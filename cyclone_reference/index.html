@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Cyclone Control</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+</head>
+
+<body>
+  <h1>Cyclone Control Panel</h1>
+  We are using Node.js <span id="node-version"></span>, Chromium
+  <span id="chrome-version"></span>, and Electron
+  <span id="electron-version"></span>.
+  <!-- Plan GCode -->
+  <section>
+    <h2>Plan GCode</h2>
+    <label for="wind-file">Select .wind file:</label>
+    <input type="file" id="wind-file" />
+    <br />
+    <label for="output-file-plan">Output file name:</label>
+    <input type="text" id="output-file-plan" placeholder="output.gcode" />
+    <br />
+    <button id="plan-button">Generate GCode</button>
+    <pre id="plan-output"></pre>
+  </section>
+
+  <!-- Plot GCode -->
+  <section>
+    <h2>Plot GCode</h2>
+    <label for="gcode-file-plot">Select GCode file:</label>
+    <input type="file" id="gcode-file-plot" />
+    <br />
+    <label for="output-file-plot">Output PNG name:</label>
+    <input type="text" id="output-file-plot" placeholder="output.png" />
+    <br />
+    <button id="plot-button">Visualize GCode</button>
+    <pre id="plot-output"></pre>
+  </section>
+
+  <!-- Run GCode -->
+  <section>
+    <h2>Run GCode</h2>
+    <label for="gcode-file-run">Select GCode file:</label>
+    <input type="file" id="gcode-file-run" />
+    <br />
+    <label for="serial-port">Serial Port:</label>
+    <input type="text" id="serial-port" placeholder="/dev/ttyUSB0" />
+    <br />
+    <button id="run-button">Run GCode</button>
+    <pre id="run-output"></pre>
+  </section>
+
+  <script src="./dist/renderer.js"></script>
+</body>
+
+</html>

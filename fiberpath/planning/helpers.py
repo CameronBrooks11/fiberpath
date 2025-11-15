@@ -1,0 +1,45 @@
+"""Utility helpers shared by planner components."""
+
+from __future__ import annotations
+
+from enum import Enum
+
+from fiberpath.math_utils import strip_precision
+
+
+class Axis(Enum):
+    CARRIAGE = "carriage"
+    MANDREL = "mandrel"
+    DELIVERY_HEAD = "delivery_head"
+
+
+AXIS_LOOKUP: dict[Axis, str] = {
+    Axis.CARRIAGE: "X",
+    Axis.MANDREL: "Y",
+    Axis.DELIVERY_HEAD: "Z",
+}
+
+Coordinate = dict[Axis, float]
+
+
+def serialize_coordinate(coordinate: Coordinate) -> str:
+    serialized = " ".join(
+        f"{axis.value}:{strip_precision(value)}" for axis, value in coordinate.items()
+    )
+    return "{" + serialized + "}"
+
+
+def interpolate_coordinates(start: Coordinate, end: Coordinate, steps: int) -> list[Coordinate]:
+    if steps <= 0:
+        raise ValueError("Steps cannot be less than 1")
+    if steps == 1:
+        return [end]
+
+    coordinates: list[Coordinate] = []
+    delta = {
+        axis: (end[axis] - start[axis]) / (steps - 1)
+        for axis in Axis
+    }
+    for step in range(steps):
+        coordinates.append({axis: start[axis] + step * delta[axis] for axis in Axis})
+    return coordinates
