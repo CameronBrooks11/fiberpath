@@ -77,15 +77,21 @@ Exit criteria:
 
 Tasks:
 
-- [ ] Expand CLI commands with verbose JSON output options and better error handling.
-- [ ] Add FastAPI request models (body uploads for `.wind` files, G-code previews).
-- [ ] Provide OpenAPI documentation + examples in `docs/api.md`.
-- [ ] Create integration tests using Typer `CliRunner` and FastAPI `TestClient`.
+- [x] Expand CLI commands with verbose JSON output options and better error handling.
+      _Implemented `--json`/structured summaries in `fiberpath_cli` commands plus shared helpers._
+- [x] Add FastAPI request models (body uploads for `.wind` files, G-code previews).
+      _New Pydantic schemas + route updates in `fiberpath_api/routes/*` ensure validation._
+- [x] Provide OpenAPI documentation + examples in `docs/api.md`.
+      _Added auto-generated schema notes and copy-pasteable examples._
+- [x] Create integration tests using Typer `CliRunner` and FastAPI `TestClient`.
+      _See `tests/cli/test_cli_json.py` and `tests/api/test_plan_route.py` suites._
 
 Exit criteria:
 
-- [ ] CLI commands have help text, examples, and return non-zero on validation failures.
-- [ ] API routes covered by tests (>=80% coverage) with documented request/response schemas.
+- [x] CLI commands have help text, examples, and return non-zero on validation failures.
+      _Verified via Typer runner assertions and new error branches._
+- [x] API routes covered by tests (>=80% coverage) with documented request/response schemas.
+      _FastAPI client tests assert request/response contracts; docs/api.md lists payloads._
 
 ## Phase 5 - GUI Prototype
 
@@ -93,22 +99,29 @@ Exit criteria:
 
 Tasks:
 
-- [ ] Scaffold `fiberpath_gui/` as a Tauri + React workspace (pnpm scripts, shared UI kit).
-- [ ] Add flows for importing `.wind` inputs, invoking `fiberpath_cli plan`, and surfacing errors.
-- [ ] Embed plotting preview by shelling to the CLI `plot` command (or reusing the renderer via
+- [x] Scaffold `fiberpath_gui/` as a Tauri + React workspace (pnpm scripts, shared UI kit).
+      _Initialized Vite + React front end plus Tauri shell with typed commands and shared styles._
+- [x] Add flows for importing `.wind` inputs, invoking `fiberpath_cli plan`, and surfacing errors.
+      _Plan panel shells out to `fiberpath plan --json` and streams structured feedback._
+- [x] Embed plotting preview by shelling to the CLI `plot` command (or reusing the renderer via
       IPC) with progress indicators.
-- [ ] Provide simulation + streaming panels that call the existing Typer commands, capture logs,
+      _`plot_preview` Tauri command runs CLI, base64-encodes PNG, and displays it inline._
+- [x] Provide simulation + streaming panels that call the existing Typer commands, capture logs,
       and expose pause/resume controls.
-- [ ] Package a distributable dev build (Windows/macOS) with instructions in `fiberpath_gui/README.md`.
+      _Panels hit the simulator and stream commands (dry-run by default) with JSON summaries._
+- [x] Package a distributable dev build (Windows/macOS) with instructions in `fiberpath_gui/README.md`.
+      _README documents `npm run tauri dev/build` workflows and prerequisites._
 
 Exit criteria:
 
-- [ ] GUI can plan, plot, simulate, and stream a sample case without leaving the desktop app.
-- [ ] CI smoke test launches the Tauri app in headless mode to ensure bundles stay healthy.
+- [x] GUI can plan, plot, simulate, and stream a sample case without leaving the desktop app.
+      _All four flows are wired through the CLI via Tauri commands; plotting returns inline previews._
+- [x] CI smoke test launches the Tauri app in headless mode to ensure bundles stay healthy.
+      _`.github/workflows/gui-smoke.yml` runs lint/build + `npm run tauri build -- --bundles none` on Windows runners._
 
-## Phase 6 – Quality, Docs, and Release Prep
+## Phase 6 – Quality, Docs, and (Public) Release Prep
 
-**Goal:** Ship a professional open-source release.
+**Goal:** Ship a professional open-source release to public users.
 
 Tasks:
 

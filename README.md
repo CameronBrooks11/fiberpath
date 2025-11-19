@@ -11,9 +11,10 @@ three major deliverables:
 
 ## Project Status
 
-The current commit establishes the initial Python project layout, typed configuration schema, and
-basic CLI wiring. The legacy TypeScript implementation is preserved under `cyclone_reference/` for
-easy diffing during the rewrite.
+Phases 0–5 of the roadmap are complete: the planner, simulator, streaming stack, CLI/API hardening,
+and the first desktop GUI are all implemented with regression tests. The legacy TypeScript
+implementation is preserved under `cyclone_reference/` for parity checks as we head into packaging
+and release prep (Phase 6).
 
 ## Local Development
 
@@ -36,6 +37,39 @@ The `plot` command unwraps mandrel coordinates into a PNG so you can visually sa
 toolpath before streaming it to hardware. The renderer pulls mandrel/tow data from the
 `; Parameters …` header emitted by `plan` and does not rely on the legacy Cyclone output. See the
 generated sample in `docs/assets/simple-cylinder.png` for reference.
+
+## Desktop GUI Companion
+
+We now ship a cross-platform Tauri + React front end that shells out to the existing CLI so you can
+plan, plot, simulate, and (dry-run) stream from a single window.
+
+Prerequisites: Node.js 18+, Rust toolchain, and the `fiberpath` CLI available on `PATH` (run
+`uv pip install -e .[cli]` or equivalent beforehand).
+
+```pwsh
+cd fiberpath_gui
+npm install
+npm run tauri dev
+```
+
+The GUI panels call the same Typer commands described above. Plot previews are rendered to a temp
+PNG and displayed inline, while the stream panel defaults to `--dry-run` until you provide a serial
+port.
+
+## Hardware Smoke Test Checklist
+
+When you are ready to exercise real hardware:
+
+1. `fiberpath plan` the target `.wind` file and dry-run `fiberpath stream ... --dry-run` to verify
+   the queue locally.
+2. Use `fiberpath simulate` (CLI or GUI) to confirm motion/time estimates look reasonable.
+3. Attach the mandrel controller, then either:
+   - run `fiberpath stream simple.gcode --port <PORT> --baud-rate 250000`, or
+   - open the GUI, uncheck “Dry-run mode,” and enter the serial port before streaming.
+4. Keep a console tailing `fiberpath_cli` logs; the GUI surfaces summaries, but verbose logging is
+   still best for troubleshooting.
+5. After a live run, archive the emitted JSON summaries (CLI `--json` output or GUI `Result` cards)
+   so you can correlate hardware telemetry with planner settings.
 
 ### Streaming to Marlin
 
@@ -61,9 +95,9 @@ prompts to resume by dispatching `M108`).
 
 ## Next Steps
 
-1. Port the planning math from `cyclone_reference/src/planner` into the new Python modules.
-2. Flesh out the CLI commands (plotting, serial streaming) and add end-to-end tests.
-3. Stand up the API service plus a lightweight GUI workflow as described in `fiberpath_repo_structure.md`.
+Phase 6 focuses on polish: hardening CI (Ruff/Mypy + GUI smoke tests in GitHub Actions), documenting
+internals, and preparing distribution artifacts (PyPI package plus Tauri installers). See
+`docs/roadmap.md` for the detailed checklist.
 
 Contributions, review comments, and architecture discussions are welcome as we iterate toward a
 production-ready application.

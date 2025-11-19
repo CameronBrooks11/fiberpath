@@ -7,6 +7,8 @@ from pathlib import Path
 import typer
 from fiberpath.execution import MarlinStreamer, StreamError, StreamProgress
 
+from .output import echo_json
+
 GCODE_ARGUMENT = typer.Argument(..., exists=True, readable=True)
 PROGRESS_INTERVAL = 25
 
@@ -26,6 +28,11 @@ def stream_command(
         help="Skip serial I/O and just report what would be streamed.",
     ),
     verbose: bool = typer.Option(False, "--verbose", help="Print every streamed command."),
+    json_output: bool = typer.Option(
+        False,
+        "--json",
+        help="Emit final summary as JSON (progress lines suppressed).",
+    ),
 ) -> None:
     """Stream the provided G-code file to a Marlin device."""
 
@@ -33,7 +40,7 @@ def stream_command(
         raise typer.BadParameter("--port is required for live streaming", param_hint="--port")
 
     commands = gcode_file.read_text(encoding="utf-8").splitlines()
-    log_callback = typer.echo if verbose else None
+    log_callback = None if json_output else (typer.echo if verbose else None)
     streamer = MarlinStreamer(port=port, baud_rate=baud_rate, log=log_callback)
     streamer.load_program(commands)
 
@@ -43,7 +50,7 @@ def stream_command(
         while streamer.commands_sent < streamer.commands_total:
             try:
                 for update in streamer.iter_stream(dry_run=dry_run):
-                    if _should_print_progress(update, verbose=progress_verbose):
+                    if not json_output and _should_print_progress(update, verbose=progress_verbose):
                         typer.echo(_format_progress(update))
                 break
             except KeyboardInterrupt:  # pragma: no cover - user-driven flow
@@ -57,6 +64,18 @@ def stream_command(
         raise typer.Exit(code=1) from exc
     finally:
         streamer.close()
+
+    summary = {
+        "status": "dry-run" if dry_run else "live",
+        "commands": streamer.commands_sent,
+        "total": streamer.commands_total,
+        "baudRate": baud_rate,
+        "dryRun": dry_run,
+    }
+
+    if json_output:
+        echo_json(summary)
+        return
 
     status = "Dry-run" if dry_run else "Streamed"
     typer.echo(

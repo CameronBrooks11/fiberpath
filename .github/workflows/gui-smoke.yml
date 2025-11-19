@@ -1,0 +1,41 @@
+name: GUI Smoke Test
+
+on:
+  push:
+    paths:
+      - "fiberpath_gui/**"
+      - ".github/workflows/gui-smoke.yml"
+  workflow_dispatch:
+
+jobs:
+  tauri-smoke:
+    runs-on: windows-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        working-directory: fiberpath_gui
+        run: npm ci
+
+      - name: Type-check React code
+        working-directory: fiberpath_gui
+        run: npm run lint
+
+      - name: Build Vite assets
+        working-directory: fiberpath_gui
+        run: npm run build
+
+      - name: Smoke test Tauri bundle (no installer)
+        working-directory: fiberpath_gui
+        run: npm run tauri build -- --bundles none

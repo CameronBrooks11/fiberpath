@@ -1,5 +1,19 @@
 # FiberPath Documentation
 
-This folder will grow into the primary knowledge base for the Python rewrite of Cyclone. High-level
-content is split into user-facing guides, architectural notes, API references, and developer
-workflows.
+This folder hosts the primary knowledge base for the Python rewrite of Cyclone. High-level content
+is split into user-facing guides, architectural notes, API references, and developer workflows.
+
+## Available Guides
+
+- `architecture.md` – planner/simulator/streaming overview and how the modules map to Cyclone.
+- `concepts.md` – glossary of filament-winding terminology used across the codebase.
+- `format-wind.md` – `.wind` file schema and validation rules.
+- `api.md` – REST entry points with sample payloads (kept in sync with the FastAPI schemas).
+- `roadmap.md` – phase-by-phase status of the rewrite (currently paused at Phase 5 completion).
+
+Additional resources:
+
+- `fiberpath_gui/ARCHITECTURE.md` documents the Tauri + React desktop companion and the CLI bridge
+  commands.
+- The top-level `README.md` now lists hardware smoke-test steps for running the CLI/GUI against
+  Marlin controllers.

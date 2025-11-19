@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import asdict
 from pathlib import Path
 
 import typer
@@ -11,6 +12,8 @@ from fiberpath.planning import PlanOptions, plan_wind
 from rich.console import Console
 from rich.table import Table
 
+from .output import echo_json
+
 console = Console()
 
 WIND_FILE_ARGUMENT = typer.Argument(..., exists=True, readable=True, help="Input .wind file")
@@ -18,21 +21,45 @@ OUTPUT_OPTION = typer.Option(
     Path("output.gcode"), "--output", "-o", help="Destination for generated G-code"
 )
 VERBOSE_OPTION = typer.Option(False, "--verbose", "-v", help="Emit verbose planner output")
+JSON_OPTION = typer.Option(
+    False,
+    "--json",
+    help="Emit machine-readable JSON instead of human-readable text.",
+)
 
 
 def plan_command(
     wind_file: Path = WIND_FILE_ARGUMENT,
     output: Path = OUTPUT_OPTION,
     verbose: bool = VERBOSE_OPTION,
+    json_output: bool = JSON_OPTION,
 ) -> None:
     try:
         wind_definition = load_wind_definition(wind_file)
     except WindFileError as exc:  # pragma: no cover - CLI glue
         raise typer.BadParameter(str(exc)) from exc
 
-    result = plan_wind(wind_definition, PlanOptions(verbose=verbose))
+    try:
+        result = plan_wind(wind_definition, PlanOptions(verbose=verbose))
+    except Exception as exc:  # pragma: no cover - defensive guard
+        typer.echo(f"Planning failed: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
     destination = write_gcode(result.commands, output)
-    console.print(f"[green]Wrote[/green] {len(result.commands)} commands to {destination}")
+
+    summary = {
+        "output": str(destination),
+        "commands": len(result.commands),
+        "timeSeconds": result.total_time_s,
+        "towMeters": result.total_tow_m,
+        "layers": [asdict(metric) for metric in result.layers],
+    }
+
+    if json_output:
+        echo_json(summary)
+        return
+
+    console.print(f"[green]Wrote[/green] {summary['commands']} commands to {destination}")
 
     if verbose:
         table = Table(title="Layer metrics", expand=False)
@@ -54,3 +81,4 @@ def plan_command(
             f"[cyan]Totals[/cyan] time={result.total_time_s:.2f}s tow={result.total_tow_m:.3f}m"
         )
         console.print(wind_definition.model_dump(mode="json"))
+
