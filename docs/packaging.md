@@ -27,9 +27,9 @@ Install the following once per machine:
 3. **Python environment with `fiberpath` installed** – `uv pip install -e .[cli]` ensures the CLI is
    available on `PATH` for runtime testing.
 4. **Microsoft Visual C++ Build Tools** – required by Rust on Windows (usually present on GitHub
-  runners and most dev machines running VS Build Tools 2022).
+   runners and most dev machines running VS Build Tools 2022).
 5. **NSIS 3.x** – installer generator used by Tauri for `.exe` bundles (`winget install
-  NSIS.NSIS -e --accept-package-agreements --accept-source-agreements`).
+NSIS.NSIS -e --accept-package-agreements --accept-source-agreements`).
 
 Once installed, run the packaging command from a PowerShell prompt inside `fiberpath_gui`:
 
@@ -52,14 +52,18 @@ macOS, and Ubuntu runners with OS-specific prep steps and shared packaging logic
 - **Install toolchains**
   - Node.js 20 via `actions/setup-node@v4`.
   - Rust via `dtolnay/rust-toolchain@stable` (ensures nightly updates automatically).
-  - Linux-only: install `libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev
-    librsvg2-dev patchelf`.
+  - Linux-only: install `pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev libjavascriptcoregtk-4.1-dev
+libayatana-appindicator3-dev librsvg2-dev patchelf`. (Ubuntu 24.04 dropped the 4.0-era
+    WebKit/JavaScriptCore headers, so we rely on the newer 4.1 packages.)
 - **Dependencies:** `npm ci` under `fiberpath_gui` (linting already handled by the smoke workflow).
 - **Packaging:** `npm run package` (which wraps `tauri build --ci` to keep the CLI non-interactive
   inside GitHub Actions).
 - **Artifacts:** Upload the entire `src-tauri/target/release/bundle/**/*` directory for later
   download. Artifact names encode the platform (`fiberpath-gui-windows`, `fiberpath-gui-macos`,
   `fiberpath-gui-linux`).
+
+> Tip: if GitHub bumps `ubuntu-latest` before Tauri updates its instructions, temporarily pin the
+> Linux matrix entry to `ubuntu-22.04` to keep the older packages available.
 
 The workflow intentionally separates smoke testing (`gui-smoke.yml`) from packaging so lint/build
 failures are caught earlier and packaging can remain focused on producing installers.
@@ -78,9 +82,9 @@ failures are caught earlier and packaging can remain focused on producing instal
 After running `npm run package`, verify the installer artifacts before pushing:
 
 1. **Inspect bundles** – confirm files exist under
-  `src-tauri/target/release/bundle/<target>/` (e.g., `nsis/FiberPath GUI_0.1.0_x64-setup.exe`).
+   `src-tauri/target/release/bundle/<target>/` (e.g., `nsis/FiberPath GUI_0.1.0_x64-setup.exe`).
 2. **Run the app** – either execute the generated installer or launch the raw binary using
-  `Start-Process '.\src-tauri\target\release\FiberPath GUI.exe'` (PowerShell) to ensure the GUI
-  opens and can reach the CLI on `PATH`.
+   `Start-Process '.\src-tauri\target\release\FiberPath GUI.exe'` (PowerShell) to ensure the GUI
+   opens and can reach the CLI on `PATH`.
 3. **Manual smoke test** – plan/plot a small `.wind` via the GUI to confirm the packaged build can
-  locate the Python CLI before uploading artifacts or pushing to CI.
+   locate the Python CLI before uploading artifacts or pushing to CI.
