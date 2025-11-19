@@ -9,7 +9,10 @@ from .plot import plot_command
 from .simulate import simulate_command
 from .validate import validate_command
 
-app = typer.Typer(help="Utilities for planning and executing filament winding jobs.")
+app = typer.Typer(
+    name="FiberPath",
+    help="FiberPath utilities for planning and executing filament winding jobs.",
+)
 
 
 app.command("plan")(plan_command)

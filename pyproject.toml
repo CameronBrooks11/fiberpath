@@ -37,6 +37,13 @@ docs = ["mkdocs>=1.5", "mkdocs-material>=9.5"]
 [project.scripts]
 fiberpath = "fiberpath_cli.main:app"
 
+[tool.hatch.build.targets.wheel]
+packages = [
+    "fiberpath",
+    "fiberpath_cli",
+    "fiberpath_api",
+]
+
 [tool.ruff]
 line-length = 100
 src = ["fiberpath", "fiberpath_cli", "fiberpath_api", "tests"]
