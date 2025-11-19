@@ -81,4 +81,3 @@ def plan_command(
             f"[cyan]Totals[/cyan] time={result.total_time_s:.2f}s tow={result.total_tow_m:.3f}m"
         )
         console.print(wind_definition.model_dump(mode="json"))
-

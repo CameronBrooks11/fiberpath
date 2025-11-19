@@ -219,9 +219,7 @@ class MarlinStreamer:
         if self._transport is None:
             if self._port is None:
                 raise StreamError("Serial port is required for live streaming")
-            self._transport = PySerialTransport(
-                self._port, self._baud_rate, self._response_timeout
-            )
+            self._transport = PySerialTransport(self._port, self._baud_rate, self._response_timeout)
         self._connected = True
 
     def _send_command(self, command: str) -> None:

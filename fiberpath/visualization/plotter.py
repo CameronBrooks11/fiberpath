@@ -5,6 +5,8 @@ from __future__ import annotations
 import ast
 from collections.abc import Sequence
 from dataclasses import dataclass
+from hashlib import sha256
+import json
 import math
 from io import BytesIO
 from pathlib import Path
@@ -72,6 +74,22 @@ def render_plot(program: Sequence[str], config: PlotConfig | None = None) -> Plo
     return PlotResult(image=image, metadata=metadata, segments_rendered=len(segments))
 
 
+@dataclass(slots=True, frozen=True)
+class PlotSignature:
+    metadata: PlotMetadata
+    segments_rendered: int
+    digest: str
+
+
+def compute_plot_signature(
+    program: Sequence[str], height_degrees: float = HEIGHT_DEGREES
+) -> PlotSignature:
+    metadata = _extract_metadata(program)
+    segments = _collect_segments(program, height_degrees)
+    digest = _hash_segments(segments)
+    return PlotSignature(metadata=metadata, segments_rendered=len(segments), digest=digest)
+
+
 def save_plot(program: Sequence[str], destination: Path, config: PlotConfig | None = None) -> Path:
     result = render_plot(program, config)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -120,6 +138,14 @@ def _collect_segments(
         segments.extend(_split_segment((x_pos, y_pos), (next_x, next_y), height_degrees))
         x_pos, y_pos = next_x, next_y
     return segments
+
+
+def _hash_segments(segments: Sequence[list[tuple[float, float]]]) -> str:
+    normalized = [
+        [[round(point[0], 6), round(point[1], 6)] for point in segment] for segment in segments
+    ]
+    payload = json.dumps(normalized, separators=(",", ":")).encode("utf-8")
+    return sha256(payload).hexdigest()
 
 
 def _split_segment(

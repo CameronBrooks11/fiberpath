@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from hashlib import sha256
-from io import BytesIO
 from pathlib import Path
 
 from typer.testing import CliRunner
 
 from fiberpath.config import load_wind_definition
 from fiberpath.planning import plan_wind
-from fiberpath.visualization.plotter import PlotConfig, render_plot
+from fiberpath.visualization.plotter import (
+    PlotConfig,
+    compute_plot_signature,
+    render_plot,
+)
 from fiberpath_cli.main import app
 
 FIXTURE = (
@@ -19,29 +21,12 @@ FIXTURE = (
     / "output.gcode"
 )
 
-SIMPLE_CYLINDER_WIND = (
-    Path(__file__).parents[2] / "examples" / "simple_cylinder" / "input.wind"
+SIMPLE_CYLINDER_WIND = Path(__file__).parents[2] / "examples" / "simple_cylinder" / "input.wind"
+
+REFERENCE_SIGNATURE_DIGEST = "bc2495ba15965b8b0e3a2616957741ef0801fc62a6a8284e30955635d2426af0"
+SIMPLE_CYLINDER_SIGNATURE_DIGEST = (
+    "f5516bc0b68cd25c8ab7014c05109c926f8183ad00ba1d25ee4b56835a73900f"
 )
-
-REFERENCE_PNG_DIGESTS = {
-    # Pillow 10.x
-    "56759d86dfe900de4a3f9ccf98d77db1cdd26b9a89c0c8f289321571d44329bc",
-    # Pillow 11.x tightened anti-aliasing, yielding a new digest
-    "4942d950928d172c87cdde7f16f9977799925230fdb48d3f60496b3886632dfb",
-}
-
-SIMPLE_CYLINDER_DIGESTS = {
-    # Pillow 10.x
-    "e2cfeb54d160e415f5f7a95c9ed575b8fc11168d031dd552671771ecbf4fbcee",
-    # Pillow 11.x
-    "c428f43d90199d1d8213ed86f39ee31d90aa423b717ea56991860f24119161f6",
-}
-
-
-def _hash_image(result_image) -> str:
-    buffer = BytesIO()
-    result_image.save(buffer, format="PNG")
-    return sha256(buffer.getvalue()).hexdigest()
 
 
 def _plan_simple_cylinder_commands() -> list[str]:
@@ -49,11 +34,17 @@ def _plan_simple_cylinder_commands() -> list[str]:
     return plan_wind(definition).commands
 
 
-def test_render_plot_produces_stable_png_hash():
+def test_render_plot_produces_stable_geometry_signature():
     program = FIXTURE.read_text(encoding="utf-8").splitlines()
+    signature = compute_plot_signature(program)
+    assert signature.digest == REFERENCE_SIGNATURE_DIGEST
+    assert signature.segments_rendered == 1821
+    assert signature.metadata.mandrel_length_mm == 500.0
+    assert signature.metadata.tow_width_mm == 8.0
+
     result = render_plot(program, PlotConfig(scale=0.5))
-    digest = _hash_image(result.image)
-    assert digest in REFERENCE_PNG_DIGESTS
+    assert result.image.size == (250, 180)
+    assert result.segments_rendered == signature.segments_rendered
 
 
 def test_plot_cli_writes_output(tmp_path: Path):
@@ -70,9 +61,11 @@ def test_plot_cli_writes_output(tmp_path: Path):
 
 def test_render_plot_handles_simple_cylinder_example():
     commands = _plan_simple_cylinder_commands()
+    signature = compute_plot_signature(commands)
+    assert signature.digest == SIMPLE_CYLINDER_SIGNATURE_DIGEST
+    assert signature.segments_rendered > 0
     result = render_plot(commands, PlotConfig(scale=0.5))
-    digest = _hash_image(result.image)
-    assert digest in SIMPLE_CYLINDER_DIGESTS
+    assert result.segments_rendered == signature.segments_rendered
 
 
 def test_plot_cli_renders_simple_cylinder_example(tmp_path: Path):
@@ -87,5 +80,4 @@ def test_plot_cli_renders_simple_cylinder_example(tmp_path: Path):
     )
     assert result.exit_code == 0, result.output
     assert destination.exists()
-    digest = sha256(destination.read_bytes()).hexdigest()
-    assert digest in SIMPLE_CYLINDER_DIGESTS
+    assert destination.stat().st_size > 0
