@@ -1,6 +1,6 @@
 # FiberPath Development Roadmap
 
-Last updated: 2025-11-18
+Last updated: 2025-11-19
 
 The roadmap focuses on delivering a production-ready Python port of Cyclone. Each phase lists the
 primary objectives, concrete tasks, and completion signals so we can track progress and keep scope
@@ -31,11 +31,11 @@ Tasks:
 Exit criteria:
 
 - [x] All planner tests pass with >90% coverage for `fiberpath.planning`.
-  *`pytest --cov=fiberpath.planning --cov-report=term-missing` now reports 98% coverage after
-  pruning dead helpers and adding focused unit tests for machines/validators.*
+      _`pytest --cov=fiberpath.planning --cov-report=term-missing` now reports 98% coverage after
+      pruning dead helpers and adding focused unit tests for machines/validators._
 - [x] Example `.wind` parity proved against Cyclone references (simple-hoop, helical-balanced,
-  skip-bias); this satisfies the Phase 1 parity requirement without reprocessing the
-  `examples/` directory.
+      skip-bias); this satisfies the Phase 1 parity requirement without reprocessing the
+      `examples/` directory.
 
 ## Phase 2 – Visualization & QA Loop
 
@@ -52,7 +52,7 @@ Exit criteria:
 
 - [x] `fiberpath_cli plot` renders PNG preview for `examples/simple_cylinder`.
 - [x] CI test verifies generated image matches baseline (within tolerance) on Linux/Windows via
-  deterministic hash checks in `tests/visualization/test_plotter.py`.
+      deterministic hash checks in `tests/visualization/test_plotter.py`.
 
 ## Phase 3 – Simulation & Streaming
 
@@ -60,16 +60,16 @@ Exit criteria:
 
 Tasks:
 
-- [ ] Upgrade `fiberpath.simulation` to compute motion time using planner feed-rate data.
-- [ ] Implement `fiberpath.execution.marlin` module (pyserial) mirroring Cyclone's pause/resume.
-- [ ] Add CLI `stream` command with dry-run mode and progress feedback.
-- [ ] Provide FastAPI `/stream` endpoint that proxies to the execution layer (mockable for tests).
-- [ ] Build test harness with virtual serial port to exercise queue/pause/resume logic.
+- [x] Upgrade `fiberpath.simulation` to compute motion time using planner feed-rate data.
+- [x] Implement `fiberpath.execution.marlin` module (pyserial) mirroring Cyclone's pause/resume.
+- [x] Add CLI `stream` command with dry-run mode and progress feedback.
+- [x] Provide FastAPI `/stream` endpoint that proxies to the execution layer (mockable for tests).
+- [x] Build test harness with virtual serial port to exercise queue/pause/resume logic.
 
 Exit criteria:
 
-- [ ] Simulation command reports realistic durations vs. reference manual calculations.
-- [ ] Streaming CLI can send G-code to a mock port and handle pause/resume interactively.
+- [x] Simulation command reports realistic durations vs. reference manual calculations.
+- [x] Streaming CLI can send G-code to a mock port and handle pause/resume interactively.
 
 ## Phase 4 – Interface Hardening (CLI + API)
 
@@ -80,7 +80,6 @@ Tasks:
 - [ ] Expand CLI commands with verbose JSON output options and better error handling.
 - [ ] Add FastAPI request models (body uploads for `.wind` files, G-code previews).
 - [ ] Provide OpenAPI documentation + examples in `docs/api.md`.
-- [ ] Integrate optional authentication stub for future deployments (API key header enforcement).
 - [ ] Create integration tests using Typer `CliRunner` and FastAPI `TestClient`.
 
 Exit criteria:
@@ -88,7 +87,15 @@ Exit criteria:
 - [ ] CLI commands have help text, examples, and return non-zero on validation failures.
 - [ ] API routes covered by tests (>=80% coverage) with documented request/response schemas.
 
-## Phase 5 – Quality, Docs, and Release Prep
+## Phase 5 - GUI Prototype
+
+**Goal:** Build a minimal GUI for end-to-end visual workflow using fiberpath.
+
+Tasks:
+
+- [ ] TODO
+
+## Phase 6 – Quality, Docs, and Release Prep
 
 **Goal:** Ship a professional open-source release.
 

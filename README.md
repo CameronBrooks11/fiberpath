@@ -37,6 +37,17 @@ toolpath before streaming it to hardware. The renderer pulls mandrel/tow data fr
 `; Parameters …` header emitted by `plan` and does not rely on the legacy Cyclone output. See the
 generated sample in `docs/assets/simple-cylinder.png` for reference.
 
+### Streaming to Marlin
+
+```pwsh
+fiberpath stream simple.gcode --port COM5 --baud-rate 250000
+```
+
+Use `--dry-run` to verify what would be streamed without opening a serial port, and `--verbose` to
+see every G-code command as it is dequeued. The command mirrors Cyclone's `run` helper: it sends one
+command at a time, waits for `ok`, and lets you press `Ctrl+C` to pause (FiberPath sends `M0` and
+prompts to resume by dispatching `M108`).
+
 ## Repository Map
 
 - `fiberpath/` – core Python package (config schemas, geometry, planning, gcode, simulation)

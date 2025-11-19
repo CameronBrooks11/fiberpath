@@ -24,6 +24,7 @@ dependencies = [
     "typer>=0.12",
     "rich>=13.7",
     "Pillow>=10.3",
+    "pyserial>=3.5",
 ]
 
 [project.optional-dependencies]

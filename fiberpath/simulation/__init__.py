@@ -1,5 +1,5 @@
 """Simulation entry points."""
 
-from .simulator import SimulationResult, simulate_program
+from .simulator import SimulationError, SimulationResult, simulate_program
 
-__all__ = ["SimulationResult", "simulate_program"]
+__all__ = ["SimulationResult", "SimulationError", "simulate_program"]
