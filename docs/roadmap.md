@@ -50,8 +50,9 @@ Tasks:
 
 Exit criteria:
 
-- [ ] `fiberpath_cli plot` renders PNG preview for `examples/simple_cylinder`.
-- [ ] CI test verifies generated image matches baseline (within tolerance) on Linux/Windows.
+- [x] `fiberpath_cli plot` renders PNG preview for `examples/simple_cylinder`.
+- [x] CI test verifies generated image matches baseline (within tolerance) on Linux/Windows via
+  deterministic hash checks in `tests/visualization/test_plotter.py`.
 
 ## Phase 3 – Simulation & Streaming
 
