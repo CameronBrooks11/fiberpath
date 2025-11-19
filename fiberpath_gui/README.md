@@ -27,8 +27,13 @@ For production builds:
 
 ```pwsh
 cd fiberpath_gui
-npm run build
-npm run tauri build
+npm install
+npm run package
 ```
+
+`npm run package` wraps `tauri build --ci`, which emits platform-specific installers under
+`src-tauri/target/release/bundle/` (MSI/NSIS on Windows, AppImage/Deb on Linux, App/Disk image on
+macOS). Windows packaging works locally, while macOS/Linux artifacts require running the command on
+those respective platforms (handled automatically in CI).
 
 See `ARCHITECTURE.md` for a deeper dive into the UI layout and Rust bridge commands.

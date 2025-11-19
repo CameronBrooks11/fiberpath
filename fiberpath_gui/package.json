@@ -11,7 +11,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "package": "tauri build --ci"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.3",

@@ -15,6 +15,15 @@
       "all": true
     },
     "bundle": {
+      "active": true,
+      "targets": [
+        "nsis",
+        "msi",
+        "app",
+        "dmg",
+        "appimage",
+        "deb"
+      ],
       "identifier": "com.fiberpath.desktop",
       "icon": [
         "icons/32x32.png",
