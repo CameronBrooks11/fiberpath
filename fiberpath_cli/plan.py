@@ -7,8 +7,9 @@ from pathlib import Path
 import typer
 from fiberpath.config import WindFileError, load_wind_definition
 from fiberpath.gcode import write_gcode
-from fiberpath.planning import plan_wind
+from fiberpath.planning import PlanOptions, plan_wind
 from rich.console import Console
+from rich.table import Table
 
 console = Console()
 
@@ -29,9 +30,27 @@ def plan_command(
     except WindFileError as exc:  # pragma: no cover - CLI glue
         raise typer.BadParameter(str(exc)) from exc
 
-    program = plan_wind(wind_definition)
-    destination = write_gcode(program, output)
-    console.print(f"[green]Wrote[/green] {len(program)} commands to {destination}")
+    result = plan_wind(wind_definition, PlanOptions(verbose=verbose))
+    destination = write_gcode(result.commands, output)
+    console.print(f"[green]Wrote[/green] {len(result.commands)} commands to {destination}")
 
     if verbose:
+        table = Table(title="Layer metrics", expand=False)
+        table.add_column("#", justify="right")
+        table.add_column("Type")
+        table.add_column("Cmds", justify="right")
+        table.add_column("Δt (s)", justify="right")
+        table.add_column("Tow (m)", justify="right")
+        for metric in result.layers:
+            table.add_row(
+                str(metric.index),
+                metric.wind_type,
+                str(metric.commands),
+                f"{metric.time_s:.2f}",
+                f"{metric.tow_m:.3f}",
+            )
+        console.print(table)
+        console.print(
+            f"[cyan]Totals[/cyan] time={result.total_time_s:.2f}s tow={result.total_tow_m:.3f}m"
+        )
         console.print(wind_definition.model_dump(mode="json"))

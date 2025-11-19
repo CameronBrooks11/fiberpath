@@ -95,6 +95,9 @@ class WinderMachine:
     def set_mandrel_diameter(self, mandrel_diameter: float) -> None:
         self._mandrel_diameter = mandrel_diameter
 
+    def get_mandrel_diameter(self) -> float:
+        return self._mandrel_diameter
+
     def _move_segment(self, position: Mapping[Axis, float]) -> None:
         command_parts = ["G0"]
         total_distance_sq = 0.0

@@ -18,14 +18,14 @@ under control. Phases should be executed sequentially unless otherwise noted.
 
 Tasks:
 
-- [ ] Port remaining planner math gaps (pattern skip validation, mandrel diameter growth per layer,
+- [x] Port remaining planner math gaps (pattern skip validation, mandrel diameter growth per layer,
       delivery-head sequencing edge cases).
-- [ ] Add guardrails: terminal layer ordering, pattern divisibility, numeric bounds on angles/widths.
-- [ ] Expose profiling metrics (layer time, cumulative tow usage) via `plan_wind` return structure.
-- [ ] Expand unit coverage:
+- [x] Add guardrails: terminal layer ordering, pattern divisibility, numeric bounds on angles/widths.
+- [x] Expose profiling metrics (layer time, cumulative tow usage) via `plan_wind` return structure.
+- [x] Expand unit coverage:
 
-  - [ ] Deterministic tests for `plan_hoop_layer`, `plan_helical_layer`, `plan_skip_layer`.
-  - [ ] Snapshot tests comparing generated G-code to golden files in `tests/planning/fixtures`.
+  - [x] Deterministic tests for `plan_hoop_layer`, `plan_helical_layer`, `plan_skip_layer`.
+  - [x] Snapshot tests comparing generated G-code to golden files in `tests/planning/fixtures`.
 
 Exit criteria:
 
@@ -38,10 +38,10 @@ Exit criteria:
 
 Tasks:
 
-- [ ] Port `plotter` logic from Cyclone into `fiberpath.visualization.plotter` using Pillow/Cairo.
-- [ ] Wire plotting into `fiberpath_cli.plot` with CLI options for PNG destination & scale.
-- [ ] Create automated regression test that renders a short toolpath and compares histogram/hash.
-- [ ] Document plotting usage in `README.md` and add sample output under `docs/assets/`.
+- [x] Port `plotter` logic from Cyclone into `fiberpath.visualization.plotter` using Pillow/Cairo.
+- [x] Wire plotting into `fiberpath_cli.plot` with CLI options for PNG destination & scale.
+- [x] Create automated regression test that renders a short toolpath and compares histogram/hash.
+- [x] Document plotting usage in `README.md` and add sample output under `docs/assets/`.
 
 Exit criteria:
 

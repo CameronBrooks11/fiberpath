@@ -25,6 +25,18 @@ pytest
 
 > Replace `uv` with `pip` if you prefer the standard installer.
 
+### Plotting quick preview
+
+```pwsh
+fiberpath plan examples/simple_cylinder/input.wind -o simple.gcode
+fiberpath plot simple.gcode --output simple.png --scale 0.8
+```
+
+The `plot` command unwraps mandrel coordinates into a PNG so you can visually sanity-check a
+toolpath before streaming it to hardware. The renderer pulls mandrel/tow data from the
+`; Parameters …` header emitted by `plan` and does not rely on the legacy Cyclone output. See the
+generated sample in `docs/assets/simple-cylinder.png` for reference.
+
 ## Repository Map
 
 - `fiberpath/` – core Python package (config schemas, geometry, planning, gcode, simulation)

@@ -13,5 +13,8 @@ def rad_to_deg(radians: float) -> float:
     return math.degrees(radians)
 
 
-def strip_precision(value: float, digits: int = 6) -> float:
-    return float(f"{value:.{digits}f}")
+def strip_precision(value: float, digits: int = 6) -> str:
+    text = f"{value:.{digits}f}"
+    if "." in text:
+        text = text.rstrip("0").rstrip(".")
+    return text or "0"

@@ -15,6 +15,7 @@ from fiberpath.config.schemas import (
 )
 from fiberpath.math_utils import deg_to_rad, rad_to_deg
 
+from .calculations import HelicalKinematics, compute_helical_kinematics
 from .helpers import Axis
 from .machine import WinderMachine
 
@@ -22,9 +23,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 def build_layer_summary(index: int, total: int, layer: LayerModel) -> str:
-    base = f"Layer {index}/{total}: {layer.wind_type}"
+    base = f"Layer {index} of {total}: {layer.wind_type}"
     if isinstance(layer, HelicalLayer):
-        return f"{base} @ {layer.wind_angle:.1f}° ({layer.pattern_number}:{layer.skip_index})"
+        return base
     return base
 
 
@@ -33,12 +34,20 @@ def dispatch_layer(
     layer: LayerModel,
     mandrel_parameters: MandrelParameters,
     tow_parameters: TowParameters,
+    *,
+    helical_kinematics: HelicalKinematics | None = None,
 ) -> None:
     if isinstance(layer, HoopLayer):
         plan_hoop_layer(machine, layer, mandrel_parameters, tow_parameters)
         return
     if isinstance(layer, HelicalLayer):
-        plan_helical_layer(machine, layer, mandrel_parameters, tow_parameters)
+        plan_helical_layer(
+            machine,
+            layer,
+            mandrel_parameters,
+            tow_parameters,
+            helical_kinematics=helical_kinematics,
+        )
         return
     if isinstance(layer, SkipLayer):
         plan_skip_layer(machine, layer)
@@ -53,9 +62,7 @@ def plan_hoop_layer(
     tow_parameters: TowParameters,
 ) -> None:
     lock_degrees = 180.0
-    wind_angle = 90.0 - rad_to_deg(
-        math.atan(mandrel_parameters.diameter / tow_parameters.width)
-    )
+    wind_angle = 90.0 - rad_to_deg(math.atan(mandrel_parameters.diameter / tow_parameters.width))
     mandrel_rotations = mandrel_parameters.wind_length / tow_parameters.width
     far_mandrel = lock_degrees + mandrel_rotations * 360.0
     far_lock = far_mandrel + lock_degrees
@@ -81,25 +88,26 @@ def plan_helical_layer(
     layer: HelicalLayer,
     mandrel_parameters: MandrelParameters,
     tow_parameters: TowParameters,
+    *,
+    helical_kinematics: HelicalKinematics | None = None,
 ) -> None:
     delivery_head_pass_start_angle = -10.0
     lead_out_degrees = layer.lead_out_degrees
     wind_lead_in_mm = layer.lead_in_mm
     lock_degrees = layer.lock_degrees
     delivery_head_angle = -1.0 * (90.0 - layer.wind_angle)
-    mandrel_circumference = math.pi * mandrel_parameters.diameter
-    tow_arc_length = tow_parameters.width / math.cos(deg_to_rad(layer.wind_angle))
-    num_circuits = math.ceil(mandrel_circumference / tow_arc_length)
-    pattern_step_degrees = 360.0 * (1 / num_circuits)
-    pass_rotation_mm = mandrel_parameters.wind_length * math.tan(deg_to_rad(layer.wind_angle))
-    pass_rotation_degrees = 360.0 * (pass_rotation_mm / mandrel_circumference)
-    pass_degrees_per_mm = pass_rotation_degrees / mandrel_parameters.wind_length
     pattern_number = layer.pattern_number
-    number_of_patterns = num_circuits / pattern_number
-    lead_in_degrees = pass_degrees_per_mm * wind_lead_in_mm
-    main_pass_degrees = pass_degrees_per_mm * (
-        mandrel_parameters.wind_length - wind_lead_in_mm
+
+    kinematics = helical_kinematics or compute_helical_kinematics(
+        layer, mandrel_parameters, tow_parameters
     )
+    num_circuits = kinematics.num_circuits
+    pattern_step_degrees = kinematics.pattern_step_degrees
+    pass_rotation_degrees = kinematics.pass_rotation_degrees
+    lead_in_degrees = kinematics.lead_in_degrees
+    main_pass_degrees = kinematics.main_pass_degrees
+    number_of_patterns = num_circuits / pattern_number
+    start_position_increment = 360.0 / pattern_number
     pass_parameters = [
         {
             "delivery_head_sign": 1,
@@ -114,9 +122,10 @@ def plan_helical_layer(
     ]
 
     LOGGER.debug("Helical wind with %s circuits", num_circuits)
+
     if num_circuits % pattern_number != 0:
         LOGGER.warning(
-            "Circuit count %s not divisible by pattern %s; aborting layer",
+            "Skipping helical layer: %s circuits not divisible by pattern %s",
             num_circuits,
             pattern_number,
         )
@@ -165,11 +174,11 @@ def plan_helical_layer(
                     }
                 )
 
-                mandrel_position += lock_degrees - lead_out_degrees - (
-                    pass_rotation_degrees % 360.0
+                mandrel_position += (
+                    lock_degrees - lead_out_degrees - (pass_rotation_degrees % 360.0)
                 )
 
-            mandrel_position += pattern_step_degrees * num_circuits / pattern_number
+            mandrel_position += start_position_increment
 
         mandrel_position += pattern_step_degrees
 

@@ -36,10 +36,7 @@ def interpolate_coordinates(start: Coordinate, end: Coordinate, steps: int) -> l
         return [end]
 
     coordinates: list[Coordinate] = []
-    delta = {
-        axis: (end[axis] - start[axis]) / (steps - 1)
-        for axis in Axis
-    }
+    delta = {axis: (end[axis] - start[axis]) / (steps - 1) for axis in Axis}
     for step in range(steps):
         coordinates.append({axis: start[axis] + step * delta[axis] for axis in Axis})
     return coordinates

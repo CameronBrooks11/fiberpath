@@ -1,0 +1,41 @@
+{
+    "layers": [
+        {
+            "windType": "helical",
+            "windAngle": 60,
+            "patternNumber": 2,
+            "skipIndex": 1,
+            "lockDegrees": 600,
+            "leadInMM": 40,
+            "leadOutDegrees": 80,
+            "skipInitialNearLock": true
+        },
+        {
+            "windType": "skip",
+            "mandrelRotation": 90
+        },
+        {
+            "windType": "helical",
+            "windAngle": 50,
+            "patternNumber": 5,
+            "skipIndex": 2,
+            "lockDegrees": 540,
+            "leadInMM": 35,
+            "leadOutDegrees": 70,
+            "skipInitialNearLock": false
+        },
+        {
+            "windType": "hoop",
+            "terminal": true
+        }
+    ],
+    "mandrelParameters": {
+        "diameter": 90,
+        "windLength": 650
+    },
+    "towParameters": {
+        "width": 9.5,
+        "thickness": 0.38
+    },
+    "defaultFeedRate": 6800
+}
