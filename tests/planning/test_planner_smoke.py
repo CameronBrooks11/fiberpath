@@ -28,9 +28,17 @@ def test_plan_wind_returns_commands():
     assert result.commands[-1] == _reference_output()[-1]
 
 
-def test_plan_wind_matches_cyclone_reference():
-    result = plan_wind(_reference_definition())
-    assert result.commands == _reference_output()
+@pytest.mark.parametrize(
+    "case",
+    [
+        "simple-hoop",
+        "helical-balanced",
+        "skip-bias",
+    ],
+)
+def test_plan_wind_matches_cyclone_reference(case: str):
+    result = plan_wind(_reference_definition(case))
+    assert result.commands == _reference_output(case)
 
 
 def test_plan_wind_rejects_layers_after_terminal():

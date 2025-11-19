@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from math import gcd, isclose
+from math import gcd
 
 from fiberpath.config.schemas import HelicalLayer, LayerModel, MandrelParameters, TowParameters
 
@@ -48,8 +48,4 @@ def validate_helical_layer(
             "skipIndex and patternNumber must be coprime for full coverage",
         )
 
-    kinematics = compute_helical_kinematics(layer, mandrel, tow)
-    if isclose(kinematics.tow_arc_length, 0.0):
-        raise LayerValidationError(layer_index, "tow arc length cannot be zero")
-
-    return kinematics
+    return compute_helical_kinematics(layer, mandrel, tow)

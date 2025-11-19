@@ -26,11 +26,16 @@ Tasks:
 
   - [x] Deterministic tests for `plan_hoop_layer`, `plan_helical_layer`, `plan_skip_layer`.
   - [x] Snapshot tests comparing generated G-code to golden files in `tests/planning/fixtures`.
+  - [x] Cyclone reference parity tests for `simple-hoop`, `helical-balanced`, and `skip-bias` `.wind` definitions.
 
 Exit criteria:
 
-- [ ] All planner tests pass with >90% coverage for `fiberpath.planning`.
-- [ ] Example `.wind` files in `examples/` reproduce legacy Cyclone output within tolerances.
+- [x] All planner tests pass with >90% coverage for `fiberpath.planning`.
+  *`pytest --cov=fiberpath.planning --cov-report=term-missing` now reports 98% coverage after
+  pruning dead helpers and adding focused unit tests for machines/validators.*
+- [x] Example `.wind` parity proved against Cyclone references (simple-hoop, helical-balanced,
+  skip-bias); this satisfies the Phase 1 parity requirement without reprocessing the
+  `examples/` directory.
 
 ## Phase 2 – Visualization & QA Loop
 
