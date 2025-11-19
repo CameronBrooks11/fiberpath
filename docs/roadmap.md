@@ -93,7 +93,18 @@ Exit criteria:
 
 Tasks:
 
-- [ ] TODO
+- [ ] Scaffold `fiberpath_gui/` as a Tauri + React workspace (pnpm scripts, shared UI kit).
+- [ ] Add flows for importing `.wind` inputs, invoking `fiberpath_cli plan`, and surfacing errors.
+- [ ] Embed plotting preview by shelling to the CLI `plot` command (or reusing the renderer via
+      IPC) with progress indicators.
+- [ ] Provide simulation + streaming panels that call the existing Typer commands, capture logs,
+      and expose pause/resume controls.
+- [ ] Package a distributable dev build (Windows/macOS) with instructions in `fiberpath_gui/README.md`.
+
+Exit criteria:
+
+- [ ] GUI can plan, plot, simulate, and stream a sample case without leaving the desktop app.
+- [ ] CI smoke test launches the Tauri app in headless mode to ensure bundles stay healthy.
 
 ## Phase 6 – Quality, Docs, and Release Prep
 
