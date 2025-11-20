@@ -1,0 +1,5 @@
+*.gcode linguist-generated=true
+*.gco linguist-generated=true
+*.gcnc linguist-generated=true
+*.ngc linguist-generated=true
+*.log linguist-generated=true
