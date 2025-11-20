@@ -106,9 +106,20 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header style={{ padding: "1.5rem" }}>
+      <header className="hero">
+        <p className="hero__eyebrow">Carbon Fiber Control Center</p>
         <h1>FiberPath Desktop</h1>
-        <p>Plan, visualize, simulate, and stream without leaving a single window.</p>
+        <p className="hero__lead">Plan, visualize, simulate, and stream without leaving a single window.</p>
+        <div className="hero__tags">
+          <span>Planner parity</span>
+          <span>Deterministic plots</span>
+          <span>Marlin streaming</span>
+        </div>
+        <div className="hero__links">
+          <a href="https://cameronbrooks11.github.io/fiberpath" target="_blank" rel="noreferrer noopener">
+            Documentation ↗
+          </a>
+        </div>
       </header>
 
       <main>
@@ -214,7 +225,7 @@ export default function App() {
                 </label>
               </fieldset>
               <fieldset>
-                <label style={{ flexDirection: "row", alignItems: "center", gap: "0.5rem" }}>
+                <label className="toggle-field">
                   <input type="checkbox" checked={dryRun} onChange={(event) => setDryRun(event.target.checked)} />
                   Dry-run mode (recommended when no hardware is attached)
                 </label>
@@ -228,8 +239,7 @@ export default function App() {
           </section>
         </div>
       </main>
-
-      <footer style={{ padding: "1.5rem", borderTop: "1px solid #e2e8f0", background: "#fff" }}>
+      <footer className="app-footer">
         <small>
           CLI operations run in the existing Python environment. Ensure `fiberpath` is on PATH before launching the GUI.
         </small>

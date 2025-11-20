@@ -1,28 +1,51 @@
 :root {
-  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
-  color: #0f172a;
-  background-color: #f8fafc;
-  line-height: 1.5;
+  font-family: "Segoe UI", "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.4;
   font-weight: 400;
+  --primary: #12a89a;
+  --primary-soft: #75e3d8;
+  --accent: #d8b534;
+  --bg: #09090b;
+  --bg-panel: #141416;
+  --bg-panel-alt: #1d1d20;
+  --border: #242428;
+  --border-soft: rgba(255, 255, 255, 0.04);
+  --text: #f7f8fa;
+  --text-muted: #8f929c;
+  --success: #32d2b6;
+  --error: #ff8a8a;
 }
 
 * {
   box-sizing: border-box;
 }
 
-body,
 html,
+body,
 #root {
   margin: 0;
   min-height: 100vh;
+  color: var(--text);
 }
 
 body {
-  background-color: #f8fafc;
+  background: linear-gradient(27deg, #141414 5px, transparent 5px) 0 5px,
+    linear-gradient(207deg, #141414 5px, transparent 5px) 10px 0,
+    linear-gradient(27deg, #1c1c1c 5px, transparent 5px) 0 10px,
+    linear-gradient(207deg, #1c1c1c 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #191919 10px, transparent 10px),
+    linear-gradient(#1e1e1e 25%, #181818 25%, #181818 50%, transparent 50%, transparent 75%, #222222 75%, #222222);
+  background-color: #111;
+  background-size: 20px 20px;
 }
 
 a {
-  color: inherit;
+  color: var(--primary-soft);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 button {
@@ -33,43 +56,104 @@ button {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(18, 168, 154, 0.15), transparent 45%),
+    radial-gradient(circle at 20% 20%, rgba(216, 181, 52, 0.15), transparent 40%);
+}
+
+.hero {
+  padding: 2.5rem 1.5rem 2rem;
+  text-align: center;
+  background: rgba(12, 12, 14, 0.9);
+  border-bottom: 1px solid var(--border);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.hero__eyebrow {
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  color: var(--primary-soft);
+}
+
+.hero__lead {
+  margin: 0.5rem auto 1.5rem;
+  max-width: 42rem;
+  color: var(--text-muted);
+}
+
+.hero__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero__tags span {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.hero__links a {
+  font-weight: 600;
 }
 
 main {
   flex: 1;
-  padding: 1.5rem;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
 }
 
 .panel-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .panel {
-  background: #ffffff;
-  border-radius: 0.75rem;
-  border: 1px solid #e2e8f0;
-  padding: 1.25rem;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  background: linear-gradient(120deg, var(--bg-panel), var(--bg-panel-alt));
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
 }
 
 .panel h2 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  color: var(--primary-soft);
 }
 
 fieldset {
   border: none;
   padding: 0;
-  margin: 0 0 1rem;
+  margin: 0 0 1.2rem;
 }
 
 label {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font-weight: 600;
+  color: var(--text);
+}
+
+.toggle-field {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .file-field__input {
@@ -83,62 +167,110 @@ label {
 
 input,
 select {
-  padding: 0.45rem 0.55rem;
-  border-radius: 0.5rem;
-  border: 1px solid #cbd5f0;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
   font: inherit;
 }
 
-button.primary {
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.9rem;
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(18, 168, 154, 0.2);
+}
+
+button {
+  border-radius: 0.65rem;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
   cursor: pointer;
+  border: none;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button.primary {
+  background: linear-gradient(120deg, var(--primary), var(--primary-soft));
+  color: #042825;
+}
+
+button.primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 button.secondary {
   background: transparent;
-  border: 1px solid #94a3b8;
-  color: #0f172a;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.9rem;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 
 .status {
   font-size: 0.85rem;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
+  color: var(--text-muted);
 }
 
 .status.ok {
-  color: #059669;
+  color: var(--success);
 }
 
 .status.error {
-  color: #dc2626;
+  color: var(--error);
 }
 
 .result-card {
-  margin-top: 0.75rem;
-  padding: 0.75rem;
-  background: #f1f5f9;
-  border-radius: 0.5rem;
+  margin-top: 0.9rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
   font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
   font-size: 0.85rem;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
+.result-card strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
 .preview-image {
   width: 100%;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  margin-top: 0.5rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border);
+  margin-top: 0.75rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+}
+
+.app-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.app-footer small {
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .panel {
+    padding: 1.1rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
 }
