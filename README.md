@@ -1,6 +1,6 @@
 # FiberPath
 
-FiberPath is the next-generation version of the original TypeScript-based Cyclone tool. The
+FiberPath is the next-generation filament winding tool. The
 goal is to deliver a maintainable, well-tested Python platform for planning, simulating, and
 executing filament winding jobs on cylindrical mandrels. This repository will eventually host
 three major deliverables:
@@ -12,9 +12,7 @@ three major deliverables:
 ## Project Status
 
 Phases 0–5 of the roadmap are complete: the planner, simulator, streaming stack, CLI/API hardening,
-and the first desktop GUI are all implemented with regression tests. The legacy TypeScript
-implementation is preserved under `cyclone_reference/` for parity checks as we head into packaging
-and release prep (Phase 6).
+and the first desktop GUI are all implemented with regression tests.
 
 ## Local Development
 
@@ -35,7 +33,7 @@ fiberpath plot simple.gcode --output simple.png --scale 0.8
 
 The `plot` command unwraps mandrel coordinates into a PNG so you can visually sanity-check a
 toolpath before streaming it to hardware. The renderer pulls mandrel/tow data from the
-`; Parameters …` header emitted by `plan` and does not rely on the legacy Cyclone output. See the
+`; Parameters …` header emitted by `plan`. See the
 generated sample in `docs/assets/simple-cylinder.png` for reference.
 
 ## Desktop GUI Companion
@@ -78,8 +76,7 @@ fiberpath stream simple.gcode --port COM5 --baud-rate 250000
 ```
 
 Use `--dry-run` to verify what would be streamed without opening a serial port, and `--verbose` to
-see every G-code command as it is dequeued. The command mirrors Cyclone's `run` helper: it sends one
-command at a time, waits for `ok`, and lets you press `Ctrl+C` to pause (FiberPath sends `M0` and
+see every G-code command as it is dequeued. The command `run` sends one command at a time, waits for `ok`, and lets you press `Ctrl+C` to pause (FiberPath sends `M0` and
 prompts to resume by dispatching `M108`).
 
 ## Repository Map
@@ -91,7 +88,6 @@ prompts to resume by dispatching `M108`).
 - `docs/` – project docs (architecture notes, developer guide, data formats)
 - `tests/` – pytest-based regression and unit tests
 - `.github/workflows/` – CI definitions (lint, tests, packaging)
-- `cyclone_reference/` – frozen copy of the original TypeScript implementation
 
 ## Next Steps
 

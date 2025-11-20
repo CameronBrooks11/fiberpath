@@ -1,11 +1,11 @@
 # FiberPath Documentation
 
-This folder hosts the primary knowledge base for the Python rewrite of Cyclone. High-level content
+This folder hosts the primary knowledge base for the project. High-level content
 is split into user-facing guides, architectural notes, API references, and developer workflows.
 
 ## Available Guides
 
-- `architecture.md` – planner/simulator/streaming overview and how the modules map to Cyclone.
+- `architecture.md` – planner/simulator/streaming overview.
 - `concepts.md` – glossary of filament-winding terminology used across the codebase.
 - `format-wind.md` – `.wind` file schema and validation rules.
 - `api.md` – REST entry points with sample payloads (kept in sync with the FastAPI schemas).

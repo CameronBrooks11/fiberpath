@@ -2,7 +2,7 @@
 
 Last updated: 2025-11-19
 
-The roadmap focuses on delivering a production-ready Python port of Cyclone. Each phase lists the
+The roadmap focuses on delivering a production-ready filament winding tool. Each phase lists the
 primary objectives, concrete tasks, and completion signals so we can track progress and keep scope
 under control. Phases should be executed sequentially unless otherwise noted.
 
@@ -135,9 +135,3 @@ Exit criteria:
 
 - [ ] CI pipeline (lint, type-check, tests) green on all platforms.
 - [ ] `v0.1.0` release notes drafted with download/install instructions.
-
-## Execution Notes
-
-- Track work via GitHub issues referencing the phase/task IDs above.
-- Keep roadmap updated after each milestone; adjust scope only with brief design notes.
-- Before starting Phase 1 tasks, review Cyclone reference math to confirm any remaining edge cases.
