@@ -25,14 +25,13 @@
       "icons/icon.ico"
     ]
   },
-  "allowlist": {
-    "shell": {
-      "all": true
-    }
-  },
   "app": {
+    "security": {
+      "capabilities": ["default"]
+    },
     "windows": [
       {
+        "label": "main",
         "title": "FiberPath Desktop",
         "width": 1280,
         "height": 800

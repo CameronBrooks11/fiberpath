@@ -1,4 +1,4 @@
-import { open as openExternal } from "@tauri-apps/api/shell";
+import { open as openExternal } from "@tauri-apps/plugin-shell";
 import { FormEvent, useState } from "react";
 
 import { FileField } from "./components/FileField";
