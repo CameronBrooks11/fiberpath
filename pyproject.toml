@@ -39,7 +39,11 @@ dev = [
     "httpx>=0.27",
 ]
 plot = ["matplotlib>=3.8", "plotly>=5.22"]
-docs = ["mkdocs>=1.5", "mkdocs-material>=9.5"]
+docs = [
+    "mkdocs>=1.5",
+    "mkdocs-material>=9.5",
+    "pymdown-extensions>=10.0",
+]
 
 [project.scripts]
 fiberpath = "fiberpath_cli.main:app"

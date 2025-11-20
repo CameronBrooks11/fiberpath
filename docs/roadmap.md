@@ -130,8 +130,9 @@ Tasks:
 - [x] Finalize documentation: complete missing pages, add contributing guidelines, architecture
       overview, and planner math notes.  
       _Added `CONTRIBUTING.md`, expanded `docs/architecture.md`, and created `docs/planner-math.md`._
-- [ ] Stand up an automated documentation site (MkDocs preferred) deployed through GitHub Pages via a
-      dedicated workflow.
+- [x] Stand up an automated documentation site (MkDocs preferred) deployed through GitHub Pages via a
+      dedicated workflow.  
+      _`mkdocs.yml` + CI build gating + `.github/workflows/docs-site.yml` publish the Material site to GitHub Pages._
 - [ ] Establish a versioning and release process (semantic versioning, CHANGELOG, PyPI packaging
       steps for `fiberpath`/`fiberpath_cli`).
 - [ ] Add cross-platform smoke tests for Windows/macOS/Linux using `uv`-managed virtual

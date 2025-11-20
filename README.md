@@ -10,6 +10,8 @@ FiberPath is a next-generation system for planning, simulating, and executing fi
 - **API (`fiberpath_api/`)** – FastAPI service exposing planning and simulation routes.
 - **Desktop GUI (`fiberpath_gui/`)** – Tauri + React application that wraps the CLI for a unified user experience.
 
+📚 Documentation: [cameronbrooks11.github.io/fiberpath](https://cameronbrooks11.github.io/fiberpath)
+
 ## Local Development
 
 ```sh

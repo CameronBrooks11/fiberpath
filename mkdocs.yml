@@ -1,0 +1,47 @@
+site_name: FiberPath
+site_description: "Modern filament winding planner, simulator, and tooling"
+site_url: https://cameronbrooks11.github.io/fiberpath
+repo_url: https://github.com/CameronBrooks11/fiberpath
+repo_name: CameronBrooks11/fiberpath
+docs_dir: docs
+site_dir: site
+
+nav:
+  - Home: index.md
+  - Roadmap: roadmap.md
+  - Concepts:
+      - Glossary: concepts.md
+      - Wind Format: format-wind.md
+  - Architecture:
+      - System Overview: architecture.md
+      - Planner Math: planner-math.md
+  - API Reference: api.md
+  - Packaging: packaging.md
+
+theme:
+  name: material
+  features:
+    - navigation.tracking
+    - content.code.copy
+    - toc.integrate
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: orange
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/CameronBrooks11/fiberpath
+      name: GitHub
