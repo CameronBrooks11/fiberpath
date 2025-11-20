@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import pytest
-
 from fiberpath.planning.helpers import Axis, interpolate_coordinates
 from fiberpath.planning.machine import WinderMachine
-
 
 BASE_START = {axis: 0.0 for axis in Axis}
 BASE_END = {

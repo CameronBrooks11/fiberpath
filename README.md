@@ -1,5 +1,8 @@
 # FiberPath
 
+[![Ruff Status](https://github.com/CameronBrooks11/fiberpath/actions/workflows/ci.yml/badge.svg?job=lint-type&label=Ruff)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/ci.yml)
+[![MyPy Status](https://github.com/CameronBrooks11/fiberpath/actions/workflows/ci.yml/badge.svg?job=lint-type&label=MyPy)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/ci.yml)
+
 FiberPath is a next-generation system for planning, simulating, and executing filament-winding jobs on cylindrical mandrels to produce high-quality, repeatable composite parts. The repository contains four coordinated components:
 
 - **Core Engine (`fiberpath/`)** – deterministic planning pipelines, geometry utilities, and G-code emission.

@@ -13,7 +13,7 @@ from fiberpath.config.schemas import (
     SkipLayer,
     TowParameters,
 )
-from fiberpath.math_utils import deg_to_rad, rad_to_deg
+from fiberpath.math_utils import rad_to_deg
 
 from .calculations import HelicalKinematics, compute_helical_kinematics
 from .helpers import Axis

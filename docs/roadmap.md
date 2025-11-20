@@ -127,8 +127,9 @@ Tasks:
 
 - [x] Enforce linting and type-checking in CI (Ruff + MyPy).  
       _CI now runs Ruff + MyPy via uv before matrix pytest in `.github/workflows/ci.yml`._
-- [ ] Finalize documentation: complete missing pages, add contributing guidelines, architecture
-      overview, and planner math notes.
+- [x] Finalize documentation: complete missing pages, add contributing guidelines, architecture
+      overview, and planner math notes.  
+      _Added `CONTRIBUTING.md`, expanded `docs/architecture.md`, and created `docs/planner-math.md`._
 - [ ] Stand up an automated documentation site (MkDocs preferred) deployed through GitHub Pages via a
       dedicated workflow.
 - [ ] Establish a versioning and release process (semantic versioning, CHANGELOG, PyPI packaging

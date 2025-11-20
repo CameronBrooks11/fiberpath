@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import ast
+import json
+import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 from hashlib import sha256
-import json
-import math
 from io import BytesIO
 from pathlib import Path
 
