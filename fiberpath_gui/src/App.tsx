@@ -1,3 +1,4 @@
+import { open as openExternal } from "@tauri-apps/api/shell";
 import { FormEvent, useState } from "react";
 
 import { FileField } from "./components/FileField";
@@ -104,21 +105,25 @@ export default function App() {
     }
   };
 
+  const handleDocsLink = () => {
+    void openExternal("https://cameronbrooks11.github.io/fiberpath");
+  };
+
   return (
     <div className="app-shell">
       <header className="hero">
-        <p className="hero__eyebrow">Carbon Fiber Control Center</p>
+        <p className="hero__eyebrow">Automated Composite Filament Winding</p>
         <h1>FiberPath Desktop</h1>
         <p className="hero__lead">Plan, visualize, simulate, and stream without leaving a single window.</p>
         <div className="hero__tags">
-          <span>Planner parity</span>
-          <span>Deterministic plots</span>
-          <span>Marlin streaming</span>
+          <span>Toolpath generation</span>
+          <span>Visual inspection & validation</span>
+          <span>Real-time streaming control</span>
         </div>
         <div className="hero__links">
-          <a href="https://cameronbrooks11.github.io/fiberpath" target="_blank" rel="noreferrer noopener">
+          <button type="button" onClick={handleDocsLink}>
             Documentation ↗
-          </a>
+          </button>
         </div>
       </header>
 

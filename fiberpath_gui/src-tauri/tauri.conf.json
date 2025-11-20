@@ -25,6 +25,11 @@
       "icons/icon.ico"
     ]
   },
+  "allowlist": {
+    "shell": {
+      "all": true
+    }
+  },
   "app": {
     "windows": [
       {
