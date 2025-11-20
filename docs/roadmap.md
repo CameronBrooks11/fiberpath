@@ -125,8 +125,8 @@ Exit criteria:
 
 Tasks:
 
-- [ ] Enforce linting and type-checking in CI (Ruff + MyPy).  
-       _Ruff/MyPy are already configured locally—extend GitHub Actions to run both on all platforms._
+- [x] Enforce linting and type-checking in CI (Ruff + MyPy).  
+      _CI now runs Ruff + MyPy via uv before matrix pytest in `.github/workflows/ci.yml`._
 - [ ] Finalize documentation: complete missing pages, add contributing guidelines, architecture
       overview, and planner math notes.
 - [ ] Stand up an automated documentation site (MkDocs preferred) deployed through GitHub Pages via a
