@@ -119,19 +119,36 @@ Exit criteria:
 - [x] CI smoke test launches the Tauri app in headless mode to ensure bundles stay healthy.
       _`.github/workflows/gui-smoke.yml` runs lint/build + `npm run tauri build -- --bundles none` on Windows runners._
 
-## Phase 6 – Quality, Docs, and (Public) Release Prep
+## Phase 6 – Quality, Documentation, and Release Preparation
 
-**Goal:** Ship a professional open-source release to public users.
+**Goal:** Produce a polished, public-facing open-source release.
 
 Tasks:
 
-- [ ] Introduce Ruff + MyPy enforcement in CI (already configured locally, ensure GitHub Actions).
-- [ ] Author developer docs: contributing guide, code architecture deep dive, planner math overview.
-- [ ] Set up versioning/release process (CHANGELOG, semantic tags, PyPI publishing instructions).
-- [ ] Create example-driven tutorials (`docs/tutorials/*.md`) showing end-to-end workflow.
-- [ ] Run cross-platform smoke tests (Windows, macOS, Linux) using uv-managed virtual envs.
+- [ ] Enforce linting and type-checking in CI (Ruff + MyPy).  
+       _Ruff/MyPy are already configured locally—extend GitHub Actions to run both on all platforms._
+- [ ] Finalize documentation: complete missing pages, add contributing guidelines, architecture
+      overview, and planner math notes.
+- [ ] Stand up an automated documentation site (MkDocs preferred) deployed through GitHub Pages via a
+      dedicated workflow.
+- [ ] Establish a versioning and release process (semantic versioning, CHANGELOG, PyPI packaging
+      steps for `fiberpath`/`fiberpath_cli`).
+- [ ] Add cross-platform smoke tests for Windows/macOS/Linux using `uv`-managed virtual
+      environments to ensure consistent build/runtime behavior.
 
 Exit criteria:
 
-- [ ] CI pipeline (lint, type-check, tests) green on all platforms.
-- [ ] `v0.1.0` release notes drafted with download/install instructions.
+- [ ] CI passes end-to-end (lint, type-check, tests, docs build) on all supported platforms.
+- [ ] Draft `v0.1.0` release notes with installation instructions and links to binaries, docs, and
+      example workflows.
+
+## Future TODOs
+
+These items are out of scope for the initial release but are on the horizon and will be organized into formal phases later.
+
+- [ ] Create example-driven tutorials (`docs/tutorials/*.md`) showing end-to-end workflow.
+- [ ] Allow remapping of machine axes (both linear X/Y/Z/E and rotational A/B/C).
+- [ ] Build interface for creating `.wind` definitions from scratch (wizard or graphical).
+- [ ] Restructuring of GUI to make it centered on the visualization and planning experience (think 3D printing slicers).
+- [ ] Allow for custom G-code headers/footers
+- [ ] Implement advanced layering strategies (variable angle, custom patterns).
