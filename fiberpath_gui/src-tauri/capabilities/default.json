@@ -4,8 +4,8 @@
   "description": "Default permissions for FiberPath GUI",
   "windows": ["main"],
   "permissions": [
-    "shell:allow-open",
-    "dialog:allow-open",
-    "dialog:allow-save"
+    "core:default",
+    "shell:default",
+    "dialog:default"
   ]
 }
