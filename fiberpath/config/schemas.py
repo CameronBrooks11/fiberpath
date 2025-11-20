@@ -53,8 +53,8 @@ LayerModel = Annotated[
 
 class WindDefinition(BaseFiberPathModel):
     layers: list[LayerModel]
-    mandrel_parameters: MandrelParameters = Field(alias="mandrelParameters")
-    tow_parameters: TowParameters = Field(alias="towParameters")
+    mandrel_parameters: Annotated[MandrelParameters, Field(alias="mandrelParameters")]
+    tow_parameters: Annotated[TowParameters, Field(alias="towParameters")]
     default_feed_rate: PositiveFloat = Field(alias="defaultFeedRate")
 
     def dump_header(self) -> str:

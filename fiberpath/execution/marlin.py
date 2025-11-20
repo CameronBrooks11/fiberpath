@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Protocol, cast
 
 DEFAULT_BAUD_RATE = 250_000
 DEFAULT_RESPONSE_TIMEOUT = 2.0
@@ -56,7 +56,7 @@ class PySerialTransport:
         if timeout is not None:
             previous_timeout = self._serial.timeout
             self._serial.timeout = timeout
-        raw = self._serial.readline()
+        raw = cast(bytes, self._serial.readline())
         if timeout is not None and previous_timeout is not None:
             self._serial.timeout = previous_timeout
         if not raw:

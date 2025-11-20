@@ -63,7 +63,7 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
 
         current_mandrel = MandrelParameters(
             diameter=mandrel_diameter,
-            wind_length=definition.mandrel_parameters.wind_length,
+            windLength=definition.mandrel_parameters.wind_length,
         )
         machine.set_mandrel_diameter(current_mandrel.diameter)
 
