@@ -33,6 +33,8 @@ export async function planWind(inputPath: string, outputPath?: string) {
   return invoke<PlanSummary>("plan_wind", { inputPath, outputPath });
 }
 
+
+
 export async function simulateProgram(gcodePath: string) {
   return invoke<SimulationSummary>("simulate_program", { gcodePath });
 }

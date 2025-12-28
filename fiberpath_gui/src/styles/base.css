@@ -126,6 +126,7 @@ main {
   border: 1px solid var(--border);
   padding: 1.5rem;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  overflow : hidden;
 }
 
 .panel h2 {
@@ -225,6 +226,7 @@ button.secondary {
   color: var(--error);
 }
 
+.panel,
 .result-card {
   margin-top: 0.9rem;
   padding: 0.85rem 1rem;
@@ -235,6 +237,9 @@ button.secondary {
   font-size: 0.85rem;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow-x: auto;              /* allow scroll if needed */
+  max-width: 100%;
+  word-break: break-all;         /* break long paths/IDs */
 }
 
 .result-card strong {
@@ -244,6 +249,29 @@ button.secondary {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 0.75rem;
+}
+
+.json-output {
+  margin: 0;
+  max-width: 100%;
+  white-space: pre-wrap;     /* allow wrapping */
+  word-break: break-all;     /* break long paths */
+  overflow-wrap: anywhere;  /* modern browsers */
+}
+
+.output-text {
+  margin: 0;
+  max-width: 100%;
+
+  /* Preserve newlines but allow wrapping */
+  white-space: pre-wrap;
+
+  /* Force-break long unbroken strings (paths, hashes, etc.) */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  /* Safety */
+  box-sizing: border-box;
 }
 
 .preview-image {

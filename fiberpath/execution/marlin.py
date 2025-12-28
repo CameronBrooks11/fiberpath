@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Protocol, cast
 
 DEFAULT_BAUD_RATE = 250_000
-DEFAULT_RESPONSE_TIMEOUT = 2.0
+DEFAULT_RESPONSE_TIMEOUT = 10.0
 
 
 class StreamError(RuntimeError):
@@ -144,6 +144,7 @@ class MarlinStreamer:
             if not dry_run:
                 self._ensure_connection()
                 self._send_command(line)
+                time.sleep(0.001)  # brief pause to avoid overwhelming Marlin
 
             self._commands_sent += 1
             yield StreamProgress(
@@ -220,6 +221,7 @@ class MarlinStreamer:
             if self._port is None:
                 raise StreamError("Serial port is required for live streaming")
             self._transport = PySerialTransport(self._port, self._baud_rate, self._response_timeout)
+        time.sleep(3.0)  # wait for Marlin to initialize
         self._connected = True
 
     def _send_command(self, command: str) -> None:

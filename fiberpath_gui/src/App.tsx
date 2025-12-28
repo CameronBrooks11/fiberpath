@@ -1,4 +1,5 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
+import { join } from "@tauri-apps/api/path";
 import { FormEvent, useState } from "react";
 
 import { FileField } from "./components/FileField";
@@ -25,7 +26,8 @@ const idleState = { status: "idle" } as const;
 
 export default function App() {
   const [planInput, setPlanInput] = useState("");
-  const [planOutput, setPlanOutput] = useState("");
+  const [planOutputDir, setPlanOutputDir] = useState<string>("");
+  const [planOutputName, setPlanOutputName] = useState<string>("");
   const [planResult, setPlanResult] = useState<PanelState<PlanSummary>>(idleState);
 
   const [plotInput, setPlotInput] = useState("");
@@ -48,8 +50,15 @@ export default function App() {
       return;
     }
     setPlanResult({ status: "running" });
+
     try {
-      const summary = await planWind(planInput, planOutput || undefined);
+      let fullOutputPath: string | undefined;
+
+      if (planOutputDir) {
+        fullOutputPath = await join(planOutputDir, planOutputName || "fiberpath.gcode");
+      }
+      const summary = await planWind(planInput, fullOutputPath);
+
       setPlanResult({ status: "success", data: summary });
     } catch (error) {
       setPlanResult({ status: "error", error: extractError(error) });
@@ -142,13 +151,27 @@ export default function App() {
               </fieldset>
               <fieldset>
                 <FileField
-                  label="Output G-code (optional)"
-                  value={planOutput}
-                  onChange={setPlanOutput}
-                  placeholder="Auto-generate temp file"
-                  filterExtensions={["gcode"]}
+                  label="Output folder"
+                  value={planOutputDir}
+                  onChange={setPlanOutputDir}
+                  placeholder="Defaults to system temp directory"
+                  directory={true}
                 />
               </fieldset>
+
+              <fieldset>
+                <label>
+                <span>Output filename (optional)</span>
+                <input
+                  type="text"
+                  placeholder="fiberpath.gcode"
+                  value={planOutputName}
+                  onChange={(e) => setPlanOutputName(e.target.value)}
+                />
+                </label>
+              </fieldset>
+
+              
               <button className="primary" type="submit" disabled={planResult.status === "running"}>
                 {planResult.status === "running" ? "Planning…" : "Plan wind"}
               </button>
@@ -254,8 +277,13 @@ export default function App() {
 }
 
 function renderJson(data: unknown) {
-  return <pre>{JSON.stringify(data, null, 2)}</pre>;
+  return (
+    <pre className="output-text">
+      {JSON.stringify(data, null, 2)}
+    </pre>
+  );
 }
+
 
 function extractError(error: unknown): string {
   if (error instanceof Error) {
