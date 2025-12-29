@@ -31,7 +31,9 @@ export default function App() {
   const [planResult, setPlanResult] = useState<PanelState<PlanSummary>>(idleState);
 
   const [plotInput, setPlotInput] = useState("");
-  const [plotScale, setPlotScale] = useState(0.5);
+  const [plotScale, setPlotScale] = useState(1.0);
+  const [plotOutputDir, setPlotOutputDir] = useState("");
+  const [plotOutputName, setPlotOutputName] = useState("");
   const [plotResult, setPlotResult] = useState<PanelState<PlotPreviewPayload>>(idleState);
 
   const [simulateInput, setSimulateInput] = useState("");
@@ -55,7 +57,11 @@ export default function App() {
       let fullOutputPath: string | undefined;
 
       if (planOutputDir) {
-        fullOutputPath = await join(planOutputDir, planOutputName || "fiberpath.gcode");
+        let filename = planOutputName?.trim() || "fiberpath";
+        if (!filename.toLowerCase().endsWith(".gcode")) {
+          filename += ".gcode";
+        }
+        fullOutputPath = await join(planOutputDir, filename);
       }
       const summary = await planWind(planInput, fullOutputPath);
 
@@ -73,7 +79,15 @@ export default function App() {
     }
     setPlotResult({ status: "running" });
     try {
-      const preview = await previewPlot(plotInput, plotScale);
+      let fullOutputPath: string | undefined;
+      if (plotOutputDir) {
+        let filename = plotOutputName?.trim() || "preview";
+        if (!filename.toLowerCase().endsWith(".png")) {
+          filename += ".png";
+        }
+        fullOutputPath = await join(plotOutputDir, filename);
+      }
+      const preview = await previewPlot(plotInput, plotScale, fullOutputPath);
       setPlotResult({ status: "success", data: preview });
     } catch (error) {
       setPlotResult({ status: "error", error: extractError(error) });
@@ -164,7 +178,7 @@ export default function App() {
                 <span>Output filename (optional)</span>
                 <input
                   type="text"
-                  placeholder="fiberpath.gcode"
+                  placeholder="fiberpath"
                   value={planOutputName}
                   onChange={(e) => setPlanOutputName(e.target.value)}
                 />
@@ -185,6 +199,26 @@ export default function App() {
             <form onSubmit={handlePlot}>
               <fieldset>
                 <FileField label="G-code" value={plotInput} onChange={setPlotInput} filterExtensions={["gcode"]} />
+              </fieldset>
+              <fieldset>
+                <FileField
+                  label="Output folder"
+                  value={plotOutputDir}
+                  onChange={setPlotOutputDir}
+                  placeholder="Defaults to temp directory"
+                  directory
+                />
+              </fieldset>
+              <fieldset>
+                <label>
+                  <span>Output filename (optional)</span>
+                  <input
+                    type="text"
+                    placeholder="preview"
+                    value={plotOutputName}
+                    onChange={(e) => setPlotOutputName(e.target.value)}
+                  />
+                </label>
               </fieldset>
               <fieldset>
                 <label>

@@ -44,11 +44,11 @@ struct PlotPreview {
 }
 
 #[tauri::command]
-async fn plot_preview(gcode_path: String, scale: f64) -> Result<PlotPreview, String> {
-    let output_file = temp_path("png");
+async fn plot_preview(input_path: String, scale: f64, output_path: Option<String>) -> Result<PlotPreview, String> {
+    let output_file = output_path.unwrap_or_else(|| temp_path("png"));
     let args = vec![
         "plot".into(),
-        gcode_path,
+        input_path,
         "--output".into(),
         output_file.clone(),
         "--scale".into(),
