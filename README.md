@@ -21,7 +21,7 @@ python -m fiberpath_cli.main --help
 pytest
 ```
 
-> Replace `uv` with `pip` if you prefer the standard installer.
+> See [uv docs](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions or replace `uv` with `pip` if you prefer the standard installer.
 
 ### Plotting Quick Preview
 
