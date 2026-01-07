@@ -4,14 +4,23 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping
+from typing import TYPE_CHECKING
 
 from fiberpath.math_utils import strip_precision
 
-from .helpers import AXIS_LOOKUP, Axis, interpolate_coordinates, serialize_coordinate
+from .helpers import Axis, get_axis_letter, interpolate_coordinates, serialize_coordinate
+
+if TYPE_CHECKING:
+    from fiberpath.gcode.dialects import MarlinDialect
 
 
 class WinderMachine:
-    def __init__(self, mandrel_diameter: float, verbose_output: bool = False) -> None:
+    def __init__(
+        self,
+        mandrel_diameter: float,
+        verbose_output: bool = False,
+        dialect: MarlinDialect | None = None,
+    ) -> None:
         self._verbose = verbose_output
         self._gcode: list[str] = []
         self._feed_rate_mmpm = 0.0
@@ -23,6 +32,13 @@ class WinderMachine:
             Axis.DELIVERY_HEAD: 0.0,
         }
         self._mandrel_diameter = mandrel_diameter
+
+        # Import here to avoid circular dependency
+        if dialect is None:
+            from fiberpath.gcode.dialects import MARLIN_XYZ_LEGACY
+
+            dialect = MARLIN_XYZ_LEGACY
+        self._dialect = dialect
 
     def get_gcode(self) -> list[str]:
         return self._gcode.copy()
@@ -69,7 +85,8 @@ class WinderMachine:
     def set_position(self, position: Mapping[Axis, float]) -> None:
         command_parts = ["G92"]
         for axis, value in position.items():
-            command_parts.append(f"{AXIS_LOOKUP[axis]}{strip_precision(value)}")
+            axis_letter = get_axis_letter(axis, self._dialect.axis_mapping)
+            command_parts.append(f"{axis_letter}{strip_precision(value)}")
             self._last_position[axis] = value
         self._gcode.append(" ".join(command_parts))
 
@@ -101,14 +118,28 @@ class WinderMachine:
         total_distance_sq = 0.0
         tow_length_sq = 0.0
         for axis, value in position.items():
-            command_parts.append(f"{AXIS_LOOKUP[axis]}{strip_precision(value)}")
+            axis_letter = get_axis_letter(axis, self._dialect.axis_mapping)
+            command_parts.append(f"{axis_letter}{strip_precision(value)}")
             move_component = value - self._last_position[axis]
-            total_distance_sq += move_component**2
+
+            # Distance calculation depends on whether axis is truly rotational in Marlin
             if axis == Axis.MANDREL:
+                # For XYZ legacy: Y/Z configured as linear in Marlin
+                # For XAB standard: A/B are rotational in Marlin
+                # In both cases, use degree value directly for distance calculation
+                total_distance_sq += move_component**2
+                # For tow length, always convert to arc length
                 arc_length = move_component / 360.0 * self._mandrel_diameter * math.pi
                 tow_length_sq += arc_length**2
             elif axis == Axis.CARRIAGE:
+                # Carriage: always linear in mm
+                total_distance_sq += move_component**2
                 tow_length_sq += move_component**2
+            elif axis == Axis.DELIVERY_HEAD:
+                # Delivery head: use value directly for distance
+                total_distance_sq += move_component**2
+                # Delivery head rotation doesn't contribute to tow length
+
             self._last_position[axis] = value
 
         if self._feed_rate_mmpm <= 0:

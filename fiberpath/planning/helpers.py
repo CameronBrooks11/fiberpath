@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from fiberpath.math_utils import strip_precision
+
+if TYPE_CHECKING:
+    from fiberpath.gcode.dialects import AxisMapping
 
 
 class Axis(Enum):
@@ -20,6 +24,15 @@ AXIS_LOOKUP: dict[Axis, str] = {
 }
 
 Coordinate = dict[Axis, float]
+
+
+def get_axis_letter(axis: Axis, mapping: AxisMapping) -> str:
+    """Get G-code axis letter for logical axis based on dialect mapping."""
+    return {
+        Axis.CARRIAGE: mapping.carriage,
+        Axis.MANDREL: mapping.mandrel,
+        Axis.DELIVERY_HEAD: mapping.delivery_head,
+    }[axis]
 
 
 def serialize_coordinate(coordinate: Coordinate) -> str:

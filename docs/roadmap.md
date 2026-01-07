@@ -126,13 +126,13 @@ Exit criteria:
 Tasks:
 
 - [x] Enforce linting and type-checking in CI (Ruff + MyPy).  
-      _CI now runs Ruff + MyPy via uv before matrix pytest in `.github/workflows/ci.yml`._
+       _CI now runs Ruff + MyPy via uv before matrix pytest in `.github/workflows/ci.yml`._
 - [x] Finalize documentation: complete missing pages, add contributing guidelines, architecture
       overview, and planner math notes.  
-      _Added `CONTRIBUTING.md`, expanded `docs/architecture.md`, and created `docs/planner-math.md`._
+       _Added `CONTRIBUTING.md`, expanded `docs/architecture.md`, and created `docs/planner-math.md`._
 - [x] Stand up an automated documentation site (MkDocs preferred) deployed through GitHub Pages via a
       dedicated workflow.  
-      _`mkdocs.yml` + CI build gating + `.github/workflows/docs-site.yml` publish the Material site to GitHub Pages._
+       _`mkdocs.yml` + CI build gating + `.github/workflows/docs-site.yml` publish the Material site to GitHub Pages._
 - [ ] Establish a versioning and release process (semantic versioning, CHANGELOG, PyPI packaging
       steps for `fiberpath`/`fiberpath_cli`).
 - [ ] Add cross-platform smoke tests for Windows/macOS/Linux using `uv`-managed virtual
@@ -140,8 +140,9 @@ Tasks:
 
 Exit criteria:
 
-- [ ] CI passes end-to-end (lint, type-check, tests, docs build) on all supported platforms.
-- [ ] Draft `v0.1.0` release notes with installation instructions and links to binaries, docs, and
+- [x] CI passes end-to-end (lint, type-check, tests, docs build) on all supported platforms.
+- [x] Implemented configurable axis mapping system supporting XYZ (legacy) and XAB (standard) formats.
+- [ ] Draft `v0.2.0` release notes with installation instructions and links to binaries, docs, and
       example workflows.
 
 ## Future TODOs
@@ -149,7 +150,7 @@ Exit criteria:
 These items are out of scope for the initial release but are on the horizon and will be organized into formal phases later.
 
 - [ ] Create example-driven tutorials (`docs/tutorials/*.md`) showing end-to-end workflow.
-- [ ] Allow remapping of machine axes (both linear X/Y/Z/E and rotational A/B/C).
+- [x] Allow remapping of machine axes (both linear X/Y/Z/E and rotational A/B/C). _Completed in v0.2.0 with dialect system._
 - [ ] Build interface for creating `.wind` definitions from scratch (wizard or graphical).
 - [ ] Restructuring of GUI to make it centered on the visualization and planning experience (think 3D printing slicers).
 - [ ] Allow for custom G-code headers/footers

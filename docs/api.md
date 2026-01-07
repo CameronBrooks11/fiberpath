@@ -13,7 +13,7 @@ POST /plan/from-file
 Request body:
 
 ```json
-{"path": "/absolute/path/to/input.wind"}
+{ "path": "/absolute/path/to/input.wind" }
 ```
 
 Response body (fields abbreviated):
@@ -45,7 +45,7 @@ POST /simulate/from-file
 Request:
 
 ```json
-{"path": "/absolute/path/to/output.gcode"}
+{ "path": "/absolute/path/to/output.gcode" }
 ```
 
 Response:
@@ -70,13 +70,13 @@ POST /validate/from-file
 Request:
 
 ```json
-{"path": "/absolute/path/to/input.wind"}
+{ "path": "/absolute/path/to/input.wind" }
 ```
 
 Response:
 
 ```json
-{"status": "ok", "path": "/absolute/path/to/input.wind"}
+{ "status": "ok", "path": "/absolute/path/to/input.wind" }
 ```
 
 ## Streaming

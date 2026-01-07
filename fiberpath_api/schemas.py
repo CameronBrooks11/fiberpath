@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
 class FilePathRequest(BaseModel):
     path: str = Field(..., description="Absolute or workspace path to an input file.")
+    axis_format: Literal["xyz", "xab"] = Field(
+        default="xab",
+        description="Axis coordinate format: xyz (legacy) or xab (standard rotational)"
+    )
+    verbose: bool = Field(default=False, description="Emit verbose planner output")
 
 
 class PlanLayer(BaseModel):
@@ -25,6 +32,7 @@ class PlanResponse(BaseModel):
     output: str
     timeSeconds: float
     towMeters: float
+    axisFormat: str
     layers: list[PlanLayer]
 
 

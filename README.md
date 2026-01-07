@@ -32,6 +32,30 @@ fiberpath plot simple.gcode --output simple.png --scale 0.8
 
 The `plot` command unwraps mandrel coordinates into a PNG so you can visually inspect a toolpath before streaming it to hardware. Plotting extracts mandrel/tow settings from the `; Parameters ...` header emitted by `plan`. See `docs/assets/simple-cylinder.png` for a sample.
 
+## Axis Format Selection
+
+FiberPath supports configurable axis mapping to work with different machine configurations:
+
+- **XAB (Standard Rotational)** - Default format using true rotational axes:
+  - `X` = Carriage (linear, mm)
+  - `A` = Mandrel rotation (rotational, degrees)
+  - `B` = Delivery head rotation (rotational, degrees)
+
+- **XYZ (Legacy)** - Compatibility format for systems where rotational axes are configured as linear:
+  - `X` = Carriage (linear, mm)
+  - `Y` = Mandrel rotation (treated as linear, degrees)
+  - `Z` = Delivery head rotation (treated as linear, degrees)
+
+Use `--axis-format xab` (default) for new projects. The legacy format is retained for backward compatibility with existing systems like Cyclone.
+
+```sh
+# Generate G-code with standard XAB axes (default)
+fiberpath plan input.wind -o output.gcode
+
+# Generate G-code with legacy XYZ axes
+fiberpath plan input.wind -o output.gcode --axis-format xyz
+```
+
 ## Desktop GUI Companion
 
 A cross-platform Tauri + React front end is provided to plan, plot, simulate, and (dry-run) stream from a single interface.

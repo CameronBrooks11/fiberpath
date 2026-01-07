@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from fiberpath.config import WindDefinition
 from fiberpath.config.schemas import HelicalLayer, MandrelParameters
@@ -17,11 +18,21 @@ from .validators import (
     validate_layer_sequence,
 )
 
+if TYPE_CHECKING:
+    from fiberpath.gcode.dialects import MarlinDialect
+
 
 @dataclass(slots=True)
 class PlanOptions:
     verbose: bool = False
-    dialect: str = "marlin"
+    dialect: MarlinDialect = field(default_factory=lambda: _get_default_dialect())  # noqa: E731
+
+
+def _get_default_dialect() -> MarlinDialect:
+    """Import default dialect lazily to avoid circular imports."""
+    from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
+
+    return MARLIN_XAB_STANDARD
 
 
 @dataclass(slots=True)
@@ -49,9 +60,16 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
     machine = WinderMachine(
         mandrel_diameter=definition.mandrel_parameters.diameter,
         verbose_output=options.verbose,
+        dialect=options.dialect,
     )
 
-    program: list[str] = [definition.dump_header(), "G0 X0 Y0 Z0"]
+    # Generate initial position command using correct axis letters
+    mapping = options.dialect.axis_mapping
+    init_cmd = (
+        f"G0 {mapping.carriage}0 {mapping.mandrel}0 {mapping.delivery_head}0"
+    )
+    program: list[str] = [definition.dump_header(), init_cmd]
+
     machine.set_feed_rate(definition.default_feed_rate)
     layer_metrics: list[LayerMetrics] = []
     encountered_terminal = False

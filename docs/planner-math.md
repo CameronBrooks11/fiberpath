@@ -5,11 +5,14 @@ strategies can be implemented consistently.
 
 ## Coordinate Frames
 
-- **Mandrel axis (Z):** All axial movement is measured along Z. Helical layers convert desired fiber
-  angle into simultaneous Z + rotational moves.
-- **Head rotation (Θ):** Circumferential movement expressed in radians. Conversion between wind angle
-  `α` (degrees) and feed rates uses `tan(α) = v_z / (r * ω)`.
+FiberPath uses three logical axes that map to physical controller axes via the dialect configuration:
+
+- **Carriage axis:** Linear motion along the mandrel's longitudinal axis (typically X). All axial movement is measured in millimeters.
+- **Mandrel rotation:** Rotational movement of the mandrel (A in standard format, Y in legacy). Expressed in degrees; helical layers convert desired fiber angle into simultaneous carriage + mandrel rotation.
+- **Delivery head rotation:** Rotational movement of the delivery head/tow feed (B in standard format, Z in legacy). Expressed in degrees.
 - **Tow width (w):** Linear coverage per wrap; used to compute the number of passes per layer.
+
+The planner operates on these logical axes independent of the physical G-code axis letters, which are determined by the selected dialect (XAB standard or XYZ legacy).
 
 ## Hoop Layers
 
@@ -23,9 +26,9 @@ For hoop-only layers (pure circumferential wraps):
 
 Given mandrel radius `r`, target angle `α`, and carriage speed limit `v_max`:
 
-- Axial advance per revolution: `Δz = 2πr * tan(α)`.
-- Required carriage velocity: `v_z = v_surface * tan(α)` with `v_surface = ω * r`.
-- Clamp `v_z` to machine limits. If clamped, recompute the achievable angle `α' = arctan(v_z / v_surface)`.
+- Axial advance per revolution: `Δz = 2πr * tan(α)` where z represents distance along the carriage axis.
+- Required carriage velocity: `v_carriage = v_surface * tan(α)` with `v_surface = ω * r`.
+- Clamp `v_carriage` to machine limits. If clamped, recompute the achievable angle `α' = arctan(v_carriage / v_surface)`.
 - Number of passes to cover the mandrel: `passes = ceil(length / (w * cos(α')))`. Skip-layers adjust this by
   introducing an integer stride to satisfy coverage without overlap.
 
