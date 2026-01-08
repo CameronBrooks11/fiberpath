@@ -97,15 +97,15 @@ export function createEmptyProject(): FiberPathProject {
     filePath: null,
     isDirty: false,
     mandrel: {
-      diameter: 100,
-      wind_length: 200,
+      diameter: 150,
+      wind_length: 750,
     },
     tow: {
-      width: 3,
+      width: 12.7,
       thickness: 0.25,
     },
     layers: [],
-    defaultFeedRate: 2000,
+    defaultFeedRate: 400,
     axisFormat: 'xab',
     activeLayerId: null,
   };
@@ -130,9 +130,9 @@ export function createLayer(type: LayerType): Layer {
           wind_angle: 45,
           pattern_number: 3,
           skip_index: 2,
-          lock_degrees: 5,
-          lead_in_mm: 10,
-          lead_out_degrees: 5,
+          lock_degrees: 540,
+          lead_in_mm: 25,
+          lead_out_degrees: 60,
           skip_initial_near_lock: false,
         },
       };

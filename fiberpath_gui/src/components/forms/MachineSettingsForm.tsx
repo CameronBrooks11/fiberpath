@@ -40,27 +40,30 @@ export function MachineSettingsForm() {
       <h3 className="param-form__title">Machine Settings</h3>
       
       <div className="param-form__group">
-        <label htmlFor="defaultFeedRate">
+        <label htmlFor="defaultFeedRate" className="param-form__label">
           Default Feed Rate
-          <span className="param-form__units">(mm/min)</span>
         </label>
-        <input
-          id="defaultFeedRate"
-          type="number"
-          value={defaultFeedRate}
-          onChange={handleFeedRateChange}
-          onBlur={handleFeedRateBlur}
-          min="1"
-          max="10000"
-          step="100"
-        />
+        <div className="param-form__input-wrapper">
+          <input
+            id="defaultFeedRate"
+            type="number"
+            value={defaultFeedRate}
+            onChange={handleFeedRateChange}
+            onBlur={handleFeedRateBlur}
+            min="1"
+            max="10000"
+            step="100"
+            className={`param-form__input ${errors.defaultFeedRate ? 'param-form__input--error' : ''}`}
+          />
+          <span className="param-form__unit">mm/min</span>
+        </div>
         {errors.defaultFeedRate && (
           <span className="param-form__error">{errors.defaultFeedRate}</span>
         )}
       </div>
       
       <div className="param-form__group">
-        <label htmlFor="axisFormat">
+        <label htmlFor="axisFormat" className="param-form__label">
           Axis Format
           <span className="param-form__hint">G-code output format</span>
         </label>
@@ -68,6 +71,7 @@ export function MachineSettingsForm() {
           id="axisFormat"
           value={axisFormat}
           onChange={handleAxisFormatChange}
+          className="param-form__select"
         >
           <option value="xab">XAB (Rotational A+B axes)</option>
           <option value="xyz">XYZ (Legacy Cartesian)</option>

@@ -139,7 +139,9 @@ input[type="checkbox"]:focus-visible {
 }
 
 /* Select Inputs */
-select {
+select,
+.param-form__select {
+  width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
   background: var(--color-bg);
   border: var(--border-width-thin) solid var(--color-border);
@@ -149,14 +151,17 @@ select {
   font-family: var(--font-family-base);
   cursor: pointer;
   transition: var(--transition-colors);
-  height: var(--input-height);
+  min-height: var(--input-height);
+  height: auto;
 }
 
-select:hover {
+select:hover,
+.param-form__select:hover {
   border-color: var(--color-border-focus);
 }
 
-select:focus {
+select:focus,
+.param-form__select:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgb(18, 168, 154, 0.1);
@@ -175,4 +180,69 @@ legend {
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
+}
+
+/* ========================================================================
+   Layer Editor Inputs
+   ======================================================================== */
+
+.layer-editor__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.layer-editor__input {
+  flex: 1;
+  padding: var(--spacing-sm) calc(var(--spacing-2xl) + var(--spacing-sm)) var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+  transition: all var(--transition-base);
+  width: 100%;
+}
+
+.layer-editor__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(18, 168, 154, 0.1);
+}
+
+.layer-editor__input--error {
+  border-color: var(--color-error);
+}
+
+.layer-editor__input--error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgb(255, 138, 138, 0.1);
+}
+
+.layer-editor__unit {
+  position: absolute;
+  right: var(--spacing-md);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  pointer-events: none;
+  font-weight: var(--font-weight-medium);
+}
+
+.layer-editor__error {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+}
+
+/* Remove spinner arrows from layer editor number inputs */
+.layer-editor__input::-webkit-outer-spin-button,
+.layer-editor__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.layer-editor__input[type="number"] {
+  -moz-appearance: textfield;
 }

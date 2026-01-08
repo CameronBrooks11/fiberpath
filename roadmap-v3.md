@@ -140,7 +140,7 @@
 - [buttons.css](fiberpath_gui/src/styles/buttons.css) - Button components (136 lines)
 - [forms.css](fiberpath_gui/src/styles/forms.css) - Form inputs (188 lines)
 - [panels.css](fiberpath_gui/src/styles/panels.css) - Panels & cards (443 lines)
-- [CSS_ARCHITECTURE.md](fiberpath_gui/CSS_ARCHITECTURE.md) - Complete documentation
+- [CSS_ARCHITECTURE.md](fiberpath_gui/docs/CSS_ARCHITECTURE.md) - Complete documentation
 
 **Files Modified:**
 

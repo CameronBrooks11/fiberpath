@@ -51,7 +51,7 @@ describe('projectStore', () => {
       
       const { project } = useProjectStore.getState();
       expect(project.mandrel.diameter).toBe(200);
-      expect(project.mandrel.wind_length).toBe(200); // unchanged
+      expect(project.mandrel.wind_length).toBe(750); // unchanged
       expect(project.isDirty).toBe(true);
     });
 
@@ -60,7 +60,7 @@ describe('projectStore', () => {
       
       const { project } = useProjectStore.getState();
       expect(project.mandrel.wind_length).toBe(300);
-      expect(project.mandrel.diameter).toBe(100); // unchanged
+      expect(project.mandrel.diameter).toBe(150); // unchanged
     });
 
     it('should update multiple mandrel properties', () => {
@@ -87,7 +87,7 @@ describe('projectStore', () => {
       
       const { project } = useProjectStore.getState();
       expect(project.tow.thickness).toBe(0.5);
-      expect(project.tow.width).toBe(3); // unchanged
+      expect(project.tow.width).toBe(12.7); // unchanged
     });
   });
 

@@ -2,365 +2,371 @@
 
 ## Overview
 
-FiberPath GUI uses a modular CSS architecture built on design tokens and organized by concern. This document describes the structure, conventions, and best practices for styling components.
+The FiberPath GUI uses a **modular CSS architecture** with a design token system for consistency and maintainability. All styles are organized into logical modules that can be independently maintained and imported in a specific order.
 
 ## Architecture Principles
 
-1. **Design Tokens First**: All design decisions (colors, spacing, typography) are centralized in `tokens.css`
-2. **Modular Organization**: CSS is split into logical modules (typography, forms, buttons, etc.)
-3. **No !important**: Proper specificity management eliminates the need for `!important`
-4. **BEM Naming**: Block-Element-Modifier naming convention for clarity
-5. **Accessibility**: Focus states, ARIA support, and keyboard navigation styling
+### 1. **Design Tokens First**
+
+All design values (colors, spacing, typography) are defined as CSS custom properties in `tokens.css`. This creates a single source of truth for design decisions.
+
+### 2. **Modular Organization**
+
+CSS is split into focused modules by responsibility:
+
+- **tokens.css** - Design system variables
+- **reset.css** - Base resets and foundation
+- **typography.css** - Text styles
+- **buttons.css** - Button components
+- **forms.css** - Form inputs and controls
+- **panels.css** - Panels, cards, and containers
+- **layout.css** - Page layout and grid
+- **dialogs.css** - Modal dialogs
+- **notifications.css** - Toast notifications
+
+### 3. **No !important Declarations**
+
+All `!important` declarations have been removed. Specificity is controlled through proper selector structure and cascade order.
+
+### 4. **BEM-like Naming Convention**
+
+Class names follow a BEM-inspired pattern:
+
+```css
+.component-name {
+  /* Block */
+}
+.component-name__element {
+  /* Element */
+}
+.component-name--modifier {
+  /* Modifier */
+}
+```
+
+### 5. **Progressive Enhancement**
+
+Styles are loaded in cascade order from general to specific:
+
+1. Tokens → 2. Reset → 3. Typography → 4. Components → 5. Layout → 6. Overlays
 
 ## File Structure
 
 ```
 src/styles/
 ├── index.css           # Main entry point (imports all modules)
-├── tokens.css          # Design system variables
-├── reset.css           # Base resets and foundation
-├── typography.css      # Text styles and headings
+├── tokens.css          # Design tokens (CSS custom properties)
+├── reset.css           # Base resets and app shell
+├── typography.css      # Text, headings, links
 ├── buttons.css         # Button variants
-├── forms.css           # Inputs and form controls
-├── panels.css          # Panels, cards, layers
-├── layout.css          # Page layout and grid
+├── forms.css           # Inputs, labels, validation
+├── panels.css          # Panels, cards, layer components
+├── layout.css          # Page layout, grid, responsive
 ├── dialogs.css         # Modal dialogs
-└── notifications.css   # Toast notifications
+├── notifications.css   # Toast notifications
+└── base.css            # DEPRECATED (kept for compatibility)
 ```
 
-## Design Tokens
+## Design Token System
 
-All design tokens are defined in `tokens.css` as CSS custom properties. Use these variables throughout the application instead of hardcoding values.
-
-### Color Palette
+### Color Tokens
 
 ```css
 /* Brand Colors */
-var(--color-primary)           /* Primary teal: #12a89a */
-var(--color-primary-soft)      /* Lighter teal: #75e3d8 */
-var(--color-primary-hover)     /* Hover state: #0e8a7e */
-var(--color-accent)            /* Gold accent: #d8b534 */
+--color-primary: #12a89a;
+--color-primary-soft: #75e3d8;
+--color-primary-hover: #0e8a7e;
+--color-accent: #d8b534;
 
 /* Background Colors */
-var(--color-bg)                /* Main background: #09090b */
-var(--color-bg-panel)          /* Panel background: #141416 */
-var(--color-bg-panel-alt)      /* Alternate panel: #1d1d20 */
-var(--color-bg-hover)          /* Hover state: #222226 */
+--color-bg: #09090b;
+--color-bg-panel: #141416;
+--color-bg-panel-alt: #1d1d20;
+--color-bg-hover: #222226;
 
 /* Text Colors */
-var(--color-text)              /* Primary text: #f7f8fa */
-var(--color-text-muted)        /* Secondary text: #8f929c */
+--color-text: #f7f8fa;
+--color-text-muted: #8f929c;
 
 /* Semantic Colors */
-var(--color-success)           /* Success green: #32d2b6 */
-var(--color-error)             /* Error red: #ff8a8a */
-var(--color-warning)           /* Warning orange: #ffb74d */
-var(--color-info)              /* Info blue: #64b5f6 */
+--color-success: #32d2b6;
+--color-error: #ff8a8a;
+--color-warning: #ffb74d;
+--color-info: #64b5f6;
 ```
 
-### Spacing Scale
+### Spacing Tokens
 
 ```css
-var(--spacing-xs)      /* 4px */
-var(--spacing-sm)      /* 8px */
-var(--spacing-md)      /* 12px */
-var(--spacing-lg)      /* 16px */
-var(--spacing-xl)      /* 24px */
-var(--spacing-2xl)     /* 32px */
-var(--spacing-3xl)     /* 48px */
+--spacing-xs: 0.25rem; /* 4px */
+--spacing-sm: 0.5rem; /* 8px */
+--spacing-md: 0.75rem; /* 12px */
+--spacing-lg: 1rem; /* 16px */
+--spacing-xl: 1.5rem; /* 24px */
+--spacing-2xl: 2rem; /* 32px */
+--spacing-3xl: 3rem; /* 48px */
 ```
 
-### Typography
+### Typography Tokens
 
 ```css
+/* Font Families */
+--font-family-base:
+  "Segoe UI", "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+--font-family-mono: "Cascadia Code", "Consolas", "Monaco", monospace;
+
 /* Font Sizes */
-var(--font-size-xs)       /* 11.2px */
-var(--font-size-sm)       /* 12px */
-var(--font-size-base)     /* 14px */
-var(--font-size-md)       /* 15px */
-var(--font-size-lg)       /* 16px */
-var(--font-size-xl)       /* 20px */
-var(--font-size-2xl)      /* 24px */
+--font-size-xs: 0.7rem; /* 11.2px */
+--font-size-sm: 0.75rem; /* 12px */
+--font-size-base: 0.875rem; /* 14px */
+--font-size-md: 0.9375rem; /* 15px */
+--font-size-lg: 1rem; /* 16px */
+--font-size-xl: 1.25rem; /* 20px */
+--font-size-2xl: 1.5rem; /* 24px */
 
 /* Font Weights */
-var(--font-weight-normal)     /* 400 */
-var(--font-weight-medium)     /* 500 */
-var(--font-weight-semibold)   /* 600 */
-var(--font-weight-bold)       /* 700 */
+--font-weight-normal: 400;
+--font-weight-medium: 500;
+--font-weight-semibold: 600;
+--font-weight-bold: 700;
 ```
 
-### Borders & Radii
+## Usage Examples
+
+### Using Design Tokens
+
+✅ **DO:**
 
 ```css
-var(--border-radius-sm)    /* 4px */
-var(--border-radius-md)    /* 6px */
-var(--border-radius-lg)    /* 8px */
-var(--border-radius-xl)    /* 12px */
-```
-
-### Transitions
-
-```css
-var(--transition-fast)     /* 150ms ease */
-var(--transition-base)     /* 200ms ease */
-var(--transition-slow)     /* 300ms ease */
-```
-
-## BEM Naming Convention
-
-FiberPath uses BEM (Block Element Modifier) for CSS class names:
-
-```
-.block                  /* Component */
-.block__element         /* Part of component */
-.block--modifier        /* Variant of component */
-.block__element--modifier
-```
-
-### Examples
-
-```css
-/* Layer Stack Component */
-.layer-stack                    /* Block */
-.layer-stack__header            /* Element */
-.layer-stack__list              /* Element */
-.layer-stack__list--dragging    /* Element with modifier */
-
-/* Layer Row Component */
-.layer-row                      /* Block */
-.layer-row--active              /* Block with modifier */
-.layer-row__drag-handle         /* Element */
-.layer-row__icon                /* Element */
-.layer-row__action-btn          /* Element */
-.layer-row__action-btn--danger  /* Element with modifier */
-```
-
-## Component Styling Guidelines
-
-### 1. Use Design Tokens
-
-❌ **Bad:**
-```css
-.button {
-  padding: 8px 16px;
-  background: #12a89a;
-  color: #f7f8fa;
-}
-```
-
-✅ **Good:**
-```css
-.button {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: var(--color-primary);
+.my-component {
+  padding: var(--spacing-md);
   color: var(--color-text);
+  background: var(--color-bg-panel);
+  border-radius: var(--border-radius-md);
 }
 ```
 
-### 2. Avoid !important
+❌ **DON'T:**
 
-Use proper specificity instead:
-
-❌ **Bad:**
 ```css
-.menubar__dropdown button {
-  display: flex !important;
-}
-
-.menubar__recent-file {
-  flex-direction: column !important;
-}
-```
-
-✅ **Good:**
-```css
-/* More specific selector wins naturally */
-.menubar__dropdown button {
-  display: flex;
-}
-
-.menubar__recent-file {
-  flex-direction: column;
+.my-component {
+  padding: 12px;
+  color: #f7f8fa;
+  background: #141416;
+  border-radius: 6px;
 }
 ```
 
-### 3. Transition Best Practices
+### BEM Naming
 
-✅ **Good:**
-```css
-.button {
-  background: var(--color-primary);
-  transition: var(--transition-colors), var(--transition-transform);
-}
-
-.button:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-1px);
-}
-```
-
-### 4. Focus States for Accessibility
-
-Always include visible focus states:
-
-✅ **Good:**
-```css
-button:focus-visible {
-  outline: 2px solid var(--color-border-focus);
-  outline-offset: 2px;
-}
-```
-
-### 5. Hover and Active States
-
-Provide clear visual feedback:
+✅ **DO:**
 
 ```css
 .layer-row {
-  transition: var(--transition-colors);
+  /* Block */
 }
-
-.layer-row:hover {
-  border-color: var(--color-primary-soft);
-  background: var(--color-bg-panel-alt);
+.layer-row__icon {
+  /* Element */
 }
-
+.layer-row__content {
+  /* Element */
+}
 .layer-row--active {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(18, 168, 154, 0.1);
+  /* Modifier */
 }
 ```
 
-## Module-Specific Guidelines
+❌ **DON'T:**
 
-### Forms Module (`forms.css`)
+```css
+.layer-row {
+}
+.icon {
+  /* Too generic */
+}
+.content {
+  /* Too generic */
+}
+.active {
+  /* Too generic */
+}
+```
 
-- All inputs use consistent height: `var(--input-height)`
-- Validation states: `--error`, `--success`
-- Focus states with shadow: `box-shadow: 0 0 0 3px rgba(...)`
+### Avoiding !important
 
-### Buttons Module (`buttons.css`)
+✅ **DO:**
 
-- Variants: `.primary`, `.secondary`, `.danger`, `.ghost`, `.icon-only`
-- Always handle `:disabled` state
-- Include `:hover` and `:active` transitions
+```css
+/* Use more specific selectors */
+.menubar__dropdown button.menubar__recent-file {
+  flex-direction: column;
+  align-items: flex-start;
+}
+```
 
-### Panels Module (`panels.css`)
+❌ **DON'T:**
 
-- Consistent padding: `var(--spacing-lg)` or `var(--spacing-xl)`
-- Border and shadow for elevation
-- Use `--color-bg-panel` for backgrounds
+```css
+.menubar__recent-file {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+```
 
 ## Responsive Design
 
-Use mobile-first approach with min-width breakpoints:
+Media queries use mobile-first approach:
 
 ```css
-/* Mobile first (default) */
-.panel {
-  padding: var(--spacing-lg);
+/* Mobile base styles */
+.component {
+  padding: var(--spacing-md);
 }
 
 /* Tablet and up */
-@media (min-width: 640px) {
-  .panel {
-    padding: var(--spacing-xl);
+@media (min-width: 768px) {
+  .component {
+    padding: var(--spacing-lg);
   }
 }
 
 /* Desktop and up */
 @media (min-width: 1024px) {
-  .panel {
-    padding: var(--spacing-2xl);
+  .component {
+    padding: var(--spacing-xl);
   }
 }
 ```
 
-## CSS Modules (Component-Scoped)
+## Component-Specific Guidelines
 
-For truly component-scoped styles, create `.module.css` files:
+### Buttons
 
-```tsx
-// Component.module.css
-.container {
-  padding: var(--spacing-lg);
-}
+All buttons should use predefined classes:
 
-// Component.tsx
-import styles from './Component.module.css';
+- `.primary` - Primary actions (CTA)
+- `.secondary` - Secondary actions
+- `.danger` - Destructive actions
+- `.ghost` - Minimal styling
+- `.icon-only` - Icon buttons
 
-function Component() {
-  return <div className={styles.container}>...</div>;
-}
-```
+### Forms
+
+- Use `.param-form__*` classes for parameter forms
+- All inputs should have labels
+- Error states use `.param-form__input--error`
+- Validation messages use `.param-form__error`
+
+### Panels
+
+- Use `.panel` for content sections
+- Layer-specific components use `.layer-*` prefix
+- Panel headers use `.panel-header`
 
 ## Linting
 
-Use stylelint to enforce conventions:
+### Run CSS Linter
 
 ```bash
-# Check CSS
 npm run lint:css
+```
 
-# Auto-fix issues
+### Auto-fix CSS Issues
+
+```bash
 npm run lint:css:fix
 ```
 
-### Stylelint Rules
+### Linting Rules
 
-- `declaration-no-important`: Disallow `!important`
-- BEM naming patterns enforced
-- Vendor prefixes managed by PostCSS
-- Import statements must use strings
+- **No !important** - Enforced (declaration-no-important)
+- **Consistent color format** - Hex colors (#rrggbb)
+- **Consistent alpha notation** - Numbers (0.5 not 50%)
+- **BEM naming** - Recommended but not enforced
 
-## Migration Guide
+## Migration from base.css
 
-### Updating Existing Styles
+The old `base.css` file has been deprecated. All styles have been migrated to modular files.
 
-1. Replace hardcoded colors with tokens:
-   ```css
-   /* Before */
-   color: #8f929c;
-   
-   /* After */
-   color: var(--color-text-muted);
-   ```
+### Backwards Compatibility
 
-2. Replace hardcoded spacing:
-   ```css
-   /* Before */
-   padding: 0.5rem 1rem;
-   
-   /* After */
-   padding: var(--spacing-sm) var(--spacing-lg);
-   ```
+Legacy CSS variable names are aliased in `tokens.css`:
 
-3. Remove !important and fix specificity:
-   ```css
-   /* Before */
-   .element {
-     display: flex !important;
-   }
-   
-   /* After - more specific selector */
-   .parent .element {
-     display: flex;
-   }
-   ```
+```css
+--primary → --color-primary
+--text → --color-text
+--bg-panel → --color-bg-panel
+/* etc. */
+```
 
-## Best Practices Summary
+### Updating Components
 
-1. ✅ Always use design tokens from `tokens.css`
-2. ✅ Follow BEM naming convention
-3. ✅ Never use `!important` (fix specificity instead)
-4. ✅ Include focus states for accessibility
-5. ✅ Use transitions for smooth interactions
-6. ✅ Write mobile-first responsive styles
-7. ✅ Run `npm run lint:css` before committing
-8. ✅ Document new design tokens when adding them
+When updating components, prefer new variable names:
+
+```css
+/* Old */
+color: var(--text-muted);
+
+/* New */
+color: var(--color-text-muted);
+```
+
+## Future Considerations
+
+### CSS Modules (Optional)
+
+For component-scoped styles, consider CSS Modules:
+
+```css
+/* ComponentName.module.css */
+.container {
+  padding: var(--spacing-md);
+}
+```
+
+```tsx
+import styles from "./ComponentName.module.css";
+
+<div className={styles.container}>...</div>;
+```
+
+### CSS-in-JS (Not Recommended)
+
+The current architecture does not use CSS-in-JS solutions (styled-components, emotion) to:
+
+- Keep bundle size small
+- Maintain clear separation of concerns
+- Leverage native CSS features (custom properties, cascade)
+- Enable easy theming without JavaScript
 
 ## Resources
 
 - [BEM Methodology](http://getbem.com/)
-- [CSS Custom Properties (MDN)](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
+- [CSS Custom Properties (MDN)](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
 - [Stylelint Documentation](https://stylelint.io/)
+- [CSS Architecture Best Practices](https://cssguidelin.es/)
+
+## Maintenance
+
+### Adding New Tokens
+
+1. Add the token to `tokens.css` in the appropriate section
+2. Document the token with a comment
+3. Use semantic naming (e.g., `--color-error` not `--red`)
+
+### Adding New Components
+
+1. Determine which module the styles belong to
+2. Add styles using existing tokens
+3. Follow BEM naming convention
+4. Avoid magic numbers - use tokens instead
+5. Run linter to check for issues
+
+### Refactoring Existing Styles
+
+1. Identify hardcoded values
+2. Replace with design tokens
+3. Remove !important declarations
+4. Ensure proper specificity
+5. Test across browsers
+6. Run linter to verify compliance
