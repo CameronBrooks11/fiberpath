@@ -70,7 +70,7 @@
 }
 
 .main-layout__bottom-panel {
-  height: 180px;
+  height: 360px;
   background: linear-gradient(120deg, var(--bg-panel), var(--bg-panel-alt));
   border-top: 1px solid var(--border);
   overflow-y: auto;

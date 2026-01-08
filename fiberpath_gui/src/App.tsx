@@ -14,6 +14,7 @@ import { BottomPanel } from "./components/panels/BottomPanel";
 import { CenterCanvas } from "./components/canvas/CenterCanvas";
 import { MandrelForm } from "./components/forms/MandrelForm";
 import { TowForm } from "./components/forms/TowForm";
+import { LayerStack } from "./components/layers/LayerStack";
 import { useProjectStore } from "./state/projectStore";
 import {
   planWind,
@@ -215,189 +216,11 @@ export default function App() {
       }
       bottomPanel={
         <BottomPanel>
-          <div className="legacy-workflows">
-            <div className="legacy-workflows__header">
-              <h3>Legacy Workflows (Temporary)</h3>
-              <p>These will be moved to the Tools menu in the next step. For now, they remain accessible here.</p>
-            </div>
-            
-            <div className="legacy-workflows__grid">
-              <section className="panel">
-                <h2>1. Plan</h2>
-                <form onSubmit={handlePlan}>
-                  <fieldset>
-                    <FileField
-                      label="Wind definition"
-                      value={planInput}
-                      onChange={setPlanInput}
-                      filterExtensions={["wind"]}
-                    />
-                  </fieldset>
-                  <fieldset>
-                    <FileField
-                      label="Output G-code (optional)"
-                      value={planOutput}
-                      onChange={setPlanOutput}
-                      placeholder="Auto-generate temp file"
-                      filterExtensions={["gcode"]}
-                    />
-                  </fieldset>
-                  <fieldset>
-                    <FileField
-                      label="Output folder (optional)"
-                      value={planOutputDir}
-                      onChange={setPlanOutputDir}
-                      placeholder="Defaults to system temp directory"
-                      directory={true}
-                    />
-                  </fieldset>
-                  <fieldset>
-                    <label>
-                      <span>Output filename (optional)</span>
-                      <input
-                        type="text"
-                        placeholder="fiberpath"
-                        value={planOutputName}
-                        onChange={(e) => setPlanOutputName(e.target.value)}
-                      />
-                    </label>
-                  </fieldset>
-                  <fieldset>
-                    <label>
-                      <span>Axis format</span>
-                      <select value={axisFormat} onChange={(e) => setAxisFormat(e.target.value as AxisFormat)}>
-                        <option value="xab">XAB (Standard rotational)</option>
-                        <option value="xyz">XYZ (Legacy compatibility)</option>
-                      </select>
-                    </label>
-                    <small style={{ display: "block", marginTop: "0.25rem", color: "var(--text-secondary, #999)" }}>
-                      XAB: A=mandrel rotation (deg), B=delivery rotation (deg). XYZ: Y/Z as linear axes for Cyclone compatibility.
-                    </small>
-                  </fieldset>
-                  <button className="primary" type="submit" disabled={planResult.status === "running"}>
-                    {planResult.status === "running" ? "Planning…" : "Plan wind"}
-                  </button>
-                </form>
-                <StatusText state={planResult.status} message={planResult.error} />
-                {planResult.data ? <ResultCard title="Summary">{renderPlanSummary(planResult.data)}</ResultCard> : null}
-              </section>
-
-              <section className="panel">
-                <h2>2. Plot Preview</h2>
-                <form onSubmit={handlePlot}>
-                  <fieldset>
-                    <FileField label="G-code" value={plotInput} onChange={setPlotInput} filterExtensions={["gcode"]} />
-                  </fieldset>
-                  <fieldset>
-                    <FileField
-                      label="Output folder (optional)"
-                      value={plotOutputDir}
-                      onChange={setPlotOutputDir}
-                      placeholder="Defaults to temp directory"
-                      directory
-                    />
-                  </fieldset>
-                  <fieldset>
-                    <label>
-                      <span>Output filename (optional)</span>
-                      <input
-                        type="text"
-                        placeholder="preview"
-                        value={plotOutputName}
-                        onChange={(e) => setPlotOutputName(e.target.value)}
-                      />
-                    </label>
-                  </fieldset>
-                  <fieldset>
-                    <label>
-                      <span>Scale</span>
-                      <input
-                        type="number"
-                        min={0.1}
-                        max={2}
-                        step={0.1}
-                        value={plotScale}
-                        onChange={(event) => setPlotScale(Number(event.target.value))}
-                      />
-                    </label>
-                  </fieldset>
-                  <button className="primary" type="submit" disabled={plotResult.status === "running"}>
-                    {plotResult.status === "running" ? "Rendering…" : "Render preview"}
-                  </button>
-                </form>
-                <StatusText state={plotResult.status} message={plotResult.error} />
-                {plotResult.data ? (
-                  <ResultCard title="Preview">
-                    <img
-                      className="preview-image"
-                      src={`data:image/png;base64,${plotResult.data.imageBase64}`}
-                      alt="Plot preview"
-                    />
-                    <small>PNG saved to {plotResult.data.path}</small>
-                  </ResultCard>
-                ) : null}
-              </section>
-
-              <section className="panel">
-                <h2>3. Simulate</h2>
-                <form onSubmit={handleSimulate}>
-                  <fieldset>
-                    <FileField label="G-code" value={simulateInput} onChange={setSimulateInput} filterExtensions={["gcode"]} />
-                  </fieldset>
-                  <button className="primary" type="submit" disabled={simulateResult.status === "running"}>
-                    {simulateResult.status === "running" ? "Simulating…" : "Simulate"}
-                  </button>
-                </form>
-                <StatusText state={simulateResult.status} message={simulateResult.error} />
-                {simulateResult.data ? <ResultCard title="Stats">{renderJson(simulateResult.data)}</ResultCard> : null}
-              </section>
-
-              <section className="panel">
-                <h2>4. Stream</h2>
-                <form onSubmit={handleStream}>
-                  <fieldset>
-                    <FileField label="G-code" value={streamInput} onChange={setStreamInput} filterExtensions={["gcode"]} />
-                  </fieldset>
-                  <fieldset>
-                    <label>
-                      <span>Baud rate</span>
-                      <input type="number" value={baudRate} onChange={(event) => setBaudRate(Number(event.target.value))} />
-                    </label>
-                  </fieldset>
-                  <fieldset>
-                    <label>
-                      <span>Serial port</span>
-                      <input
-                        value={serialPort}
-                        disabled={dryRun}
-                        onChange={(event) => setSerialPort(event.target.value)}
-                      />
-                    </label>
-                  </fieldset>
-                  <fieldset>
-                    <label className="toggle-field">
-                      <input type="checkbox" checked={dryRun} onChange={(event) => setDryRun(event.target.checked)} />
-                      Dry-run mode (recommended when no hardware is attached)
-                    </label>
-                  </fieldset>
-                  <button className="primary" type="submit" disabled={streamResult.status === "running"}>
-                    {streamResult.status === "running" ? "Streaming…" : dryRun ? "Simulate stream" : "Stream to device"}
-                  </button>
-                </form>
-                <StatusText state={streamResult.status} message={streamResult.error} />
-                {streamResult.data ? <ResultCard title="Stream summary">{renderJson(streamResult.data)}</ResultCard> : null}
-              </section>
-            </div>
-          </div>
+          <LayerStack />
         </BottomPanel>
       }
       statusBar={
-        <StatusBar 
-          projectName="Untitled.wind"
-          isDirty={false}
-          layerCount={0}
-          cliStatus="ready"
-        />
+        <StatusBar />
       }
       leftPanelCollapsed={leftPanelCollapsed}
       rightPanelCollapsed={rightPanelCollapsed}
