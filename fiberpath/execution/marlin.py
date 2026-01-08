@@ -46,7 +46,6 @@ class PySerialTransport:
             write_timeout=timeout,
         )
 
-
     def write_line(self, data: str) -> None:
         payload = (data + "\n").encode("utf-8")
         self._serial.write(payload)

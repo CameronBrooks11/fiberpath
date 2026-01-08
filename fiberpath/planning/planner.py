@@ -65,9 +65,7 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
 
     # Generate initial position command using correct axis letters
     mapping = options.dialect.axis_mapping
-    init_cmd = (
-        f"G0 {mapping.carriage}0 {mapping.mandrel}0 {mapping.delivery_head}0"
-    )
+    init_cmd = f"G0 {mapping.carriage}0 {mapping.mandrel}0 {mapping.delivery_head}0"
     program: list[str] = [definition.dump_header(), init_cmd]
 
     machine.set_feed_rate(definition.default_feed_rate)

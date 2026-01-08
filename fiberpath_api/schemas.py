@@ -11,7 +11,7 @@ class FilePathRequest(BaseModel):
     path: str = Field(..., description="Absolute or workspace path to an input file.")
     axis_format: Literal["xyz", "xab"] = Field(
         default="xab",
-        description="Axis coordinate format: xyz (legacy) or xab (standard rotational)"
+        description="Axis coordinate format: xyz (legacy) or xab (standard rotational)",
     )
     verbose: bool = Field(default=False, description="Emit verbose planner output")
 

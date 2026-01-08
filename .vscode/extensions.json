@@ -1,0 +1,32 @@
+{
+    "recommendations": [
+        // Core Python
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "ms-python.vscode-python-envs",
+        
+        // Python Code Quality & Tooling
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker",
+        "njpwerner.autodocstring",
+        
+        // Rust & Tauri (GUI Backend)
+        "rust-lang.rust-analyzer",
+        "tauri-apps.tauri-vscode",
+        
+        // TypeScript/React (GUI Frontend)
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        
+        // Configuration & Data Files
+        "ninoseki.vscode-mogami",
+        
+        // Utilities
+        "christian-kohler.path-intellisense",
+        "yzhang.markdown-all-in-one",
+        
+        // CI/CD
+        "github.vscode-github-actions"
+    ]
+}
