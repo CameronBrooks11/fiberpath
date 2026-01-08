@@ -1,11 +1,8 @@
 /* Dialog Overlay */
 .dialog-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
+  inset: 0;
+  background: rgb(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,7 +16,7 @@
 .dialog-content {
   background: var(--bg-panel);
   border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px rgb(0, 0, 0, 0.5);
   max-width: 600px;
   width: 100%;
   max-height: calc(100vh - 4rem);
@@ -116,7 +113,7 @@
 }
 
 .about-version {
-  margin: 0.25rem 0 0 0;
+  margin: 0.25rem 0 0;
   font-size: 0.875rem;
   color: var(--text-muted);
 }
@@ -128,7 +125,7 @@
 }
 
 .about-section h4 {
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 0.75rem;
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -194,8 +191,7 @@
 }
 
 .diagnostics-section h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1rem;
+  margin: 0 0 1rem;
   font-weight: 600;
   color: var(--text-primary);
   text-transform: uppercase;
@@ -231,7 +227,7 @@
   color: var(--text-primary);
   font-size: 0.875rem;
   text-align: right;
-  font-family: 'Consolas', 'Monaco', monospace;
+  font-family: Consolas, Monaco, monospace;
 }
 
 .diagnostics-value--path {
@@ -293,28 +289,28 @@
 }
 
 .export-validation__status--checking {
-  background: rgba(64, 156, 255, 0.1);
+  background: rgb(64, 156, 255, 0.1);
   color: #409cff;
-  border: 1px solid rgba(64, 156, 255, 0.3);
+  border: 1px solid rgb(64, 156, 255, 0.3);
 }
 
 .export-validation__status--success {
-  background: rgba(18, 168, 154, 0.1);
+  background: rgb(18, 168, 154, 0.1);
   color: var(--primary);
-  border: 1px solid rgba(18, 168, 154, 0.3);
+  border: 1px solid rgb(18, 168, 154, 0.3);
 }
 
 .export-validation__status--error {
-  background: rgba(255, 138, 138, 0.1);
+  background: rgb(255, 138, 138, 0.1);
   color: var(--error);
-  border: 1px solid rgba(255, 138, 138, 0.3);
+  border: 1px solid rgb(255, 138, 138, 0.3);
 }
 
 .export-validation__status .spinner {
   display: inline-block;
   width: 1rem;
   height: 1rem;
-  border: 2px solid rgba(64, 156, 255, 0.3);
+  border: 2px solid rgb(64, 156, 255, 0.3);
   border-top-color: #409cff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -362,7 +358,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 0.75rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border-soft);
 }
@@ -397,8 +393,8 @@
 }
 
 .export-summary__note {
-  background: rgba(64, 156, 255, 0.05);
-  border: 1px solid rgba(64, 156, 255, 0.2);
+  background: rgb(64, 156, 255, 0.05);
+  border: 1px solid rgb(64, 156, 255, 0.2);
   border-radius: 4px;
   padding: 0.75rem;
   font-size: 0.875rem;

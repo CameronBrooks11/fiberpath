@@ -1,0 +1,178 @@
+/**
+ * Form & Input Styles
+ * 
+ * All form-related components including inputs, labels, validation states.
+ */
+
+/* Parameter Forms */
+.param-form {
+  padding: 0;
+}
+
+.param-form__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--spacing-lg) 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.param-form__group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.param-form__group:last-child {
+  margin-bottom: 0;
+}
+
+.param-form__label {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.param-form__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.param-form__input {
+  flex: 1;
+  padding: var(--spacing-sm) 3rem var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-mono);
+  transition: var(--transition-colors), box-shadow var(--transition-fast);
+  width: 100%;
+  height: var(--input-height);
+}
+
+.param-form__input:hover {
+  border-color: var(--color-border-focus);
+}
+
+.param-form__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(18, 168, 154, 0.1);
+}
+
+/* Error State */
+.param-form__input--error {
+  border-color: var(--color-error);
+}
+
+.param-form__input--error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px var(--color-error-bg);
+}
+
+/* Success State */
+.param-form__input--success {
+  border-color: var(--color-success);
+}
+
+/* Input Unit Label */
+.param-form__unit {
+  position: absolute;
+  right: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  pointer-events: none;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Validation Messages */
+.param-form__error {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+.param-form__hint {
+  margin-left: var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-normal);
+  font-style: italic;
+}
+
+.param-form__description {
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+}
+
+/* Remove spinner arrows from number inputs for cleaner look */
+.param-form__input::-webkit-outer-spin-button,
+.param-form__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.param-form__input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Checkbox Inputs */
+input[type="checkbox"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Select Inputs */
+select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-base);
+  cursor: pointer;
+  transition: var(--transition-colors);
+  height: var(--input-height);
+}
+
+select:hover {
+  border-color: var(--color-border-focus);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(18, 168, 154, 0.1);
+}
+
+/* Fieldset */
+fieldset {
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+legend {
+  padding: 0 var(--spacing-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}

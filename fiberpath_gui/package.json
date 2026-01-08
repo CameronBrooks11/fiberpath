@@ -11,6 +11,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
@@ -48,6 +50,8 @@
     "ajv": "^8.17.1",
     "jsdom": "^27.4.0",
     "json-schema-to-typescript": "^15.0.4",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^39.0.1",
     "typescript": "^5.6.3",
     "vite": "^5.4.8",
     "vitest": "^2.1.8"
