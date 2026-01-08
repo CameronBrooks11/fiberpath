@@ -5,6 +5,8 @@ import { useProjectStore } from "../state/projectStore";
 import { saveWindFile, loadWindFile, validateWindDefinition as validateWindCmd, planWind } from "../lib/commands";
 import { projectToWindDefinition, windDefinitionToProject } from "../types/converters";
 import { getRecentFiles, addRecentFile, formatRecentFileName, formatRecentFilePath } from "../lib/recentFiles";
+import { AboutDialog } from "./dialogs/AboutDialog";
+import { DiagnosticsDialog } from "./dialogs/DiagnosticsDialog";
 import type { FiberPathProject } from "../types/project";
 import type { FiberPathWindDefinition } from "../types/wind-schema";
 
@@ -19,6 +21,8 @@ export function MenuBar({
 }: MenuBarProps) {
   const menuRefs = useRef<(HTMLDetailsElement | null)[]>([]);
   const [recentFiles, setRecentFiles] = useState(getRecentFiles());
+  const [showAboutDialog, setShowAboutDialog] = useState(false);
+  const [showDiagnosticsDialog, setShowDiagnosticsDialog] = useState(false);
   
   const project = useProjectStore(state => state.project);
   const newProject = useProjectStore(state => state.newProject);
@@ -333,12 +337,26 @@ export function MenuBar({
               Documentation<span className="menubar__external">↗</span>
             </button>
             <hr />
-            <button disabled>About FiberPath</button>
+            <button onClick={() => setShowAboutDialog(true)}>
+              About FiberPath
+            </button>
             <button disabled>Check for Updates</button>
-            <button disabled>Diagnostics</button>
+            <button onClick={() => setShowDiagnosticsDialog(true)}>
+              Diagnostics
+            </button>
           </div>
         </details>
       </div>
+
+      <AboutDialog 
+        isOpen={showAboutDialog} 
+        onClose={() => setShowAboutDialog(false)} 
+      />
+      
+      <DiagnosticsDialog 
+        isOpen={showDiagnosticsDialog} 
+        onClose={() => setShowDiagnosticsDialog(false)} 
+      />
     </nav>
   );
 }
