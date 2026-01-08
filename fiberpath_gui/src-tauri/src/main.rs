@@ -49,6 +49,7 @@ struct PlotPreview {
     path: String,
     #[serde(rename = "imageBase64")]
     image_base64: String,
+    warnings: Vec<String>,
 }
 
 #[tauri::command]
@@ -67,6 +68,7 @@ async fn plot_preview(gcode_path: String, scale: f64, output_path: Option<String
     Ok(PlotPreview {
         path: output_file,
         image_base64: Base64.encode(bytes),
+        warnings: vec![], // plot command doesn't generate warnings like plan does
     })
 }
 
@@ -85,10 +87,14 @@ async fn stream_program(gcode_path: String, port: Option<String>, baud_rate: u32
 
 #[tauri::command]
 async fn plot_definition(definition_json: String, visible_layer_count: usize, output_path: Option<String>) -> Result<PlotPreview, String> {
+    let mut warnings = Vec::new();
+    
     // Create temporary .wind file
     let wind_file = temp_path("wind");
     fs::write(&wind_file, &definition_json)
         .map_err(|err| FiberpathError::File(format!("Failed to write temp .wind file: {err}")).to_string())?;
+    
+    println!("Wrote wind file to: {}", wind_file);
     
     // Create temporary .gcode file
     let gcode_file = temp_path("gcode");
@@ -100,7 +106,19 @@ async fn plot_definition(definition_json: String, visible_layer_count: usize, ou
         "--output".into(),
         gcode_file.clone(),
     ];
-    exec_fiberpath(plan_args).await.map_err(|err| format!("Planning failed: {err}"))?;
+    let plan_output = exec_fiberpath(plan_args).await.map_err(|err| format!("Planning failed: {err}"))?;
+    
+    // Capture stderr warnings from planner
+    let stderr = String::from_utf8_lossy(&plan_output.stderr);
+    if !stderr.is_empty() {
+        for line in stderr.lines() {
+            if !line.trim().is_empty() {
+                warnings.push(line.trim().to_string());
+            }
+        }
+    }
+    
+    println!("Generated gcode file: {}", gcode_file);
     
     // Generate output path for PNG
     let output_file = output_path.unwrap_or_else(|| temp_path("png"));
@@ -118,20 +136,25 @@ async fn plot_definition(definition_json: String, visible_layer_count: usize, ou
     // Execute plot command
     exec_fiberpath(args).await.map_err(|err| format!("Plotting failed: {err}"))?;
     
+    println!("Generated plot file: {}", output_file);
+    
     // Read and encode image
     let bytes = fs::read(&output_file)
         .map_err(|err| FiberpathError::File(format!("Failed to read plot output: {err}")).to_string())?;
     
     println!("Read {} bytes from {}", bytes.len(), output_file);
+    println!("Wind file: {}", wind_file);
+    println!("Gcode file: {}", gcode_file);
     
-    // Clean up temp files
-    let _ = fs::remove_file(&wind_file);
-    let _ = fs::remove_file(&gcode_file);
-    // Don't delete output_file yet, let OS clean it up
+    // Don't delete temp files for debugging
+    // let _ = fs::remove_file(&wind_file);
+    // let _ = fs::remove_file(&gcode_file);
+    // let _ = fs::remove_file(&output_file);
     
     Ok(PlotPreview {
         path: output_file,
         image_base64: Base64.encode(&bytes),
+        warnings,
     })
 }
 

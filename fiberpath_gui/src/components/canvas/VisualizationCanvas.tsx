@@ -2,7 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useProjectStore } from "../../state/projectStore";
 import { LayerScrubber } from "./LayerScrubber";
-import { CanvasControls } from "./CanvasControls";import { plotDefinition } from '../../lib/commands';
+import { CanvasControls } from "./CanvasControls";
+import { plotDefinition } from '../../lib/commands';
+import { projectToWindDefinition } from '../../types/converters';
+import { validateWindDefinition } from '../../lib/validation';
 import type { FiberPathProject } from '../../types/project';
 export function VisualizationCanvas() {
   const project = useProjectStore((state) => state.project);
@@ -11,6 +14,7 @@ export function VisualizationCanvas() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
   const [visibleLayerCount, setVisibleLayerCount] = useState(project.layers.length);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
   
@@ -72,58 +76,38 @@ export function VisualizationCanvas() {
     
     setIsGenerating(true);
     setError(null);
+    setWarnings([]);
     
     try {
-      // Convert layer to .wind schema format
-      const convertLayer = (layer: Layer): any => {
-        const { id, type, ...rest } = layer;
-        
-        if (type === 'hoop') {
-          const hoopData = (layer as any).hoop || {};
-          return {
-            windType: 'hoop',
-            terminal: hoopData.terminal || false,
-          };
-        } else if (type === 'helical') {
-          const helicalData = (layer as any).helical || {};
-          return {
-            windType: 'helical',
-            windAngle: helicalData.wind_angle || 45,
-            patternNumber: helicalData.pattern_number || 3,
-            skipIndex: helicalData.skip_index || 2,
-            lockDegrees: helicalData.lock_degrees || 5,
-            leadInMM: helicalData.lead_in_mm || 10,
-            leadOutDegrees: helicalData.lead_out_degrees || 5,
-            skipInitialNearLock: helicalData.skip_initial_near_lock || false,
-          };
-        } else if (type === 'skip') {
-          const skipData = (layer as any).skip || {};
-          return {
-            windType: 'skip',
-            mandrelRotation: skipData.mandrel_rotation || 90,
-          };
-        }
-        return {};
-      };
+      // Convert project to .wind schema format
+      const windDefinition = projectToWindDefinition(project, visibleLayerCount);
       
-      // Serialize project to .wind schema format
-      const definitionJson = JSON.stringify({
-        mandrelParameters: {
-          diameter: project.mandrel.diameter,
-          windLength: project.mandrel.wind_length,
-        },
-        towParameters: {
-          width: project.tow.width,
-          thickness: project.tow.thickness,
-        },
-        defaultFeedRate: 2000, // Default feed rate
-        layers: project.layers.slice(0, visibleLayerCount).map(convertLayer),
+      console.log('Wind definition:', {
+        visibleLayerCount,
+        totalLayers: project.layers.length,
+        includedLayers: windDefinition.layers.length,
+        definition: windDefinition
       });
+      
+      // Validate against schema
+      const validation = validateWindDefinition(windDefinition);
+      if (!validation.valid) {
+        const errorMessages = validation.errors.map(e => `${e.field}: ${e.message}`).join(', ');
+        throw new Error(`Schema validation failed: ${errorMessages}`);
+      }
+      
+      // Serialize to JSON
+      const definitionJson = JSON.stringify(windDefinition);
 
       // Call Tauri command
       console.log('Calling plotDefinition with', visibleLayerCount, 'layers');
       const result = await plotDefinition(definitionJson, visibleLayerCount);
-      console.log('Plot result:', { pathLength: result.path?.length, base64Length: result.imageBase64?.length });
+      console.log('Plot result:', { pathLength: result.path?.length, base64Length: result.imageBase64?.length, warnings: result.warnings });
+      
+      // Store warnings if any
+      if (result.warnings && result.warnings.length > 0) {
+        setWarnings(result.warnings);
+      }
       
       if (!result.imageBase64 || result.imageBase64.length === 0) {
         throw new Error('Empty image data returned from plot command');
@@ -247,6 +231,22 @@ export function VisualizationCanvas() {
               </>
             )}
           </TransformWrapper>
+        )}
+        
+        {warnings.length > 0 && !isGenerating && (
+          <div className="visualization-canvas__warnings">
+            <div className="visualization-canvas__warnings-header">
+              <span className="visualization-canvas__warnings-icon">⚠</span>
+              <span className="visualization-canvas__warnings-title">Planner Warnings</span>
+            </div>
+            <div className="visualization-canvas__warnings-list">
+              {warnings.map((warning, idx) => (
+                <div key={idx} className="visualization-canvas__warning-item">
+                  {warning}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>

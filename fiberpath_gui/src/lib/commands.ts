@@ -30,6 +30,7 @@ export interface StreamSummary {
 export interface PlotPreviewPayload {
   path: string;
   imageBase64: string;
+  warnings: string[];
 }
 
 export async function planWind(inputPath: string, outputPath?: string, axisFormat?: AxisFormat) {

@@ -1,0 +1,190 @@
+{
+  "$defs": {
+    "HelicalLayer": {
+      "properties": {
+        "windType": {
+          "const": "helical",
+          "default": "helical",
+          "title": "Windtype",
+          "type": "string"
+        },
+        "windAngle": {
+          "exclusiveMinimum": 0,
+          "title": "Windangle",
+          "type": "number"
+        },
+        "patternNumber": {
+          "exclusiveMinimum": 0,
+          "title": "Patternnumber",
+          "type": "integer"
+        },
+        "skipIndex": {
+          "exclusiveMinimum": 0,
+          "title": "Skipindex",
+          "type": "integer"
+        },
+        "lockDegrees": {
+          "exclusiveMinimum": 0,
+          "title": "Lockdegrees",
+          "type": "number"
+        },
+        "leadInMM": {
+          "exclusiveMinimum": 0,
+          "title": "Leadinmm",
+          "type": "number"
+        },
+        "leadOutDegrees": {
+          "exclusiveMinimum": 0,
+          "title": "Leadoutdegrees",
+          "type": "number"
+        },
+        "skipInitialNearLock": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skipinitialnearlock"
+        }
+      },
+      "required": [
+        "windAngle",
+        "patternNumber",
+        "skipIndex",
+        "lockDegrees",
+        "leadInMM",
+        "leadOutDegrees"
+      ],
+      "title": "HelicalLayer",
+      "type": "object"
+    },
+    "HoopLayer": {
+      "properties": {
+        "windType": {
+          "const": "hoop",
+          "default": "hoop",
+          "title": "Windtype",
+          "type": "string"
+        },
+        "terminal": {
+          "default": false,
+          "title": "Terminal",
+          "type": "boolean"
+        }
+      },
+      "title": "HoopLayer",
+      "type": "object"
+    },
+    "MandrelParameters": {
+      "properties": {
+        "diameter": {
+          "exclusiveMinimum": 0,
+          "title": "Diameter",
+          "type": "number"
+        },
+        "windLength": {
+          "exclusiveMinimum": 0,
+          "title": "Windlength",
+          "type": "number"
+        }
+      },
+      "required": [
+        "diameter",
+        "windLength"
+      ],
+      "title": "MandrelParameters",
+      "type": "object"
+    },
+    "SkipLayer": {
+      "properties": {
+        "windType": {
+          "const": "skip",
+          "default": "skip",
+          "title": "Windtype",
+          "type": "string"
+        },
+        "mandrelRotation": {
+          "title": "Mandrelrotation",
+          "type": "number"
+        }
+      },
+      "required": [
+        "mandrelRotation"
+      ],
+      "title": "SkipLayer",
+      "type": "object"
+    },
+    "TowParameters": {
+      "properties": {
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "number"
+        },
+        "thickness": {
+          "exclusiveMinimum": 0,
+          "title": "Thickness",
+          "type": "number"
+        }
+      },
+      "required": [
+        "width",
+        "thickness"
+      ],
+      "title": "TowParameters",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "layers": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "helical": "#/$defs/HelicalLayer",
+            "hoop": "#/$defs/HoopLayer",
+            "skip": "#/$defs/SkipLayer"
+          },
+          "propertyName": "windType"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/HoopLayer"
+          },
+          {
+            "$ref": "#/$defs/HelicalLayer"
+          },
+          {
+            "$ref": "#/$defs/SkipLayer"
+          }
+        ]
+      },
+      "title": "Layers",
+      "type": "array"
+    },
+    "mandrelParameters": {
+      "$ref": "#/$defs/MandrelParameters"
+    },
+    "towParameters": {
+      "$ref": "#/$defs/TowParameters"
+    },
+    "defaultFeedRate": {
+      "exclusiveMinimum": 0,
+      "title": "Defaultfeedrate",
+      "type": "number"
+    }
+  },
+  "required": [
+    "layers",
+    "mandrelParameters",
+    "towParameters",
+    "defaultFeedRate"
+  ],
+  "title": "FiberPath Wind Definition",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Schema for FiberPath filament winding pattern definitions"
+}

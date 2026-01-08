@@ -23,6 +23,25 @@ The `tauri dev` command spawns the Vite dev server and opens the desktop shell. 
 3. **Simulate** – run the simulator and inspect motion estimates.
 4. **Stream** – start with `--dry-run` to validate queue handling before connecting to hardware.
 
+## Schema Management
+
+The GUI uses a JSON Schema generated from the Python Pydantic models to ensure type safety and validation:
+
+```pwsh
+# Regenerate schema and TypeScript types from Python models
+npm run schema:generate
+```
+
+This:
+
+1. Runs `scripts/generate_schema.py` to extract JSON Schema from Pydantic
+2. Generates TypeScript types in `src/types/wind-schema.ts`
+3. Ensures GUI and CLI stay in sync
+
+The schema is automatically validated before sending data to the backend, catching errors early.
+
+## Building for Production
+
 For production builds:
 
 ```pwsh
