@@ -20,6 +20,7 @@ import { LayerStack } from "./components/layers/LayerStack";
 import { HoopLayerEditor } from "./components/editors/HoopLayerEditor";
 import { HelicalLayerEditor } from "./components/editors/HelicalLayerEditor";
 import { SkipLayerEditor } from "./components/editors/SkipLayerEditor";
+import { ExportConfirmationDialog } from "./components/dialogs/ExportConfirmationDialog";
 import { useProjectStore } from "./state/projectStore";
 import {
   planWind,
@@ -61,6 +62,7 @@ export default function App() {
   // Layout state
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   
   // Keyboard shortcuts - create file operations handlers
   const fileOps = createFileOperations({
@@ -84,7 +86,7 @@ export default function App() {
     onOpen: fileOps.handleOpen,
     onSave: fileOps.handleSave,
     onSaveAs: fileOps.handleSaveAs,
-    onExport: fileOps.handleExportGcode,
+    onExport: () => setShowExportDialog(true),
     onDuplicate: fileOps.handleDuplicateLayer,
     onDelete: fileOps.handleDeleteLayer,
   });
@@ -241,7 +243,7 @@ export default function App() {
       }
       centerCanvas={
         <CenterCanvas>
-          <VisualizationCanvas />
+          <VisualizationCanvas onExport={() => setShowExportDialog(true)} />
         </CenterCanvas>
       }
       rightPanel={
@@ -271,7 +273,18 @@ export default function App() {
       }
       leftPanelCollapsed={leftPanelCollapsed}
       rightPanelCollapsed={rightPanelCollapsed}
-    />
+    >
+      {showExportDialog && (
+        <ExportConfirmationDialog
+          project={project}
+          onConfirm={async () => {
+            setShowExportDialog(false);
+            await fileOps.handleExportGcode();
+          }}
+          onCancel={() => setShowExportDialog(false)}
+        />
+      )}
+    </MainLayout>
   );
 }
 

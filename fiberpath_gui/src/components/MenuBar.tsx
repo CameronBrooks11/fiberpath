@@ -5,6 +5,7 @@ import { getRecentFiles, formatRecentFileName, formatRecentFilePath } from "../l
 import { createFileOperations } from "../lib/fileOperations";
 import { AboutDialog } from "./dialogs/AboutDialog";
 import { DiagnosticsDialog } from "./dialogs/DiagnosticsDialog";
+import { ExportConfirmationDialog } from "./dialogs/ExportConfirmationDialog";
 
 interface MenuBarProps {
   onToggleLeftPanel?: () => void;
@@ -19,6 +20,7 @@ export function MenuBar({
   const [recentFiles, setRecentFiles] = useState(getRecentFiles());
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [showDiagnosticsDialog, setShowDiagnosticsDialog] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   
   const project = useProjectStore(state => state.project);
   const newProject = useProjectStore(state => state.newProject);
@@ -121,7 +123,7 @@ export function MenuBar({
               Save As<span className="menubar__shortcut">Ctrl+Shift+S</span>
             </button>
             <hr />
-            <button onClick={fileOps.handleExportGcode}>
+            <button onClick={() => setShowExportDialog(true)}>
               Export G-code<span className="menubar__shortcut">Ctrl+E</span>
             </button>
             {recentFiles.length > 0 && (
@@ -215,6 +217,17 @@ export function MenuBar({
         isOpen={showDiagnosticsDialog} 
         onClose={() => setShowDiagnosticsDialog(false)} 
       />
+      
+      {showExportDialog && (
+        <ExportConfirmationDialog
+          project={project}
+          onConfirm={async () => {
+            setShowExportDialog(false);
+            await fileOps.handleExportGcode();
+          }}
+          onCancel={() => setShowExportDialog(false)}
+        />
+      )}
     </nav>
   );
 }

@@ -67,7 +67,9 @@ export async function loadWindFile(path: string) {
 }
 
 export interface ValidationResult {
-  valid: boolean;
+  valid?: boolean;
+  status?: string;  // Backend returns "ok" or "error"
+  path?: string;
   errors?: Array<{ field: string; message: string }>;
 }
 

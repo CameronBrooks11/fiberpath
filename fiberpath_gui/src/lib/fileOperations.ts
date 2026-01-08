@@ -115,16 +115,10 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
     }
   };
 
+  // This is called after user confirms in the export dialog
   const handleExportGcode = async () => {
     try {
       const windDef = projectToWindDefinition(project);
-      const validationResult = await validateWindCmd(JSON.stringify(windDef));
-      
-      if (!validationResult.valid) {
-        const errors = validationResult.errors?.map(e => `${e.field}: ${e.message}`).join('\n') || 'Unknown errors';
-        console.error('Validation failed:', errors);
-        return false;
-      }
       
       const gcodeFilePath = await save({
         filters: [{

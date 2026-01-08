@@ -33,8 +33,6 @@ interface ProjectState {
   
   // UI state
   setActiveLayerId: (id: string | null) => void;
-  autoRefreshPreview: boolean;
-  toggleAutoRefreshPreview: () => void;
   
   // Dirty state
   markDirty: () => void;
@@ -46,7 +44,6 @@ interface ProjectState {
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
   project: createEmptyProject(),
-  autoRefreshPreview: false,
   
   loadProject: (project: FiberPathProject) => {
     set({ project });
@@ -205,12 +202,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   setFilePath: (path: string | null) => {
     set((state) => ({
       project: { ...state.project, filePath: path },
-    }));
-  },
-  
-  toggleAutoRefreshPreview: () => {
-    set((state) => ({
-      autoRefreshPreview: !state.autoRefreshPreview,
     }));
   },
 }));

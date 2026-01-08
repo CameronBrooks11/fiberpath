@@ -14,7 +14,7 @@ export function LayerScrubber({ totalLayers, currentLayer, onLayerChange }: Laye
   return (
     <div className="layer-scrubber">
       <div className="layer-scrubber__label">
-        Layer {currentLayer} of {totalLayers}
+        Preview Layers: {currentLayer === totalLayers ? 'All' : `1-${currentLayer}`} of {totalLayers}
       </div>
       <input
         type="range"
@@ -23,6 +23,7 @@ export function LayerScrubber({ totalLayers, currentLayer, onLayerChange }: Laye
         value={currentLayer}
         onChange={(e) => onLayerChange(parseInt(e.target.value))}
         className="layer-scrubber__slider"
+        title="Adjust visible layers in preview (does not affect export)"
       />
       <div className="layer-scrubber__ticks">
         <span>1</span>

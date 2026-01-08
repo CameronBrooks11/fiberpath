@@ -86,7 +86,7 @@ async fn stream_program(gcode_path: String, port: Option<String>, baud_rate: u32
 }
 
 #[tauri::command]
-async fn plot_definition(definition_json: String, visible_layer_count: usize, output_path: Option<String>) -> Result<PlotPreview, String> {
+async fn plot_definition(definition_json: String, _visible_layer_count: usize, output_path: Option<String>) -> Result<PlotPreview, String> {
     let mut warnings = Vec::new();
     
     // Create temporary .wind file

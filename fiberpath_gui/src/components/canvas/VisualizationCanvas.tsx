@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { Eye } from 'lucide-react';
 import { useProjectStore } from "../../state/projectStore";
 import { LayerScrubber } from "./LayerScrubber";
 import { CanvasControls } from "./CanvasControls";
@@ -7,10 +8,13 @@ import { plotDefinition } from '../../lib/commands';
 import { projectToWindDefinition } from '../../types/converters';
 import { validateWindDefinition } from '../../lib/validation';
 import type { FiberPathProject } from '../../types/project';
-export function VisualizationCanvas() {
+
+interface VisualizationCanvasProps {
+  onExport?: () => void;
+}
+
+export function VisualizationCanvas({ onExport }: VisualizationCanvasProps = {}) {
   const project = useProjectStore((state) => state.project);
-  const autoRefreshPreview = useProjectStore((state) => state.autoRefreshPreview);
-  const toggleAutoRefreshPreview = useProjectStore((state) => state.toggleAutoRefreshPreview);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,36 +28,6 @@ export function VisualizationCanvas() {
   useEffect(() => {
     setVisibleLayerCount(project.layers.length);
   }, [project.layers.length]);
-  
-  // Debounced preview generation (only if auto-refresh enabled)
-  useEffect(() => {
-    if (!hasLayers) {
-      setPreviewImage(null);
-      setError(null);
-      return;
-    }
-    
-    // Only auto-generate if toggle is enabled
-    if (!autoRefreshPreview) {
-      return;
-    }
-    
-    // Clear existing timer
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-    
-    // Set new timer
-    debounceTimer.current = setTimeout(() => {
-      generatePreview();
-    }, 500);
-    
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
-    };
-  }, [project.mandrel, project.tow, project.layers, visibleLayerCount, autoRefreshPreview]);
   
   const generatePreview = async () => {
     // Validate before attempting to plot
@@ -161,29 +135,18 @@ export function VisualizationCanvas() {
           <>
             <div className="visualization-canvas__controls-standalone">
               <button
-                className="canvas-controls__btn"
+                className="canvas-controls__btn canvas-controls__btn--preview"
                 onClick={generatePreview}
                 disabled={isGenerating}
-                title="Refresh preview (F5)"
+                title="Generate preview"
               >
-                ⟳
+                <Eye size={20} />
               </button>
-              <label className="canvas-controls__toggle" title="Auto-refresh preview when parameters change">
-                <input
-                  type="checkbox"
-                  checked={autoRefreshPreview}
-                  onChange={toggleAutoRefreshPreview}
-                />
-                <span>Auto</span>
-              </label>
             </div>
             <div className="visualization-canvas__placeholder">
               <div className="visualization-canvas__placeholder-icon">🔄</div>
               <div className="visualization-canvas__placeholder-text">
-                Click the refresh button to generate preview
-              </div>
-              <div className="visualization-canvas__placeholder-hint">
-                Or enable Auto to refresh automatically
+                Click the preview button to generate visualization
               </div>
             </div>
           </>
@@ -204,9 +167,8 @@ export function VisualizationCanvas() {
                   onZoomOut={() => zoomOut()}
                   onResetZoom={() => resetTransform()}
                   onRefresh={generatePreview}
-                  autoRefresh={autoRefreshPreview}
-                  onToggleAutoRefresh={toggleAutoRefreshPreview}
                   isGenerating={isGenerating}
+                  onExport={onExport}
                 />
                 <TransformComponent
                   wrapperClass="visualization-canvas__transform-wrapper"

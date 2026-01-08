@@ -10,6 +10,7 @@ interface MainLayoutProps {
   statusBar: ReactNode;
   leftPanelCollapsed?: boolean;
   rightPanelCollapsed?: boolean;
+  children?: ReactNode;
 }
 
 export function MainLayout({
@@ -21,6 +22,7 @@ export function MainLayout({
   statusBar,
   leftPanelCollapsed = false,
   rightPanelCollapsed = false,
+  children,
 }: MainLayoutProps) {
   return (
     <div className="main-layout">
@@ -48,6 +50,7 @@ export function MainLayout({
       </div>
       
       <div className="main-layout__statusbar">{statusBar}</div>
+      {children}
     </div>
   );
 }
