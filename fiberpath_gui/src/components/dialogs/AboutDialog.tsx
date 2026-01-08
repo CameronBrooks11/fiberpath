@@ -68,7 +68,7 @@ export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
               <div className="about-icon">🧵</div>
               <div className="about-title">
                 <h3>FiberPath</h3>
-                <p className="about-version">Version 0.2.3</p>
+                <p className="about-version">Version 0.3.0</p>
               </div>
             </div>
           </div>
