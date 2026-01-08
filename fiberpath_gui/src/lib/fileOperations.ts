@@ -1,4 +1,4 @@
-import { open, save } from "@tauri-apps/plugin-dialog";
+import { open, save, ask } from "@tauri-apps/plugin-dialog";
 import { saveWindFile, loadWindFile, validateWindDefinition as validateWindCmd, planWind } from "./commands";
 import { projectToWindDefinition, windDefinitionToProject } from "../types/converters";
 import { addRecentFile, getRecentFiles } from "./recentFiles";
@@ -6,12 +6,12 @@ import type { FiberPathProject } from "../types/project";
 import type { FiberPathWindDefinition } from "../types/wind-schema";
 
 export interface FileOperationCallbacks {
-  project: FiberPathProject;
+  getProject: () => FiberPathProject;  // Changed to function to get current state
   newProject: () => void;
   loadProject: (project: FiberPathProject) => void;
   setFilePath: (path: string | null) => void;
   clearDirty: () => void;
-  activeLayerId: string | null;
+  getActiveLayerId: () => string | null;  // Changed to function
   duplicateLayer: (layerId: string) => void;
   removeLayer: (layerId: string) => void;
   updateRecentFiles?: () => void;
@@ -19,12 +19,12 @@ export interface FileOperationCallbacks {
 
 export function createFileOperations(callbacks: FileOperationCallbacks) {
   const {
-    project,
+    getProject,
     newProject,
     loadProject,
     setFilePath,
     clearDirty,
-    activeLayerId,
+    getActiveLayerId,
     duplicateLayer,
     removeLayer,
     updateRecentFiles,
@@ -32,6 +32,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
 
   const saveToFile = async (filePath: string) => {
     try {
+      const project = getProject();
       const windDef = projectToWindDefinition(project);
       const content = JSON.stringify(windDef, null, 2);
       
@@ -47,8 +48,12 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
   };
 
   const handleNewProject = async () => {
+    const project = getProject();
     if (project.isDirty) {
-      const confirmed = window.confirm('You have unsaved changes. Create new project anyway?');
+      const confirmed = await ask('You have unsaved changes. Create new project anyway?', {
+        title: 'Unsaved Changes',
+        kind: 'warning'
+      });
       if (!confirmed) return false;
     }
     newProject();
@@ -56,8 +61,12 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
   };
 
   const handleOpen = async () => {
+    const project = getProject();
     if (project.isDirty) {
-      const confirmed = window.confirm('You have unsaved changes. Open new file anyway?');
+      const confirmed = await ask('You have unsaved changes. Open new file anyway?', {
+        title: 'Unsaved Changes',
+        kind: 'warning'
+      });
       if (!confirmed) return false;
     }
     
@@ -88,6 +97,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
   };
 
   const handleSave = async () => {
+    const project = getProject();
     if (project.filePath) {
       await saveToFile(project.filePath);
       return true;
@@ -118,6 +128,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
   // This is called after user confirms in the export dialog
   const handleExportGcode = async () => {
     try {
+      const project = getProject();
       const windDef = projectToWindDefinition(project);
       
       const gcodeFilePath = await save({
@@ -144,8 +155,12 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
   };
 
   const handleOpenRecent = async (filePath: string) => {
+    const project = getProject();
     if (project.isDirty) {
-      const confirmed = window.confirm('You have unsaved changes. Open file anyway?');
+      const confirmed = await ask('You have unsaved changes. Open file anyway?', {
+        title: 'Unsaved Changes',
+        kind: 'warning'
+      });
       if (!confirmed) return false;
     }
     
@@ -166,6 +181,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
   };
 
   const handleDuplicateLayer = () => {
+    const activeLayerId = getActiveLayerId();
     if (activeLayerId) {
       duplicateLayer(activeLayerId);
       return true;
@@ -174,6 +190,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
   };
 
   const handleDeleteLayer = () => {
+    const activeLayerId = getActiveLayerId();
     if (activeLayerId) {
       removeLayer(activeLayerId);
       return true;
@@ -183,6 +200,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
 
   const handleValidate = async () => {
     try {
+      const project = getProject();
       const windDef = projectToWindDefinition(project);
       const result = await validateWindCmd(JSON.stringify(windDef));
       

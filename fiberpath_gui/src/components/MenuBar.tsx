@@ -33,12 +33,12 @@ export function MenuBar({
   
   // Create file operation handlers
   const fileOps = createFileOperations({
-    project,
+    getProject: () => useProjectStore.getState().project,
     newProject,
     loadProject,
     setFilePath,
     clearDirty,
-    activeLayerId,
+    getActiveLayerId: () => useProjectStore.getState().project.activeLayerId,
     duplicateLayer,
     removeLayer,
     updateRecentFiles: () => setRecentFiles(getRecentFiles()),

@@ -64,18 +64,17 @@ export default function App() {
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
   
-  // Keyboard shortcuts - create file operations handlers
+  // Create file operations handlers
   const fileOps = createFileOperations({
-    project,
+    getProject: () => useProjectStore.getState().project,
     newProject,
     loadProject,
     setFilePath,
     clearDirty,
-    activeLayerId,
+    getActiveLayerId: () => useProjectStore.getState().project.activeLayerId,
     duplicateLayer,
     removeLayer,
     updateRecentFiles: () => {
-      // Trigger re-render when recent files change
       getRecentFiles();
     },
   });
@@ -212,14 +211,6 @@ export default function App() {
 
   const handleDocsLink = () => {
     void openExternal("https://cameronbrooks11.github.io/fiberpath");
-  };
-  
-  const handleNewProject = () => {
-    if (project.isDirty) {
-      const confirmed = confirm("You have unsaved changes. Create new project anyway?");
-      if (!confirmed) return;
-    }
-    newProject();
   };
 
   return (
