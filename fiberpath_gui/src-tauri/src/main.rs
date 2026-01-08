@@ -222,6 +222,67 @@ async fn validate_wind_definition(definition_json: String) -> Result<Value, Stri
     parse_json_payload(output)
 }
 
+#[derive(serde::Serialize)]
+struct CliHealthResponse {
+    healthy: bool,
+    version: Option<String>,
+    #[serde(rename = "errorMessage")]
+    error_message: Option<String>,
+}
+
+#[tauri::command]
+async fn check_cli_health() -> Result<CliHealthResponse, String> {
+    // Try to run `fiberpath --help` to check if CLI is available
+    // (fiberpath doesn't support --version, so we use --help instead)
+    let output = tauri::async_runtime::spawn_blocking(|| {
+        std::process::Command::new("fiberpath")
+            .arg("--help")
+            .output()
+    })
+    .await
+    .map_err(|err| format!("Failed to spawn health check: {err}"))?;
+    
+    match output {
+        Ok(out) if out.status.success() => {
+            // CLI is available, try to extract version from help text
+            let help_text = String::from_utf8_lossy(&out.stdout);
+            
+            // Try to find version in help text (format: "fiberpath, version X.Y.Z" or similar)
+            let version = help_text.lines()
+                .find(|line| line.contains("version") || line.contains("Version"))
+                .map(|line| {
+                    // Extract version number if found
+                    line.split_whitespace()
+                        .find(|word| word.chars().next().map_or(false, |c| c.is_ascii_digit()))
+                        .unwrap_or("unknown")
+                        .to_string()
+                })
+                .or_else(|| Some("available".to_string()));
+            
+            Ok(CliHealthResponse {
+                healthy: true,
+                version,
+                error_message: None,
+            })
+        }
+        Ok(out) => {
+            let stderr = String::from_utf8_lossy(&out.stderr);
+            Ok(CliHealthResponse {
+                healthy: false,
+                version: None,
+                error_message: Some(format!("CLI returned error: {}", stderr.trim())),
+            })
+        }
+        Err(err) => {
+            Ok(CliHealthResponse {
+                healthy: false,
+                version: None,
+                error_message: Some(format!("CLI not found or not executable: {err}")),
+            })
+        }
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
@@ -234,7 +295,8 @@ fn main() {
             stream_program,
             save_wind_file,
             load_wind_file,
-            validate_wind_definition
+            validate_wind_definition,
+            check_cli_health
         ])
         .run(tauri::generate_context!())
         .expect("error while running FiberPath GUI");

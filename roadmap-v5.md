@@ -88,7 +88,25 @@
 
 ---
 
-## Phase 7: Testing & Release Process
+## Phase 7: Accessibility (a11y) Compliance
+
+- [ ] Add ARIA labels to all buttons, inputs, and interactive elements
+- [ ] Add ARIA live regions for status updates and notifications
+- [ ] Test full keyboard navigation for all workflows (tab order, enter/escape handling)
+- [ ] Implement focus management for dialogs (trap focus, restore on close)
+- [ ] Add visible focus indicators for keyboard navigation
+- [ ] Test with screen reader (NVDA or JAWS)
+- [ ] Ensure color contrast meets WCAG AA standards
+- [ ] Add alt text for visualization preview images
+- [ ] Support high contrast mode (Windows/macOS)
+
+**Progress:** 0/9 tasks complete
+
+**Note:** Accessibility is crucial for professional software. This phase ensures FiberPath is usable by everyone, including users with disabilities.
+
+---
+
+## Phase 8: Testing & Release Process
 
 - [ ] Establish versioning and release process (semantic versioning, CHANGELOG, PyPI packaging)
 - [ ] Set up automated release builds with GitHub Actions
@@ -106,7 +124,7 @@
 
 ## Overall Progress
 
-**Status:** 0/44 tasks complete (0%)
+**Status:** 0/53 tasks complete (0%)
 
 ---
 

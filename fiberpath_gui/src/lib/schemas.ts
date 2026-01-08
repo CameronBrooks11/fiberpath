@@ -48,6 +48,15 @@ export const PlotPreviewPayloadSchema = z.object({
 });
 
 /**
+ * Schema for CliHealthResponse from check_cli_health command
+ */
+export const CliHealthResponseSchema = z.object({
+  healthy: z.boolean(),
+  version: z.string().nullable(),
+  errorMessage: z.string().nullable(),
+});
+
+/**
  * Schema for ValidationResult response from validate_wind_definition command
  */
 export const ValidationResultSchema = z.object({

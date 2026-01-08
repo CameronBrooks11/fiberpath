@@ -1,7 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../state/projectStore";
-
-type CliStatus = "ready" | "checking" | "unavailable";
+import { useCliHealthContext } from "../contexts/CliHealthContext";
 
 export function StatusBar() {
   // Extract only needed fields with shallow comparison
@@ -11,11 +10,11 @@ export function StatusBar() {
     isDirty: state.project.isDirty
   })));
   
+  const { status: cliStatus } = useCliHealthContext();
+  
   const projectName = filePath 
     ? filePath.split(/[\\/]/).pop() || 'Untitled'
     : 'Untitled';
-  
-  const cliStatus = "ready" as CliStatus; // TODO: Implement actual CLI health check
   
   const getCliStatusText = (): string => {
     switch (cliStatus) {
@@ -25,6 +24,8 @@ export function StatusBar() {
         return "CLI: Checking...";
       case "unavailable":
         return "CLI: Unavailable";
+      case "unknown":
+        return "CLI: Unknown";
       default:
         return "CLI: Unknown";
     }
@@ -38,6 +39,8 @@ export function StatusBar() {
         return "var(--text-muted)";
       case "unavailable":
         return "var(--error)";
+      case "unknown":
+        return "var(--text-muted)";
       default:
         return "var(--text-muted)";
     }

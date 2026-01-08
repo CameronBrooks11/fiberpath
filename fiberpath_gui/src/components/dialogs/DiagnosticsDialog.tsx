@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { getRecentFiles } from "../../lib/recentFiles";
 import { useProjectStore } from "../../state/projectStore";
+import { useCliHealthContext } from "../../contexts/CliHealthContext";
 import type { DialogBaseProps } from "../../types/components";
 import "../../styles/dialogs.css";
 
@@ -17,12 +18,6 @@ interface DiagnosticsDialogProps extends DialogBaseProps {
  * Diagnostic information displayed in the dialog.
  */
 interface DiagnosticsData {
-  /** Version string of the CLI backend (TODO: fetch from backend) */
-  cliVersion: string | null;
-  
-  /** Health status of the CLI backend (TODO: implement real health check) */
-  cliHealthy: boolean;
-  
   /** Number of files in the recent files list */
   recentFilesCount: number;
   
@@ -66,9 +61,9 @@ interface DiagnosticsData {
  */
 export function DiagnosticsDialog({ isOpen, onClose }: DiagnosticsDialogProps) {
   const project = useProjectStore(state => state.project);
+  const { version: cliVersion, isHealthy: cliHealthy, errorMessage, lastChecked, refresh } = useCliHealthContext();
+  
   const [diagnostics, setDiagnostics] = useState<DiagnosticsData>({
-    cliVersion: "0.2.3",
-    cliHealthy: true,
     recentFilesCount: 0,
     projectStats: {
       layers: 0,
@@ -83,8 +78,6 @@ export function DiagnosticsDialog({ isOpen, onClose }: DiagnosticsDialogProps) {
       const recentFiles = getRecentFiles();
       
       setDiagnostics({
-        cliVersion: "0.2.3", // TODO: Actually check CLI version
-        cliHealthy: true, // TODO: Actually check CLI health
         recentFilesCount: recentFiles.length,
         projectStats: {
           layers: project.layers.length,
@@ -92,8 +85,11 @@ export function DiagnosticsDialog({ isOpen, onClose }: DiagnosticsDialogProps) {
           isDirty: project.isDirty,
         },
       });
+      
+      // Refresh CLI health when dialog opens
+      refresh();
     }
-  }, [isOpen, project]);
+  }, [isOpen, project, refresh]);
 
   if (!isOpen) return null;
 
@@ -117,17 +113,36 @@ export function DiagnosticsDialog({ isOpen, onClose }: DiagnosticsDialogProps) {
             <div className="diagnostics-grid">
               <div className="diagnostics-item">
                 <span className="diagnostics-label">Health:</span>
-                <span className={`diagnostics-value ${diagnostics.cliHealthy ? 'status-healthy' : 'status-error'}`}>
-                  {diagnostics.cliHealthy ? '✓ Healthy' : '✗ Unavailable'}
+                <span className={`diagnostics-value ${cliHealthy ? 'status-healthy' : 'status-error'}`}>
+                  {cliHealthy ? '✓ Healthy' : '✗ Unavailable'}
                 </span>
               </div>
               <div className="diagnostics-item">
                 <span className="diagnostics-label">Version:</span>
                 <span className="diagnostics-value">
-                  {diagnostics.cliVersion || 'Unknown'}
+                  {cliVersion || 'Unknown'}
                 </span>
               </div>
+              {!cliHealthy && errorMessage && (
+                <div className="diagnostics-item diagnostics-item--full-width">
+                  <span className="diagnostics-label">Error:</span>
+                  <span className="diagnostics-value diagnostics-value--error">
+                    {errorMessage}
+                  </span>
+                </div>
+              )}
+              {lastChecked && (
+                <div className="diagnostics-item">
+                  <span className="diagnostics-label">Last Checked:</span>
+                  <span className="diagnostics-value">
+                    {lastChecked.toLocaleTimeString()}
+                  </span>
+                </div>
+              )}
             </div>
+            <button className="btn btn--secondary" onClick={refresh} style={{ marginTop: '0.5rem' }}>
+              Refresh CLI Status
+            </button>
           </div>
 
           <div className="diagnostics-section">

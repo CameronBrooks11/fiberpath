@@ -4,6 +4,7 @@ import { useShallow } from "zustand/react/shallow";
 import { MainLayout } from "./layouts/MainLayout";
 import { MenuBar } from "./components/MenuBar";
 import { StatusBar } from "./components/StatusBar";
+import { CliHealthWarning } from "./components/CliHealthWarning";
 import { LeftPanel } from "./components/panels/LeftPanel";
 import { RightPanel } from "./components/panels/RightPanel";
 import { BottomPanel } from "./components/panels/BottomPanel";
@@ -19,6 +20,7 @@ import { SkipLayerEditor } from "./components/editors/SkipLayerEditor";
 import { ExportConfirmationDialog } from "./components/dialogs/ExportConfirmationDialog";
 import { useProjectStore } from "./state/projectStore";
 import { useErrorNotification } from "./contexts/ErrorNotificationContext";
+import { useCliHealthContext } from "./contexts/CliHealthContext";
 import { createFileOperations } from "./lib/fileOperations";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { getRecentFiles } from "./lib/recentFiles";
@@ -151,6 +153,7 @@ export default function App() {
       leftPanelCollapsed={leftPanelCollapsed}
       rightPanelCollapsed={rightPanelCollapsed}
     >
+      <CliHealthWarning />
       {showExportDialog && (
         <ExportConfirmationDialog
           project={project}
