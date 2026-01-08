@@ -15,6 +15,9 @@ import { CenterCanvas } from "./components/canvas/CenterCanvas";
 import { MandrelForm } from "./components/forms/MandrelForm";
 import { TowForm } from "./components/forms/TowForm";
 import { LayerStack } from "./components/layers/LayerStack";
+import { HoopLayerEditor } from "./components/editors/HoopLayerEditor";
+import { HelicalLayerEditor } from "./components/editors/HelicalLayerEditor";
+import { SkipLayerEditor } from "./components/editors/SkipLayerEditor";
 import { useProjectStore } from "./state/projectStore";
 import {
   planWind,
@@ -40,6 +43,11 @@ export default function App() {
   // Project store
   const project = useProjectStore((state) => state.project);
   const newProject = useProjectStore((state) => state.newProject);
+  const activeLayerId = useProjectStore((state) => state.project.activeLayerId);
+  const layers = useProjectStore((state) => state.project.layers);
+  
+  // Find active layer
+  const activeLayer = activeLayerId ? layers.find(l => l.id === activeLayerId) : null;
   
   // Layout state
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
@@ -207,11 +215,19 @@ export default function App() {
       }
       rightPanel={
         <RightPanel>
-          <div className="panel-placeholder">
-            <p className="panel-placeholder-text">
-              Layer properties editor will appear here in Phase 5.
-            </p>
-          </div>
+          {!activeLayer ? (
+            <div className="panel-placeholder">
+              <p className="panel-placeholder-text">
+                Select a layer to edit its properties
+              </p>
+            </div>
+          ) : activeLayer.type === 'hoop' ? (
+            <HoopLayerEditor layerId={activeLayer.id} />
+          ) : activeLayer.type === 'helical' ? (
+            <HelicalLayerEditor layerId={activeLayer.id} />
+          ) : activeLayer.type === 'skip' ? (
+            <SkipLayerEditor layerId={activeLayer.id} />
+          ) : null}
         </RightPanel>
       }
       bottomPanel={
