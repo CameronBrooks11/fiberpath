@@ -55,7 +55,7 @@ All workflows use reusable composite actions (`.github/actions/`) for setup step
 
 **Branch Triggers:**
 
-- CI workflows (backend-ci, gui-ci, docs-ci) run on `main`, `newgui`, and all PRs
+- CI workflows (backend-ci, gui-ci, docs-ci) run on `main`, `tabsgui`, and all PRs
 - Deployment (docs-deploy) runs only on `main` to prevent accidental deployments
 - Packaging and publishing run on releases or manual dispatch
 

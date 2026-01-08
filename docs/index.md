@@ -1,5 +1,15 @@
 # FiberPath Documentation
 
+## Download & Installation
+
+**Latest Release:** [v0.3.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+
+- **Desktop GUI** – Download installers for Windows (.msi/.exe), macOS (.dmg), or Linux (.deb/.AppImage)
+- **Python Package** – `pip install fiberpath` or `uv pip install fiberpath`
+- **Source Code** – Clone the repository and install with `uv pip install .[dev,cli,api]`
+
+---
+
 This folder hosts the primary knowledge base for the project. High-level content
 is split into user-facing guides, architectural notes, API references, and developer workflows.
 

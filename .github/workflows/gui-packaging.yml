@@ -2,7 +2,7 @@ name: GUI Packaging
 
 on:
   push:
-    branches: [main, newgui]
+    branches: [main, tabsgui]
     paths:
       - "fiberpath_gui/**"
       - ".github/workflows/gui-packaging.yml"

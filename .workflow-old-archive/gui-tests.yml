@@ -2,12 +2,12 @@ name: FiberPath GUI Tests
 
 on:
   push:
-    branches: [main, newgui]
+    branches: [main, tabsgui]
     paths:
       - 'fiberpath_gui/**'
       - '.github/workflows/gui-tests.yml'
   pull_request:
-    branches: [main, newgui]
+    branches: [main, tabsgui]
     paths:
       - 'fiberpath_gui/**'
 
