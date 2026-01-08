@@ -1,10 +1,13 @@
 import { invoke } from "@tauri-apps/api/core";
 
+export type AxisFormat = "xyz" | "xab";
+
 export interface PlanSummary {
   output: string;
   commands: number;
   layers?: number;
   metadata?: Record<string, unknown>;
+  axisFormat?: string;
 }
 
 export interface SimulationSummary {
@@ -29,8 +32,8 @@ export interface PlotPreviewPayload {
   imageBase64: string;
 }
 
-export async function planWind(inputPath: string, outputPath?: string) {
-  return invoke<PlanSummary>("plan_wind", { inputPath, outputPath });
+export async function planWind(inputPath: string, outputPath?: string, axisFormat?: AxisFormat) {
+  return invoke<PlanSummary>("plan_wind", { inputPath, outputPath, axisFormat });
 }
 
 export async function simulateProgram(gcodePath: string) {

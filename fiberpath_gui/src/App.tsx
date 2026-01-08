@@ -9,6 +9,7 @@ import {
   previewPlot,
   simulateProgram,
   streamProgram,
+  type AxisFormat,
   type PlanSummary,
   type PlotPreviewPayload,
   type SimulationSummary,
@@ -26,6 +27,7 @@ const idleState = { status: "idle" } as const;
 export default function App() {
   const [planInput, setPlanInput] = useState("");
   const [planOutput, setPlanOutput] = useState("");
+  const [axisFormat, setAxisFormat] = useState<AxisFormat>("xab");
   const [planResult, setPlanResult] = useState<PanelState<PlanSummary>>(idleState);
 
   const [plotInput, setPlotInput] = useState("");
@@ -49,7 +51,7 @@ export default function App() {
     }
     setPlanResult({ status: "running" });
     try {
-      const summary = await planWind(planInput, planOutput || undefined);
+      const summary = await planWind(planInput, planOutput || undefined, axisFormat);
       setPlanResult({ status: "success", data: summary });
     } catch (error) {
       setPlanResult({ status: "error", error: extractError(error) });
@@ -149,12 +151,24 @@ export default function App() {
                   filterExtensions={["gcode"]}
                 />
               </fieldset>
+              <fieldset>
+                <label>
+                  <span>Axis format</span>
+                  <select value={axisFormat} onChange={(e) => setAxisFormat(e.target.value as AxisFormat)}>
+                    <option value="xab">XAB (Standard rotational)</option>
+                    <option value="xyz">XYZ (Legacy compatibility)</option>
+                  </select>
+                </label>
+                <small style={{ display: "block", marginTop: "0.25rem", color: "var(--text-secondary, #999)" }}>
+                  XAB: A=mandrel rotation (deg), B=delivery rotation (deg). XYZ: Y/Z as linear axes for Cyclone compatibility.
+                </small>
+              </fieldset>
               <button className="primary" type="submit" disabled={planResult.status === "running"}>
                 {planResult.status === "running" ? "Planning…" : "Plan wind"}
               </button>
             </form>
             <StatusText state={planResult.status} message={planResult.error} />
-            {planResult.data ? <ResultCard title="Summary">{renderJson(planResult.data)}</ResultCard> : null}
+            {planResult.data ? <ResultCard title="Summary">{renderPlanSummary(planResult.data)}</ResultCard> : null}
           </section>
 
           <section className="panel">
@@ -249,6 +263,19 @@ export default function App() {
           CLI operations run in the existing Python environment. Ensure `fiberpath` is on PATH before launching the GUI.
         </small>
       </footer>
+    </div>
+  );
+}
+
+function renderPlanSummary(data: PlanSummary) {
+  const formatLabel = data.axisFormat === "xab" ? "XAB (Rotational)" : data.axisFormat === "xyz" ? "XYZ (Legacy)" : data.axisFormat || "XAB (Rotational)";
+  
+  return (
+    <div>
+      <div style={{ marginBottom: "0.75rem", padding: "0.5rem", background: "var(--bg-card, #1a1a1c)", borderRadius: "4px", borderLeft: "3px solid var(--primary, #12a89a)" }}>
+        <strong style={{ color: "var(--primary, #12a89a)" }}>Axis Format:</strong> {formatLabel}
+      </div>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 }

@@ -18,9 +18,16 @@ enum FiberpathError {
 }
 
 #[tauri::command]
-async fn plan_wind(input_path: String, output_path: Option<String>) -> Result<Value, String> {
+async fn plan_wind(input_path: String, output_path: Option<String>, axis_format: Option<String>) -> Result<Value, String> {
     let output_file = output_path.unwrap_or_else(|| temp_path("gcode"));
-    let args = vec!["plan".to_string(), input_path, "--output".into(), output_file.clone(), "--json".into()];
+    let mut args = vec!["plan".to_string(), input_path, "--output".into(), output_file.clone(), "--json".into()];
+    
+    // Add axis format flag if specified
+    if let Some(format) = axis_format {
+        args.push("--axis-format".into());
+        args.push(format);
+    }
+    
     let output = exec_fiberpath(args).await.map_err(|err| err.to_string())?;
     parse_json_payload(output).map(|mut payload| {
         if let Value::Object(ref mut obj) = payload {
