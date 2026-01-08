@@ -1,16 +1,19 @@
+import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../state/projectStore";
 
 type CliStatus = "ready" | "checking" | "unavailable";
 
 export function StatusBar() {
-  const project = useProjectStore((state) => state.project);
+  // Extract only needed fields with shallow comparison
+  const { filePath, layerCount, isDirty } = useProjectStore(useShallow((state) => ({
+    filePath: state.project.filePath,
+    layerCount: state.project.layers.length,
+    isDirty: state.project.isDirty
+  })));
   
-  const projectName = project.filePath 
-    ? project.filePath.split(/[\\/]/).pop() || 'Untitled'
+  const projectName = filePath 
+    ? filePath.split(/[\\/]/).pop() || 'Untitled'
     : 'Untitled';
-  
-  const layerCount = project.layers.length;
-  const isDirty = project.isDirty;
   
   const cliStatus = "ready" as CliStatus; // TODO: Implement actual CLI health check
   

@@ -34,7 +34,7 @@ export function addRecentFile(path: string): void {
     
     localStorage.setItem(RECENT_FILES_KEY, JSON.stringify(updated));
   } catch (error) {
-    console.error('Failed to save recent file:', error);
+    // Silently fail - localStorage may be unavailable
   }
 }
 
@@ -44,7 +44,7 @@ export function removeRecentFile(path: string): void {
     const updated = recent.filter(f => f.path !== path);
     localStorage.setItem(RECENT_FILES_KEY, JSON.stringify(updated));
   } catch (error) {
-    console.error('Failed to remove recent file:', error);
+    // Silently fail - localStorage may be unavailable
   }
 }
 
@@ -52,7 +52,7 @@ export function clearRecentFiles(): void {
   try {
     localStorage.removeItem(RECENT_FILES_KEY);
   } catch (error) {
-    console.error('Failed to clear recent files:', error);
+    // Silently fail - localStorage may be unavailable
   }
 }
 

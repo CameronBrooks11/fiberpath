@@ -2,6 +2,7 @@ import { createPortal } from "react-dom";
 import { useState, useEffect } from "react";
 import { validateWindDefinition } from "../../lib/commands";
 import { projectToWindDefinition } from "../../types/converters";
+import { useErrorNotification } from "../../contexts/ErrorNotificationContext";
 import type { FiberPathProject } from "../../types/project";
 
 interface ExportConfirmationDialogProps {
@@ -13,15 +14,14 @@ interface ExportConfirmationDialogProps {
 export function ExportConfirmationDialog({ project, onConfirm, onCancel }: ExportConfirmationDialogProps) {
   const [validationStatus, setValidationStatus] = useState<'checking' | 'valid' | 'invalid'>('checking');
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const { showError } = useErrorNotification();
   
   useEffect(() => {
     const validate = async () => {
       try {
         const windDef = projectToWindDefinition(project);
-        console.log('Validating wind definition:', windDef);
         
         const result = await validateWindDefinition(JSON.stringify(windDef));
-        console.log('Validation result:', result);
         
         // Check for both possible response formats
         const isValid = result.valid === true || result.status === 'ok';
@@ -31,19 +31,18 @@ export function ExportConfirmationDialog({ project, onConfirm, onCancel }: Expor
         } else {
           setValidationStatus('invalid');
           const errors = result.errors?.map((e: { field: string; message: string }) => `${e.field}: ${e.message}`) || ['Validation failed'];
-          console.error('Validation errors:', errors);
           setValidationErrors(errors);
         }
       } catch (error) {
-        console.error('Validation exception:', error);
         setValidationStatus('invalid');
         const errorMessage = error instanceof Error ? error.message : String(error);
         setValidationErrors([`Validation error: ${errorMessage}`]);
+        showError(`Validation failed: ${errorMessage}`);
       }
     };
     
     validate();
-  }, [project]);
+  }, [project, showError]);
   
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {

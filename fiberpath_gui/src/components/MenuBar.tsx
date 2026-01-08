@@ -1,6 +1,8 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../state/projectStore";
+import { useErrorNotification } from "../contexts/ErrorNotificationContext";
 import { getRecentFiles, formatRecentFileName, formatRecentFilePath } from "../lib/recentFiles";
 import { createFileOperations } from "../lib/fileOperations";
 import { AboutDialog } from "./dialogs/AboutDialog";
@@ -22,17 +24,32 @@ export function MenuBar({
   const [showDiagnosticsDialog, setShowDiagnosticsDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
   
-  const project = useProjectStore(state => state.project);
-  const newProject = useProjectStore(state => state.newProject);
-  const loadProject = useProjectStore(state => state.loadProject);
-  const setFilePath = useProjectStore(state => state.setFilePath);
-  const clearDirty = useProjectStore(state => state.clearDirty);
-  const activeLayerId = useProjectStore(state => state.project.activeLayerId);
-  const duplicateLayer = useProjectStore(state => state.duplicateLayer);
-  const removeLayer = useProjectStore(state => state.removeLayer);
+  // Use shallow comparison for multiple selectors
+  const {
+    project,
+    activeLayerId,
+    newProject,
+    loadProject,
+    setFilePath,
+    clearDirty,
+    duplicateLayer,
+    removeLayer
+  } = useProjectStore(useShallow((state) => ({
+    project: state.project,
+    activeLayerId: state.project.activeLayerId,
+    newProject: state.newProject,
+    loadProject: state.loadProject,
+    setFilePath: state.setFilePath,
+    clearDirty: state.clearDirty,
+    duplicateLayer: state.duplicateLayer,
+    removeLayer: state.removeLayer
+  })));
   
-  // Create file operation handlers
-  const fileOps = createFileOperations({
+  // Error notifications
+  const { showError, showInfo } = useErrorNotification();
+  
+  // Create file operation handlers (memoized to prevent recreation on every render)
+  const fileOps = useMemo(() => createFileOperations({
     getProject: () => useProjectStore.getState().project,
     newProject,
     loadProject,
@@ -42,7 +59,9 @@ export function MenuBar({
     duplicateLayer,
     removeLayer,
     updateRecentFiles: () => setRecentFiles(getRecentFiles()),
-  });
+    showError,
+    showInfo,
+  }), [newProject, loadProject, setFilePath, clearDirty, duplicateLayer, removeLayer, showError, showInfo]);
   
   const handleDocsLink = () => {
     void openExternal("https://cameronbrooks11.github.io/fiberpath");

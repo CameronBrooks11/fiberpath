@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { withRetry } from "./retry";
 
 export type AxisFormat = "xyz" | "xab";
 
@@ -33,19 +34,28 @@ export interface PlotPreviewPayload {
   warnings: string[];
 }
 
-export async function planWind(inputPath: string, outputPath?: string, axisFormat?: AxisFormat) {
-  return invoke<PlanSummary>("plan_wind", { inputPath, outputPath, axisFormat });
-}
+// Core commands with retry logic for transient failures
+export const planWind = withRetry(
+  async (inputPath: string, outputPath?: string, axisFormat?: AxisFormat) => {
+    return invoke<PlanSummary>("plan_wind", { inputPath, outputPath, axisFormat });
+  },
+  { maxAttempts: 2 } // Lower retry for planning - it's usually not transient
+);
 
-export async function simulateProgram(gcodePath: string) {
-  return invoke<SimulationSummary>("simulate_program", { gcodePath });
-}
+export const simulateProgram = withRetry(
+  async (gcodePath: string) => {
+    return invoke<SimulationSummary>("simulate_program", { gcodePath });
+  }
+);
 
-export async function previewPlot(gcodePath: string, scale: number, outputPath?: string) {
-  return invoke<PlotPreviewPayload>("plot_preview", { gcodePath, scale, outputPath });
-}
+export const previewPlot = withRetry(
+  async (gcodePath: string, scale: number, outputPath?: string) => {
+    return invoke<PlotPreviewPayload>("plot_preview", { gcodePath, scale, outputPath });
+  }
+);
 
 export async function streamProgram(gcodePath: string, options: { port?: string; baudRate: number; dryRun: boolean }) {
+  // Don't retry streaming - it's a deliberate serial operation
   return invoke<StreamSummary>("stream_program", {
     gcodePath,
     port: options.port,
@@ -54,17 +64,24 @@ export async function streamProgram(gcodePath: string, options: { port?: string;
   });
 }
 
-export async function plotDefinition(definitionJson: string, visibleLayerCount: number, outputPath?: string) {
-  return invoke<PlotPreviewPayload>("plot_definition", { definitionJson, visibleLayerCount, outputPath });
-}
+export const plotDefinition = withRetry(
+  async (definitionJson: string, visibleLayerCount: number, outputPath?: string) => {
+    return invoke<PlotPreviewPayload>("plot_definition", { definitionJson, visibleLayerCount, outputPath });
+  }
+);
 
-export async function saveWindFile(path: string, content: string) {
-  return invoke<void>("save_wind_file", { path, content });
-}
+// File operations with retry logic
+export const saveWindFile = withRetry(
+  async (path: string, content: string) => {
+    return invoke<void>("save_wind_file", { path, content });
+  }
+);
 
-export async function loadWindFile(path: string) {
-  return invoke<string>("load_wind_file", { path });
-}
+export const loadWindFile = withRetry(
+  async (path: string) => {
+    return invoke<string>("load_wind_file", { path });
+  }
+);
 
 export interface ValidationResult {
   valid?: boolean;
@@ -73,6 +90,9 @@ export interface ValidationResult {
   errors?: Array<{ field: string; message: string }>;
 }
 
-export async function validateWindDefinition(definitionJson: string) {
-  return invoke<ValidationResult>("validate_wind_definition", { definitionJson });
-}
+export const validateWindDefinition = withRetry(
+  async (definitionJson: string) => {
+    return invoke<ValidationResult>("validate_wind_definition", { definitionJson });
+  },
+  { maxAttempts: 2 } // Lower retry for validation - errors are usually not transient
+);

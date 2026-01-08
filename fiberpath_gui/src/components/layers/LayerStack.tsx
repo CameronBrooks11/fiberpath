@@ -1,17 +1,29 @@
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../../state/projectStore";
 import { LayerType } from "../../types/project";
 import { LayerRow } from "./LayerRow";
 
 export function LayerStack() {
-  const layers = useProjectStore((state) => state.project.layers);
-  const activeLayerId = useProjectStore((state) => state.project.activeLayerId);
-  const addLayer = useProjectStore((state) => state.addLayer);
-  const removeLayer = useProjectStore((state) => state.removeLayer);
-  const duplicateLayer = useProjectStore((state) => state.duplicateLayer);
-  const reorderLayers = useProjectStore((state) => state.reorderLayers);
-  const setActiveLayerId = useProjectStore((state) => state.setActiveLayerId);
+  // Use shallow comparison for multiple selectors to prevent unnecessary re-renders
+  const {
+    layers,
+    activeLayerId,
+    addLayer,
+    removeLayer,
+    duplicateLayer,
+    reorderLayers,
+    setActiveLayerId
+  } = useProjectStore(useShallow((state) => ({
+    layers: state.project.layers,
+    activeLayerId: state.project.activeLayerId,
+    addLayer: state.addLayer,
+    removeLayer: state.removeLayer,
+    duplicateLayer: state.duplicateLayer,
+    reorderLayers: state.reorderLayers,
+    setActiveLayerId: state.setActiveLayerId
+  })));
   
   const [showTypePicker, setShowTypePicker] = useState(false);
 

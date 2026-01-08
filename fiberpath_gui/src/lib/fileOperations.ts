@@ -15,6 +15,8 @@ export interface FileOperationCallbacks {
   duplicateLayer: (layerId: string) => void;
   removeLayer: (layerId: string) => void;
   updateRecentFiles?: () => void;
+  showError?: (message: string) => void;
+  showInfo?: (message: string) => void;
 }
 
 export function createFileOperations(callbacks: FileOperationCallbacks) {
@@ -28,6 +30,8 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
     duplicateLayer,
     removeLayer,
     updateRecentFiles,
+    showError,
+    showInfo,
   } = callbacks;
 
   const saveToFile = async (filePath: string) => {
@@ -42,7 +46,8 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       addRecentFile(filePath);
       updateRecentFiles?.();
     } catch (error) {
-      console.error('Failed to save file:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      showError?.(`Failed to save file: ${message}`);
       throw error;
     }
   };
@@ -91,7 +96,8 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       updateRecentFiles?.();
       return true;
     } catch (error) {
-      console.error('Failed to open file:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      showError?.(`Failed to open file: ${message}`);
       return false;
     }
   };
@@ -146,10 +152,11 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       await saveWindFile(tempWindPath, content);
       await planWind(tempWindPath, gcodeFilePath, project.axisFormat);
       
-      console.log(`G-code exported to: ${gcodeFilePath}`);
+      showInfo?.(`G-code exported to: ${gcodeFilePath}`);
       return true;
     } catch (error) {
-      console.error('Failed to export G-code:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      showError?.(`Failed to export G-code: ${message}`);
       return false;
     }
   };
@@ -175,7 +182,8 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       updateRecentFiles?.();
       return true;
     } catch (error) {
-      console.error('Failed to open file:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      showError?.(`Failed to open file: ${message}`);
       return false;
     }
   };
@@ -204,16 +212,20 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       const windDef = projectToWindDefinition(project);
       const result = await validateWindCmd(JSON.stringify(windDef));
       
-      if (result.valid) {
-        console.log('✓ Definition is valid');
+      // Check for both possible response formats (status: "ok" or valid: true)
+      const isValid = result.status === 'ok' || result.valid === true;
+      
+      if (isValid) {
+        showInfo?.('✓ Definition is valid');
         return true;
       } else {
         const errors = result.errors?.map(e => `• ${e.field}: ${e.message}`).join('\n') || 'Unknown errors';
-        console.error('Validation failed:', errors);
+        showError?.(`Validation failed:\n${errors}`);
         return false;
       }
     } catch (error) {
-      console.error('Validation error:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      showError?.(`Validation error: ${message}`);
       return false;
     }
   };

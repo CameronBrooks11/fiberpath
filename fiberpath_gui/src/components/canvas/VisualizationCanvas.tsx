@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Eye } from 'lucide-react';
 import { useProjectStore } from "../../state/projectStore";
+import { useErrorNotification } from "../../contexts/ErrorNotificationContext";
 import { LayerScrubber } from "./LayerScrubber";
 import { CanvasControls } from "./CanvasControls";
 import { plotDefinition } from '../../lib/commands';
@@ -15,6 +16,7 @@ interface VisualizationCanvasProps {
 
 export function VisualizationCanvas({ onExport }: VisualizationCanvasProps = {}) {
   const project = useProjectStore((state) => state.project);
+  const { showError } = useErrorNotification();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -81,8 +83,9 @@ export function VisualizationCanvas({ onExport }: VisualizationCanvasProps = {})
       const dataUri = `data:image/png;base64,${result.imageBase64}`;
       setPreviewImage(dataUri);
     } catch (err) {
-      console.error('Failed to generate preview:', err);
-      setError(err instanceof Error ? err.message : String(err));
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
+      showError(`Failed to generate preview: ${errorMessage}`);
     } finally {
       setIsGenerating(false);
     }
