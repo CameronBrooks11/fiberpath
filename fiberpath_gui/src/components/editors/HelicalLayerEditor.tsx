@@ -1,5 +1,6 @@
 import { useState, FocusEvent } from "react";
 import { useProjectStore } from "../../state/projectStore";
+import type { HelicalLayer } from "../../types/project";
 
 interface HelicalLayerEditorProps {
   layerId: string;
@@ -42,10 +43,20 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
     return undefined;
   };
   
-  const handleChange = (field: keyof typeof layer.helical, value: number | boolean) => {
+  const handleChange = (field: keyof HelicalLayer, value: number | boolean) => {
+    const currentHelical = layer.helical || {
+      wind_angle: 45,
+      pattern_number: 3,
+      skip_index: 2,
+      lock_degrees: 5,
+      lead_in_mm: 10,
+      lead_out_degrees: 5,
+      skip_initial_near_lock: false
+    };
+    
     updateLayer(layerId, {
       helical: {
-        ...layer.helical,
+        ...currentHelical,
         [field]: value,
       },
     });

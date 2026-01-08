@@ -193,11 +193,49 @@ fn format_cli_error(output: &Output) -> String {
     )
 }
 
+#[tauri::command]
+async fn save_wind_file(path: String, content: String) -> Result<(), String> {
+    fs::write(&path, content)
+        .map_err(|err| FiberpathError::File(format!("Failed to write .wind file: {err}")).to_string())
+}
+
+#[tauri::command]
+async fn load_wind_file(path: String) -> Result<String, String> {
+    fs::read_to_string(&path)
+        .map_err(|err| FiberpathError::File(format!("Failed to read .wind file: {err}")).to_string())
+}
+
+#[tauri::command]
+async fn validate_wind_definition(definition_json: String) -> Result<Value, String> {
+    // Create temporary .wind file
+    let wind_file = temp_path("wind");
+    fs::write(&wind_file, &definition_json)
+        .map_err(|err| FiberpathError::File(format!("Failed to write temp .wind file: {err}")).to_string())?;
+    
+    // Run validate command
+    let args = vec!["validate".into(), wind_file.clone(), "--json".into()];
+    let output = exec_fiberpath(args).await.map_err(|err| err.to_string())?;
+    
+    // Clean up temp file
+    let _ = fs::remove_file(&wind_file);
+    
+    parse_json_payload(output)
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![plan_wind, simulate_program, plot_preview, plot_definition, stream_program])
+        .invoke_handler(tauri::generate_handler![
+            plan_wind,
+            simulate_program,
+            plot_preview,
+            plot_definition,
+            stream_program,
+            save_wind_file,
+            load_wind_file,
+            validate_wind_definition
+        ])
         .run(tauri::generate_context!())
         .expect("error while running FiberPath GUI");
 }

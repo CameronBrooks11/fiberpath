@@ -299,6 +299,32 @@
   color: var(--primary-soft);
 }
 
+.menubar__submenu-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1rem 0.3rem;
+}
+
+.menubar__recent-file {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 0.25rem !important;
+  padding: 0.6rem 1rem !important;
+}
+
+.menubar__recent-name {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.menubar__recent-path {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
 /* StatusBar Styles */
 .statusbar {
   display: flex;

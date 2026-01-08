@@ -1,5 +1,7 @@
 import { useProjectStore } from "../state/projectStore";
 
+type CliStatus = "ready" | "checking" | "unavailable";
+
 export function StatusBar() {
   const project = useProjectStore((state) => state.project);
   
@@ -10,9 +12,9 @@ export function StatusBar() {
   const layerCount = project.layers.length;
   const isDirty = project.isDirty;
   
-  const cliStatus = "ready"; // TODO: Implement actual CLI health check
+  const cliStatus = "ready" as CliStatus; // TODO: Implement actual CLI health check
   
-  const getCliStatusText = () => {
+  const getCliStatusText = (): string => {
     switch (cliStatus) {
       case "ready":
         return "CLI: Ready";
@@ -20,10 +22,12 @@ export function StatusBar() {
         return "CLI: Checking...";
       case "unavailable":
         return "CLI: Unavailable";
+      default:
+        return "CLI: Unknown";
     }
   };
 
-  const getCliStatusColor = () => {
+  const getCliStatusColor = (): string => {
     switch (cliStatus) {
       case "ready":
         return "var(--success)";
@@ -31,6 +35,8 @@ export function StatusBar() {
         return "var(--text-muted)";
       case "unavailable":
         return "var(--error)";
+      default:
+        return "var(--text-muted)";
     }
   };
 

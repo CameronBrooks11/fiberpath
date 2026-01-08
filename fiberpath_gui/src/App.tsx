@@ -190,7 +190,6 @@ export default function App() {
     <MainLayout
       menuBar={
         <MenuBar
-          onNewProject={handleNewProject}
           onToggleLeftPanel={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
           onToggleRightPanel={() => setRightPanelCollapsed(!rightPanelCollapsed)}
         />

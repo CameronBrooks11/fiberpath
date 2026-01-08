@@ -57,3 +57,20 @@ export async function streamProgram(gcodePath: string, options: { port?: string;
 export async function plotDefinition(definitionJson: string, visibleLayerCount: number, outputPath?: string) {
   return invoke<PlotPreviewPayload>("plot_definition", { definitionJson, visibleLayerCount, outputPath });
 }
+
+export async function saveWindFile(path: string, content: string) {
+  return invoke<void>("save_wind_file", { path, content });
+}
+
+export async function loadWindFile(path: string) {
+  return invoke<string>("load_wind_file", { path });
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  errors?: Array<{ field: string; message: string }>;
+}
+
+export async function validateWindDefinition(definitionJson: string) {
+  return invoke<ValidationResult>("validate_wind_definition", { definitionJson });
+}
