@@ -15,6 +15,7 @@ import { CenterCanvas } from "./components/canvas/CenterCanvas";
 import { VisualizationCanvas } from "./components/canvas/VisualizationCanvas";
 import { MandrelForm } from "./components/forms/MandrelForm";
 import { TowForm } from "./components/forms/TowForm";
+import { MachineSettingsForm } from "./components/forms/MachineSettingsForm";
 import { LayerStack } from "./components/layers/LayerStack";
 import { HoopLayerEditor } from "./components/editors/HoopLayerEditor";
 import { HelicalLayerEditor } from "./components/editors/HelicalLayerEditor";
@@ -25,12 +26,14 @@ import {
   previewPlot,
   simulateProgram,
   streamProgram,
-  type AxisFormat,
   type PlanSummary,
   type PlotPreviewPayload,
   type SimulationSummary,
   type StreamSummary,
 } from "./lib/commands";
+import { createFileOperations } from "./lib/fileOperations";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+import { getRecentFiles } from "./lib/recentFiles";
 
 interface PanelState<T> {
   status: "idle" | "running" | "success" | "error";
@@ -44,8 +47,13 @@ export default function App() {
   // Project store
   const project = useProjectStore((state) => state.project);
   const newProject = useProjectStore((state) => state.newProject);
+  const loadProject = useProjectStore((state) => state.loadProject);
+  const setFilePath = useProjectStore((state) => state.setFilePath);
+  const clearDirty = useProjectStore((state) => state.clearDirty);
   const activeLayerId = useProjectStore((state) => state.project.activeLayerId);
   const layers = useProjectStore((state) => state.project.layers);
+  const duplicateLayer = useProjectStore((state) => state.duplicateLayer);
+  const removeLayer = useProjectStore((state) => state.removeLayer);
   
   // Find active layer
   const activeLayer = activeLayerId ? layers.find(l => l.id === activeLayerId) : null;
@@ -53,6 +61,33 @@ export default function App() {
   // Layout state
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
+  
+  // Keyboard shortcuts - create file operations handlers
+  const fileOps = createFileOperations({
+    project,
+    newProject,
+    loadProject,
+    setFilePath,
+    clearDirty,
+    activeLayerId,
+    duplicateLayer,
+    removeLayer,
+    updateRecentFiles: () => {
+      // Trigger re-render when recent files change
+      getRecentFiles();
+    },
+  });
+  
+  // Wire up keyboard shortcuts
+  useKeyboardShortcuts({
+    onNew: fileOps.handleNewProject,
+    onOpen: fileOps.handleOpen,
+    onSave: fileOps.handleSave,
+    onSaveAs: fileOps.handleSaveAs,
+    onExport: fileOps.handleExportGcode,
+    onDuplicate: fileOps.handleDuplicateLayer,
+    onDelete: fileOps.handleDeleteLayer,
+  });
   
   // Unsaved changes prompt
   useEffect(() => {
@@ -72,7 +107,6 @@ export default function App() {
   const [planOutput, setPlanOutput] = useState("");
   const [planOutputDir, setPlanOutputDir] = useState("");
   const [planOutputName, setPlanOutputName] = useState("");
-  const [axisFormat, setAxisFormat] = useState<AxisFormat>("xab");
   const [planResult, setPlanResult] = useState<PanelState<PlanSummary>>(idleState);
 
   const [plotInput, setPlotInput] = useState("");
@@ -108,7 +142,7 @@ export default function App() {
         fullOutputPath = await join(planOutputDir, filename);
       }
       
-      const summary = await planWind(planInput, fullOutputPath, axisFormat);
+      const summary = await planWind(planInput, fullOutputPath, project.axisFormat);
       setPlanResult({ status: "success", data: summary });
     } catch (error) {
       setPlanResult({ status: "error", error: extractError(error) });
@@ -199,6 +233,9 @@ export default function App() {
           <MandrelForm />
           <div style={{ marginTop: '1.5rem' }}>
             <TowForm />
+          </div>
+          <div style={{ marginTop: '1.5rem' }}>
+            <MachineSettingsForm />
           </div>
         </LeftPanel>
       }

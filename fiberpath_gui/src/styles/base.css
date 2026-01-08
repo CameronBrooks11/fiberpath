@@ -366,6 +366,21 @@ button.secondary {
   color: var(--error);
 }
 
+.param-form__hint {
+  margin-left: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: normal;
+  font-style: italic;
+}
+
+.param-form__description {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 /* Remove spinner arrows from number inputs */
 .param-form__input::-webkit-outer-spin-button,
 .param-form__input::-webkit-inner-spin-button {

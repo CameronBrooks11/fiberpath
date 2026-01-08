@@ -42,6 +42,7 @@ export function projectToWindDefinition(
     mandrel: { diameter: number; wind_length: number };
     tow: { width: number; thickness: number };
     layers: Layer[];
+    defaultFeedRate: number;
   },
   visibleLayerCount?: number
 ): FiberPathWindDefinition {
@@ -59,7 +60,7 @@ export function projectToWindDefinition(
       width: project.tow.width,
       thickness: project.tow.thickness,
     },
-    defaultFeedRate: 2000,
+    defaultFeedRate: project.defaultFeedRate,
     layers: layersToInclude.map(convertLayerToWindSchema),
   };
 }
@@ -119,7 +120,8 @@ export function windDefinitionToProject(windDef: FiberPathWindDefinition, filePa
       thickness: windDef.towParameters.thickness,
     },
     layers: windDef.layers.map(convertWindSchemaToLayer),
-    activeLayerId: null,
+    defaultFeedRate: windDef.defaultFeedRate,
     axisFormat: 'xab', // Default, could be stored in wind file in future
+    activeLayerId: null,
   };
 }

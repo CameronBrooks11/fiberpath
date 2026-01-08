@@ -1,14 +1,10 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
-import { open, save } from "@tauri-apps/plugin-dialog";
 import { useEffect, useRef, useState } from "react";
 import { useProjectStore } from "../state/projectStore";
-import { saveWindFile, loadWindFile, validateWindDefinition as validateWindCmd, planWind } from "../lib/commands";
-import { projectToWindDefinition, windDefinitionToProject } from "../types/converters";
-import { getRecentFiles, addRecentFile, formatRecentFileName, formatRecentFilePath } from "../lib/recentFiles";
+import { getRecentFiles, formatRecentFileName, formatRecentFilePath } from "../lib/recentFiles";
+import { createFileOperations } from "../lib/fileOperations";
 import { AboutDialog } from "./dialogs/AboutDialog";
 import { DiagnosticsDialog } from "./dialogs/DiagnosticsDialog";
-import type { FiberPathProject } from "../types/project";
-import type { FiberPathWindDefinition } from "../types/wind-schema";
 
 interface MenuBarProps {
   onToggleLeftPanel?: () => void;
@@ -33,155 +29,21 @@ export function MenuBar({
   const duplicateLayer = useProjectStore(state => state.duplicateLayer);
   const removeLayer = useProjectStore(state => state.removeLayer);
   
-  // Handlers
-  const handleNewProject = async () => {
-    if (project.isDirty) {
-      const confirmed = window.confirm('You have unsaved changes. Create new project anyway?');
-      if (!confirmed) return;
-    }
-    newProject();
-  };
+  // Create file operation handlers
+  const fileOps = createFileOperations({
+    project,
+    newProject,
+    loadProject,
+    setFilePath,
+    clearDirty,
+    activeLayerId,
+    duplicateLayer,
+    removeLayer,
+    updateRecentFiles: () => setRecentFiles(getRecentFiles()),
+  });
   
-  const handleOpen = async () => {
-    if (project.isDirty) {
-      const confirmed = window.confirm('You have unsaved changes. Open new file anyway?');
-      if (!confirmed) return;
-    }
-    
-    const filePath = await open({
-      filters: [{
-        name: 'Wind Files',
-        extensions: ['wind']
-      }],
-      multiple: false
-    });
-    
-    if (!filePath) return;
-    
-    try {
-      const content = await loadWindFile(filePath);
-      const windDef: FiberPathWindDefinition = JSON.parse(content);
-      const fullProject = windDefinitionToProject(windDef, filePath);
-      
-      loadProject(fullProject);
-      setFilePath(filePath);
-      addRecentFile(filePath);
-      setRecentFiles(getRecentFiles());
-    } catch (error) {
-      console.error('Failed to open file:', error);
-    }
-  };
-  
-  const handleSave = async () => {
-    if (project.filePath) {
-      await saveToFile(project.filePath);
-    } else {
-      await handleSaveAs();
-    }
-  };
-  
-  const handleSaveAs = async () => {
-    const filePath = await save({
-      filters: [{
-        name: 'Wind Files',
-        extensions: ['wind']
-      }],
-      defaultPath: 'untitled.wind'
-    });
-    
-    if (!filePath) return;
-    await saveToFile(filePath);
-  };
-  
-  const saveToFile = async (filePath: string) => {
-    try {
-      const windDef = projectToWindDefinition(project);
-      const content = JSON.stringify(windDef, null, 2);
-      
-      await saveWindFile(filePath, content);
-      setFilePath(filePath);
-      clearDirty();
-      addRecentFile(filePath);
-      setRecentFiles(getRecentFiles());
-    } catch (error) {
-      console.error('Failed to save file:', error);
-    }
-  };
-  
-  const handleExportGcode = async () => {
-    try {
-      const windDef = projectToWindDefinition(project);
-      const validationResult = await validateWindCmd(JSON.stringify(windDef));
-      
-      if (!validationResult.valid) {
-        const errors = validationResult.errors?.map(e => `${e.field}: ${e.message}`).join('\n') || 'Unknown errors';
-        console.error('Validation failed:', errors);
-        return;
-      }
-      
-      const gcodeFilePath = await save({
-        filters: [{
-          name: 'G-code Files',
-          extensions: ['gcode']
-        }],
-        defaultPath: 'output.gcode'
-      });
-      
-      if (!gcodeFilePath) return;
-      
-      const tempWindPath = gcodeFilePath.replace(/\.gcode$/, '.wind');
-      const content = JSON.stringify(windDef, null, 2);
-      await saveWindFile(tempWindPath, content);
-      await planWind(tempWindPath, gcodeFilePath, project.axisFormat);
-      
-      console.log(`G-code exported to: ${gcodeFilePath}`);
-    } catch (error) {
-      console.error('Failed to export G-code:', error);
-    }
-  };
-  
-  const handleOpenRecent = async (filePath: string) => {
-    if (project.isDirty) {
-      const confirmed = window.confirm('You have unsaved changes. Open file anyway?');
-      if (!confirmed) return;
-    }
-    
-    try {
-      const content = await loadWindFile(filePath);
-      const windDef: FiberPathWindDefinition = JSON.parse(content);
-      const fullProject = windDefinitionToProject(windDef, filePath);
-      
-      loadProject(fullProject);
-      setFilePath(filePath);
-      addRecentFile(filePath);
-      setRecentFiles(getRecentFiles());
-    } catch (error) {
-      console.error('Failed to open file:', error);
-    }
-  };
-  
-  const handleDuplicateLayer = () => {
-    if (activeLayerId) duplicateLayer(activeLayerId);
-  };
-  
-  const handleDeleteLayer = () => {
-    if (activeLayerId) removeLayer(activeLayerId);
-  };
-  
-  const handleValidate = async () => {
-    try {
-      const windDef = projectToWindDefinition(project);
-      const result = await validateWindCmd(JSON.stringify(windDef));
-      
-      if (result.valid) {
-        console.log('✓ Definition is valid');
-      } else {
-        const errors = result.errors?.map(e => `• ${e.field}: ${e.message}`).join('\n') || 'Unknown errors';
-        console.error('Validation failed:', errors);
-      }
-    } catch (error) {
-      console.error('Validation error:', error);
-    }
+  const handleDocsLink = () => {
+    void openExternal("https://cameronbrooks11.github.io/fiberpath");
   };
   
   useEffect(() => {
@@ -234,10 +96,6 @@ export function MenuBar({
     };
   }, []);
 
-  const handleDocsLink = () => {
-    void openExternal("https://cameronbrooks11.github.io/fiberpath");
-  };
-
   return (
     <nav className="menubar">
       <div className="menubar__brand">
@@ -249,21 +107,21 @@ export function MenuBar({
         <details className="menubar__menu" ref={el => menuRefs.current[0] = el}>
           <summary>File</summary>
           <div className="menubar__dropdown">
-            <button onClick={handleNewProject}>
+            <button onClick={fileOps.handleNewProject}>
               New Project<span className="menubar__shortcut">Ctrl+N</span>
             </button>
-            <button onClick={handleOpen}>
+            <button onClick={fileOps.handleOpen}>
               Open<span className="menubar__shortcut">Ctrl+O</span>
             </button>
             <hr />
-            <button onClick={handleSave}>
+            <button onClick={fileOps.handleSave}>
               Save<span className="menubar__shortcut">Ctrl+S</span>
             </button>
-            <button onClick={handleSaveAs}>
+            <button onClick={fileOps.handleSaveAs}>
               Save As<span className="menubar__shortcut">Ctrl+Shift+S</span>
             </button>
             <hr />
-            <button onClick={handleExportGcode}>
+            <button onClick={fileOps.handleExportGcode}>
               Export G-code<span className="menubar__shortcut">Ctrl+E</span>
             </button>
             {recentFiles.length > 0 && (
@@ -273,7 +131,7 @@ export function MenuBar({
                 {recentFiles.map((file) => (
                   <button
                     key={file.path}
-                    onClick={() => handleOpenRecent(file.path)}
+                    onClick={() => fileOps.handleOpenRecent(file.path)}
                     className="menubar__recent-file"
                     title={file.path}
                   >
@@ -292,10 +150,10 @@ export function MenuBar({
             <button disabled>Undo<span className="menubar__shortcut">Ctrl+Z</span></button>
             <button disabled>Redo<span className="menubar__shortcut">Ctrl+Y</span></button>
             <hr />
-            <button onClick={handleDuplicateLayer} disabled={!activeLayerId}>
+            <button onClick={fileOps.handleDuplicateLayer} disabled={!activeLayerId}>
               Duplicate Layer<span className="menubar__shortcut">Ctrl+D</span>
             </button>
-            <button onClick={handleDeleteLayer} disabled={!activeLayerId}>
+            <button onClick={fileOps.handleDeleteLayer} disabled={!activeLayerId}>
               Delete Layer<span className="menubar__shortcut">Del</span>
             </button>
           </div>
@@ -321,7 +179,7 @@ export function MenuBar({
         <details className="menubar__menu" ref={el => menuRefs.current[3] = el}>
           <summary>Tools</summary>
           <div className="menubar__dropdown">
-            <button onClick={handleValidate}>
+            <button onClick={fileOps.handleValidate}>
               Validate Definition
             </button>
             <hr />

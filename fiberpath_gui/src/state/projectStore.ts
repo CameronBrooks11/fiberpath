@@ -20,6 +20,10 @@ interface ProjectState {
   updateMandrel: (mandrel: Partial<Mandrel>) => void;
   updateTow: (tow: Partial<Tow>) => void;
   
+  // Machine settings
+  updateDefaultFeedRate: (feedRate: number) => void;
+  setAxisFormat: (format: 'xab' | 'xyz') => void;
+  
   // Layer operations
   addLayer: (type: LayerType) => string; // returns new layer id
   removeLayer: (id: string) => void;
@@ -29,7 +33,6 @@ interface ProjectState {
   
   // UI state
   setActiveLayerId: (id: string | null) => void;
-  setAxisFormat: (format: 'xab' | 'xyz') => void;
   autoRefreshPreview: boolean;
   toggleAutoRefreshPreview: () => void;
   
@@ -68,6 +71,16 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       project: {
         ...state.project,
         tow: { ...state.project.tow, ...tow },
+        isDirty: true,
+      },
+    }));
+  },
+  
+  updateDefaultFeedRate: (feedRate: number) => {
+    set((state) => ({
+      project: {
+        ...state.project,
+        defaultFeedRate: feedRate,
         isDirty: true,
       },
     }));
@@ -173,7 +186,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   
   setAxisFormat: (format: 'xab' | 'xyz') => {
     set((state) => ({
-      project: { ...state.project, axisFormat: format },
+      project: { ...state.project, axisFormat: format, isDirty: true },
     }));
   },
   

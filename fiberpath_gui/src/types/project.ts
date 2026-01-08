@@ -48,9 +48,12 @@ export interface FiberPathProject {
   tow: Tow;
   layers: Layer[];
   
+  // Machine settings
+  defaultFeedRate: number;         // mm/min for G-code generation
+  axisFormat: 'xab' | 'xyz';      // output format preference
+  
   // UI state
   activeLayerId: string | null;    // selected in layer stack
-  axisFormat: 'xab' | 'xyz';      // output format preference
 }
 
 // Helper to create empty project
@@ -67,8 +70,9 @@ export function createEmptyProject(): FiberPathProject {
       thickness: 0.25,
     },
     layers: [],
-    activeLayerId: null,
+    defaultFeedRate: 2000,
     axisFormat: 'xab',
+    activeLayerId: null,
   };
 }
 
