@@ -1,4 +1,5 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
+import { join } from "@tauri-apps/api/path";
 import { FormEvent, useState } from "react";
 
 import { FileField } from "./components/FileField";
@@ -27,11 +28,15 @@ const idleState = { status: "idle" } as const;
 export default function App() {
   const [planInput, setPlanInput] = useState("");
   const [planOutput, setPlanOutput] = useState("");
+  const [planOutputDir, setPlanOutputDir] = useState("");
+  const [planOutputName, setPlanOutputName] = useState("");
   const [axisFormat, setAxisFormat] = useState<AxisFormat>("xab");
   const [planResult, setPlanResult] = useState<PanelState<PlanSummary>>(idleState);
 
   const [plotInput, setPlotInput] = useState("");
   const [plotScale, setPlotScale] = useState(0.5);
+  const [plotOutputDir, setPlotOutputDir] = useState("");
+  const [plotOutputName, setPlotOutputName] = useState("");
   const [plotResult, setPlotResult] = useState<PanelState<PlotPreviewPayload>>(idleState);
 
   const [simulateInput, setSimulateInput] = useState("");
@@ -51,7 +56,17 @@ export default function App() {
     }
     setPlanResult({ status: "running" });
     try {
-      const summary = await planWind(planInput, planOutput || undefined, axisFormat);
+      let fullOutputPath: string | undefined = planOutput || undefined;
+      
+      if (planOutputDir) {
+        let filename = planOutputName?.trim() || "fiberpath";
+        if (!filename.toLowerCase().endsWith(".gcode")) {
+          filename += ".gcode";
+        }
+        fullOutputPath = await join(planOutputDir, filename);
+      }
+      
+      const summary = await planWind(planInput, fullOutputPath, axisFormat);
       setPlanResult({ status: "success", data: summary });
     } catch (error) {
       setPlanResult({ status: "error", error: extractError(error) });
@@ -66,7 +81,17 @@ export default function App() {
     }
     setPlotResult({ status: "running" });
     try {
-      const preview = await previewPlot(plotInput, plotScale);
+      let fullOutputPath: string | undefined;
+      
+      if (plotOutputDir) {
+        let filename = plotOutputName?.trim() || "preview";
+        if (!filename.toLowerCase().endsWith(".png")) {
+          filename += ".png";
+        }
+        fullOutputPath = await join(plotOutputDir, filename);
+      }
+      
+      const preview = await previewPlot(plotInput, plotScale, fullOutputPath);
       setPlotResult({ status: "success", data: preview });
     } catch (error) {
       setPlotResult({ status: "error", error: extractError(error) });
@@ -152,6 +177,26 @@ export default function App() {
                 />
               </fieldset>
               <fieldset>
+                <FileField
+                  label="Output folder (optional)"
+                  value={planOutputDir}
+                  onChange={setPlanOutputDir}
+                  placeholder="Defaults to system temp directory"
+                  directory={true}
+                />
+              </fieldset>
+              <fieldset>
+                <label>
+                  <span>Output filename (optional)</span>
+                  <input
+                    type="text"
+                    placeholder="fiberpath"
+                    value={planOutputName}
+                    onChange={(e) => setPlanOutputName(e.target.value)}
+                  />
+                </label>
+              </fieldset>
+              <fieldset>
                 <label>
                   <span>Axis format</span>
                   <select value={axisFormat} onChange={(e) => setAxisFormat(e.target.value as AxisFormat)}>
@@ -176,6 +221,26 @@ export default function App() {
             <form onSubmit={handlePlot}>
               <fieldset>
                 <FileField label="G-code" value={plotInput} onChange={setPlotInput} filterExtensions={["gcode"]} />
+              </fieldset>
+              <fieldset>
+                <FileField
+                  label="Output folder (optional)"
+                  value={plotOutputDir}
+                  onChange={setPlotOutputDir}
+                  placeholder="Defaults to temp directory"
+                  directory
+                />
+              </fieldset>
+              <fieldset>
+                <label>
+                  <span>Output filename (optional)</span>
+                  <input
+                    type="text"
+                    placeholder="preview"
+                    value={plotOutputName}
+                    onChange={(e) => setPlotOutputName(e.target.value)}
+                  />
+                </label>
               </fieldset>
               <fieldset>
                 <label>
@@ -281,7 +346,7 @@ function renderPlanSummary(data: PlanSummary) {
 }
 
 function renderJson(data: unknown) {
-  return <pre>{JSON.stringify(data, null, 2)}</pre>;
+  return <pre className="output-text">{JSON.stringify(data, null, 2)}</pre>;
 }
 
 function extractError(error: unknown): string {

@@ -246,6 +246,15 @@ button.secondary {
   font-size: 0.75rem;
 }
 
+.output-text {
+  margin: 0;
+  max-width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
 .preview-image {
   width: 100%;
   border-radius: 0.6rem;

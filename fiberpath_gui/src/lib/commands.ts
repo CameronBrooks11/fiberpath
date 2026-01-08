@@ -40,8 +40,8 @@ export async function simulateProgram(gcodePath: string) {
   return invoke<SimulationSummary>("simulate_program", { gcodePath });
 }
 
-export async function previewPlot(gcodePath: string, scale: number) {
-  return invoke<PlotPreviewPayload>("plot_preview", { gcodePath, scale });
+export async function previewPlot(gcodePath: string, scale: number, outputPath?: string) {
+  return invoke<PlotPreviewPayload>("plot_preview", { gcodePath, scale, outputPath });
 }
 
 export async function streamProgram(gcodePath: string, options: { port?: string; baudRate: number; dryRun: boolean }) {
