@@ -55,4 +55,9 @@ npm run package
 macOS). Windows packaging works locally, while macOS/Linux artifacts require running the command on
 those respective platforms (handled automatically in CI).
 
-See `ARCHITECTURE.md` for a deeper dive into the UI layout and Rust bridge commands.
+See `fiberpath_gui/docs/` for more details on architecture and schema generation, contains:
+
+- `ARCHITECTURE.md` – high-level design of the Tauri + React GUI
+- `SCHEMA.md` – how JSON Schema and TypeScript types are generated
+- `PERFORMANCE_PROFILING.md` – guide to profiling React performance
+- `STORE_SPLITTING_ANALYSIS.md` – analysis of Zustand store splitting considerations

@@ -30,6 +30,7 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 ### 2. Analyze Results
 
 **Flamegraph View:**
+
 - Shows component render tree
 - Width = time spent rendering
 - Color:
@@ -38,10 +39,12 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
   - **Red**: Slow renders (>10ms)
 
 **Ranked View:**
+
 - Lists components by render duration
 - Focus on top offenders first
 
 **Component View:**
+
 - Shows why a component re-rendered
 - Look for:
   - "Props changed" (which props?)
@@ -51,21 +54,25 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 ### 3. Common Issues to Look For
 
 #### Unnecessary Re-renders
+
 - Components rendering without prop/state changes
 - Parent updates triggering child updates unnecessarily
 - **Fix**: Use `React.memo()`, `useMemo()`, `useCallback()`
 
 #### Expensive Computations
+
 - Heavy calculations in render functions
 - Large data transformations on every render
 - **Fix**: Use `useMemo()` to cache results
 
 #### Large Render Trees
+
 - Deep component hierarchies rendering together
 - Many child components updating simultaneously
 - **Fix**: Split into smaller components, use virtualization
 
 #### State Management Issues
+
 - Zustand store updates causing cascading renders
 - Subscribing to entire store objects instead of specific values
 - **Fix**: Use shallow comparison, select only needed values
@@ -73,12 +80,14 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 ## Performance Targets
 
 ### Acceptable Render Times
+
 - **Interactive components** (buttons, inputs): <5ms
 - **List items** (layer rows): <10ms
 - **Complex panels** (layer editors, forms): <16ms (60 FPS)
 - **Full app renders**: <50ms
 
 ### Red Flags
+
 - ⚠️ Component rendering >50ms
 - ⚠️ More than 100 components rendering per user action
 - ⚠️ Same component rendering multiple times in one update
@@ -87,9 +96,9 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 ## Current Optimizations
 
 ### Implemented in Phase 3
+
 1. **useMemo for createFileOperations** (App.tsx, MenuBar.tsx)
    - Prevents recreation of file operation handlers on every render
-   
 2. **Shallow comparison for Zustand selectors**
    - App.tsx: Multiple store values with shallow comparison
    - MenuBar.tsx: Multiple store values with shallow comparison
@@ -97,6 +106,7 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
    - StatusBar.tsx: Only extracts needed fields with shallow
 
 ### Areas Already Optimized
+
 - **Layer rendering**: Individual layer rows are isolated components
 - **Form inputs**: Controlled components with local state where appropriate
 - **Canvas updates**: Debounced preview generation
@@ -104,12 +114,15 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 ## Profiling Specific Scenarios
 
 ### Test Case 1: Adding Layers
+
 **Expected behavior:**
+
 - LayerStack should re-render
 - New LayerRow should render once
 - Other components should NOT re-render
 
 **Profile:**
+
 ```
 1. Record
 2. Click "Add Layer" → Select "Helical"
@@ -118,12 +131,15 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 ```
 
 ### Test Case 2: Editing Layer Properties
+
 **Expected behavior:**
+
 - Active layer editor should re-render
 - VisualizationCanvas may re-render (debounced)
 - LayerStack should NOT re-render
 
 **Profile:**
+
 ```
 1. Record
 2. Change wind_angle in HelicalLayerEditor
@@ -132,12 +148,15 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 ```
 
 ### Test Case 3: Drag-Drop Reordering
+
 **Expected behavior:**
+
 - LayerStack re-renders
 - All LayerRow components may update (indices change)
 - Forms/editors should NOT re-render
 
 **Profile:**
+
 ```
 1. Record
 2. Drag layer from position 2 to position 5

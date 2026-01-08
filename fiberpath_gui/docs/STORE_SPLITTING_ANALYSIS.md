@@ -12,7 +12,6 @@ The application currently uses a single Zustand store (`projectStore.ts`) that m
 
 2. **UI State** (~15% of state):
    - activeLayerId (which layer is selected)
-   
 3. **Metadata** (~15% of state):
    - filePath (current project file location)
    - isDirty flag (unsaved changes indicator)
@@ -22,6 +21,7 @@ The application currently uses a single Zustand store (`projectStore.ts`) that m
 ### Current Performance Characteristics
 
 **Strengths:**
+
 - ✅ Single source of truth for project data
 - ✅ Simple mental model - everything in one place
 - ✅ Easy to serialize entire project for save/load
@@ -29,6 +29,7 @@ The application currently uses a single Zustand store (`projectStore.ts`) that m
 - ✅ Shallow selectors already implemented (Phase 3)
 
 **Potential Issues:**
+
 - ⚠️ Updating activeLayerId causes any component selecting `project` to re-render
 - ⚠️ Updating isDirty could trigger unnecessary renders
 - ⚠️ Large layer arrays might cause performance issues at scale (50+ layers)
@@ -37,13 +38,13 @@ The application currently uses a single Zustand store (`projectStore.ts`) that m
 
 With current implementation (after Phase 3 optimizations):
 
-| Action | Components That Re-render | Severity |
-|--------|---------------------------|----------|
-| Change activeLayerId | StatusBar (unnecessary), Components selecting full `project` | 🟡 Low |
-| Mark dirty | StatusBar (necessary), Components selecting full `project` | 🟡 Low |
-| Update layer | Layer editor, VisualizationCanvas (debounced) | 🟢 Expected |
-| Add/remove layer | LayerStack, StatusBar, VisualizationCanvas | 🟢 Expected |
-| Update mandrel/tow | Forms, VisualizationCanvas (debounced) | 🟢 Expected |
+| Action               | Components That Re-render                                    | Severity    |
+| -------------------- | ------------------------------------------------------------ | ----------- |
+| Change activeLayerId | StatusBar (unnecessary), Components selecting full `project` | 🟡 Low      |
+| Mark dirty           | StatusBar (necessary), Components selecting full `project`   | 🟡 Low      |
+| Update layer         | Layer editor, VisualizationCanvas (debounced)                | 🟢 Expected |
+| Add/remove layer     | LayerStack, StatusBar, VisualizationCanvas                   | 🟢 Expected |
+| Update mandrel/tow   | Forms, VisualizationCanvas (debounced)                       | 🟢 Expected |
 
 ## Store Splitting Recommendation
 
@@ -76,6 +77,7 @@ With current implementation (after Phase 3 optimizations):
 ### When to Reconsider Splitting
 
 Consider splitting if:
+
 - ✅ Profiling shows frequent unnecessary renders of StatusBar/MenuBar
 - ✅ Users report lag with >50 layers
 - ✅ activeLayerId changes cause visible performance issues
@@ -113,11 +115,13 @@ If splitting becomes necessary, use this structure:
 ```
 
 **Benefits of this split:**
+
 - activeLayerId changes don't trigger data store subscribers
 - UI state doesn't get saved to .wind files
 - Metadata updates isolated from render-heavy components
 
 **Costs:**
+
 - Need to mark dirty across stores (e.g., projectDataStore updates must trigger metadataStore.markDirty)
 - Save/load logic must combine stores
 - More complex debugging (which store has the bug?)
@@ -125,6 +129,7 @@ If splitting becomes necessary, use this structure:
 ## Current Optimization Status
 
 After Phase 3 completion:
+
 - ✅ Shallow comparison on all multi-selector components
 - ✅ useMemo for expensive factory functions
 - ✅ Proper selector patterns (select only what's needed)
@@ -135,16 +140,19 @@ After Phase 3 completion:
 ## Action Items
 
 ### Immediate (Phase 3 ✅)
+
 - [x] Implement shallow selectors
 - [x] Add useMemo for fileOperations
 - [x] Create profiling documentation
 
 ### Short-term (Next 2-4 weeks)
+
 - [ ] Profile with React DevTools in production-like scenarios
 - [ ] Test with 50+ layer projects
 - [ ] Measure render counts during typical workflows
 
 ### Long-term (If Issues Arise)
+
 - [ ] Consider store splitting based on profiling data
 - [ ] Implement virtualization for layer list
 - [ ] Add React.memo to expensive components

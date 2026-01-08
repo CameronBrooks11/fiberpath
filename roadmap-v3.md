@@ -39,7 +39,7 @@
 
 **Progress:** 4/4 tasks complete (100%) ✅
 
-**Note:** Created [PERFORMANCE_PROFILING.md](fiberpath_gui/PERFORMANCE_PROFILING.md) guide and [STORE_SPLITTING_ANALYSIS.md](fiberpath_gui/STORE_SPLITTING_ANALYSIS.md) analysis. Store splitting determined unnecessary with current optimizations.
+**Note:** Created [PERFORMANCE_PROFILING.md](fiberpath_gui/docs/PERFORMANCE_PROFILING.md) guide and [STORE_SPLITTING_ANALYSIS.md](fiberpath_gui/docs/STORE_SPLITTING_ANALYSIS.md) analysis. Store splitting determined unnecessary with current optimizations.
 
 ---
 
