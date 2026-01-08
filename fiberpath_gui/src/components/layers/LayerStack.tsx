@@ -5,6 +5,28 @@ import { useProjectStore } from "../../state/projectStore";
 import { LayerType } from "../../types/project";
 import { LayerRow } from "./LayerRow";
 
+/**
+ * The LayerStack component displays and manages the list of winding layers.
+ * 
+ * Features:
+ * - Displays all layers in order with drag-and-drop reordering
+ * - Shows layer type, index, and summary information
+ * - Highlights the currently selected/active layer
+ * - Provides "Add Layer" button with type picker (hoop, helical, skip)
+ * - Individual layer actions (select, remove, duplicate)
+ * - Drag handles for visual reordering feedback
+ * 
+ * Uses @hello-pangea/dnd for drag-and-drop functionality.
+ * Optimized with shallow comparison to prevent unnecessary re-renders
+ * when only specific store properties change.
+ * 
+ * @example
+ * ```tsx
+ * <LayerStack />
+ * ```
+ * 
+ * @returns The layer stack UI with all layers and controls
+ */
 export function LayerStack() {
   // Use shallow comparison for multiple selectors to prevent unnecessary re-renders
   const {

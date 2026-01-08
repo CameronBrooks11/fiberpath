@@ -1,12 +1,42 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
 import { createPortal } from "react-dom";
+import type { DialogBaseProps } from "../../types/components";
 import "../../styles/dialogs.css";
 
-interface AboutDialogProps {
+/**
+ * Props for the AboutDialog component.
+ */
+interface AboutDialogProps extends DialogBaseProps {
+  /** Whether the dialog is currently visible */
   isOpen: boolean;
-  onClose: () => void;
 }
 
+/**
+ * About dialog displaying application information and links.
+ * 
+ * Shows:
+ * - Application name and version
+ * - Description of FiberPath functionality
+ * - Links to documentation and GitHub repository
+ * - License information
+ * - Contributor credits
+ * 
+ * The dialog is rendered as a portal to ensure proper z-index layering.
+ * Clicking the overlay or the X button closes the dialog.
+ * 
+ * @example
+ * ```tsx
+ * <AboutDialog 
+ *   isOpen={showAbout} 
+ *   onClose={() => setShowAbout(false)} 
+ * />
+ * ```
+ * 
+ * @param props - Component props
+ * @param props.isOpen - Controls dialog visibility
+ * @param props.onClose - Callback invoked when the dialog should close
+ * @returns The about dialog portal, or null if not open
+ */
 export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
   if (!isOpen) return null;
 

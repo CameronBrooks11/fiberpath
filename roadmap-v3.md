@@ -92,13 +92,32 @@
 
 ## Phase 6: Component Documentation & Contracts
 
-- [ ] Add JSDoc comments to all component prop interfaces
-- [ ] Document required vs optional props with clear usage examples
-- [ ] Add default props where appropriate
-- [ ] Create shared prop types for common patterns (onClose, onChange callbacks)
-- [ ] Add prop validation for numeric ranges (feed rate 1-10000, angles 0-90)
+- [x] Add JSDoc comments to all component prop interfaces
+- [x] Document required vs optional props with clear usage examples
+- [x] Add default props where appropriate
+- [x] Create shared prop types for common patterns (onClose, onChange callbacks)
+- [x] Add prop validation for numeric ranges (feed rate 1-10000, angles 0-90)
 
-**Progress:** 0/5 tasks complete
+**Progress:** 5/5 tasks complete (100%) ✅
+
+**Files Created:**
+
+- [types/components.ts](fiberpath_gui/src/types/components.ts) - Shared prop types, numeric ranges, validation helpers
+
+**Components Documented:**
+
+- Layer editors: HoopLayerEditor, HelicalLayerEditor, SkipLayerEditor
+- Forms: MandrelForm, TowForm
+- Dialogs: AboutDialog, ExportConfirmationDialog, DiagnosticsDialog
+- Layer components: LayerStack, LayerRow
+
+**Improvements:**
+
+- Centralized validation with `NUMERIC_RANGES` constants
+- Shared `validateNumericRange()` helper function
+- Common prop interfaces: `LayerEditorBaseProps`, `DialogBaseProps`
+- Type-safe callbacks: `OnCloseCallback`, `OnChangeCallback<T>`
+- Comprehensive JSDoc with @param, @returns, @example tags
 
 ---
 
@@ -150,7 +169,7 @@
 
 ## Overall Progress
 
-**Status:** 27/53 tasks complete (51%)
+**Status:** 32/53 tasks complete (60%)
 
 **Success Criteria:**
 
@@ -162,6 +181,6 @@ v3 is complete when:
 - ✅ All Tauri responses validated with Zod
 - ✅ Test coverage >70%
 - ✅ All components have JSDoc prop documentation
-- ✅ CSS has no !important, uses modules
+- ⏳ CSS has no !important, uses modules
 - ✅ CLI health check shows real status
 - ✅ Basic accessibility testing passes (keyboard nav + screen reader)

@@ -1,15 +1,58 @@
 import { useProjectStore } from "../../state/projectStore";
 import { Layer, LayerType } from "../../types/project";
+import type { OnCloseCallback } from "../../types/components";
 
+/**
+ * Props for the LayerRow component.
+ */
 interface LayerRowProps {
+  /** The layer data to display */
   layer: Layer;
+  
+  /** Zero-based index of the layer in the stack (displayed as index + 1) */
   index: number;
+  
+  /** Whether this layer is currently selected/active */
   isActive: boolean;
-  onSelect: () => void;
-  onRemove: () => void;
-  onDuplicate: () => void;
+  
+  /** Callback invoked when the layer is clicked to select it */
+  onSelect: OnCloseCallback;
+  
+  /** Callback invoked when the remove button is clicked */
+  onRemove: OnCloseCallback;
+  
+  /** Callback invoked when the duplicate button is clicked */
+  onDuplicate: OnCloseCallback;
 }
 
+/**
+ * A single row in the layer stack, displaying layer information and actions.
+ * 
+ * Shows:
+ * - Layer index (1-based display)
+ * - Layer type icon (○ for hoop, ⟋ for helical, ↻ for skip)
+ * - Layer type name
+ * - Layer summary (e.g., "Helical 45°", "Hoop (Terminal)")
+ * - Action buttons (remove, duplicate)
+ * - Drag handle for reordering
+ * 
+ * The row is highlighted when active. Clicking the row selects it.
+ * 
+ * @example
+ * ```tsx
+ * <LayerRow
+ *   layer={layer}
+ *   index={0}
+ *   isActive={activeLayerId === layer.id}
+ *   onSelect={() => setActiveLayerId(layer.id)}
+ *   onRemove={() => removeLayer(layer.id)}
+ *   onDuplicate={() => duplicateLayer(layer.id)}
+ * />
+ * ```
+ * 
+ * @param props - Component props
+ * @returns The layer row UI
+ */
 export function LayerRow({ layer, index, isActive, onSelect, onRemove, onDuplicate }: LayerRowProps) {
   const getLayerSummary = (layer: Layer): string => {
     switch (layer.type) {

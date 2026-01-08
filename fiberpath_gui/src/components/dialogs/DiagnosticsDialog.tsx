@@ -2,24 +2,68 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { getRecentFiles } from "../../lib/recentFiles";
 import { useProjectStore } from "../../state/projectStore";
+import type { DialogBaseProps } from "../../types/components";
 import "../../styles/dialogs.css";
 
-interface DiagnosticsDialogProps {
+/**
+ * Props for the DiagnosticsDialog component.
+ */
+interface DiagnosticsDialogProps extends DialogBaseProps {
+  /** Whether the dialog is currently visible */
   isOpen: boolean;
-  onClose: () => void;
 }
 
+/**
+ * Diagnostic information displayed in the dialog.
+ */
 interface DiagnosticsData {
+  /** Version string of the CLI backend (TODO: fetch from backend) */
   cliVersion: string | null;
+  
+  /** Health status of the CLI backend (TODO: implement real health check) */
   cliHealthy: boolean;
+  
+  /** Number of files in the recent files list */
   recentFilesCount: number;
+  
+  /** Statistics about the current project */
   projectStats: {
+    /** Number of layers in the current project */
     layers: number;
+    
+    /** File path of the current project, or null if unsaved */
     filePath: string | null;
+    
+    /** Whether the project has unsaved changes */
     isDirty: boolean;
   };
 }
 
+/**
+ * Diagnostics dialog showing system and project information.
+ * 
+ * Displays:
+ * - CLI backend version and health status
+ * - Recent files count
+ * - Current project statistics (layer count, file path, dirty state)
+ * - System information for debugging
+ * 
+ * This dialog is useful for troubleshooting and understanding the
+ * current state of the application.
+ * 
+ * @example
+ * ```tsx
+ * <DiagnosticsDialog 
+ *   isOpen={showDiagnostics} 
+ *   onClose={() => setShowDiagnostics(false)} 
+ * />
+ * ```
+ * 
+ * @param props - Component props
+ * @param props.isOpen - Controls dialog visibility
+ * @param props.onClose - Callback invoked when the dialog should close
+ * @returns The diagnostics dialog portal, or null if not open
+ */
 export function DiagnosticsDialog({ isOpen, onClose }: DiagnosticsDialogProps) {
   const project = useProjectStore(state => state.project);
   const [diagnostics, setDiagnostics] = useState<DiagnosticsData>({

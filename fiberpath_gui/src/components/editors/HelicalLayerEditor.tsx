@@ -1,11 +1,40 @@
 import { useState, FocusEvent } from "react";
 import { useProjectStore } from "../../state/projectStore";
 import type { HelicalLayer } from "../../types/project";
+import type { LayerEditorBaseProps, NumericRange } from "../../types/components";
+import { NUMERIC_RANGES, validateNumericRange } from "../../types/components";
 
-interface HelicalLayerEditorProps {
-  layerId: string;
+/**
+ * Props for the HelicalLayerEditor component.
+ */
+interface HelicalLayerEditorProps extends LayerEditorBaseProps {
+  // HelicalLayerEditor uses only the base props
 }
 
+/**
+ * Editor component for helical layer properties.
+ * 
+ * Helical layers wind at an angle to the mandrel axis, creating
+ * structural reinforcement. Parameters include:
+ * - **Wind angle**: Angle relative to the mandrel axis (0° to 90°, exclusive)
+ * - **Pattern number**: Number of circuits in the pattern (must be coprime with skip_index)
+ * - **Skip index**: Number of circuits to skip (must be coprime with pattern_number)
+ * - **Terminal**: Whether this is the first/last layer
+ * - **Turn offsets**: Start/end turning points for the wind
+ * - **Circuit offsets**: Offset circuits at start/end
+ * 
+ * The pattern_number and skip_index must be coprime (GCD = 1) to ensure
+ * proper coverage of the mandrel surface.
+ * 
+ * @example
+ * ```tsx
+ * <HelicalLayerEditor layerId="layer-789" />
+ * ```
+ * 
+ * @param props - Component props
+ * @param props.layerId - The unique identifier of the helical layer to edit
+ * @returns The helical layer editor UI, or null if the layer is not found or is not a helical layer
+ */
 export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
   const layers = useProjectStore((state) => state.project.layers);
   const updateLayer = useProjectStore((state) => state.updateLayer);
@@ -18,24 +47,18 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
     return null;
   }
   
+  /**
+   * Calculate the greatest common divisor of two numbers.
+   * Used to validate that pattern_number and skip_index are coprime.
+   */
   const gcd = (a: number, b: number): number => {
     return b === 0 ? a : gcd(b, a % b);
   };
   
-  const validateWindAngle = (value: number): string | undefined => {
-    if (isNaN(value) || value <= 0 || value >= 90) {
-      return "Wind angle must be between 0° and 90°";
-    }
-    return undefined;
-  };
-  
-  const validatePositive = (value: number, name: string): string | undefined => {
-    if (isNaN(value) || value < 0) {
-      return `${name} must be non-negative`;
-    }
-    return undefined;
-  };
-  
+  /**
+   * Validates that pattern_number and skip_index are coprime (GCD = 1).
+   * This ensures proper coverage of the mandrel surface.
+   */
   const validateCoprime = (pattern: number, skip: number): string | undefined => {
     if (gcd(pattern, skip) !== 1) {
       return "Pattern and skip must be coprime (GCD = 1)";
@@ -67,26 +90,28 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
     
     switch (field) {
       case 'wind_angle':
-        error = validateWindAngle(value);
+        error = validateNumericRange(value, NUMERIC_RANGES.WIND_ANGLE, 'Wind angle');
         break;
       case 'pattern_number':
-        error = validatePositive(value, 'Pattern number');
+        error = validateNumericRange(value, NUMERIC_RANGES.PATTERN_SKIP, 'Pattern number');
         if (!error && layer.helical) {
           error = validateCoprime(value, layer.helical.skip_index);
         }
         break;
       case 'skip_index':
-        error = validatePositive(value, 'Skip index');
+        error = validateNumericRange(value, NUMERIC_RANGES.PATTERN_SKIP, 'Skip index');
         if (!error && layer.helical) {
           error = validateCoprime(layer.helical.pattern_number, value);
         }
         break;
       case 'lock_degrees':
       case 'lead_out_degrees':
-        error = validatePositive(value, field.replace('_', ' '));
+        // Non-negative validation for degree values
+        error = value < 0 ? `${field.replace('_', ' ')} must be non-negative` : undefined;
         break;
       case 'lead_in_mm':
-        error = validatePositive(value, 'Lead-in');
+        // Non-negative validation for lead-in
+        error = value < 0 ? 'Lead-in must be non-negative' : undefined;
         break;
     }
     

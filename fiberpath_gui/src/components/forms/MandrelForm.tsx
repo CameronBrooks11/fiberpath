@@ -1,25 +1,30 @@
 import { useState, FocusEvent } from "react";
 import { useProjectStore } from "../../state/projectStore";
+import { NUMERIC_RANGES, validateNumericRange } from "../../types/components";
 
+/**
+ * Form component for editing mandrel parameters.
+ * 
+ * The mandrel is the cylindrical form around which the fiber is wound.
+ * This form allows editing of:
+ * - **Diameter**: The outer diameter of the mandrel (mm, must be > 0)
+ * - **Wind Length**: The axial length available for winding (mm, must be > 0)
+ * 
+ * Both fields are validated on blur to ensure positive values.
+ * Invalid values are highlighted with error messages.
+ * 
+ * @example
+ * ```tsx
+ * <MandrelForm />
+ * ```
+ * 
+ * @returns The mandrel parameter form UI
+ */
 export function MandrelForm() {
   const mandrel = useProjectStore((state) => state.project.mandrel);
   const updateMandrel = useProjectStore((state) => state.updateMandrel);
   
   const [errors, setErrors] = useState<{ diameter?: string; wind_length?: string }>({});
-  
-  const validateDiameter = (value: number): string | undefined => {
-    if (isNaN(value) || value <= 0) {
-      return "Diameter must be greater than 0";
-    }
-    return undefined;
-  };
-  
-  const validateWindLength = (value: number): string | undefined => {
-    if (isNaN(value) || value <= 0) {
-      return "Wind length must be greater than 0";
-    }
-    return undefined;
-  };
   
   const handleDiameterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
@@ -28,7 +33,7 @@ export function MandrelForm() {
   
   const handleDiameterBlur = (e: FocusEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    const error = validateDiameter(value);
+    const error = validateNumericRange(value, NUMERIC_RANGES.MANDREL_DIAMETER, 'Diameter');
     setErrors((prev) => ({ ...prev, diameter: error }));
   };
   
@@ -39,7 +44,7 @@ export function MandrelForm() {
   
   const handleWindLengthBlur = (e: FocusEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    const error = validateWindLength(value);
+    const error = validateNumericRange(value, NUMERIC_RANGES.WIND_LENGTH, 'Wind length');
     setErrors((prev) => ({ ...prev, wind_length: error }));
   };
   

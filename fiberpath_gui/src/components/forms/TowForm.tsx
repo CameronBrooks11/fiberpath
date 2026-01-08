@@ -1,25 +1,30 @@
 import { useState, FocusEvent } from "react";
 import { useProjectStore } from "../../state/projectStore";
+import { NUMERIC_RANGES, validateNumericRange } from "../../types/components";
 
+/**
+ * Form component for editing tow (fiber) parameters.
+ * 
+ * The tow represents the fiber material being wound onto the mandrel.
+ * This form allows editing of:
+ * - **Width**: The width of the tow strip (mm, must be > 0)
+ * - **Thickness**: The thickness of the tow strip (mm, must be > 0)
+ * 
+ * Both fields are validated on blur to ensure positive values.
+ * Invalid values are highlighted with error messages.
+ * 
+ * @example
+ * ```tsx
+ * <TowForm />
+ * ```
+ * 
+ * @returns The tow parameter form UI
+ */
 export function TowForm() {
   const tow = useProjectStore((state) => state.project.tow);
   const updateTow = useProjectStore((state) => state.updateTow);
   
   const [errors, setErrors] = useState<{ width?: string; thickness?: string }>({});
-  
-  const validateWidth = (value: number): string | undefined => {
-    if (isNaN(value) || value <= 0) {
-      return "Width must be greater than 0";
-    }
-    return undefined;
-  };
-  
-  const validateThickness = (value: number): string | undefined => {
-    if (isNaN(value) || value <= 0) {
-      return "Thickness must be greater than 0";
-    }
-    return undefined;
-  };
   
   const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
@@ -28,7 +33,7 @@ export function TowForm() {
   
   const handleWidthBlur = (e: FocusEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    const error = validateWidth(value);
+    const error = validateNumericRange(value, NUMERIC_RANGES.TOW_WIDTH, 'Width');
     setErrors((prev) => ({ ...prev, width: error }));
   };
   
@@ -39,7 +44,7 @@ export function TowForm() {
   
   const handleThicknessBlur = (e: FocusEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
-    const error = validateThickness(value);
+    const error = validateNumericRange(value, NUMERIC_RANGES.TOW_THICKNESS, 'Thickness');
     setErrors((prev) => ({ ...prev, thickness: error }));
   };
   

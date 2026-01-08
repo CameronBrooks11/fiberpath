@@ -1,10 +1,30 @@
 import { FocusEvent } from "react";
 import { useProjectStore } from "../../state/projectStore";
+import type { LayerEditorBaseProps } from "../../types/components";
 
-interface HoopLayerEditorProps {
-  layerId: string;
+/**
+ * Props for the HoopLayerEditor component.
+ */
+interface HoopLayerEditorProps extends LayerEditorBaseProps {
+  // HoopLayerEditor uses only the base props
 }
 
+/**
+ * Editor component for hoop layer properties.
+ * 
+ * Hoop layers are circumferential windings around the mandrel.
+ * The only configurable property is whether the layer is terminal
+ * (first or last layer in the wind definition).
+ * 
+ * @example
+ * ```tsx
+ * <HoopLayerEditor layerId="layer-123" />
+ * ```
+ * 
+ * @param props - Component props
+ * @param props.layerId - The unique identifier of the hoop layer to edit
+ * @returns The hoop layer editor UI, or null if the layer is not found or is not a hoop layer
+ */
 export function HoopLayerEditor({ layerId }: HoopLayerEditorProps) {
   const layers = useProjectStore((state) => state.project.layers);
   const updateLayer = useProjectStore((state) => state.updateLayer);

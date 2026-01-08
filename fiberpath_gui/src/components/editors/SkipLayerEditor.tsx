@@ -1,10 +1,30 @@
 import { useState, FocusEvent } from "react";
 import { useProjectStore } from "../../state/projectStore";
+import type { LayerEditorBaseProps } from "../../types/components";
 
-interface SkipLayerEditorProps {
-  layerId: string;
+/**
+ * Props for the SkipLayerEditor component.
+ */
+interface SkipLayerEditorProps extends LayerEditorBaseProps {
+  // SkipLayerEditor uses only the base props
 }
 
+/**
+ * Editor component for skip layer properties.
+ * 
+ * Skip layers represent intentional gaps in the winding pattern,
+ * allowing for rotation of the pattern without depositing material.
+ * The rotation value determines the angular offset in degrees.
+ * 
+ * @example
+ * ```tsx
+ * <SkipLayerEditor layerId="layer-456" />
+ * ```
+ * 
+ * @param props - Component props
+ * @param props.layerId - The unique identifier of the skip layer to edit
+ * @returns The skip layer editor UI, or null if the layer is not found or is not a skip layer
+ */
 export function SkipLayerEditor({ layerId }: SkipLayerEditorProps) {
   const layers = useProjectStore((state) => state.project.layers);
   const updateLayer = useProjectStore((state) => state.updateLayer);

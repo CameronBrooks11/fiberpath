@@ -4,13 +4,50 @@ import { validateWindDefinition } from "../../lib/commands";
 import { projectToWindDefinition } from "../../types/converters";
 import { useErrorNotification } from "../../contexts/ErrorNotificationContext";
 import type { FiberPathProject } from "../../types/project";
+import type { OnCloseCallback } from "../../types/components";
 
+/**
+ * Props for the ExportConfirmationDialog component.
+ */
 interface ExportConfirmationDialogProps {
+  /** The project being validated and exported */
   project: FiberPathProject;
-  onConfirm: () => void;
-  onCancel: () => void;
+  
+  /** Callback invoked when the user confirms the export */
+  onConfirm: OnCloseCallback;
+  
+  /** Callback invoked when the user cancels the export */
+  onCancel: OnCloseCallback;
 }
 
+/**
+ * Confirmation dialog for exporting G-code with validation.
+ * 
+ * This dialog:
+ * 1. Automatically validates the project against the CLI backend
+ * 2. Shows a loading state during validation
+ * 3. Displays validation errors if any are found
+ * 4. Shows layer count and file size estimates
+ * 5. Allows the user to proceed or cancel
+ * 
+ * Validation happens automatically when the dialog is shown.
+ * The export button is only enabled if validation succeeds.
+ * 
+ * @example
+ * ```tsx
+ * <ExportConfirmationDialog
+ *   project={currentProject}
+ *   onConfirm={handleExport}
+ *   onCancel={() => setShowDialog(false)}
+ * />
+ * ```
+ * 
+ * @param props - Component props
+ * @param props.project - The FiberPath project to validate and export
+ * @param props.onConfirm - Called when user clicks "Export" (only enabled if valid)
+ * @param props.onCancel - Called when user clicks "Cancel" or closes the dialog
+ * @returns The export confirmation dialog portal
+ */
 export function ExportConfirmationDialog({ project, onConfirm, onCancel }: ExportConfirmationDialogProps) {
   const [validationStatus, setValidationStatus] = useState<'checking' | 'valid' | 'invalid'>('checking');
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
