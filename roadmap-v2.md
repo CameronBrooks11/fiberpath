@@ -7,7 +7,7 @@
 - [x] Fix Tauri plugin semver (2.0)
 - [x] Add FileField directory mode
 - [x] Integration tests for axis formats
-- [x] Version bump to 0.2.3
+- [x] Version bump to 0.2.(3)
 
 ## Phase 1: Layout Architecture
 
