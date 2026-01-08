@@ -1,23 +1,32 @@
-# FiberPath
+<div align="center">
+
+<h1>FiberPath</h1>
+
+<!-- Version & License -->
+
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE)
+
+<!-- CI/CD Status -->
 
 [![Backend CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/backend-ci.yml)
 [![GUI CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-ci.yml)
 [![Docs CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/docs-ci.yml?branch=main&label=Docs%20CI&logo=markdown&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/docs-ci.yml)
-[![Docs Deployment](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/docs-deploy.yml?branch=main&label=Docs%20Deploy&logo=githubpages&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/docs-deploy.yml)
 [![GUI Packaging](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-packaging.yml?branch=main&label=GUI%20Packaging&logo=tauri&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-packaging.yml)
-[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Docs Deployment](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/docs-deploy.yml?branch=main&label=Docs%20Deploy&logo=githubpages&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/docs-deploy.yml)
 
----
+<!-- Technology Stack -->
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-1.70+-000000?logo=rust&logoColor=white)
-![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=black)
-![Tauri](https://img.shields.io/badge/Tauri-2.0-FFC131?logo=tauri&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-5.0+-646CFF?logo=vite&logoColor=white)
+![Tauri](https://img.shields.io/badge/Tauri-2.0-FFC131?logo=tauri&logoColor=white)
 ![MkDocs](https://img.shields.io/badge/MkDocs-Material-526CFE?logo=materialformkdocs&logoColor=white)
+
+</div>
 
 FiberPath is a next-generation system for planning, simulating, and executing filament-winding jobs on cylindrical mandrels to produce high-quality, repeatable composite parts. The repository contains four coordinated components:
 
