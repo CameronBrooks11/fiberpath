@@ -37,6 +37,7 @@ The `plot` command unwraps mandrel coordinates into a PNG so you can visually in
 FiberPath supports configurable axis mapping to work with different machine configurations:
 
 - **XAB (Standard Rotational)** - Default format using true rotational axes:
+
   - `X` = Carriage (linear, mm)
   - `A` = Mandrel rotation (rotational, degrees)
   - `B` = Delivery head rotation (rotational, degrees)
@@ -88,4 +89,6 @@ When validating real hardware:
 fiberpath stream simple.gcode --port COM5 --baud-rate 250000
 ```
 
-Use `--dry-run` to preview streaming without opening a serial port. `--verbose` prints each dequeued G-code command. The `run` operation streams one command at a time, waits for `ok`, and lets you pause with `Ctrl+C` (FiberPath issues `M0` and resumes via `M108`).
+FiberPath automatically waits for Marlin's startup sequence to complete before streaming commands. This handles the ~10-20 line configuration banner that Marlin outputs on connection (typically ending with settings like `M92`, `M203`, `M206`, etc.).
+
+Use `--dry-run` to preview streaming without opening a serial port. `--verbose` prints each dequeued G-code command and Marlin's startup messages. The `run` operation streams one command at a time, waits for `ok`, and lets you pause with `Ctrl+C` (FiberPath issues `M0` and resumes via `M108`).

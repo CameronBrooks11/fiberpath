@@ -66,7 +66,8 @@ class WinderMachine:
                     f"{serialize_coordinate(self._last_position)} -> "
                     f"{serialize_coordinate(complete_end)}"
                 )
-            self._move_segment(position)
+            # Pass complete_end so all axes are included in the G-code command
+            self._move_segment(complete_end)
             return
 
         carriage_delta = abs(self._last_position[Axis.CARRIAGE] - complete_end[Axis.CARRIAGE])

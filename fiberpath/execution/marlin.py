@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Protocol, cast
 
 DEFAULT_BAUD_RATE = 250_000
-DEFAULT_RESPONSE_TIMEOUT = 2.0
+DEFAULT_RESPONSE_TIMEOUT = 10.0  # Allow time for slow moves (e.g., large rotations)
 
 
 class StreamError(RuntimeError):
@@ -45,6 +45,7 @@ class PySerialTransport:
             timeout=timeout,
             write_timeout=timeout,
         )
+
 
     def write_line(self, data: str) -> None:
         payload = (data + "\n").encode("utf-8")
@@ -94,7 +95,8 @@ class MarlinStreamer:
         self._response_timeout = response_timeout_s
         self._log = log
         self._transport = transport
-        self._connected = transport is not None
+        self._connected = False
+        self._startup_handled = transport is not None  # Mock transports skip startup
 
         self._program: list[str] = []
         self._cursor = 0
@@ -184,6 +186,7 @@ class MarlinStreamer:
         if self._transport is not None:
             self._transport.close()
         self._connected = False
+        self._startup_handled = False
 
     def __enter__(self) -> MarlinStreamer:
         return self
@@ -214,13 +217,71 @@ class MarlinStreamer:
     # Internal helpers
     # ------------------------------------------------------------------
     def _ensure_connection(self) -> None:
-        if self._connected:
+        if self._connected and self._startup_handled:
             return
+
         if self._transport is None:
             if self._port is None:
                 raise StreamError("Serial port is required for live streaming")
             self._transport = PySerialTransport(self._port, self._baud_rate, self._response_timeout)
+
+        if not self._startup_handled:
+            self._wait_for_marlin_ready()
+            self._startup_handled = True
+
         self._connected = True
+
+    def _wait_for_marlin_ready(self) -> None:
+        """Wait for Marlin to complete its startup sequence and become ready."""
+        assert self._transport is not None
+
+        if self._log is not None:
+            self._log("Waiting for Marlin to initialize...")
+
+        # Marlin sends a startup banner on connection. Wait for it to finish.
+        # The startup typically ends with configuration dump (M206, M200, etc.)
+        # We'll wait up to 5 seconds for the startup to complete, consuming all lines.
+        start_time = time.monotonic()
+        startup_timeout = 5.0
+        last_line_time = start_time
+        quiet_period = 0.5  # Wait for 0.5s of silence to confirm startup is done
+
+        startup_lines: list[str] = []
+        seen_first_line = False
+
+        while time.monotonic() - start_time < startup_timeout:
+            remaining = startup_timeout - (time.monotonic() - start_time)
+            # Use a shorter timeout for responsive checking
+            line = self._transport.readline(min(remaining, 0.05))
+
+            if line is not None and line.strip():
+                startup_lines.append(line.strip())
+                last_line_time = time.monotonic()
+                seen_first_line = True
+                if self._log is not None:
+                    self._log(f"[marlin startup] {line.strip()}")
+
+            # Only check for quiet period after we've seen the first line
+            # and enough time has passed since the last line
+            if seen_first_line:
+                time_since_last_line = time.monotonic() - last_line_time
+                if time_since_last_line >= quiet_period:
+                    if self._log is not None:
+                        self._log(f"Marlin ready (received {len(startup_lines)} startup lines)")
+                    return
+
+        # If we got here, we either saw no startup or timed out
+        if not startup_lines:
+            # No startup lines seen - might be already initialized, wrong port, or wrong baud rate
+            if self._log is not None:
+                self._log("No Marlin startup detected. Controller may already be initialized.")
+        else:
+            # We timed out while receiving startup - this could be problematic
+            if self._log is not None:
+                self._log(
+                    f"Warning: Startup timeout after {len(startup_lines)} lines. "
+                    "Proceeding, but stream may fail if controller is not ready."
+                )
 
     def _send_command(self, command: str) -> None:
         assert self._transport is not None  # for type checkers

@@ -22,6 +22,12 @@ def stream_command(
         help="Serial port or pyserial URL (required unless --dry-run).",
     ),
     baud_rate: int = typer.Option(250_000, "--baud-rate", "-b", help="Marlin baud rate."),
+    response_timeout: float = typer.Option(
+        10.0,
+        "--timeout",
+        "-t",
+        help="Response timeout in seconds for slow moves.",
+    ),
     dry_run: bool = typer.Option(
         False,
         "--dry-run",
@@ -41,7 +47,9 @@ def stream_command(
 
     commands = gcode_file.read_text(encoding="utf-8").splitlines()
     log_callback = None if json_output else (typer.echo if verbose else None)
-    streamer = MarlinStreamer(port=port, baud_rate=baud_rate, log=log_callback)
+    streamer = MarlinStreamer(
+        port=port, baud_rate=baud_rate, response_timeout_s=response_timeout, log=log_callback
+    )
     streamer.load_program(commands)
 
     progress_verbose = verbose or dry_run
