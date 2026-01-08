@@ -12,6 +12,8 @@ import { LeftPanel } from "./components/panels/LeftPanel";
 import { RightPanel } from "./components/panels/RightPanel";
 import { BottomPanel } from "./components/panels/BottomPanel";
 import { CenterCanvas } from "./components/canvas/CenterCanvas";
+import { MandrelForm } from "./components/forms/MandrelForm";
+import { TowForm } from "./components/forms/TowForm";
 import { useProjectStore } from "./state/projectStore";
 import {
   planWind,
@@ -185,10 +187,9 @@ export default function App() {
       }
       leftPanel={
         <LeftPanel>
-          <div className="panel-placeholder">
-            <p className="panel-placeholder-text">
-              Mandrel and Tow parameters will appear here in the next phase.
-            </p>
+          <MandrelForm />
+          <div style={{ marginTop: '1.5rem' }}>
+            <TowForm />
           </div>
         </LeftPanel>
       }
