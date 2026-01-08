@@ -3,3 +3,4 @@ dist/
 *.log
 src-tauri/gen/
 src-tauri/target/
+coverage/
