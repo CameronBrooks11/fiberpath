@@ -2,6 +2,8 @@
  * Retry utility for handling transient failures in Tauri commands
  */
 
+import { isRetryableError } from './schemas';
+
 export interface RetryOptions {
   maxAttempts?: number;
   delayMs?: number;
@@ -13,29 +15,7 @@ const DEFAULT_OPTIONS: Required<RetryOptions> = {
   maxAttempts: 3,
   delayMs: 500,
   backoffMultiplier: 2,
-  shouldRetry: (error: unknown) => {
-    // Retry on network/IO errors, but not on validation errors
-    if (error instanceof Error) {
-      const message = error.message.toLowerCase();
-      // Don't retry validation errors, schema errors, or user input errors
-      if (message.includes('validation') || 
-          message.includes('invalid') || 
-          message.includes('schema') ||
-          message.includes('bad parameter')) {
-        return false;
-      }
-      // Retry on IO errors, connection issues, timeouts
-      if (message.includes('failed to') ||
-          message.includes('timeout') ||
-          message.includes('connection') ||
-          message.includes('enoent') ||
-          message.includes('permission denied')) {
-        return true;
-      }
-    }
-    // Default: retry on unknown errors
-    return true;
-  },
+  shouldRetry: isRetryableError, // Use the error-class-aware checker
 };
 
 /**

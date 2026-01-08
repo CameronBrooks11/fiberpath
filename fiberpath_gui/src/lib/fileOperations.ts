@@ -2,6 +2,7 @@ import { open, save, ask } from "@tauri-apps/plugin-dialog";
 import { saveWindFile, loadWindFile, validateWindDefinition as validateWindCmd, planWind } from "./commands";
 import { projectToWindDefinition, windDefinitionToProject } from "../types/converters";
 import { addRecentFile, getRecentFiles } from "./recentFiles";
+import { FileError, ValidationError, parseError, WindDefinitionSchema, validateData } from "./schemas";
 import type { FiberPathProject } from "../types/project";
 import type { FiberPathWindDefinition } from "../types/wind-schema";
 
@@ -46,9 +47,9 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       addRecentFile(filePath);
       updateRecentFiles?.();
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = parseError(error);
       showError?.(`Failed to save file: ${message}`);
-      throw error;
+      throw new FileError(`Failed to save file: ${message}`, filePath, 'save', { originalError: error });
     }
   };
 
@@ -88,6 +89,10 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
     try {
       const content = await loadWindFile(filePath);
       const windDef: FiberPathWindDefinition = JSON.parse(content);
+      
+      // Runtime validation of loaded .wind file structure
+      validateData(WindDefinitionSchema, windDef, `.wind file at ${filePath}`);
+      
       const fullProject = windDefinitionToProject(windDef, filePath);
       
       loadProject(fullProject);
@@ -96,9 +101,9 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       updateRecentFiles?.();
       return true;
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = parseError(error);
       showError?.(`Failed to open file: ${message}`);
-      return false;
+      throw new FileError(`Failed to open file: ${message}`, filePath, 'load', { originalError: error });
     }
   };
 
@@ -155,9 +160,9 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       showInfo?.(`G-code exported to: ${gcodeFilePath}`);
       return true;
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = parseError(error);
       showError?.(`Failed to export G-code: ${message}`);
-      return false;
+      throw new FileError(`Failed to export G-code: ${message}`, undefined, 'export', { originalError: error });
     }
   };
 
@@ -174,6 +179,10 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
     try {
       const content = await loadWindFile(filePath);
       const windDef: FiberPathWindDefinition = JSON.parse(content);
+      
+      // Runtime validation of loaded .wind file structure
+      validateData(WindDefinitionSchema, windDef, `.wind file at ${filePath}`);
+      
       const fullProject = windDefinitionToProject(windDef, filePath);
       
       loadProject(fullProject);
@@ -182,9 +191,9 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       updateRecentFiles?.();
       return true;
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = parseError(error);
       showError?.(`Failed to open file: ${message}`);
-      return false;
+      throw new FileError(`Failed to open file: ${message}`, filePath, 'load', { originalError: error });
     }
   };
 
@@ -219,14 +228,15 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
         showInfo?.('✓ Definition is valid');
         return true;
       } else {
-        const errors = result.errors?.map(e => `• ${e.field}: ${e.message}`).join('\n') || 'Unknown errors';
-        showError?.(`Validation failed:\n${errors}`);
-        return false;
+        const errorList = result.errors?.map(e => `• ${e.field}: ${e.message}`).join('\n') || 'Unknown errors';
+        const validationError = new ValidationError(`Wind definition validation failed`, result.errors);
+        showError?.(`Validation failed:\n${errorList}`);
+        throw validationError;
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = parseError(error);
       showError?.(`Validation error: ${message}`);
-      return false;
+      throw error;
     }
   };
 

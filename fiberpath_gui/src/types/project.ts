@@ -38,6 +38,41 @@ export interface Layer {
   skip?: SkipLayer;
 }
 
+// ===========================
+// Type Guards for Layer Types
+// ===========================
+
+/**
+ * Type guard to check if a layer is a hoop layer
+ */
+export function isHoopLayer(layer: Layer): layer is Layer & { type: 'hoop'; hoop: HoopLayer } {
+  return layer.type === 'hoop' && layer.hoop !== undefined;
+}
+
+/**
+ * Type guard to check if a layer is a helical layer
+ */
+export function isHelicalLayer(layer: Layer): layer is Layer & { type: 'helical'; helical: HelicalLayer } {
+  return layer.type === 'helical' && layer.helical !== undefined;
+}
+
+/**
+ * Type guard to check if a layer is a skip layer
+ */
+export function isSkipLayer(layer: Layer): layer is Layer & { type: 'skip'; skip: SkipLayer } {
+  return layer.type === 'skip' && layer.skip !== undefined;
+}
+
+/**
+ * Get the layer-specific data from a layer (type-safe)
+ */
+export function getLayerData(layer: Layer): HoopLayer | HelicalLayer | SkipLayer {
+  if (isHoopLayer(layer)) return layer.hoop;
+  if (isHelicalLayer(layer)) return layer.helical;
+  if (isSkipLayer(layer)) return layer.skip;
+  throw new Error(`Invalid layer type: ${layer.type}`);
+}
+
 export interface FiberPathProject {
   // File metadata
   filePath: string | null;         // null = unsaved
