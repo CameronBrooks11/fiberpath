@@ -8,6 +8,7 @@ import {
   ValidationResultSchema,
   validateData,
   CommandError,
+  ValidationError,
   type PlanSummary,
   type SimulationSummary,
   type StreamSummary,
