@@ -331,7 +331,6 @@ The `schemaVersion` field allows for future format evolution:
 - **[Architecture](architecture.md)**: System design and component interaction
 - **[API Documentation](api.md)**: REST API endpoints for validation and planning
 - **[Concepts](concepts.md)**: Winding theory and geometric calculations
-- **[GUI Schema Documentation](../fiberpath_gui/docs/SCHEMA.md)**: Schema architecture and workflow
 
 ## Validation Tools
 
