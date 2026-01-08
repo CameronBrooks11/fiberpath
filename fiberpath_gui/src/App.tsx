@@ -1,6 +1,6 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
 import { join } from "@tauri-apps/api/path";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 
 import { FileField } from "./components/FileField";
 import { ResultCard } from "./components/ResultCard";
@@ -12,6 +12,7 @@ import { LeftPanel } from "./components/panels/LeftPanel";
 import { RightPanel } from "./components/panels/RightPanel";
 import { BottomPanel } from "./components/panels/BottomPanel";
 import { CenterCanvas } from "./components/canvas/CenterCanvas";
+import { useProjectStore } from "./state/projectStore";
 import {
   planWind,
   previewPlot,
@@ -33,9 +34,26 @@ interface PanelState<T> {
 const idleState = { status: "idle" } as const;
 
 export default function App() {
+  // Project store
+  const project = useProjectStore((state) => state.project);
+  const newProject = useProjectStore((state) => state.newProject);
+  
   // Layout state
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
+  
+  // Unsaved changes prompt
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (project.isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [project.isDirty]);
   
   // Existing state
   const [planInput, setPlanInput] = useState("");
@@ -147,11 +165,20 @@ export default function App() {
   const handleDocsLink = () => {
     void openExternal("https://cameronbrooks11.github.io/fiberpath");
   };
+  
+  const handleNewProject = () => {
+    if (project.isDirty) {
+      const confirmed = confirm("You have unsaved changes. Create new project anyway?");
+      if (!confirmed) return;
+    }
+    newProject();
+  };
 
   return (
     <MainLayout
       menuBar={
         <MenuBar
+          onNewProject={handleNewProject}
           onToggleLeftPanel={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
           onToggleRightPanel={() => setRightPanelCollapsed(!rightPanelCollapsed)}
         />

@@ -1,16 +1,17 @@
-interface StatusBarProps {
-  projectName?: string;
-  isDirty?: boolean;
-  layerCount?: number;
-  cliStatus?: "ready" | "checking" | "unavailable";
-}
+import { useProjectStore } from "../state/projectStore";
 
-export function StatusBar({ 
-  projectName = "Untitled", 
-  isDirty = false,
-  layerCount = 0,
-  cliStatus = "ready"
-}: StatusBarProps) {
+export function StatusBar() {
+  const project = useProjectStore((state) => state.project);
+  
+  const projectName = project.filePath 
+    ? project.filePath.split(/[\\/]/).pop() || 'Untitled'
+    : 'Untitled';
+  
+  const layerCount = project.layers.length;
+  const isDirty = project.isDirty;
+  
+  const cliStatus = "ready"; // TODO: Implement actual CLI health check
+  
   const getCliStatusText = () => {
     switch (cliStatus) {
       case "ready":
