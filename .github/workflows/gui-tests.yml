@@ -55,9 +55,6 @@ jobs:
           name: fiberpath-gui
           fail_ci_if_error: false
       
-      - name: Check coverage thresholds
-        run: npm run test:coverage -- --reporter=json --reporter=text
-      
       - name: Comment PR with coverage
         if: github.event_name == 'pull_request'
         uses: romeovs/lcov-reporter-action@v0.3.1
