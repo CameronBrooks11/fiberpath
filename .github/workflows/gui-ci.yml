@@ -1,0 +1,75 @@
+name: GUI CI
+
+on:
+  push:
+    branches: [main, newgui]
+    paths:
+      - "fiberpath_gui/**"
+      - ".github/workflows/gui-ci.yml"
+      - ".github/actions/setup-node/**"
+      - ".github/actions/setup-rust/**"
+  pull_request:
+    paths:
+      - "fiberpath_gui/**"
+      - ".github/workflows/gui-ci.yml"
+      - ".github/actions/setup-node/**"
+      - ".github/actions/setup-rust/**"
+
+jobs:
+  lint-and-type-check:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fiberpath_gui
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: ./.github/actions/setup-node
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript compiler
+        run: npx tsc --noEmit
+
+  test:
+    name: Test & Build
+    needs: lint-and-type-check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fiberpath_gui
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: ./.github/actions/setup-node
+
+      - name: Run Vitest
+        run: npm test
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./fiberpath_gui/coverage/lcov.info
+          flags: gui
+          name: gui
+          fail_ci_if_error: false
+
+      - name: Build Vite assets
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Build failed - no dist directory"
+            exit 1
+          fi
+          echo "Build successful - dist/ directory created"

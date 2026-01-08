@@ -1,0 +1,46 @@
+name: Setup Python Environment
+description: Sets up Python with uv and installs dependencies
+
+inputs:
+  python-version:
+    description: Python version to use
+    required: false
+    default: "3.11"
+  dependencies:
+    description: Dependency groups to install (e.g., ".[dev,api]")
+    required: false
+    default: ".[dev,api,docs]"
+  cache-key-suffix:
+    description: Additional suffix for cache key
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "pyproject.toml"
+
+    - name: Cache Python virtual environment
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ inputs.cache-key-suffix }}
+        restore-keys: |
+          venv-${{ runner.os }}-${{ inputs.python-version }}-
+
+    - name: Create virtual environment
+      shell: bash
+      run: uv venv
+
+    - name: Install dependencies
+      shell: bash
+      run: uv pip install ${{ inputs.dependencies }}

@@ -85,7 +85,7 @@
 - [schemas.test.ts](fiberpath_gui/src/lib/schemas.test.ts)
 - [workflows.test.ts](fiberpath_gui/src/tests/integration/workflows.test.ts)
 - [setup.ts](fiberpath_gui/src/tests/setup.ts)
-- [gui-tests.yml](.github/workflows/gui-tests.yml)
+- [gui-tests.yml](.github/workflows/archive/gui-tests.yml)
 - Coverage configured in [vite.config.ts](fiberpath_gui/vite.config.ts)
 
 ---
@@ -186,11 +186,13 @@
 **Implementation Details:**
 
 **Backend (Rust/Tauri):**
+
 - Added `check_cli_health` command in [main.rs](fiberpath_gui/src-tauri/src/main.rs)
 - Runs `fiberpath --version` to verify CLI is available and get version
 - Returns health status, version string, and error messages
 
 **Frontend (TypeScript/React):**
+
 - [useCliHealth.ts](fiberpath_gui/src/hooks/useCliHealth.ts) - Hook for CLI health checking with polling
 - [CliHealthContext.tsx](fiberpath_gui/src/contexts/CliHealthContext.tsx) - Context provider for app-wide health state
 - [CliHealthWarning.tsx](fiberpath_gui/src/components/CliHealthWarning.tsx) - Warning banner component
@@ -199,10 +201,12 @@
 - [DiagnosticsDialog.tsx](fiberpath_gui/src/components/dialogs/DiagnosticsDialog.tsx) - Updated with real health data
 
 **Schemas & Validation:**
+
 - Added `CliHealthResponseSchema` to [schemas.ts](fiberpath_gui/src/lib/schemas.ts)
 - Full Zod validation for health check responses
 
 **Features:**
+
 - ✅ Automatic health check on app launch
 - ✅ Polling every 30 seconds (configurable)
 - ✅ Visual warning banner when CLI unavailable
@@ -213,9 +217,163 @@
 
 ---
 
+## Phase 9: CI/CD Workflow Organization
+
+**Current State Analysis:**
+
+Existing workflows (4 files):
+
+- `ci.yml` - Python backend: lint (Ruff), type-check (MyPy), MkDocs build, pytest on 3 OS
+- `gui.yml` - GUI packaging: lint, build, create installers for 3 OS
+- `gui-tests.yml` - GUI testing: lint, type-check, tests, coverage, build check
+- `docs-site.yml` - MkDocs deployment to GitHub Pages
+
+**Issues Identified:**
+
+1. **Overlapping responsibilities** - `gui.yml` and `gui-tests.yml` both do linting and building
+2. **Naming inconsistency** - `ci.yml` vs `gui-tests.yml` vs `docs-site.yml` vs `gui.yml`
+3. **Trigger inconsistency** - Some use `main`, some use `main, newgui`, some path-based
+4. **Missing workflows** - No Python package publishing, no release automation
+5. **Redundant jobs** - Linting/building duplicated across workflows
+6. **No composite actions** - Repeated setup steps (Python, Node, Rust, caching)
+
+**Proposed Structure:**
+
+```
+.github/
+├── workflows/
+│   ├── backend-ci.yml           # Python: lint, type-check, test (all OS)
+│   ├── backend-publish.yml      # Publish to PyPI on release
+│   ├── gui-ci.yml              # GUI: lint, type-check, test, build
+│   ├── gui-packaging.yml       # GUI: create installers (all OS)
+│   ├── docs-ci.yml             # MkDocs: build validation
+│   ├── docs-deploy.yml         # MkDocs: deploy to GitHub Pages
+│   └── release.yml             # Tag release, trigger publish workflows
+└── actions/
+    ├── setup-python/           # Composite: Python + uv setup
+    ├── setup-node/             # Composite: Node + npm cache
+    └── setup-rust/             # Composite: Rust + cargo cache
+```
+
+**Naming Convention:**
+
+- `{component}-ci.yml` - Continuous Integration (lint, test, build validation)
+- `{component}-packaging.yml` - Create distributable artifacts
+- `{component}-deploy.yml` - Deploy to production/hosting
+- `{component}-publish.yml` - Publish to package registry
+- `release.yml` - Release orchestration
+
+**Workflow Responsibilities:**
+
+1. **backend-ci.yml** (main + PRs)
+
+   - Ruff linting
+   - MyPy type checking
+   - Pytest on ubuntu/macos/windows
+   - Coverage reporting
+   - Triggers: push to main, all PRs
+
+2. **backend-publish.yml** (releases only)
+
+   - Build Python wheel/sdist
+   - Publish to PyPI
+   - Triggers: GitHub release created
+
+3. **gui-ci.yml** (main + newgui + PRs)
+
+   - ESLint linting
+   - TypeScript type checking
+   - Vitest unit/integration tests
+   - Coverage reporting
+   - Vite build validation
+   - Triggers: push to main/newgui, PRs affecting fiberpath_gui/
+
+4. **gui-packaging.yml** (manual + releases)
+
+   - Tauri bundle creation for Windows/macOS/Linux
+   - Upload installers as artifacts
+   - Triggers: workflow_dispatch, release created
+
+5. **docs-ci.yml** (main + PRs)
+
+   - MkDocs build --strict validation
+   - Link checking
+   - Triggers: push to main, PRs affecting docs/
+
+6. **docs-deploy.yml** (main only)
+
+   - Build MkDocs site
+   - Deploy to GitHub Pages
+   - Triggers: push to main affecting docs/
+
+7. **release.yml** (manual)
+   - Create GitHub release
+   - Trigger backend-publish
+   - Trigger gui-packaging
+   - Triggers: workflow_dispatch with version input
+
+**Composite Actions:**
+
+1. **setup-python/** - Reusable Python setup
+
+   - Setup Python 3.11
+   - Setup uv package manager
+   - Create venv
+   - Install dependencies with caching
+
+2. **setup-node/** - Reusable Node setup
+
+   - Setup Node 20
+   - Cache npm modules
+   - Install dependencies
+
+3. **setup-rust/** - Reusable Rust setup
+   - Setup Rust toolchain
+   - Cache cargo artifacts
+   - Install system dependencies (Linux)
+
+**Tasks:**
+
+- [x] Create composite actions for repeated setup steps
+- [x] Split gui.yml into gui-ci.yml and gui-packaging.yml
+- [x] Rename and reorganize existing workflows to match convention
+- [x] Create backend-publish.yml for PyPI releases
+- [x] Create release.yml for coordinated releases
+- [x] Update all workflow triggers for consistency (main + PRs)
+- [x] Remove redundant linting/building from gui-tests.yml
+- [ ] Add workflow status badges to README.md
+- [ ] Document workflow architecture in CONTRIBUTING.md
+- [ ] Test all workflows on a test branch
+
+**Progress:** 7/10 tasks complete
+
+**Implementation Details:**
+
+- Created 3 composite actions (.github/actions/):
+  - setup-python: Python 3.11 + uv + venv + dependencies with caching
+  - setup-node: Node 20 + npm cache + dependencies
+  - setup-rust: Rust toolchain + cargo cache + Linux Tauri dependencies
+- Created 7 new workflows (.github/workflows/):
+  - backend-ci.yml: Python linting (Ruff), type-checking (MyPy), testing (pytest) on 3 OS
+  - gui-ci.yml: GUI linting (ESLint), type-checking (tsc), testing (Vitest), building
+  - docs-ci.yml: MkDocs validation (--strict build)
+  - docs-deploy.yml: MkDocs deployment to GitHub Pages
+  - gui-packaging.yml: Tauri installers for Windows/macOS/Linux
+  - backend-publish.yml: PyPI publishing with trusted publishing
+  - release.yml: Coordinated release orchestration
+- Archived old workflows (ci.yml, gui.yml, gui-tests.yml, docs-site.yml)
+- Established naming convention: {component}-{purpose}.yml
+- Eliminated redundancy (gui.yml and gui-tests.yml both did linting/building)
+- Added PyPI trusted publishing support
+- Release automation with version validation
+
+**Note:** This phase focuses on maintainability and reducing CI/CD technical debt. Proper organization will make future workflow additions easier and reduce GitHub Actions minutes usage.
+
+---
+
 ## Overall Progress
 
-**Status:** 44/44 tasks complete (100%) ✅
+**Status:** 51/54 tasks complete (94%)
 
 **Success Criteria:**
 
@@ -229,13 +387,9 @@ v3 is complete when:
 - ✅ All components have JSDoc prop documentation
 - ✅ CSS has no !important, uses modules
 - ✅ CLI health check shows real status (Phase 8)
+- 🔄 CI/CD workflows properly organized and documented (Phase 9)
 
-**🎉 ROADMAP V3 COMPLETE! 🎉**
+**Status: 51/54 tasks complete (94%)**
 
-All 44 tasks across 8 phases have been successfully completed. The FiberPath GUI now has:
-- Robust error handling and user feedback
-- Clean, maintainable codebase
-- Comprehensive test coverage (113 tests passing)
-- Full TypeScript type safety with runtime validation
-- Professional CSS architecture with design tokens
-- Real-time CLI health monitoring with graceful failure handling
+Phases 1-8 complete. Phase 9 (CI/CD) implementation complete, testing and documentation pending.
+
