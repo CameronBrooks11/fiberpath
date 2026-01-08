@@ -1,0 +1,44 @@
+name: Docs CI
+
+on:
+  push:
+    branches: [main, newgui]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "CONTRIBUTING.md"
+      - "README.md"
+      - ".github/workflows/docs-ci.yml"
+      - ".github/actions/setup-python/**"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "CONTRIBUTING.md"
+      - "README.md"
+      - ".github/workflows/docs-ci.yml"
+      - ".github/actions/setup-python/**"
+
+jobs:
+  validate:
+    name: Validate MkDocs Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python
+        with:
+          dependencies: ".[docs]"
+
+      - name: Build MkDocs site
+        run: uv run mkdocs build --strict
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "site" ]; then
+            echo "Build failed - no site directory"
+            exit 1
+          fi
+          echo "MkDocs build successful"

@@ -1,0 +1,62 @@
+name: GUI Packaging
+
+on:
+  push:
+    branches: [main, newgui]
+    paths:
+      - "fiberpath_gui/**"
+      - ".github/workflows/gui-packaging.yml"
+      - ".github/actions/setup-node/**"
+      - ".github/actions/setup-rust/**"
+  workflow_call:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  package:
+    name: Build Installers (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    defaults:
+      run:
+        working-directory: fiberpath_gui
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: ./.github/actions/setup-node
+
+      - name: Setup Rust environment
+        uses: ./.github/actions/setup-rust
+        with:
+          install-linux-deps: "true"
+
+      - name: Build Tauri bundles
+        run: npm run package
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fiberpath-gui-${{ matrix.os }}
+          path: fiberpath_gui/src-tauri/target/release/bundle
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload release assets
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            fiberpath_gui/src-tauri/target/release/bundle/dmg/*.dmg
+            fiberpath_gui/src-tauri/target/release/bundle/nsis/*.exe
+            fiberpath_gui/src-tauri/target/release/bundle/msi/*.msi
+            fiberpath_gui/src-tauri/target/release/bundle/deb/*.deb
+            fiberpath_gui/src-tauri/target/release/bundle/appimage/*.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,121 @@
+/**
+ * Typography Styles
+ * 
+ * All text-related styles including headings, paragraphs, links, and text utilities.
+ */
+
+/* Links */
+a {
+  color: var(--color-primary-soft);
+  text-decoration: none;
+  transition: var(--transition-colors);
+}
+
+a:hover {
+  text-decoration: underline;
+  color: var(--color-primary);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+h1 {
+  font-size: var(--font-size-2xl);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+}
+
+h3 {
+  font-size: var(--font-size-lg);
+}
+
+h4, h5, h6 {
+  font-size: var(--font-size-md);
+}
+
+/* Paragraphs */
+p {
+  margin: 0 0 var(--spacing-md);
+  line-height: var(--line-height-relaxed);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* Text Utilities */
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-mono {
+  font-family: var(--font-family-mono);
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Hero Section Typography */
+.hero {
+  padding: var(--spacing-2xl) var(--spacing-xl) var(--spacing-xl);
+  text-align: center;
+  background: rgb(12, 12, 14, 0.9);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(8px);
+}
+
+.hero__eyebrow {
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--spacing-sm);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  color: var(--color-primary-soft);
+}
+
+.hero__lead {
+  margin: var(--spacing-sm) auto var(--spacing-xl);
+  max-width: 42rem;
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+}
+
+.hero__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.hero__tags span {
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}

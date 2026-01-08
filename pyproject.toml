@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fiberpath"
-version = "0.2.3"
+version = "0.3.0"
 description = "Modern filament winding planner, simulator, and G-code toolkit."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
-authors = [{ name = "Western Engineering Rocketry Team" }]
+authors = [{ name = "Cameron K. Brooks" }]
 keywords = ["gcode", "cnc", "filament-winding", "composites"]
 classifiers = [
     "Programming Language :: Python :: 3",

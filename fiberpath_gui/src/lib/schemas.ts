@@ -1,0 +1,310 @@
+import { z } from 'zod';
+
+// ===========================
+// Tauri Command Response Schemas
+// ===========================
+
+/**
+ * Schema for PlanSummary response from plan_wind command
+ */
+export const PlanSummarySchema = z.object({
+  output: z.string(),
+  commands: z.number().int().nonnegative(),
+  layers: z.number().int().nonnegative().optional(),
+  metadata: z.record(z.unknown()).optional(),
+  axisFormat: z.string().optional(),
+});
+
+/**
+ * Schema for SimulationSummary response from simulate_program command
+ */
+export const SimulationSummarySchema = z.object({
+  commands_executed: z.number().int().nonnegative(),
+  moves: z.number().int().nonnegative(),
+  estimated_time_s: z.number().nonnegative(),
+  total_distance_mm: z.number().nonnegative(),
+  average_feed_rate_mmpm: z.number().nonnegative(),
+  tow_length_mm: z.number().nonnegative(),
+});
+
+/**
+ * Schema for StreamSummary response from stream_program command
+ */
+export const StreamSummarySchema = z.object({
+  status: z.string(),
+  commands: z.number().int().nonnegative(),
+  total: z.number().int().nonnegative(),
+  baudRate: z.number().int().positive(),
+  dryRun: z.boolean(),
+});
+
+/**
+ * Schema for PlotPreviewPayload response from plot_preview and plot_definition commands
+ */
+export const PlotPreviewPayloadSchema = z.object({
+  path: z.string(),
+  imageBase64: z.string(),
+  warnings: z.array(z.string()),
+});
+
+/**
+ * Schema for CliHealthResponse from check_cli_health command
+ */
+export const CliHealthResponseSchema = z.object({
+  healthy: z.boolean(),
+  version: z.string().nullable(),
+  errorMessage: z.string().nullable(),
+});
+
+/**
+ * Schema for ValidationResult response from validate_wind_definition command
+ */
+export const ValidationResultSchema = z.object({
+  valid: z.boolean().optional(),
+  status: z.string().optional(),
+  path: z.string().optional(),
+  errors: z.array(z.object({
+    field: z.string(),
+    message: z.string(),
+  })).optional(),
+});
+
+// ===========================
+// Wind File Structure Schemas
+// ===========================
+
+/**
+ * Schema for Mandrel object in .wind files
+ */
+export const MandrelSchema = z.object({
+  diameter: z.number().positive(),
+  wind_length: z.number().positive(),
+});
+
+/**
+ * Schema for Tow object in .wind files
+ */
+export const TowSchema = z.object({
+  width: z.number().positive(),
+  thickness: z.number().positive(),
+});
+
+/**
+ * Schema for HoopLayer object in .wind files
+ */
+export const HoopLayerSchema = z.object({
+  terminal: z.boolean(),
+});
+
+/**
+ * Schema for HelicalLayer object in .wind files
+ */
+export const HelicalLayerSchema = z.object({
+  wind_angle: z.number().min(0).max(90),
+  pattern_number: z.number().int().positive(),
+  skip_index: z.number().int().nonnegative(),
+  lock_degrees: z.number().nonnegative(),
+  lead_in_mm: z.number().nonnegative(),
+  lead_out_degrees: z.number().nonnegative(),
+  skip_initial_near_lock: z.boolean(),
+});
+
+/**
+ * Schema for SkipLayer object in .wind files
+ */
+export const SkipLayerSchema = z.object({
+  mandrel_rotation: z.number(),
+});
+
+/**
+ * Schema for Layer object in .wind files
+ * Uses discriminated union for layer types
+ */
+export const LayerSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('hoop'),
+    hoop: HoopLayerSchema,
+  }),
+  z.object({
+    type: z.literal('helical'),
+    helical: HelicalLayerSchema,
+  }),
+  z.object({
+    type: z.literal('skip'),
+    skip: SkipLayerSchema,
+  }),
+]);
+
+/**
+ * Schema for complete .wind file structure
+ */
+export const WindDefinitionSchema = z.object({
+  mandrel: MandrelSchema,
+  tow: TowSchema,
+  layers: z.array(LayerSchema),
+});
+
+// ===========================
+// Type Inference Helpers
+// ===========================
+
+export type PlanSummary = z.infer<typeof PlanSummarySchema>;
+export type SimulationSummary = z.infer<typeof SimulationSummarySchema>;
+export type StreamSummary = z.infer<typeof StreamSummarySchema>;
+export type PlotPreviewPayload = z.infer<typeof PlotPreviewPayloadSchema>;
+export type ValidationResult = z.infer<typeof ValidationResultSchema>;
+export type WindDefinition = z.infer<typeof WindDefinitionSchema>;
+
+// ===========================
+// Validation Helper Functions
+// ===========================
+
+/**
+ * Validates and parses data against a schema
+ * @throws {ValidationError} if validation fails
+ */
+export function validateData<T>(schema: z.ZodSchema<T>, data: unknown, context: string): T {
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    const errors = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+    throw new ValidationError(`${context} validation failed: ${errors}`);
+  }
+  return result.data;
+}
+
+/**
+ * Type guard to check if data matches schema
+ */
+export function isValidData<T>(schema: z.ZodSchema<T>, data: unknown): data is T {
+  return schema.safeParse(data).success;
+}
+
+// ===========================
+// Custom Error Classes
+// ===========================
+
+/**
+ * Base error class for FiberPath application errors
+ */
+export class FiberPathError extends Error {
+  constructor(message: string, public readonly context?: Record<string, unknown>) {
+    super(message);
+    this.name = 'FiberPathError';
+    Object.setPrototypeOf(this, FiberPathError.prototype);
+  }
+}
+
+/**
+ * Error for file system operations (save, load, export)
+ */
+export class FileError extends FiberPathError {
+  constructor(
+    message: string,
+    public readonly path?: string,
+    public readonly operation?: 'save' | 'load' | 'export',
+    context?: Record<string, unknown>
+  ) {
+    super(message, { ...context, path, operation });
+    this.name = 'FileError';
+    Object.setPrototypeOf(this, FileError.prototype);
+  }
+}
+
+/**
+ * Error for validation failures (schema, runtime checks)
+ */
+export class ValidationError extends FiberPathError {
+  constructor(
+    message: string,
+    public readonly errors?: Array<{ field: string; message: string }>,
+    context?: Record<string, unknown>
+  ) {
+    super(message, { ...context, errors });
+    this.name = 'ValidationError';
+    Object.setPrototypeOf(this, ValidationError.prototype);
+  }
+}
+
+/**
+ * Error for Tauri command invocations
+ */
+export class CommandError extends FiberPathError {
+  constructor(
+    message: string,
+    public readonly command?: string,
+    public readonly originalError?: unknown,
+    context?: Record<string, unknown>
+  ) {
+    super(message, { ...context, command, originalError });
+    this.name = 'CommandError';
+    Object.setPrototypeOf(this, CommandError.prototype);
+  }
+}
+
+/**
+ * Error for network/connection issues with CLI backend
+ */
+export class ConnectionError extends FiberPathError {
+  constructor(
+    message: string,
+    public readonly endpoint?: string,
+    context?: Record<string, unknown>
+  ) {
+    super(message, { ...context, endpoint });
+    this.name = 'ConnectionError';
+    Object.setPrototypeOf(this, ConnectionError.prototype);
+  }
+}
+
+// ===========================
+// Error Parsing Utilities
+// ===========================
+
+/**
+ * Extracts user-friendly error message from various error types
+ */
+export function parseError(error: unknown): string {
+  if (error instanceof FiberPathError) {
+    return error.message;
+  }
+  
+  if (error instanceof Error) {
+    return error.message;
+  }
+  
+  if (typeof error === 'string') {
+    return error;
+  }
+  
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String(error.message);
+  }
+  
+  return 'An unknown error occurred';
+}
+
+/**
+ * Checks if error is retryable (transient failure)
+ */
+export function isRetryableError(error: unknown): boolean {
+  if (error instanceof ValidationError) {
+    return false; // Validation errors won't fix themselves
+  }
+  
+  if (error instanceof FileError) {
+    // Retry file operations (might be temporary lock)
+    return true;
+  }
+  
+  if (error instanceof ConnectionError) {
+    return true; // Network issues might resolve
+  }
+  
+  if (error instanceof CommandError) {
+    // Check if it's a validation vs IO error
+    const message = error.message.toLowerCase();
+    return !message.includes('validation') && !message.includes('invalid');
+  }
+  
+  return true; // Default: retry unknown errors
+}

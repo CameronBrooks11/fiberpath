@@ -1,6 +1,6 @@
 {
   "name": "fiberpath-gui",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -11,25 +11,49 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch",
     "tauri": "tauri",
-    "package": "tauri build --ci"
+    "package": "tauri build --ci",
+    "schema:generate": "python ../scripts/generate_schema.py && npx json-schema-to-typescript schemas/wind-schema.json > src/types/wind-schema.ts"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-menubar": "^1.1.16",
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.3.3",
     "clsx": "^2.1.0",
+    "lucide-react": "^0.562.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zod": "^3.23.8"
+    "react-zoom-pan-pinch": "^3.7.0",
+    "zod": "^3.25.76",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.8.4",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.2",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^2.1.9",
+    "@vitest/ui": "^2.1.8",
+    "ajv": "^8.17.1",
+    "jsdom": "^27.4.0",
+    "json-schema-to-typescript": "^15.0.4",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^39.0.1",
     "typescript": "^5.6.3",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "vitest": "^2.1.8"
   }
 }

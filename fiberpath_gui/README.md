@@ -23,6 +23,25 @@ The `tauri dev` command spawns the Vite dev server and opens the desktop shell. 
 3. **Simulate** – run the simulator and inspect motion estimates.
 4. **Stream** – start with `--dry-run` to validate queue handling before connecting to hardware.
 
+## Schema Management
+
+The GUI uses a JSON Schema generated from the Python Pydantic models to ensure type safety and validation:
+
+```pwsh
+# Regenerate schema and TypeScript types from Python models
+npm run schema:generate
+```
+
+This:
+
+1. Runs `scripts/generate_schema.py` to extract JSON Schema from Pydantic
+2. Generates TypeScript types in `src/types/wind-schema.ts`
+3. Ensures GUI and CLI stay in sync
+
+The schema is automatically validated before sending data to the backend, catching errors early.
+
+## Building for Production
+
 For production builds:
 
 ```pwsh
@@ -36,4 +55,9 @@ npm run package
 macOS). Windows packaging works locally, while macOS/Linux artifacts require running the command on
 those respective platforms (handled automatically in CI).
 
-See `ARCHITECTURE.md` for a deeper dive into the UI layout and Rust bridge commands.
+See `fiberpath_gui/docs/` for more details on architecture and schema generation, contains:
+
+- `ARCHITECTURE.md` – high-level design of the Tauri + React GUI
+- `SCHEMA.md` – how JSON Schema and TypeScript types are generated
+- `PERFORMANCE_PROFILING.md` – guide to profiling React performance
+- `STORE_SPLITTING_ANALYSIS.md` – analysis of Zustand store splitting considerations

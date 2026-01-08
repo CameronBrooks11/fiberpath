@@ -37,7 +37,27 @@ Thanks for investing time in the project! This guide explains how to set up a de
 4. Update documentation and add changelog entries (once release tracking is in place).
 5. Ensure commits are scoped and descriptive. Squash locally if needed before opening the PR.
 
-CI will enforce the same Ruff/MyPy/Pytest pipeline on every PR via `.github/workflows/ci.yml`. If a job fails, reproduce locally with the matching `uv run …` command.
+CI will enforce the same Ruff/MyPy/Pytest pipeline on every PR. If a job fails, reproduce locally with the matching `uv run …` command.
+
+## CI/CD Workflows
+
+FiberPath uses GitHub Actions with 7 specialized workflows:
+
+- **backend-ci.yml** - Python linting (Ruff), type checking (MyPy), testing (pytest on 3 OS)
+- **gui-ci.yml** - GUI linting (ESLint), type checking (tsc), testing (Vitest), building (Vite)
+- **docs-ci.yml** - Documentation validation (MkDocs --strict)
+- **docs-deploy.yml** - Documentation deployment to GitHub Pages (main branch only)
+- **gui-packaging.yml** - Tauri installer creation for Windows/macOS/Linux
+- **backend-publish.yml** - PyPI publishing with trusted publishing (releases only)
+- **release.yml** - Coordinated release orchestration (manual dispatch)
+
+All workflows use reusable composite actions (`.github/actions/`) for setup steps. See [docs/ci-cd.md](docs/ci-cd.md) for complete architecture documentation.
+
+**Branch Triggers:**
+
+- CI workflows (backend-ci, gui-ci, docs-ci) run on `main`, `newgui`, and all PRs
+- Deployment (docs-deploy) runs only on `main` to prevent accidental deployments
+- Packaging and publishing run on releases or manual dispatch
 
 ## Issue Triage & Discussion
 
