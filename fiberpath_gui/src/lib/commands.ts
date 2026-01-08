@@ -52,3 +52,7 @@ export async function streamProgram(gcodePath: string, options: { port?: string;
     dryRun: options.dryRun,
   });
 }
+
+export async function plotDefinition(definitionJson: string, visibleLayerCount: number, outputPath?: string) {
+  return invoke<PlotPreviewPayload>("plot_definition", { definitionJson, visibleLayerCount, outputPath });
+}

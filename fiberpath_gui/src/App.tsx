@@ -12,6 +12,7 @@ import { LeftPanel } from "./components/panels/LeftPanel";
 import { RightPanel } from "./components/panels/RightPanel";
 import { BottomPanel } from "./components/panels/BottomPanel";
 import { CenterCanvas } from "./components/canvas/CenterCanvas";
+import { VisualizationCanvas } from "./components/canvas/VisualizationCanvas";
 import { MandrelForm } from "./components/forms/MandrelForm";
 import { TowForm } from "./components/forms/TowForm";
 import { LayerStack } from "./components/layers/LayerStack";
@@ -204,13 +205,7 @@ export default function App() {
       }
       centerCanvas={
         <CenterCanvas>
-          <div className="canvas-placeholder">
-            <div className="canvas-placeholder-icon">⬢</div>
-            <div className="canvas-placeholder-text">
-              2D visualization canvas will appear here in Phase 6.<br />
-              Use the Tools menu to access existing workflows.
-            </div>
-          </div>
+          <VisualizationCanvas />
         </CenterCanvas>
       }
       rightPanel={
