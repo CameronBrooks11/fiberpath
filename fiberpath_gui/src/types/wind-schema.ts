@@ -23,6 +23,10 @@ export type Windlength = number;
 export type Width = number;
 export type Thickness = number;
 export type Defaultfeedrate = number;
+/**
+ * Version of the .wind file format schema
+ */
+export type SchemaVersion = "1.0";
 
 /**
  * Schema for FiberPath filament winding pattern definitions
@@ -32,6 +36,7 @@ export interface FiberPathWindDefinition {
   mandrelParameters: MandrelParameters;
   towParameters: TowParameters;
   defaultFeedRate: Defaultfeedrate;
+  schemaVersion?: SchemaVersion;
   [k: string]: unknown;
 }
 export interface HoopLayer {

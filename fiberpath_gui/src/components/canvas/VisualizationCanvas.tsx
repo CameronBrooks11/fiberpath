@@ -82,13 +82,6 @@ export function VisualizationCanvas() {
       // Convert project to .wind schema format
       const windDefinition = projectToWindDefinition(project, visibleLayerCount);
       
-      console.log('Wind definition:', {
-        visibleLayerCount,
-        totalLayers: project.layers.length,
-        includedLayers: windDefinition.layers.length,
-        definition: windDefinition
-      });
-      
       // Validate against schema
       const validation = validateWindDefinition(windDefinition);
       if (!validation.valid) {
@@ -100,9 +93,7 @@ export function VisualizationCanvas() {
       const definitionJson = JSON.stringify(windDefinition);
 
       // Call Tauri command
-      console.log('Calling plotDefinition with', visibleLayerCount, 'layers');
       const result = await plotDefinition(definitionJson, visibleLayerCount);
-      console.log('Plot result:', { pathLength: result.path?.length, base64Length: result.imageBase64?.length, warnings: result.warnings });
       
       // Store warnings if any
       if (result.warnings && result.warnings.length > 0) {
@@ -114,7 +105,6 @@ export function VisualizationCanvas() {
       }
       
       const dataUri = `data:image/png;base64,${result.imageBase64}`;
-      console.log('Setting preview image, data URI length:', dataUri.length);
       setPreviewImage(dataUri);
     } catch (err) {
       console.error('Failed to generate preview:', err);

@@ -94,8 +94,6 @@ async fn plot_definition(definition_json: String, visible_layer_count: usize, ou
     fs::write(&wind_file, &definition_json)
         .map_err(|err| FiberpathError::File(format!("Failed to write temp .wind file: {err}")).to_string())?;
     
-    println!("Wrote wind file to: {}", wind_file);
-    
     // Create temporary .gcode file
     let gcode_file = temp_path("gcode");
     
@@ -118,8 +116,6 @@ async fn plot_definition(definition_json: String, visible_layer_count: usize, ou
         }
     }
     
-    println!("Generated gcode file: {}", gcode_file);
-    
     // Generate output path for PNG
     let output_file = output_path.unwrap_or_else(|| temp_path("png"));
     
@@ -136,20 +132,14 @@ async fn plot_definition(definition_json: String, visible_layer_count: usize, ou
     // Execute plot command
     exec_fiberpath(args).await.map_err(|err| format!("Plotting failed: {err}"))?;
     
-    println!("Generated plot file: {}", output_file);
-    
     // Read and encode image
     let bytes = fs::read(&output_file)
         .map_err(|err| FiberpathError::File(format!("Failed to read plot output: {err}")).to_string())?;
     
-    println!("Read {} bytes from {}", bytes.len(), output_file);
-    println!("Wind file: {}", wind_file);
-    println!("Gcode file: {}", gcode_file);
-    
-    // Don't delete temp files for debugging
-    // let _ = fs::remove_file(&wind_file);
-    // let _ = fs::remove_file(&gcode_file);
-    // let _ = fs::remove_file(&output_file);
+    // Clean up temp files
+    let _ = fs::remove_file(&wind_file);
+    let _ = fs::remove_file(&gcode_file);
+    let _ = fs::remove_file(&output_file);
     
     Ok(PlotPreview {
         path: output_file,

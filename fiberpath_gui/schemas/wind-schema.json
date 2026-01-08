@@ -175,6 +175,13 @@
       "exclusiveMinimum": 0,
       "title": "Defaultfeedrate",
       "type": "number"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "description": "Version of the .wind file format schema"
     }
   },
   "required": [

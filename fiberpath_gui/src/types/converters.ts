@@ -50,6 +50,7 @@ export function projectToWindDefinition(
     : project.layers;
   
   return {
+    schemaVersion: '1.0',
     mandrelParameters: {
       diameter: project.mandrel.diameter,
       windLength: project.mandrel.wind_length,
