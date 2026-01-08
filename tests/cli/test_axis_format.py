@@ -75,14 +75,15 @@ def test_xab_gcode_contains_rotational_axes(tmp_path: Path) -> None:
 
     assert result.exit_code == 0, result.output
     gcode = output_file.read_text(encoding="utf-8")
-    
+
     # Check that G-code contains A and B axes (rotational)
     assert re.search(r"G[01].*\sA[\d\.-]+", gcode), "XAB format should contain A axis moves"
     assert re.search(r"G[01].*\sB[\d\.-]+", gcode), "XAB format should contain B axis moves"
-    
+
     # Check that G-code does NOT contain Y or Z axes in move commands
     # (they might appear in comments but not in actual move commands)
-    move_lines = [line for line in gcode.split("\n") if line.strip().startswith("G0") or line.strip().startswith("G1")]
+    move_lines = [line for line in gcode.split("\n") if line.strip().startswith("G0") or
+                  line.strip().startswith("G1")]
     for line in move_lines:
         if not line.startswith(";"):  # Ignore comments
             assert " Y" not in line, f"XAB format should not contain Y axis in moves: {line}"
@@ -101,13 +102,14 @@ def test_xyz_gcode_contains_linear_axes(tmp_path: Path) -> None:
 
     assert result.exit_code == 0, result.output
     gcode = output_file.read_text(encoding="utf-8")
-    
+
     # Check that G-code contains Y and Z axes (legacy linear)
     assert re.search(r"G[01].*\sY[\d\.-]+", gcode), "XYZ format should contain Y axis moves"
     assert re.search(r"G[01].*\sZ[\d\.-]+", gcode), "XYZ format should contain Z axis moves"
-    
+
     # Check that G-code does NOT contain A or B axes in move commands
-    move_lines = [line for line in gcode.split("\n") if line.strip().startswith("G0") or line.strip().startswith("G1")]
+    move_lines = [line for line in gcode.split("\n") if line.strip().startswith("G0") or
+                  line.strip().startswith("G1")]
     for line in move_lines:
         if not line.startswith(";"):  # Ignore comments
             assert " A" not in line, f"XYZ format should not contain A axis in moves: {line}"
@@ -115,7 +117,7 @@ def test_xyz_gcode_contains_linear_axes(tmp_path: Path) -> None:
 
 
 def test_both_formats_produce_same_metrics(tmp_path: Path) -> None:
-    """Test that XAB and XYZ formats produce identical planning metrics (just different axis letters)."""
+    """Test that XAB and XYZ formats produce identical planning metrics (just diff axis letters)."""
     runner = CliRunner()
     output_xab = tmp_path / "compare_xab.gcode"
     output_xyz = tmp_path / "compare_xyz.gcode"
@@ -137,10 +139,10 @@ def test_both_formats_produce_same_metrics(tmp_path: Path) -> None:
 
     # Both should have same number of commands
     assert payload_xab["commands"] == payload_xyz["commands"]
-    
+
     # Both should have same time and tow usage
     assert payload_xab["timeSeconds"] == payload_xyz["timeSeconds"]
     assert payload_xab["towMeters"] == payload_xyz["towMeters"]
-    
+
     # Both should have same layer structure
     assert len(payload_xab["layers"]) == len(payload_xyz["layers"])
