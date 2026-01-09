@@ -32,10 +32,13 @@ def start_stream(payload: StreamRequest) -> StreamResponse:
 
     commands = payload.gcode.splitlines()
     streamer = MarlinStreamer(port=payload.port, baud_rate=payload.baud_rate)
-    streamer.load_program(commands)
 
     try:
-        for _update in streamer.iter_stream(dry_run=payload.dry_run):
+        # Use new connection-centric API
+        if not payload.dry_run:
+            streamer.connect()
+
+        for _update in streamer.iter_stream(commands, dry_run=payload.dry_run):
             pass
     except StreamError as exc:  # pragma: no cover - exercised via API test
         raise HTTPException(status_code=502, detail=f"Streaming failed: {exc}") from exc

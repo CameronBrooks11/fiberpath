@@ -1,12 +1,42 @@
-# FiberPath Roadmap v5 - Enhancement & Polish
+# FiberPath Roadmap v5 - Streaming Enhancements & Core Polish
 
-**Focus:** Code quality improvements, developer experience, and UX enhancements  
-**Prerequisites:** v3 (Code Quality & Stability) must be complete  
-**Timeline:** 2-3 weeks
+**Focus:** Essential quality-of-life improvements and streaming feature completion  
+**Prerequisites:** v4 (Basic Marlin Streaming) must be complete  
+**Timeline:** 2-3 weeks  
+**Priority:** High - immediate improvements after v4 ships
 
 ---
 
-## Phase 1: Documentation
+## Phase 1: Streaming Feature Completion
+
+- [ ] Add Settings tab to TabBar (3 tabs: Main, Stream, Settings)
+- [ ] Create settingsStore (Zustand) for persistent preferences
+- [ ] Create SettingsTab with streaming/general/export sections
+- [ ] Add Tauri commands: load_settings, save_settings (JSON in app_data)
+- [ ] Add streaming settings (defaultBaudRate, defaultTimeout, verboseLogging)
+- [ ] Add general settings (autoSaveInterval, recentFilesLimit)
+- [ ] Add export settings (defaultNamingPattern)
+- [ ] Add Save Settings and Reset to Defaults buttons
+- [ ] Test settings persistence across app restarts
+- [ ] Add timestamps to log messages
+- [ ] Add log filtering (show all, errors only, commands only)
+- [ ] Add Export Log button (save to .txt file)
+- [ ] Add Copy Log button (clipboard API)
+- [ ] Create CommandInput component for manual G-code commands
+- [ ] Add command history (up/down arrows to recall)
+- [ ] Add common command buttons (Home, Get Position, Emergency Stop)
+- [ ] Create command response parser (extract coordinates from M114)
+- [ ] Display parsed position data in UI
+- [ ] Add StreamStatistics component (ETA, elapsed time, progress %)
+- [ ] Update statistics in real-time during streaming
+
+**Progress:** 0/20 tasks complete
+
+**Note:** Features moved from v4 to ship core streaming fast. Add these based on initial user feedback.
+
+---
+
+## Phase 2: Documentation
 
 - [ ] Add JSDoc comments to all exported functions and components
 - [ ] Document Zustand store architecture and state flow patterns
@@ -105,7 +135,29 @@
 
 ---
 
-## Phase 8: Testing & Release Process
+## Phase 9: Advanced Stream Visualization (Optional)
+
+- [ ] Evaluate if 3D streaming visualization adds real value (user feedback)
+- [ ] If valuable: Add three.js and @react-three/fiber dependencies
+- [ ] Refactor StreamTab to 3-panel layout (controls | log | visualization)
+- [ ] Set up Canvas with camera, lights, OrbitControls
+- [ ] Add coordinate axes helper and grid
+- [ ] Create gcode-parser.ts utility for movement commands
+- [ ] Parse G0/G1 commands, handle G90/G91 positioning
+- [ ] Create Toolpath component with BufferGeometry
+- [ ] Color-code by move type (travel=red, extrude=blue)
+- [ ] Add current position marker during streaming
+- [ ] Optimize rendering performance (60fps target)
+- [ ] Add Show/Hide toggle and Reset Camera button
+- [ ] Test with various G-code file sizes
+
+**Progress:** 0/13 tasks complete
+
+**Note:** Only implement if user testing shows demand. Current plot visualization in Main tab may be sufficient.
+
+---
+
+## Phase 10: Testing & Release Process
 
 - [ ] Create download links on docs website from GitHub releases
 - [ ] Write example-driven tutorials (docs/tutorials/\*.md) showing complete workflows
@@ -121,22 +173,42 @@
 
 ## Overall Progress
 
-**Status:** 0/51 tasks complete (0%)
+**Status:** 0/42 tasks complete (0%)
+
+**Phase Summary:**
+
+- Phase 1: Streaming Feature Completion (20 tasks)
+- Phase 2: Documentation (5 tasks)
+- Phase 3: Code Organization (4 tasks)
+- Phase 4: Performance Optimization (5 tasks)
+- Phase 5: Testing & Release (8 tasks)
+
+**Timeline:** 2-3 weeks after v4 complete
 
 ---
 
-## Future Enhancements (Post-v5 Backlog)
+## Scope Note
 
-Ideas for future versions:
+**Moved to v6 (Medium Priority):**
 
-- [ ] Undo/Redo system (implement command pattern for all state mutations)
-- [ ] Layer presets system (save/load common layer configurations)
-- [ ] 3D visualization (Three.js-based mandrel and tow path rendering)
-- [ ] Advanced layer strategies UI (variable angle profiles, custom winding patterns)
-- [ ] Custom G-code headers/footers configuration (machine-specific setup)
-- [ ] Cloud sync and project sharing capabilities
-- [ ] Batch processing for multiple .wind files
-- [ ] Coverage analysis and visualization
-- [ ] Real-time G-code preview in canvas (highlight current position)
-- [ ] WebGL-based toolpath rendering for performance
-- [ ] Multi-language support (i18n) for international users
+- Developer experience tools (ESLint, Prettier, Storybook)
+- Enhanced validation (field-level, cross-field)
+- UX enhancements (light/dark mode, panel resize, undo/redo)
+- Accessibility improvements (ARIA, screen reader, WCAG)
+- Advanced layer strategies UI
+- Custom G-code headers/footers
+- Batch processing
+- Cloud sync research
+
+**Moved to Backlog (Low Priority / Speculative):**
+
+- 3D streaming visualization (32 tasks, unclear value)
+- WebGL rendering
+- Multi-language support (i18n)
+- Coverage analysis visualization
+- CAD software plugins
+- AI/ML-based optimization
+
+**v5 Focus:** Complete streaming features that users will want immediately, improve code quality, ensure cross-platform stability.
+
+**Last Updated:** 2026-01-09

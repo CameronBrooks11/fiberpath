@@ -35,7 +35,7 @@ def _reference_output(name: str = "simple-hoop") -> list[str]:
         "skip-bias",
     ],
 )
-def test_xyz_format_maintains_cyclone_reference_parity(case: str):
+def test_xyz_format_maintains_cyclone_reference_parity(case: str) -> None:
     """Ensure XYZ format with MARLIN_XYZ_LEGACY still matches Cyclone output."""
     options = PlanOptions(dialect=MARLIN_XYZ_LEGACY)
     result = plan_wind(_reference_definition(case), options)
@@ -43,7 +43,7 @@ def test_xyz_format_maintains_cyclone_reference_parity(case: str):
 
 
 # Test 2: Verify XAB format generates correct axis letters
-def test_xab_format_generates_correct_axis_letters():
+def test_xab_format_generates_correct_axis_letters() -> None:
     """Verify XAB format uses A and B axes instead of Y and Z."""
     options = PlanOptions(dialect=MARLIN_XAB_STANDARD)
     result = plan_wind(_reference_definition("simple-hoop"), options)
@@ -70,7 +70,7 @@ def test_xab_format_generates_correct_axis_letters():
 
 
 # Test 3: Test AxisMapping properties
-def test_axis_mapping_rotational_properties():
+def test_axis_mapping_rotational_properties() -> None:
     """Verify AxisMapping property methods correctly identify rotational axes."""
     # XYZ mapping - no rotational axes
     xyz = AxisMapping(carriage="X", mandrel="Y", delivery_head="Z")
@@ -94,7 +94,7 @@ def test_axis_mapping_rotational_properties():
 
 
 # Test 4: Verify predefined dialects have correct configuration
-def test_predefined_dialects_configuration():
+def test_predefined_dialects_configuration() -> None:
     """Ensure predefined dialect constants have correct axis mappings."""
     # MARLIN_XYZ_LEGACY
     assert MARLIN_XYZ_LEGACY.axis_mapping.carriage == "X"
@@ -108,7 +108,7 @@ def test_predefined_dialects_configuration():
 
 
 # Test 5: Test G92 (set_position) commands use correct axes
-def test_set_position_uses_correct_axes():
+def test_set_position_uses_correct_axes() -> None:
     """Verify G92 commands use the correct axis letters."""
     # Simple definition that will trigger G92 commands
     definition = WindDefinition.model_validate(
@@ -143,7 +143,7 @@ def test_set_position_uses_correct_axes():
 
 
 # Test 6: Test both formats produce same number of commands
-def test_both_formats_produce_same_command_count():
+def test_both_formats_produce_same_command_count() -> None:
     """Verify XYZ and XAB formats produce the same number of commands."""
     definition = _reference_definition("simple-hoop")
 
@@ -156,7 +156,7 @@ def test_both_formats_produce_same_command_count():
 
 
 # Test 7: Test both formats produce same time and tow metrics
-def test_both_formats_produce_same_metrics():
+def test_both_formats_produce_same_metrics() -> None:
     """Verify planning metrics are identical regardless of axis format."""
     definition = _reference_definition("helical-balanced")
 
@@ -189,7 +189,7 @@ def test_both_formats_produce_same_metrics():
 
 
 # Test 8: Test custom axis mapping
-def test_custom_axis_mapping():
+def test_custom_axis_mapping() -> None:
     """Verify custom axis mappings work correctly."""
     # Create a custom dialect with unusual mapping
     custom_dialect = MarlinDialect(
@@ -223,7 +223,7 @@ def test_custom_axis_mapping():
 
 
 # Test 9: Test default dialect is XYZ_LEGACY
-def test_default_dialect_is_xyz_legacy():
+def test_default_dialect_is_xyz_legacy() -> None:
     """Verify that not specifying a dialect defaults to XAB_STANDARD."""
     definition = _reference_definition("simple-hoop")
 
@@ -238,7 +238,7 @@ def test_default_dialect_is_xyz_legacy():
 
 
 # Test 10: Test verbose mode works with both dialects
-def test_verbose_mode_with_both_dialects():
+def test_verbose_mode_with_both_dialects() -> None:
     """Verify verbose mode produces comments with both dialects."""
     definition = WindDefinition.model_validate(
         {

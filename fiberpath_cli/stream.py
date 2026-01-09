@@ -50,23 +50,29 @@ def stream_command(
     streamer = MarlinStreamer(
         port=port, baud_rate=baud_rate, response_timeout_s=response_timeout, log=log_callback
     )
-    streamer.load_program(commands)
 
     progress_verbose = verbose or dry_run
 
     try:
-        while streamer.commands_sent < streamer.commands_total:
-            try:
-                for update in streamer.iter_stream(dry_run=dry_run):
-                    if not json_output and _should_print_progress(update, verbose=progress_verbose):
-                        typer.echo(_format_progress(update))
-                break
-            except KeyboardInterrupt:  # pragma: no cover - user-driven flow
-                if dry_run:
-                    raise
-                typer.echo("\nPause requested (Ctrl+C). Sending M0 ...")
-                _pause_and_prompt(streamer)
-                continue
+        # Connect if not dry run
+        if not dry_run:
+            streamer.connect()
+
+        # Stream commands with pause/resume support
+        try:
+            for update in streamer.iter_stream(commands, dry_run=dry_run):
+                if not json_output and _should_print_progress(update, verbose=progress_verbose):
+                    typer.echo(_format_progress(update))
+        except KeyboardInterrupt:  # pragma: no cover - user-driven flow
+            if dry_run:
+                raise
+            typer.echo("\nPause requested (Ctrl+C). Sending M0 ...")
+            _pause_and_prompt(streamer)
+            # Reset and retry streaming
+            streamer.reset_progress()
+            for update in streamer.iter_stream(commands, dry_run=dry_run):
+                if not json_output and _should_print_progress(update, verbose=progress_verbose):
+                    typer.echo(_format_progress(update))
     except StreamError as exc:
         typer.echo(f"Streaming failed: {exc}", err=True)
         raise typer.Exit(code=1) from exc

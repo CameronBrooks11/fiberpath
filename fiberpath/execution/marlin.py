@@ -106,6 +106,22 @@ class MarlinStreamer:
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
+    def connect(self) -> None:
+        """Explicitly connect to Marlin without streaming.
+
+        This establishes the serial connection and waits for Marlin
+        to complete its startup sequence. After calling this, you can
+        send individual commands or stream programs.
+        """
+        if self._connected and self._startup_handled:
+            return  # Already connected
+        self._ensure_connection()
+
+    @property
+    def is_connected(self) -> bool:
+        """Check if currently connected to Marlin."""
+        return self._connected and self._startup_handled
+
     def load_program(self, commands: Sequence[str]) -> None:
         """Load and sanitize a G-code program for streaming."""
 
@@ -125,11 +141,20 @@ class MarlinStreamer:
         self._commands_sent = 0
         self._total_commands = total
 
-    def iter_stream(self, *, dry_run: bool = False) -> Iterator[StreamProgress]:
-        """Yield progress as commands are streamed."""
+    def iter_stream(
+        self, commands: Sequence[str], *, dry_run: bool = False
+    ) -> Iterator[StreamProgress]:
+        """Yield progress as commands are streamed.
+
+        Args:
+            commands: G-code command sequence to stream.
+            dry_run: If True, skip serial I/O and just report progress.
+        """
+        # Load and sanitize commands
+        self.load_program(commands)
 
         if not self._program:
-            raise StreamError("No program loaded")
+            raise StreamError("No valid commands to stream")
 
         while self._cursor < len(self._program):
             line = self._program[self._cursor]
@@ -143,8 +168,7 @@ class MarlinStreamer:
                 continue
 
             if not dry_run:
-                self._ensure_connection()
-                self._send_command(line)
+                self.send_command(line)
 
             self._commands_sent += 1
             yield StreamProgress(
@@ -159,8 +183,7 @@ class MarlinStreamer:
 
         if self._paused:
             raise StreamError("Stream is already paused")
-        self._ensure_connection()
-        self._send_command("M0")
+        self.send_command("M0")
         self._paused = True
 
     def resume(self) -> None:
@@ -168,8 +191,7 @@ class MarlinStreamer:
 
         if not self._paused:
             raise StreamError("Stream is not paused")
-        self._ensure_connection()
-        self._send_command("M108")
+        self.send_command("M108")
         self._paused = False
 
     def reset_progress(self) -> None:
@@ -282,14 +304,26 @@ class MarlinStreamer:
                     "Proceeding, but stream may fail if controller is not ready."
                 )
 
-    def _send_command(self, command: str) -> None:
+    def send_command(self, command: str) -> list[str]:
+        """Send a single G-code command and return response lines.
+
+        This is the public API for sending individual commands to Marlin.
+        Useful for interactive control (e.g., G28, M114).
+
+        Returns:
+            List of response lines received before 'ok'.
+        """
+        self._ensure_connection()
         assert self._transport is not None  # for type checkers
         self._transport.write_line(command)
-        self._await_ok()
+        return self._await_ok()
 
-    def _await_ok(self) -> None:
+    def _await_ok(self) -> list[str]:
+        """Wait for 'ok' response and return all intermediate lines."""
         assert self._transport is not None
         deadline = time.monotonic() + self._response_timeout
+        responses: list[str] = []
+
         while True:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
@@ -301,11 +335,13 @@ class MarlinStreamer:
             if not line:
                 continue
             if line == "ok":
-                return
+                return responses
             if line.startswith("echo:busy"):
                 deadline = time.monotonic() + self._response_timeout
                 continue
             if line.startswith("Error"):
                 raise StreamError(f"Marlin reported: {line}")
+            # Collect all non-ok responses
+            responses.append(line)
             if self._log is not None:
                 self._log(f"[marlin] {line}")
