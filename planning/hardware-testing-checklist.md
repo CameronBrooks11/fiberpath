@@ -79,6 +79,10 @@
 - [ ] **Click Pause** → Machine stops, warning toast?
 - [ ] **Click Resume** → Machine continues, success toast?
 - [ ] **Completes** → Success?
+- [ ] **Test large file** → Stream test_medium.gcode (1000+ commands)
+- [ ] **Pause mid-stream** → Verify machine stops executing
+- [ ] **Resume** → Verify streaming continues from pause point
+- [ ] **Complete** → Verify all commands executed successfully
 
 ### 6. Tab Navigation (5 min)
 

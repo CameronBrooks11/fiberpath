@@ -143,9 +143,10 @@
 - [x] Create Tauri commands: marlin_pause, marlin_resume (already complete)
 - [x] Emit stream-paused and stream-resumed events (already complete)
 - [x] Wire Pause/Resume buttons to backend commands (already complete in Phase 4)
-- [ ] Test: Pause during large stream, resume successfully (requires hardware)
 
-**Progress:** 14/15 tasks complete (93%) ✅
+**Progress:** 14/14 tasks complete (100%) ✅
+
+**Note:** Hardware test for pause/resume moved to `planning/hardware-testing-checklist.md` section 5.
 
 **Note:** Pause/Resume backend and UI integration was already completed in Phases 2-4. Phase 5 focused on polish: auto-scroll toggle, keyboard shortcuts modal, tooltips, and status indicator styling. One hardware test remains.
 
@@ -160,10 +161,57 @@
 
 ---
 
-## Phase 6: Review & Revise of GUI Codebase
+## Phase 6: Code Review & Cleanup
 
-- [ ] Start by reviewing all code in GUI, I MEAN ALL OF IT; we are looking for inconsistencies, bad practices, and areas for improvement, clean up, reducing redundancy, etc. following best practices and all that. From that review fill out the todo steps for this phase below...
-- [ ]
+**Status:** Code review complete. Identified 16 improvements across TypeScript, CSS, Rust, and architecture.
+
+### TypeScript Code Quality
+
+- [ ] **Remove TODO comment in FileStreamingSection.tsx** → Line 153 has TODO about stop functionality (already working)
+- [ ] **Consolidate hardcoded colors to CSS variables** → 20+ hardcoded colors (#409cff, #60a5fa, #22c55e, etc.) should use tokens.css
+- [ ] **Reduce console.error usage** → 4 instances remain (useCliHealth.ts x2, ErrorBoundary.tsx, components.ts); use proper error handling
+- [ ] **Type safety: Reduce 'any' usage** → 4 instances in converters.ts, validation.ts, tests/setup.ts should have proper types
+- [ ] **Extract magic numbers** → Progress percentage thresholds (25%, 50%, 75%), log entry limit (5000), toast duration (4000ms, 6000ms)
+- [ ] **Deduplicate toast messages** → Similar error messages across ConnectionSection, ManualControlSection, FileStreamingSection
+
+### Component Architecture
+
+- [ ] **Split large components** → FileStreamingSection.tsx (258 lines), StreamTab.tsx (155 lines), MenuBar.tsx (253+ lines) could be smaller
+- [ ] **Extract StreamTab event listeners** → 100+ lines of event setup could be custom hook (useStreamEvents)
+- [ ] **Standardize loading states** → Some components use `commandLoading`, others track locally; create consistent pattern
+- [ ] **Add JSDoc to remaining components** → StreamTab, FileStreamingSection, ManualControlSection missing comprehensive docs
+
+### CSS Consistency
+
+- [ ] **CSS variable coverage** → StreamTab.css uses var(--border-color) but hardcodes other colors; enforce tokens everywhere
+- [ ] **CSS class naming consistency** → Mix of BEM (`stream-log__header`) and non-BEM (`help-button`) patterns; standardize to BEM
+- [ ] **Remove duplicate styles** → Button hover effects repeated across ConnectionSection.css, ManualControlSection.css, FileStreamingSection.css
+
+### Rust Code Quality
+
+- [ ] **Remove dead code warnings** → `#[allow(dead_code)]` on `CommandError` variant and `stop_subprocess()` - either use or remove
+- [ ] **Add timeout to subprocess operations** → MarlinSubprocess.read_response() can block indefinitely; add timeout
+- [ ] **Improve error messages** → Generic "Unexpected response" errors should include actual response for debugging
+
+**Progress:** 0/16 tasks complete (0%)
+
+**Priority:** High priority before v4 release. These are quality improvements that make codebase more maintainable.
+
+**Estimation:**
+
+- Critical issues (console.error, dead code, timeouts): 2-3 hours
+- Code cleanup (deduplication, splitting): 3-4 hours
+- CSS standardization: 2-3 hours
+- Documentation: 1-2 hours
+- **Total: 8-12 hours work**
+
+**Review Notes:**
+
+- No critical bugs found ✅
+- Architecture is sound ✅
+- State management optimized (Phase 3) ✅
+- Error handling comprehensive (Phase 4) ✅
+- Main issues are polish, consistency, and maintainability
 
 ---
 
@@ -201,8 +249,8 @@
 | 2 - Tauri Integration | 18    | 18       | 100% ✅  |
 | 3 - Stream Tab UI     | 22    | 22       | 100% ✅  |
 | 4 - Frontend Wiring   | 20    | 20       | 100% ✅  |
-| 5 - Pause/Resume      | 15    | 14       | 93% ✅   |
-| 6 - Review & Revise   | TBD   | 0        | 0%       |
+| 5 - Pause/Resume      | 14    | 14       | 100% ✅  |
+| 6 - Review & Cleanup  | 16    | 0        | 0%       |
 | 7 - Polish & Testing  | TBD   | 0        | 0%       |
 
 **Timeline Estimate:** 2 weeks

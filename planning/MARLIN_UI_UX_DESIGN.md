@@ -20,7 +20,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 
 ### Two-Panel Horizontal Split
 
-```
+```text
 ┌──────────────────────────────────────────────────────┐
 │  Stream Tab                                          │
 ├─────────────────────┬────────────────────────────────┤
@@ -49,7 +49,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 
 **Elements:**
 
-```
+```text
 ┌─────────────────────────────┐
 │ CONNECTION                  │
 ├─────────────────────────────┤
@@ -116,7 +116,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 
 **Elements:**
 
-```
+```text
 ┌─────────────────────────────┐
 │ MANUAL CONTROL              │
 ├─────────────────────────────┤
@@ -201,7 +201,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 
 **Elements:**
 
-```
+```text
 ┌─────────────────────────────┐
 │ FILE STREAMING              │
 ├─────────────────────────────┤
@@ -282,7 +282,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 
 **Elements:**
 
-```
+```text
 ┌────────────────────────────────────┐
 │ Output Log                  [Clear]│
 ├────────────────────────────────────┤
@@ -302,42 +302,42 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 
 ### Entry Types & Styling
 
-**1. Info (Connection/Status)**
+**1. Info (Connection/Status):**
 
 - Prefix: `[Info]` or `[●]`
 - Color: Gray (#64748b)
 - Font: Regular
 - Example: "Connected to COM3", "Streaming started"
 
-**2. Command (User Input)**
+**2. Command (User Input):**
 
 - Prefix: `[>]` or `[Command]`
 - Color: Blue (#60a5fa)
 - Font: Bold, Monospace
 - Example: "> M114", "> G28"
 
-**3. Response (Marlin Output)**
+**3. Response (Marlin Output):**
 
 - Prefix: `[<]` or `[Response]`
 - Color: Green (#4ade80)
 - Font: Regular, Monospace
 - Example: "< X:0.00 Y:0.00 Z:0.00", "< ok"
 
-**4. Stream (File Commands)**
+**4. Stream (File Commands):**
 
 - Prefix: `[Stream]` or none
 - Color: Light Gray (#94a3b8)
 - Font: Regular, Monospace, Smaller
 - Example: "G1 X10 Y20 F3000", "ok"
 
-**5. Progress (Stream Status)**
+**5. Progress (Stream Status):**
 
 - Prefix: `[Progress]` or `[→]`
 - Color: Cyan (#22d3ee)
 - Font: Regular
 - Example: "Progress: 42 / 100 (42%)"
 
-**6. Error (Failures)**
+**6. Error (Failures):**
 
 - Prefix: `[Error]` or `[!]`
 - Color: Red (#f87171)
@@ -770,7 +770,7 @@ interface SerialPort {
 
 ## Success Criteria
 
-### v4 Complete When:
+**v4 Complete When**:
 
 1. ✅ User can connect to Marlin controller
 2. ✅ User can send manual G-code commands
