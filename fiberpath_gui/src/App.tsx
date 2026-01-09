@@ -2,6 +2,9 @@ import { FormEvent, useState, useEffect, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { MainLayout } from "./layouts/MainLayout";
+import { TabBar, TabId } from "./components/TabBar";
+import { MainTab } from "./components/tabs/MainTab";
+import { StreamTab } from "./components/tabs/StreamTab";
 import { MenuBar } from "./components/MenuBar";
 import { StatusBar } from "./components/StatusBar";
 import { CliHealthWarning } from "./components/CliHealthWarning";
@@ -26,6 +29,9 @@ import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { getRecentFiles } from "./lib/recentFiles";
 
 export default function App() {
+  // Tab state
+  const [activeTab, setActiveTab] = useState<TabId>("main");
+  
   // Project store - use shallow comparison for multiple selectors
   const {
     project,
@@ -101,6 +107,81 @@ export default function App() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [project.isDirty]);
 
+  // Keyboard shortcuts for tab switching (Alt+1/2)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && !e.ctrlKey && !e.shiftKey) {
+        if (e.key === '1') {
+          e.preventDefault();
+          setActiveTab("main");
+        } else if (e.key === '2') {
+          e.preventDefault();
+          setActiveTab("stream");
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Render appropriate tab content
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "main":
+        return (
+          <MainTab
+            leftPanel={
+              <LeftPanel>
+                <MandrelForm />
+                <div style={{ marginTop: '1.5rem' }}>
+                  <TowForm />
+                </div>
+                <div style={{ marginTop: '1.5rem' }}>
+                  <MachineSettingsForm />
+                </div>
+              </LeftPanel>
+            }
+            centerCanvas={
+              <CenterCanvas>
+                <VisualizationCanvas onExport={() => setShowExportDialog(true)} />
+              </CenterCanvas>
+            }
+            rightPanel={
+              <RightPanel>
+                {!activeLayer ? (
+                  <div className="panel-placeholder">
+                    <p className="panel-placeholder-text">
+                      Select a layer to edit its properties
+                    </p>
+                  </div>
+                ) : activeLayer.type === 'hoop' ? (
+                  <HoopLayerEditor layerId={activeLayer.id} />
+                ) : activeLayer.type === 'helical' ? (
+                  <HelicalLayerEditor layerId={activeLayer.id} />
+                ) : activeLayer.type === 'skip' ? (
+                  <SkipLayerEditor layerId={activeLayer.id} />
+                ) : null}
+              </RightPanel>
+            }
+            bottomPanel={
+              <BottomPanel>
+                <LayerStack />
+              </BottomPanel>
+            }
+            leftPanelCollapsed={leftPanelCollapsed}
+            rightPanelCollapsed={rightPanelCollapsed}
+          />
+        );
+      
+      case "stream":
+        return <StreamTab />;
+      
+      default:
+        return null;
+    }
+  };
+
   return (
     <MainLayout
       menuBar={
@@ -109,49 +190,11 @@ export default function App() {
           onToggleRightPanel={() => setRightPanelCollapsed(!rightPanelCollapsed)}
         />
       }
-      leftPanel={
-        <LeftPanel>
-          <MandrelForm />
-          <div style={{ marginTop: '1.5rem' }}>
-            <TowForm />
-          </div>
-          <div style={{ marginTop: '1.5rem' }}>
-            <MachineSettingsForm />
-          </div>
-        </LeftPanel>
+      tabBar={
+        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       }
-      centerCanvas={
-        <CenterCanvas>
-          <VisualizationCanvas onExport={() => setShowExportDialog(true)} />
-        </CenterCanvas>
-      }
-      rightPanel={
-        <RightPanel>
-          {!activeLayer ? (
-            <div className="panel-placeholder">
-              <p className="panel-placeholder-text">
-                Select a layer to edit its properties
-              </p>
-            </div>
-          ) : activeLayer.type === 'hoop' ? (
-            <HoopLayerEditor layerId={activeLayer.id} />
-          ) : activeLayer.type === 'helical' ? (
-            <HelicalLayerEditor layerId={activeLayer.id} />
-          ) : activeLayer.type === 'skip' ? (
-            <SkipLayerEditor layerId={activeLayer.id} />
-          ) : null}
-        </RightPanel>
-      }
-      bottomPanel={
-        <BottomPanel>
-          <LayerStack />
-        </BottomPanel>
-      }
-      statusBar={
-        <StatusBar />
-      }
-      leftPanelCollapsed={leftPanelCollapsed}
-      rightPanelCollapsed={rightPanelCollapsed}
+      content={renderTabContent()}
+      statusBar={<StatusBar />}
     >
       <CliHealthWarning />
       {showExportDialog && (
