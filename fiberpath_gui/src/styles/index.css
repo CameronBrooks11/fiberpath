@@ -13,17 +13,19 @@
  * 6. panels.css - Panels, cards, and containers
  * 7. canvas.css - Visualization canvas
  * 8. layout.css - Page layout and grid
- * 9. dialogs.css - Modal dialogs
- * 10. notifications.css - Toast notifications
+ * 9. tabs.css - Tab navigation
+ * 10. dialogs.css - Modal dialogs
+ * 11. notifications.css - Toast notifications
  */
 
-@import './tokens.css';
-@import './reset.css';
-@import './typography.css';
-@import './buttons.css';
-@import './forms.css';
-@import './panels.css';
-@import './canvas.css';
-@import './layout.css';
-@import './dialogs.css';
-@import './notifications.css';
+@import "./tokens.css";
+@import "./reset.css";
+@import "./typography.css";
+@import "./buttons.css";
+@import "./forms.css";
+@import "./panels.css";
+@import "./canvas.css";
+@import "./layout.css";
+@import "./tabs.css";
+@import "./dialogs.css";
+@import "./notifications.css";

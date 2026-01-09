@@ -16,7 +16,9 @@ class StreamRequest(BaseModel):
         description="Serial port or pyserial URL. Required when dry_run is false.",
     )
     baud_rate: int = Field(default=250_000, ge=1, description="Controller baud rate.")
-    dry_run: bool = Field(default=True, description="Skip serial I/O and only count commands.")
+    dry_run: bool = Field(
+        default=True, description="Skip serial I/O and only count commands."
+    )
 
 
 class StreamResponse(BaseModel):
@@ -28,14 +30,19 @@ class StreamResponse(BaseModel):
 @router.post("/", response_model=StreamResponse)
 def start_stream(payload: StreamRequest) -> StreamResponse:
     if not payload.dry_run and payload.port is None:
-        raise HTTPException(status_code=400, detail="port is required when dry_run is false")
+        raise HTTPException(
+            status_code=400, detail="port is required when dry_run is false"
+        )
 
     commands = payload.gcode.splitlines()
     streamer = MarlinStreamer(port=payload.port, baud_rate=payload.baud_rate)
-    streamer.load_program(commands)
 
     try:
-        for _update in streamer.iter_stream(dry_run=payload.dry_run):
+        # Use new connection-centric API
+        if not payload.dry_run:
+            streamer.connect()
+
+        for _update in streamer.iter_stream(commands, dry_run=payload.dry_run):
             pass
     except StreamError as exc:  # pragma: no cover - exercised via API test
         raise HTTPException(status_code=502, detail=f"Streaming failed: {exc}") from exc

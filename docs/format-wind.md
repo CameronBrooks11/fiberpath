@@ -35,7 +35,7 @@ A `.wind` file is a JSON document with the following top-level structure:
 - **Type**: `object`
 - **Description**: Physical parameters of the mandrel (the part being wound)
 
-#### Fields:
+**Fields**:
 
 - `diameter` (required): Mandrel outer diameter in mm (must be > 0)
 - `windLength` (required): Length of the winding area in mm (must be > 0)
@@ -54,7 +54,7 @@ A `.wind` file is a JSON document with the following top-level structure:
 - **Type**: `object`
 - **Description**: Material properties of the fiber tow (carbon fiber, fiberglass, etc.)
 
-#### Fields:
+**Fields**:
 
 - `width` (required): Tow width in mm (must be > 0)
 - `thickness` (required): Tow thickness in mm (must be > 0)

@@ -1,4 +1,4 @@
-import { Eye, ZoomIn, ZoomOut, RotateCcw, FileDown } from 'lucide-react';
+import { Eye, ZoomIn, ZoomOut, RotateCcw, FileDown } from "lucide-react";
 
 interface CanvasControlsProps {
   onZoomIn: () => void;
@@ -9,13 +9,13 @@ interface CanvasControlsProps {
   onExport?: () => void;
 }
 
-export function CanvasControls({ 
-  onZoomIn, 
-  onZoomOut, 
-  onResetZoom, 
-  onRefresh, 
+export function CanvasControls({
+  onZoomIn,
+  onZoomOut,
+  onResetZoom,
+  onRefresh,
   isGenerating,
-  onExport
+  onExport,
 }: CanvasControlsProps) {
   return (
     <div className="canvas-controls">

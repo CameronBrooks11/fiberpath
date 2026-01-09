@@ -1,13 +1,13 @@
 // Project state interfaces matching fiberpath/config/schemas.py
 
 export interface Mandrel {
-  diameter: number;      // mm
-  wind_length: number;   // mm
+  diameter: number; // mm
+  wind_length: number; // mm
 }
 
 export interface Tow {
-  width: number;         // mm
-  thickness: number;     // mm
+  width: number; // mm
+  thickness: number; // mm
 }
 
 export interface HoopLayer {
@@ -15,7 +15,7 @@ export interface HoopLayer {
 }
 
 export interface HelicalLayer {
-  wind_angle: number;              // degrees (0-90)
+  wind_angle: number; // degrees (0-90)
   pattern_number: number;
   skip_index: number;
   lock_degrees: number;
@@ -25,13 +25,13 @@ export interface HelicalLayer {
 }
 
 export interface SkipLayer {
-  mandrel_rotation: number;        // degrees
+  mandrel_rotation: number; // degrees
 }
 
-export type LayerType = 'hoop' | 'helical' | 'skip';
+export type LayerType = "hoop" | "helical" | "skip";
 
 export interface Layer {
-  id: string;                      // UUID for React keys
+  id: string; // UUID for React keys
   type: LayerType;
   hoop?: HoopLayer;
   helical?: HelicalLayer;
@@ -45,28 +45,36 @@ export interface Layer {
 /**
  * Type guard to check if a layer is a hoop layer
  */
-export function isHoopLayer(layer: Layer): layer is Layer & { type: 'hoop'; hoop: HoopLayer } {
-  return layer.type === 'hoop' && layer.hoop !== undefined;
+export function isHoopLayer(
+  layer: Layer,
+): layer is Layer & { type: "hoop"; hoop: HoopLayer } {
+  return layer.type === "hoop" && layer.hoop !== undefined;
 }
 
 /**
  * Type guard to check if a layer is a helical layer
  */
-export function isHelicalLayer(layer: Layer): layer is Layer & { type: 'helical'; helical: HelicalLayer } {
-  return layer.type === 'helical' && layer.helical !== undefined;
+export function isHelicalLayer(
+  layer: Layer,
+): layer is Layer & { type: "helical"; helical: HelicalLayer } {
+  return layer.type === "helical" && layer.helical !== undefined;
 }
 
 /**
  * Type guard to check if a layer is a skip layer
  */
-export function isSkipLayer(layer: Layer): layer is Layer & { type: 'skip'; skip: SkipLayer } {
-  return layer.type === 'skip' && layer.skip !== undefined;
+export function isSkipLayer(
+  layer: Layer,
+): layer is Layer & { type: "skip"; skip: SkipLayer } {
+  return layer.type === "skip" && layer.skip !== undefined;
 }
 
 /**
  * Get the layer-specific data from a layer (type-safe)
  */
-export function getLayerData(layer: Layer): HoopLayer | HelicalLayer | SkipLayer {
+export function getLayerData(
+  layer: Layer,
+): HoopLayer | HelicalLayer | SkipLayer {
   if (isHoopLayer(layer)) return layer.hoop;
   if (isHelicalLayer(layer)) return layer.helical;
   if (isSkipLayer(layer)) return layer.skip;
@@ -75,20 +83,20 @@ export function getLayerData(layer: Layer): HoopLayer | HelicalLayer | SkipLayer
 
 export interface FiberPathProject {
   // File metadata
-  filePath: string | null;         // null = unsaved
-  isDirty: boolean;                // unsaved changes
-  
+  filePath: string | null; // null = unsaved
+  isDirty: boolean; // unsaved changes
+
   // Wind definition
   mandrel: Mandrel;
   tow: Tow;
   layers: Layer[];
-  
+
   // Machine settings
-  defaultFeedRate: number;         // mm/min for G-code generation
-  axisFormat: 'xab' | 'xyz';      // output format preference
-  
+  defaultFeedRate: number; // mm/min for G-code generation
+  axisFormat: "xab" | "xyz"; // output format preference
+
   // UI state
-  activeLayerId: string | null;    // selected in layer stack
+  activeLayerId: string | null; // selected in layer stack
 }
 
 // Helper to create empty project
@@ -106,7 +114,7 @@ export function createEmptyProject(): FiberPathProject {
     },
     layers: [],
     defaultFeedRate: 400,
-    axisFormat: 'xab',
+    axisFormat: "xab",
     activeLayerId: null,
   };
 }
@@ -114,18 +122,18 @@ export function createEmptyProject(): FiberPathProject {
 // Helper to create layer with defaults
 export function createLayer(type: LayerType): Layer {
   const id = crypto.randomUUID();
-  
+
   switch (type) {
-    case 'hoop':
+    case "hoop":
       return {
         id,
-        type: 'hoop',
+        type: "hoop",
         hoop: { terminal: false },
       };
-    case 'helical':
+    case "helical":
       return {
         id,
-        type: 'helical',
+        type: "helical",
         helical: {
           wind_angle: 45,
           pattern_number: 3,
@@ -136,10 +144,10 @@ export function createLayer(type: LayerType): Layer {
           skip_initial_near_lock: false,
         },
       };
-    case 'skip':
+    case "skip":
       return {
         id,
-        type: 'skip',
+        type: "skip",
         skip: { mandrel_rotation: 90 },
       };
   }

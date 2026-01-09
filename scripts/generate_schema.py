@@ -10,7 +10,7 @@ from pathlib import Path
 from fiberpath.config.schemas import WindDefinition
 
 
-def main():
+def main() -> None:
     # Generate schema
     schema = WindDefinition.model_json_schema(mode='serialization')
 

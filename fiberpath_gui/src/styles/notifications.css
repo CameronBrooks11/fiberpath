@@ -110,7 +110,11 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, rgb(234, 179, 8, 0.15), rgb(234, 179, 8, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgb(234, 179, 8, 0.15),
+    rgb(234, 179, 8, 0.08)
+  );
   border-bottom: 1px solid rgb(234, 179, 8, 0.3);
   border-left: 4px solid rgb(234, 179, 8);
   animation: slideDown 0.3s ease-out;

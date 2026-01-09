@@ -2,7 +2,7 @@
  * Retry utility for handling transient failures in Tauri commands
  */
 
-import { isRetryableError } from './schemas';
+import { isRetryableError } from "./schemas";
 
 export interface RetryOptions {
   maxAttempts?: number;
@@ -23,7 +23,7 @@ const DEFAULT_OPTIONS: Required<RetryOptions> = {
  */
 export async function retry<T>(
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const opts = { ...DEFAULT_OPTIONS, ...options };
   let lastError: unknown;
@@ -46,7 +46,7 @@ export async function retry<T>(
       }
 
       // Wait before retrying with exponential backoff
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
       delay *= opts.backoffMultiplier;
     }
   }
@@ -60,7 +60,7 @@ export async function retry<T>(
  */
 export function withRetry<TArgs extends unknown[], TResult>(
   fn: (...args: TArgs) => Promise<TResult>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): (...args: TArgs) => Promise<TResult> {
   return (...args: TArgs) => retry(() => fn(...args), options);
 }

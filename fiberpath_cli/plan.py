@@ -17,11 +17,15 @@ from .output import echo_json
 
 console = Console()
 
-WIND_FILE_ARGUMENT = typer.Argument(..., exists=True, readable=True, help="Input .wind file")
+WIND_FILE_ARGUMENT = typer.Argument(
+    ..., exists=True, readable=True, help="Input .wind file"
+)
 OUTPUT_OPTION = typer.Option(
     Path("output.gcode"), "--output", "-o", help="Destination for generated G-code"
 )
-VERBOSE_OPTION = typer.Option(False, "--verbose", "-v", help="Emit verbose planner output")
+VERBOSE_OPTION = typer.Option(
+    False, "--verbose", "-v", help="Emit verbose planner output"
+)
 JSON_OPTION = typer.Option(
     False,
     "--json",
@@ -43,7 +47,9 @@ def plan_command(
 ) -> None:
     # Validate axis format
     if axis_format not in {"xyz", "xab"}:
-        typer.echo(f"Invalid axis format: {axis_format}. Must be 'xyz' or 'xab'.", err=True)
+        typer.echo(
+            f"Invalid axis format: {axis_format}. Must be 'xyz' or 'xab'.", err=True
+        )
         raise typer.Exit(code=1)
 
     # Select dialect based on axis format
@@ -55,7 +61,9 @@ def plan_command(
         raise typer.BadParameter(str(exc)) from exc
 
     try:
-        result = plan_wind(wind_definition, PlanOptions(verbose=verbose, dialect=dialect))
+        result = plan_wind(
+            wind_definition, PlanOptions(verbose=verbose, dialect=dialect)
+        )
     except Exception as exc:  # pragma: no cover - defensive guard
         typer.echo(f"Planning failed: {exc}", err=True)
         raise typer.Exit(code=1) from exc
@@ -75,7 +83,9 @@ def plan_command(
         echo_json(summary)
         return
 
-    console.print(f"[green]Wrote[/green] {summary['commands']} commands to {destination}")
+    console.print(
+        f"[green]Wrote[/green] {summary['commands']} commands to {destination}"
+    )
     console.print(f"[dim]Axis format: {axis_format.upper()}[/dim]")
 
     if verbose:

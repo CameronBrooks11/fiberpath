@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 import {
   PlanSummarySchema,
   SimulationSummarySchema,
@@ -21,27 +21,27 @@ import {
   ConnectionError,
   parseError,
   isRetryableError,
-} from './schemas';
+} from "./schemas";
 
-describe('schemas', () => {
-  describe('Tauri Response Schemas', () => {
-    describe('PlanSummarySchema', () => {
-      it('should validate valid plan summary', () => {
+describe("schemas", () => {
+  describe("Tauri Response Schemas", () => {
+    describe("PlanSummarySchema", () => {
+      it("should validate valid plan summary", () => {
         const data = {
-          output: '/path/to/output.gcode',
+          output: "/path/to/output.gcode",
           commands: 150,
           layers: 3,
-          metadata: { key: 'value' },
-          axisFormat: 'xab',
+          metadata: { key: "value" },
+          axisFormat: "xab",
         };
 
         const result = PlanSummarySchema.safeParse(data);
         expect(result.success).toBe(true);
       });
 
-      it('should reject negative commands', () => {
+      it("should reject negative commands", () => {
         const data = {
-          output: '/path/to/output.gcode',
+          output: "/path/to/output.gcode",
           commands: -5,
         };
 
@@ -49,9 +49,9 @@ describe('schemas', () => {
         expect(result.success).toBe(false);
       });
 
-      it('should allow optional fields to be missing', () => {
+      it("should allow optional fields to be missing", () => {
         const data = {
-          output: '/path/to/output.gcode',
+          output: "/path/to/output.gcode",
           commands: 100,
         };
 
@@ -60,8 +60,8 @@ describe('schemas', () => {
       });
     });
 
-    describe('SimulationSummarySchema', () => {
-      it('should validate valid simulation summary', () => {
+    describe("SimulationSummarySchema", () => {
+      it("should validate valid simulation summary", () => {
         const data = {
           commands_executed: 150,
           moves: 120,
@@ -75,7 +75,7 @@ describe('schemas', () => {
         expect(result.success).toBe(true);
       });
 
-      it('should reject negative values', () => {
+      it("should reject negative values", () => {
         const data = {
           commands_executed: -1,
           moves: 100,
@@ -90,24 +90,24 @@ describe('schemas', () => {
       });
     });
 
-    describe('ValidationResultSchema', () => {
-      it('should validate success result', () => {
+    describe("ValidationResultSchema", () => {
+      it("should validate success result", () => {
         const data = {
           valid: true,
-          status: 'ok',
+          status: "ok",
         };
 
         const result = ValidationResultSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
 
-      it('should validate error result with errors array', () => {
+      it("should validate error result with errors array", () => {
         const data = {
           valid: false,
-          status: 'error',
+          status: "error",
           errors: [
-            { field: 'mandrel.diameter', message: 'Must be positive' },
-            { field: 'tow.width', message: 'Required field' },
+            { field: "mandrel.diameter", message: "Must be positive" },
+            { field: "tow.width", message: "Required field" },
           ],
         };
 
@@ -117,29 +117,29 @@ describe('schemas', () => {
     });
   });
 
-  describe('Wind File Structure Schemas', () => {
-    describe('MandrelSchema', () => {
-      it('should validate valid mandrel', () => {
+  describe("Wind File Structure Schemas", () => {
+    describe("MandrelSchema", () => {
+      it("should validate valid mandrel", () => {
         const data = { diameter: 100, wind_length: 200 };
         const result = MandrelSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
 
-      it('should reject zero diameter', () => {
+      it("should reject zero diameter", () => {
         const data = { diameter: 0, wind_length: 200 };
         const result = MandrelSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
 
-      it('should reject negative wind_length', () => {
+      it("should reject negative wind_length", () => {
         const data = { diameter: 100, wind_length: -50 };
         const result = MandrelSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
     });
 
-    describe('HelicalLayerSchema', () => {
-      it('should validate valid helical layer', () => {
+    describe("HelicalLayerSchema", () => {
+      it("should validate valid helical layer", () => {
         const data = {
           wind_angle: 45,
           pattern_number: 3,
@@ -154,7 +154,7 @@ describe('schemas', () => {
         expect(result.success).toBe(true);
       });
 
-      it('should reject wind_angle > 90', () => {
+      it("should reject wind_angle > 90", () => {
         const data = {
           wind_angle: 95,
           pattern_number: 3,
@@ -169,7 +169,7 @@ describe('schemas', () => {
         expect(result.success).toBe(false);
       });
 
-      it('should reject wind_angle < 0', () => {
+      it("should reject wind_angle < 0", () => {
         const data = {
           wind_angle: -5,
           pattern_number: 3,
@@ -184,7 +184,7 @@ describe('schemas', () => {
         expect(result.success).toBe(false);
       });
 
-      it('should reject zero pattern_number', () => {
+      it("should reject zero pattern_number", () => {
         const data = {
           wind_angle: 45,
           pattern_number: 0,
@@ -200,10 +200,10 @@ describe('schemas', () => {
       });
     });
 
-    describe('LayerSchema', () => {
-      it('should validate hoop layer', () => {
+    describe("LayerSchema", () => {
+      it("should validate hoop layer", () => {
         const data = {
-          type: 'hoop',
+          type: "hoop",
           hoop: { terminal: true },
         };
 
@@ -211,9 +211,9 @@ describe('schemas', () => {
         expect(result.success).toBe(true);
       });
 
-      it('should validate helical layer', () => {
+      it("should validate helical layer", () => {
         const data = {
-          type: 'helical',
+          type: "helical",
           helical: {
             wind_angle: 60,
             pattern_number: 5,
@@ -229,9 +229,9 @@ describe('schemas', () => {
         expect(result.success).toBe(true);
       });
 
-      it('should validate skip layer', () => {
+      it("should validate skip layer", () => {
         const data = {
-          type: 'skip',
+          type: "skip",
           skip: { mandrel_rotation: 90 },
         };
 
@@ -239,9 +239,9 @@ describe('schemas', () => {
         expect(result.success).toBe(true);
       });
 
-      it('should reject layer with mismatched type and data', () => {
+      it("should reject layer with mismatched type and data", () => {
         const data = {
-          type: 'hoop',
+          type: "hoop",
           helical: { wind_angle: 45 },
         };
 
@@ -250,15 +250,15 @@ describe('schemas', () => {
       });
     });
 
-    describe('WindDefinitionSchema', () => {
-      it('should validate complete wind definition', () => {
+    describe("WindDefinitionSchema", () => {
+      it("should validate complete wind definition", () => {
         const data = {
           mandrel: { diameter: 100, wind_length: 200 },
           tow: { width: 3, thickness: 0.25 },
           layers: [
-            { type: 'hoop', hoop: { terminal: false } },
+            { type: "hoop", hoop: { terminal: false } },
             {
-              type: 'helical',
+              type: "helical",
               helical: {
                 wind_angle: 45,
                 pattern_number: 3,
@@ -276,12 +276,12 @@ describe('schemas', () => {
         expect(result.success).toBe(true);
       });
 
-      it('should reject wind definition with invalid layer', () => {
+      it("should reject wind definition with invalid layer", () => {
         const data = {
           mandrel: { diameter: 100, wind_length: 200 },
           tow: { width: 3, thickness: 0.25 },
           layers: [
-            { type: 'helical', helical: { wind_angle: 120 } }, // Invalid: wind_angle > 90
+            { type: "helical", helical: { wind_angle: 120 } }, // Invalid: wind_angle > 90
           ],
         };
 
@@ -291,50 +291,50 @@ describe('schemas', () => {
     });
   });
 
-  describe('Validation Helper Functions', () => {
-    describe('validateData', () => {
-      it('should return data when validation succeeds', () => {
+  describe("Validation Helper Functions", () => {
+    describe("validateData", () => {
+      it("should return data when validation succeeds", () => {
         const data = { diameter: 100, wind_length: 200 };
-        const result = validateData(MandrelSchema, data, 'test mandrel');
-        
+        const result = validateData(MandrelSchema, data, "test mandrel");
+
         expect(result).toEqual(data);
       });
 
-      it('should throw ValidationError when validation fails', () => {
+      it("should throw ValidationError when validation fails", () => {
         const data = { diameter: -50, wind_length: 200 };
-        
+
         expect(() => {
-          validateData(MandrelSchema, data, 'test mandrel');
+          validateData(MandrelSchema, data, "test mandrel");
         }).toThrow(ValidationError);
       });
 
-      it('should include context in error message', () => {
+      it("should include context in error message", () => {
         const data = { diameter: 0, wind_length: -100 };
-        
+
         try {
-          validateData(MandrelSchema, data, 'test mandrel');
-          expect.fail('Should have thrown');
+          validateData(MandrelSchema, data, "test mandrel");
+          expect.fail("Should have thrown");
         } catch (error) {
           expect(error).toBeInstanceOf(ValidationError);
-          expect((error as ValidationError).message).toContain('test mandrel');
+          expect((error as ValidationError).message).toContain("test mandrel");
         }
       });
     });
 
-    describe('isValidData', () => {
-      it('should return true for valid data', () => {
+    describe("isValidData", () => {
+      it("should return true for valid data", () => {
         const data = { diameter: 100, wind_length: 200 };
         expect(isValidData(MandrelSchema, data)).toBe(true);
       });
 
-      it('should return false for invalid data', () => {
+      it("should return false for invalid data", () => {
         const data = { diameter: -50, wind_length: 200 };
         expect(isValidData(MandrelSchema, data)).toBe(false);
       });
 
-      it('should act as type guard', () => {
+      it("should act as type guard", () => {
         const data: unknown = { diameter: 100, wind_length: 200 };
-        
+
         if (isValidData(MandrelSchema, data)) {
           // TypeScript should know data is Mandrel type here
           expect(data.diameter).toBe(100);
@@ -343,129 +343,144 @@ describe('schemas', () => {
     });
   });
 
-  describe('Custom Error Classes', () => {
-    describe('FiberPathError', () => {
-      it('should create error with message', () => {
-        const error = new FiberPathError('Test error');
-        
-        expect(error.message).toBe('Test error');
-        expect(error.name).toBe('FiberPathError');
+  describe("Custom Error Classes", () => {
+    describe("FiberPathError", () => {
+      it("should create error with message", () => {
+        const error = new FiberPathError("Test error");
+
+        expect(error.message).toBe("Test error");
+        expect(error.name).toBe("FiberPathError");
         expect(error).toBeInstanceOf(Error);
       });
 
-      it('should store context', () => {
-        const context = { key: 'value', count: 42 };
-        const error = new FiberPathError('Test error', context);
-        
+      it("should store context", () => {
+        const context = { key: "value", count: 42 };
+        const error = new FiberPathError("Test error", context);
+
         expect(error.context).toEqual(context);
       });
     });
 
-    describe('FileError', () => {
-      it('should create file error with all properties', () => {
-        const error = new FileError('Failed to save', '/path/file.wind', 'save');
-        
-        expect(error.message).toBe('Failed to save');
-        expect(error.path).toBe('/path/file.wind');
-        expect(error.operation).toBe('save');
-        expect(error.name).toBe('FileError');
+    describe("FileError", () => {
+      it("should create file error with all properties", () => {
+        const error = new FileError(
+          "Failed to save",
+          "/path/file.wind",
+          "save",
+        );
+
+        expect(error.message).toBe("Failed to save");
+        expect(error.path).toBe("/path/file.wind");
+        expect(error.operation).toBe("save");
+        expect(error.name).toBe("FileError");
         expect(error).toBeInstanceOf(FiberPathError);
       });
     });
 
-    describe('ValidationError', () => {
-      it('should create validation error with errors array', () => {
+    describe("ValidationError", () => {
+      it("should create validation error with errors array", () => {
         const errors = [
-          { field: 'mandrel.diameter', message: 'Must be positive' },
-          { field: 'tow.width', message: 'Required' },
+          { field: "mandrel.diameter", message: "Must be positive" },
+          { field: "tow.width", message: "Required" },
         ];
-        const error = new ValidationError('Validation failed', errors);
-        
-        expect(error.message).toBe('Validation failed');
+        const error = new ValidationError("Validation failed", errors);
+
+        expect(error.message).toBe("Validation failed");
         expect(error.errors).toEqual(errors);
-        expect(error.name).toBe('ValidationError');
+        expect(error.name).toBe("ValidationError");
       });
     });
 
-    describe('CommandError', () => {
-      it('should create command error with command name', () => {
-        const originalError = new Error('Underlying error');
-        const error = new CommandError('Command failed', 'plan_wind', originalError);
-        
-        expect(error.message).toBe('Command failed');
-        expect(error.command).toBe('plan_wind');
+    describe("CommandError", () => {
+      it("should create command error with command name", () => {
+        const originalError = new Error("Underlying error");
+        const error = new CommandError(
+          "Command failed",
+          "plan_wind",
+          originalError,
+        );
+
+        expect(error.message).toBe("Command failed");
+        expect(error.command).toBe("plan_wind");
         expect(error.originalError).toBe(originalError);
-        expect(error.name).toBe('CommandError');
+        expect(error.name).toBe("CommandError");
       });
     });
 
-    describe('ConnectionError', () => {
-      it('should create connection error with endpoint', () => {
-        const error = new ConnectionError('Connection lost', 'http://localhost:8000');
-        
-        expect(error.message).toBe('Connection lost');
-        expect(error.endpoint).toBe('http://localhost:8000');
-        expect(error.name).toBe('ConnectionError');
+    describe("ConnectionError", () => {
+      it("should create connection error with endpoint", () => {
+        const error = new ConnectionError(
+          "Connection lost",
+          "http://localhost:8000",
+        );
+
+        expect(error.message).toBe("Connection lost");
+        expect(error.endpoint).toBe("http://localhost:8000");
+        expect(error.name).toBe("ConnectionError");
       });
     });
   });
 
-  describe('Error Parsing Utilities', () => {
-    describe('parseError', () => {
-      it('should extract message from FiberPathError', () => {
-        const error = new FileError('File not found', '/path/file.wind', 'load');
-        expect(parseError(error)).toBe('File not found');
+  describe("Error Parsing Utilities", () => {
+    describe("parseError", () => {
+      it("should extract message from FiberPathError", () => {
+        const error = new FileError(
+          "File not found",
+          "/path/file.wind",
+          "load",
+        );
+        expect(parseError(error)).toBe("File not found");
       });
 
-      it('should extract message from standard Error', () => {
-        const error = new Error('Standard error');
-        expect(parseError(error)).toBe('Standard error');
+      it("should extract message from standard Error", () => {
+        const error = new Error("Standard error");
+        expect(parseError(error)).toBe("Standard error");
       });
 
-      it('should handle string errors', () => {
-        expect(parseError('Error string')).toBe('Error string');
+      it("should handle string errors", () => {
+        expect(parseError("Error string")).toBe("Error string");
       });
 
-      it('should handle objects with message property', () => {
-        const error = { message: 'Object error' };
-        expect(parseError(error)).toBe('Object error');
+      it("should handle objects with message property", () => {
+        const error = { message: "Object error" };
+        expect(parseError(error)).toBe("Object error");
       });
 
-      it('should handle unknown error types', () => {
-        expect(parseError(null)).toBe('An unknown error occurred');
-        expect(parseError(undefined)).toBe('An unknown error occurred');
-        expect(parseError(42)).toBe('An unknown error occurred');
+      it("should handle unknown error types", () => {
+        expect(parseError(null)).toBe("An unknown error occurred");
+        expect(parseError(undefined)).toBe("An unknown error occurred");
+        expect(parseError(42)).toBe("An unknown error occurred");
       });
     });
 
-    describe('isRetryableError', () => {
-      it('should not retry ValidationError', () => {
-        const error = new ValidationError('Validation failed');
+    describe("isRetryableError", () => {
+      it("should not retry ValidationError", () => {
+        const error = new ValidationError("Validation failed");
         expect(isRetryableError(error)).toBe(false);
       });
 
-      it('should retry FileError', () => {
-        const error = new FileError('File locked', '/path/file.wind', 'save');
+      it("should retry FileError", () => {
+        const error = new FileError("File locked", "/path/file.wind", "save");
         expect(isRetryableError(error)).toBe(true);
       });
 
-      it('should retry ConnectionError', () => {
-        const error = new ConnectionError('Network timeout');
+      it("should retry ConnectionError", () => {
+        const error = new ConnectionError("Network timeout");
         expect(isRetryableError(error)).toBe(true);
       });
 
-      it('should not retry CommandError with validation message', () => {
-        const error = new CommandError('Validation failed', 'plan_wind');
+      it("should not retry CommandError with validation message", () => {
+        const error = new CommandError("Validation failed", "plan_wind");
         expect(isRetryableError(error)).toBe(false);
       });
 
-      it('should retry CommandError with IO message', () => {
-        const error = new CommandError('Failed to read file', 'load_wind_file');
+      it("should retry CommandError with IO message", () => {
+        const error = new CommandError("Failed to read file", "load_wind_file");
         expect(isRetryableError(error)).toBe(true);
       });
 
-      it('should retry unknown errors by default', () => {
-        const error = new Error('Unknown error');
+      it("should retry unknown errors by default", () => {
+        const error = new Error("Unknown error");
         expect(isRetryableError(error)).toBe(true);
       });
     });

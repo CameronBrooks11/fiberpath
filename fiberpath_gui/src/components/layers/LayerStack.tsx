@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../../state/projectStore";
 import { LayerType } from "../../types/project";
@@ -7,7 +12,7 @@ import { LayerRow } from "./LayerRow";
 
 /**
  * The LayerStack component displays and manages the list of winding layers.
- * 
+ *
  * Features:
  * - Displays all layers in order with drag-and-drop reordering
  * - Shows layer type, index, and summary information
@@ -15,16 +20,16 @@ import { LayerRow } from "./LayerRow";
  * - Provides "Add Layer" button with type picker (hoop, helical, skip)
  * - Individual layer actions (select, remove, duplicate)
  * - Drag handles for visual reordering feedback
- * 
+ *
  * Uses @hello-pangea/dnd for drag-and-drop functionality.
  * Optimized with shallow comparison to prevent unnecessary re-renders
  * when only specific store properties change.
- * 
+ *
  * @example
  * ```tsx
  * <LayerStack />
  * ```
- * 
+ *
  * @returns The layer stack UI with all layers and controls
  */
 export function LayerStack() {
@@ -36,17 +41,19 @@ export function LayerStack() {
     removeLayer,
     duplicateLayer,
     reorderLayers,
-    setActiveLayerId
-  } = useProjectStore(useShallow((state) => ({
-    layers: state.project.layers,
-    activeLayerId: state.project.activeLayerId,
-    addLayer: state.addLayer,
-    removeLayer: state.removeLayer,
-    duplicateLayer: state.duplicateLayer,
-    reorderLayers: state.reorderLayers,
-    setActiveLayerId: state.setActiveLayerId
-  })));
-  
+    setActiveLayerId,
+  } = useProjectStore(
+    useShallow((state) => ({
+      layers: state.project.layers,
+      activeLayerId: state.project.activeLayerId,
+      addLayer: state.addLayer,
+      removeLayer: state.removeLayer,
+      duplicateLayer: state.duplicateLayer,
+      reorderLayers: state.reorderLayers,
+      setActiveLayerId: state.setActiveLayerId,
+    })),
+  );
+
   const [showTypePicker, setShowTypePicker] = useState(false);
 
   const handleDragEnd = (result: DropResult) => {
@@ -85,21 +92,21 @@ export function LayerStack() {
         <div className="layer-type-picker">
           <button
             className="layer-type-picker__option"
-            onClick={() => handleAddLayer('hoop')}
+            onClick={() => handleAddLayer("hoop")}
           >
             <span className="layer-type-picker__icon">○</span>
             <span className="layer-type-picker__label">Hoop Layer</span>
           </button>
           <button
             className="layer-type-picker__option"
-            onClick={() => handleAddLayer('helical')}
+            onClick={() => handleAddLayer("helical")}
           >
             <span className="layer-type-picker__icon">⟋</span>
             <span className="layer-type-picker__label">Helical Layer</span>
           </button>
           <button
             className="layer-type-picker__option"
-            onClick={() => handleAddLayer('skip')}
+            onClick={() => handleAddLayer("skip")}
           >
             <span className="layer-type-picker__icon">↻</span>
             <span className="layer-type-picker__label">Skip Layer</span>
@@ -111,19 +118,25 @@ export function LayerStack() {
         <div className="layer-stack__empty">
           <div className="layer-stack__empty-icon">⬢</div>
           <p className="layer-stack__empty-text">No layers yet</p>
-          <p className="layer-stack__empty-hint">Click "Add Layer" to get started</p>
+          <p className="layer-stack__empty-hint">
+            Click "Add Layer" to get started
+          </p>
         </div>
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="layer-stack">
             {(provided, snapshot) => (
               <div
-                className={`layer-stack__list ${snapshot.isDraggingOver ? 'layer-stack__list--dragging' : ''}`}
+                className={`layer-stack__list ${snapshot.isDraggingOver ? "layer-stack__list--dragging" : ""}`}
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
                 {layers.map((layer, index) => (
-                  <Draggable key={layer.id} draggableId={layer.id} index={index}>
+                  <Draggable
+                    key={layer.id}
+                    draggableId={layer.id}
+                    index={index}
+                  >
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}

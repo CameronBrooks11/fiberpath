@@ -15,8 +15,11 @@ nav:
   - Architecture:
       - System Overview: architecture.md
       - Planner Math: planner-math.md
+  - Guides:
+      - Marlin Streaming: marlin-streaming.md
   - API Reference: api.md
   - Packaging: packaging.md
+  - CI/CD: ci-cd.md
 
 theme:
   name: material

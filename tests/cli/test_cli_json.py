@@ -11,7 +11,8 @@ EXAMPLES = ROOT.parent / "examples"
 SIMPLE_WIND = EXAMPLES / "simple_cylinder" / "input.wind"
 
 SIM_HEADER = (
-    '; Parameters {"mandrel":{"diameter":50,"windLength":500},"tow":{"width":8,"thickness":0.4}}'
+    '; Parameters {"mandrel":{"diameter":50,"windLength":500},'
+    '"tow":{"width":8,"thickness":0.4}}'
 )
 SIM_PROGRAM = [SIM_HEADER, "G0 F6000", "G0 X10", "G0 Y180", "G0 X10 Y360"]
 

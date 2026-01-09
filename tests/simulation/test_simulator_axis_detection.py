@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from fiberpath.config import load_wind_definition
+from fiberpath.config.schemas import WindDefinition
 from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, MARLIN_XYZ_LEGACY
 from fiberpath.planning import PlanOptions, plan_wind
 from fiberpath.simulation import simulate_program
@@ -11,11 +12,11 @@ REFERENCE_ROOT = Path(__file__).parents[1] / "cyclone_reference_runs"
 REFERENCE_INPUTS = REFERENCE_ROOT / "inputs"
 
 
-def _reference_definition(name: str = "simple-hoop"):
+def _reference_definition(name: str = "simple-hoop") -> WindDefinition:
     return load_wind_definition(REFERENCE_INPUTS / f"{name}.wind")
 
 
-def test_detect_xyz_format():
+def test_detect_xyz_format() -> None:
     """Verify auto-detection recognizes XYZ format."""
     # Generate actual G-code with XYZ format
     definition = _reference_definition("simple-hoop")
@@ -28,7 +29,7 @@ def test_detect_xyz_format():
     assert result.estimated_time_s > 0
 
 
-def test_detect_xab_format():
+def test_detect_xab_format() -> None:
     """Verify auto-detection recognizes XAB format."""
     # Generate actual G-code with XAB format
     definition = _reference_definition("simple-hoop")
@@ -41,7 +42,7 @@ def test_detect_xab_format():
     assert result.estimated_time_s > 0
 
 
-def test_explicit_dialect_overrides_detection():
+def test_explicit_dialect_overrides_detection() -> None:
     """Verify explicit dialect parameter overrides auto-detection."""
     # Generate XAB G-code
     definition = _reference_definition("simple-hoop")
@@ -54,7 +55,7 @@ def test_explicit_dialect_overrides_detection():
     assert result.estimated_time_s > 0
 
 
-def test_xyz_and_xab_produce_same_simulation_results():
+def test_xyz_and_xab_produce_same_simulation_results() -> None:
     """Verify XYZ and XAB formats produce identical simulation metrics."""
     definition = _reference_definition("simple-hoop")
 
@@ -76,7 +77,7 @@ def test_xyz_and_xab_produce_same_simulation_results():
     assert abs(xyz_sim.total_distance_mm - xab_sim.total_distance_mm) < 1e-6
 
 
-def test_auto_detect_with_helical_balanced():
+def test_auto_detect_with_helical_balanced() -> None:
     """Verify auto-detection works with more complex wind patterns."""
     definition = _reference_definition("helical-balanced")
 

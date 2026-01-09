@@ -12,17 +12,24 @@ interface FileFieldProps {
 }
 
 export function FileField(props: FileFieldProps) {
-  const { label, value, onChange, placeholder, dialogTitle, filterExtensions, directory } = props;
+  const {
+    label,
+    value,
+    onChange,
+    placeholder,
+    dialogTitle,
+    filterExtensions,
+    directory,
+  } = props;
 
   const handleBrowse = useCallback(async () => {
     const selected = await open({
       title: dialogTitle ?? label,
       multiple: false,
       directory: directory === true,
-      filters:
-        directory
-          ? undefined
-          : filterExtensions && filterExtensions.length > 0
+      filters: directory
+        ? undefined
+        : filterExtensions && filterExtensions.length > 0
           ? [{ name: label, extensions: filterExtensions }]
           : undefined,
     });

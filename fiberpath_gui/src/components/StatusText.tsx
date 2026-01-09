@@ -13,7 +13,11 @@ const statusLabel: Record<StatusKind, string> = {
 };
 
 export function StatusText({ state, message }: StatusTextProps) {
-  const className = ["status", state === "success" ? "ok" : undefined, state === "error" ? "error" : undefined]
+  const className = [
+    "status",
+    state === "success" ? "ok" : undefined,
+    state === "error" ? "error" : undefined,
+  ]
     .filter(Boolean)
     .join(" ");
 

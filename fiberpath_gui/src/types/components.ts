@@ -82,25 +82,53 @@ export interface NumericRange {
  */
 export const NUMERIC_RANGES = {
   /** Wind angle: 0° to 90° (exclusive) */
-  WIND_ANGLE: { min: 0, max: 90, inclusive: { min: false, max: false } } as NumericRange,
-  
+  WIND_ANGLE: {
+    min: 0,
+    max: 90,
+    inclusive: { min: false, max: false },
+  } as NumericRange,
+
   /** Feed rate: 1 to 10000 mm/min */
-  FEED_RATE: { min: 1, max: 10000, inclusive: { min: true, max: true } } as NumericRange,
-  
+  FEED_RATE: {
+    min: 1,
+    max: 10000,
+    inclusive: { min: true, max: true },
+  } as NumericRange,
+
   /** Mandrel diameter: > 0 mm */
-  MANDREL_DIAMETER: { min: 0, max: Infinity, inclusive: { min: false, max: false } } as NumericRange,
-  
+  MANDREL_DIAMETER: {
+    min: 0,
+    max: Infinity,
+    inclusive: { min: false, max: false },
+  } as NumericRange,
+
   /** Wind length: > 0 mm */
-  WIND_LENGTH: { min: 0, max: Infinity, inclusive: { min: false, max: false } } as NumericRange,
-  
+  WIND_LENGTH: {
+    min: 0,
+    max: Infinity,
+    inclusive: { min: false, max: false },
+  } as NumericRange,
+
   /** Tow width: > 0 mm */
-  TOW_WIDTH: { min: 0, max: Infinity, inclusive: { min: false, max: false } } as NumericRange,
-  
+  TOW_WIDTH: {
+    min: 0,
+    max: Infinity,
+    inclusive: { min: false, max: false },
+  } as NumericRange,
+
   /** Tow thickness: > 0 mm */
-  TOW_THICKNESS: { min: 0, max: Infinity, inclusive: { min: false, max: false } } as NumericRange,
-  
+  TOW_THICKNESS: {
+    min: 0,
+    max: Infinity,
+    inclusive: { min: false, max: false },
+  } as NumericRange,
+
   /** Pattern/Skip: positive integers */
-  PATTERN_SKIP: { min: 1, max: Infinity, inclusive: { min: true, max: false } } as NumericRange,
+  PATTERN_SKIP: {
+    min: 1,
+    max: Infinity,
+    inclusive: { min: true, max: false },
+  } as NumericRange,
 } as const;
 
 /**
@@ -120,23 +148,23 @@ export const NUMERIC_RANGES = {
 export function validateNumericRange(
   value: number,
   range: NumericRange,
-  fieldName: string
+  fieldName: string,
 ): string | undefined {
   if (isNaN(value)) {
     return `${fieldName} must be a valid number`;
   }
-  
+
   const { min, max, inclusive = { min: true, max: true } } = range;
   const minInclusive = inclusive.min ?? true;
   const maxInclusive = inclusive.max ?? true;
-  
+
   if (minInclusive ? value < min : value <= min) {
-    return `${fieldName} must be ${minInclusive ? 'at least' : 'greater than'} ${min}`;
+    return `${fieldName} must be ${minInclusive ? "at least" : "greater than"} ${min}`;
   }
-  
+
   if (maxInclusive ? value > max : value >= max) {
-    return `${fieldName} must be ${maxInclusive ? 'at most' : 'less than'} ${max}`;
+    return `${fieldName} must be ${maxInclusive ? "at most" : "less than"} ${max}`;
   }
-  
+
   return undefined;
 }

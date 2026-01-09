@@ -15,11 +15,11 @@ interface CliUnavailableDialogProps extends DialogBaseProps {
 
 /**
  * Dialog displayed when the CLI backend becomes unavailable.
- * 
+ *
  * This dialog informs the user that file operations cannot be performed
  * until the CLI is available again. Provides a retry button and helpful
  * troubleshooting information.
- * 
+ *
  * @example
  * ```tsx
  * <CliUnavailableDialog
@@ -31,12 +31,12 @@ interface CliUnavailableDialogProps extends DialogBaseProps {
  * />
  * ```
  */
-export function CliUnavailableDialog({ 
-  isOpen, 
+export function CliUnavailableDialog({
+  isOpen,
   version,
   errorMessage,
   onRetry,
-  onClose 
+  onClose,
 }: CliUnavailableDialogProps) {
   if (!isOpen) return null;
 
@@ -51,13 +51,16 @@ export function CliUnavailableDialog({
       <div className="dialog-content dialog-content--warning">
         <div className="dialog-header">
           <h2>⚠️ CLI Backend Unavailable</h2>
-          <button className="dialog-close" onClick={onClose}>×</button>
+          <button className="dialog-close" onClick={onClose}>
+            ×
+          </button>
         </div>
-        
+
         <div className="dialog-body">
           <p className="dialog-message">
-            The FiberPath CLI backend is not available. File operations (planning, simulation, export) 
-            cannot be performed until the CLI is detected.
+            The FiberPath CLI backend is not available. File operations
+            (planning, simulation, export) cannot be performed until the CLI is
+            detected.
           </p>
 
           {errorMessage && (
@@ -70,10 +73,17 @@ export function CliUnavailableDialog({
           <div className="dialog-help-section">
             <h3>Troubleshooting Steps:</h3>
             <ol>
-              <li>Ensure the <code>fiberpath</code> CLI is installed</li>
+              <li>
+                Ensure the <code>fiberpath</code> CLI is installed
+              </li>
               <li>Verify it's accessible from your system PATH</li>
-              <li>Try running <code>fiberpath --version</code> in a terminal</li>
-              <li>Reinstall the FiberPath package if needed: <code>pip install fiberpath</code></li>
+              <li>
+                Try running <code>fiberpath --version</code> in a terminal
+              </li>
+              <li>
+                Reinstall the FiberPath package if needed:{" "}
+                <code>pip install fiberpath</code>
+              </li>
             </ol>
           </div>
 

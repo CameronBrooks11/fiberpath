@@ -8,7 +8,12 @@ from typing import TYPE_CHECKING
 
 from fiberpath.math_utils import strip_precision
 
-from .helpers import Axis, get_axis_letter, interpolate_coordinates, serialize_coordinate
+from .helpers import (
+    Axis,
+    get_axis_letter,
+    interpolate_coordinates,
+    serialize_coordinate,
+)
 
 if TYPE_CHECKING:
     from fiberpath.gcode.dialects import MarlinDialect
@@ -57,7 +62,9 @@ class WinderMachine:
         complete_end = self._last_position.copy()
         complete_end.update(position)
         do_segment_move = not math.isclose(
-            self._last_position[Axis.CARRIAGE], complete_end[Axis.CARRIAGE], abs_tol=1e-6
+            self._last_position[Axis.CARRIAGE],
+            complete_end[Axis.CARRIAGE],
+            abs_tol=1e-6,
         )
         if not do_segment_move:
             if self._verbose:
@@ -70,7 +77,9 @@ class WinderMachine:
             self._move_segment(complete_end)
             return
 
-        carriage_delta = abs(self._last_position[Axis.CARRIAGE] - complete_end[Axis.CARRIAGE])
+        carriage_delta = abs(
+            self._last_position[Axis.CARRIAGE] - complete_end[Axis.CARRIAGE]
+        )
         num_segments = int(round(carriage_delta)) + 1
         if self._verbose:
             self.insert_comment(

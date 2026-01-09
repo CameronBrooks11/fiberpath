@@ -14,152 +14,183 @@
   /* ========================================
      COLOR PALETTE
      ======================================== */
-  
+
   /* Brand Colors */
   --color-primary: #12a89a;
   --color-primary-soft: #75e3d8;
   --color-primary-hover: #0e8a7e;
   --color-accent: #d8b534;
   --color-accent-hover: #c4a42e;
-  
+
   /* Background Colors */
   --color-bg: #09090b;
   --color-bg-panel: #141416;
   --color-bg-panel-alt: #1d1d20;
   --color-bg-hover: #222226;
   --color-bg-active: #2a2a2e;
-  
+
   /* Border Colors */
   --color-border: #242428;
   --color-border-soft: rgb(255, 255, 255, 0.04);
   --color-border-focus: var(--color-primary);
-  
+
   /* Text Colors */
   --color-text: #f7f8fa;
   --color-text-muted: #8f929c;
   --color-text-inverse: #09090b;
-  
+
   /* Semantic Colors */
   --color-success: #32d2b6;
   --color-success-bg: rgb(50, 210, 182, 0.1);
+  --color-success-green: #22c55e;
+  --color-success-green-hover: #16a34a;
   --color-error: #ff8a8a;
   --color-error-bg: rgb(255, 138, 138, 0.1);
+  --color-error-red: #ef4444;
+  --color-error-red-hover: #dc2626;
+  --color-error-red-light: #f87171;
+  --color-error-red-bg: #fef2f2;
   --color-warning: #ffb74d;
   --color-warning-bg: rgb(255, 183, 77, 0.1);
+  --color-warning-orange: #f97316;
+  --color-warning-yellow: #eab308;
+  --color-warning-yellow-hover: #ca8a04;
   --color-info: #64b5f6;
   --color-info-bg: rgb(100, 181, 246, 0.1);
-  
+
+  /* Stream Tab / Console Colors */
+  --color-console-bg-dark: #0c0c0e;
+  --color-console-bg-mid: #18181b;
+  --color-slate-500: #64748b;
+  --color-slate-400: #94a3b8;
+  --color-slate-600: #475569;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-800: #1e40af;
+  --color-blue-900: #1e3a8a;
+  --color-green-400: #4ade80;
+  --color-cyan-400: #22d3ee;
+  --color-cyan-600: #06b6d4;
+  --color-zinc-700: #3f3f46;
+  --color-zinc-800: #27272a;
+  --color-zinc-200: #e4e4e7;
+
   /* ========================================
      SPACING SCALE
      ======================================== */
-  
-  --spacing-xs: 0.25rem;    /* 4px */
-  --spacing-sm: 0.5rem;     /* 8px */
-  --spacing-md: 0.75rem;    /* 12px */
-  --spacing-lg: 1rem;       /* 16px */
-  --spacing-xl: 1.5rem;     /* 24px */
-  --spacing-2xl: 2rem;      /* 32px */
-  --spacing-3xl: 3rem;      /* 48px */
-  
+
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 0.75rem; /* 12px */
+  --spacing-lg: 1rem; /* 16px */
+  --spacing-xl: 1.5rem; /* 24px */
+  --spacing-2xl: 2rem; /* 32px */
+  --spacing-3xl: 3rem; /* 48px */
+
   /* ========================================
      TYPOGRAPHY
      ======================================== */
-  
+
   /* Font Families */
-  --font-family-base: "Segoe UI", "Inter", system-ui, -apple-system, blinkmacsystemfont, sans-serif;
+  --font-family-base:
+    "Segoe UI", "Inter", system-ui, -apple-system, blinkmacsystemfont,
+    sans-serif;
   --font-family-mono: "Cascadia Code", "Consolas", "Monaco", monospace;
-  
+
   /* Font Sizes */
-  --font-size-xs: 0.7rem;     /* 11.2px */
-  --font-size-sm: 0.75rem;    /* 12px */
+  --font-size-xs: 0.7rem; /* 11.2px */
+  --font-size-sm: 0.75rem; /* 12px */
   --font-size-base: 0.875rem; /* 14px */
-  --font-size-md: 0.9375rem;  /* 15px */
-  --font-size-lg: 1rem;       /* 16px */
-  --font-size-xl: 1.25rem;    /* 20px */
-  --font-size-2xl: 1.5rem;    /* 24px */
-  
+  --font-size-md: 0.9375rem; /* 15px */
+  --font-size-lg: 1rem; /* 16px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+
   /* Font Weights */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  
+
   /* Line Heights */
   --line-height-tight: 1.2;
   --line-height-normal: 1.4;
   --line-height-relaxed: 1.6;
-  
+
   /* ========================================
      BORDERS & RADII
      ======================================== */
-  
+
   --border-width-thin: 1px;
   --border-width-medium: 2px;
-  --border-radius-sm: 0.25rem;  /* 4px */
+  --border-radius-sm: 0.25rem; /* 4px */
   --border-radius-md: 0.375rem; /* 6px */
-  --border-radius-lg: 0.5rem;   /* 8px */
-  --border-radius-xl: 0.75rem;  /* 12px */
-  
+  --border-radius-lg: 0.5rem; /* 8px */
+  --border-radius-xl: 0.75rem; /* 12px */
+
   /* ========================================
      SHADOWS
      ======================================== */
-  
+
   --shadow-sm: 0 1px 2px rgb(0, 0, 0, 0.3);
   --shadow-md: 0 4px 8px rgb(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 16px rgb(0, 0, 0, 0.5);
   --shadow-xl: 0 16px 32px rgb(0, 0, 0, 0.6);
-  
+
   /* ========================================
      TRANSITIONS
      ======================================== */
-  
+
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
   --transition-transform: transform var(--transition-base);
-  --transition-colors: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  --transition-colors:
+    background-color var(--transition-fast), color var(--transition-fast),
+    border-color var(--transition-fast);
   --transition-opacity: opacity var(--transition-base);
-  
+
   /* ========================================
      Z-INDEX SCALE
      ======================================== */
-  
+
   --z-index-base: 0;
   --z-index-dropdown: 100;
   --z-index-sticky: 200;
   --z-index-overlay: 300;
   --z-index-modal: 400;
   --z-index-toast: 500;
-  
+
   /* ========================================
      COMPONENT-SPECIFIC DIMENSIONS
      ======================================== */
-  
+
   /* MenuBar */
   --menubar-height: 2rem;
-  
+
   /* StatusBar */
   --statusbar-height: 1.75rem;
-  
+
   /* Panels */
   --panel-header-height: 2.5rem;
   --panel-min-width: 15rem;
   --panel-max-width: 30rem;
-  
+
   /* Layer Row */
   --layer-row-height: 3.5rem;
-  
+
   /* Inputs */
   --input-height: 2rem;
   --input-height-sm: 1.75rem;
   --input-height-lg: 2.5rem;
-  
+
   /* ========================================
      LEGACY VARIABLE NAMES (Backwards Compatibility)
      These map to the new token names above.
      Use the new names in new code.
      ======================================== */
-  
+
   --primary: var(--color-primary);
   --primary-soft: var(--color-primary-soft);
   --accent: var(--color-accent);

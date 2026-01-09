@@ -5,9 +5,5 @@ interface CenterCanvasProps {
 }
 
 export function CenterCanvas({ children }: CenterCanvasProps) {
-  return (
-    <div className="canvas-container">
-      {children}
-    </div>
-  );
+  return <div className="canvas-container">{children}</div>;
 }

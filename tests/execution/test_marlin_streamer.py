@@ -31,9 +31,8 @@ class DummyTransport:
 def test_iter_stream_sends_commands_and_skips_comments() -> None:
     transport = DummyTransport()
     streamer = MarlinStreamer(transport=transport)
-    streamer.load_program(["; header", "G0 X1", "", "G1 Y2 F1000"])
 
-    progress = list(streamer.iter_stream())
+    progress = list(streamer.iter_stream(["; header", "G0 X1", "", "G1 Y2 F1000"]))
 
     assert [p.command for p in progress] == ["G0 X1", "G1 Y2 F1000"]
     assert transport.written == ["G0 X1", "G1 Y2 F1000"]
@@ -44,9 +43,8 @@ def test_iter_stream_sends_commands_and_skips_comments() -> None:
 def test_pause_and_resume_issue_m_codes() -> None:
     transport = DummyTransport()
     streamer = MarlinStreamer(transport=transport)
-    streamer.load_program(["G0 X1"])
 
-    list(streamer.iter_stream())
+    list(streamer.iter_stream(["G0 X1"]))
 
     streamer.pause()
     streamer.resume()
@@ -57,11 +55,10 @@ def test_pause_and_resume_issue_m_codes() -> None:
 def test_stream_raises_on_marlin_error() -> None:
     transport = DummyTransport()
     streamer = MarlinStreamer(transport=transport)
-    streamer.load_program(["G1 X5"])
     transport.queue_front("Error: printer halted")
 
     with pytest.raises(StreamError):
-        next(streamer.iter_stream())
+        next(streamer.iter_stream(["G1 X5"]))
 
 
 def test_marlin_startup_sequence_consumed() -> None:
@@ -118,10 +115,8 @@ def test_marlin_startup_sequence_consumed() -> None:
     streamer._transport = transport
     # Don't set _startup_handled - let the code handle it naturally
 
-    streamer.load_program(["G0 X1", "G1 Y2"])
-
     # Stream should automatically handle startup
-    progress = list(streamer.iter_stream())
+    progress = list(streamer.iter_stream(["G0 X1", "G1 Y2"]))
 
     # Verify all startup lines were consumed
     assert transport._startup_index == len(transport._startup_lines)
@@ -134,10 +129,9 @@ def test_reconnection_handles_startup_again() -> None:
     """Verify that reconnecting after close() properly handles startup again."""
     transport = DummyTransport()
     streamer = MarlinStreamer(transport=transport)
-    streamer.load_program(["G0 X1"])
 
     # First stream
-    list(streamer.iter_stream())
+    list(streamer.iter_stream(["G0 X1"]))
     assert transport.written == ["G0 X1"]
 
     # Close and verify state reset
@@ -149,10 +143,9 @@ def test_reconnection_handles_startup_again() -> None:
     new_transport = DummyTransport()
     streamer._transport = new_transport
     streamer.reset_progress()
-    streamer.load_program(["G1 Y2"])
 
     # Should handle startup again (even though it's a mock)
-    list(streamer.iter_stream())
+    list(streamer.iter_stream(["G1 Y2"]))
     assert new_transport.written == ["G1 Y2"]
 
 
@@ -187,10 +180,9 @@ def test_startup_timeout_proceeds_with_warning() -> None:
 
     streamer = MarlinStreamer(port="test_port", log=capture_log, response_timeout_s=0.2)
     streamer._transport = transport
-    streamer.load_program(["G0 X1"])
 
     # Should timeout during startup but proceed
-    list(streamer.iter_stream())
+    list(streamer.iter_stream(["G0 X1"]))
 
     # Verify warning was logged
     assert any("No Marlin startup detected" in msg for msg in transport.log_messages)

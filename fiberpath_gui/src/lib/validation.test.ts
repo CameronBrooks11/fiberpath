@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { validateWindDefinition, isValidWindDefinition } from './validation';
-import type { FiberPathWindDefinition } from '../types/wind-schema';
+import { describe, it, expect, beforeEach } from "vitest";
+import { validateWindDefinition, isValidWindDefinition } from "./validation";
+import type { FiberPathWindDefinition } from "../types/wind-schema";
 
-describe('Wind Definition Validation', () => {
-  describe('Valid definitions', () => {
-    it('should validate a minimal valid hoop layer definition', () => {
+describe("Wind Definition Validation", () => {
+  describe("Valid definitions", () => {
+    it("should validate a minimal valid hoop layer definition", () => {
       const validDef: FiberPathWindDefinition = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -18,7 +18,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'hoop',
+            windType: "hoop",
             terminal: false,
           },
         ],
@@ -30,9 +30,9 @@ describe('Wind Definition Validation', () => {
       expect(isValidWindDefinition(validDef)).toBe(true);
     });
 
-    it('should validate a helical layer with all required fields', () => {
+    it("should validate a helical layer with all required fields", () => {
       const validDef: FiberPathWindDefinition = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -44,7 +44,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'helical',
+            windType: "helical",
             windAngle: 45,
             patternNumber: 3,
             skipIndex: 1,
@@ -61,9 +61,9 @@ describe('Wind Definition Validation', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it('should validate a skip layer', () => {
+    it("should validate a skip layer", () => {
       const validDef: FiberPathWindDefinition = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -75,7 +75,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'skip',
+            windType: "skip",
             mandrelRotation: 180,
           },
         ],
@@ -86,9 +86,9 @@ describe('Wind Definition Validation', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it('should validate a definition with multiple layer types', () => {
+    it("should validate a definition with multiple layer types", () => {
       const validDef: FiberPathWindDefinition = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -100,11 +100,11 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'hoop',
+            windType: "hoop",
             terminal: false,
           },
           {
-            windType: 'helical',
+            windType: "helical",
             windAngle: 35,
             patternNumber: 4,
             skipIndex: 1,
@@ -113,11 +113,11 @@ describe('Wind Definition Validation', () => {
             leadOutDegrees: 10,
           },
           {
-            windType: 'skip',
+            windType: "skip",
             mandrelRotation: 90,
           },
           {
-            windType: 'hoop',
+            windType: "hoop",
             terminal: true,
           },
         ],
@@ -129,8 +129,8 @@ describe('Wind Definition Validation', () => {
     });
   });
 
-  describe('Invalid definitions', () => {
-    it('should reject missing required top-level fields', () => {
+  describe("Invalid definitions", () => {
+    it("should reject missing required top-level fields", () => {
       const invalidDef = {
         mandrelParameters: {
           diameter: 150,
@@ -144,9 +144,9 @@ describe('Wind Definition Validation', () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it('should reject negative mandrel diameter', () => {
+    it("should reject negative mandrel diameter", () => {
       const invalidDef = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: -150,
           windLength: 800,
@@ -161,12 +161,14 @@ describe('Wind Definition Validation', () => {
 
       const result = validateWindDefinition(invalidDef);
       expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.field.includes('diameter'))).toBe(true);
+      expect(result.errors.some((e) => e.field.includes("diameter"))).toBe(
+        true,
+      );
     });
 
-    it('should reject zero tow width', () => {
+    it("should reject zero tow width", () => {
       const invalidDef = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -181,12 +183,12 @@ describe('Wind Definition Validation', () => {
 
       const result = validateWindDefinition(invalidDef);
       expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.field.includes('width'))).toBe(true);
+      expect(result.errors.some((e) => e.field.includes("width"))).toBe(true);
     });
 
-    it('should reject helical layer with missing required fields', () => {
+    it("should reject helical layer with missing required fields", () => {
       const invalidDef = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -198,7 +200,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'helical',
+            windType: "helical",
             windAngle: 45,
             // Missing patternNumber, skipIndex, lockDegrees, leadInMM, leadOutDegrees
           },
@@ -210,9 +212,9 @@ describe('Wind Definition Validation', () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it('should reject helical layer with zero wind angle', () => {
+    it("should reject helical layer with zero wind angle", () => {
       const invalidDef = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -224,7 +226,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'helical',
+            windType: "helical",
             windAngle: 0,
             patternNumber: 3,
             skipIndex: 1,
@@ -237,12 +239,14 @@ describe('Wind Definition Validation', () => {
 
       const result = validateWindDefinition(invalidDef);
       expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.field.includes('windAngle'))).toBe(true);
+      expect(result.errors.some((e) => e.field.includes("windAngle"))).toBe(
+        true,
+      );
     });
 
-    it('should reject skip layer without mandrelRotation', () => {
+    it("should reject skip layer without mandrelRotation", () => {
       const invalidDef = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -254,7 +258,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'skip',
+            windType: "skip",
             // Missing mandrelRotation
           },
         ],
@@ -263,13 +267,19 @@ describe('Wind Definition Validation', () => {
       const result = validateWindDefinition(invalidDef);
       expect(result.valid).toBe(false);
       if (!result.valid) {
-        expect(result.errors.some((e) => e.field.includes('mandrelRotation') || e.message.includes('mandrelRotation'))).toBe(true);
+        expect(
+          result.errors.some(
+            (e) =>
+              e.field.includes("mandrelRotation") ||
+              e.message.includes("mandrelRotation"),
+          ),
+        ).toBe(true);
       }
     });
 
-    it('should reject invalid layer type', () => {
+    it("should reject invalid layer type", () => {
       const invalidDef = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -281,7 +291,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'invalid_type',
+            windType: "invalid_type",
           },
         ],
       };
@@ -290,29 +300,29 @@ describe('Wind Definition Validation', () => {
       expect(result.valid).toBe(false);
     });
 
-    it('should reject non-object input', () => {
+    it("should reject non-object input", () => {
       const result = validateWindDefinition("not an object");
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it('should reject null input', () => {
+    it("should reject null input", () => {
       const result = validateWindDefinition(null);
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it('should reject empty object', () => {
+    it("should reject empty object", () => {
       const result = validateWindDefinition({});
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Type guard', () => {
-    it('should return true for valid definition', () => {
+  describe("Type guard", () => {
+    it("should return true for valid definition", () => {
       const validDef: FiberPathWindDefinition = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -324,7 +334,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'hoop',
+            windType: "hoop",
             terminal: false,
           },
         ],
@@ -333,7 +343,7 @@ describe('Wind Definition Validation', () => {
       expect(isValidWindDefinition(validDef)).toBe(true);
     });
 
-    it('should return false for invalid definition', () => {
+    it("should return false for invalid definition", () => {
       const invalidDef = {
         mandrelParameters: {
           diameter: -150, // Negative value
@@ -344,10 +354,10 @@ describe('Wind Definition Validation', () => {
     });
   });
 
-  describe('Error messages', () => {
-    it('should provide meaningful error messages', () => {
+  describe("Error messages", () => {
+    it("should provide meaningful error messages", () => {
       const invalidDef = {
-        schemaVersion: '1.0',
+        schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
           windLength: 800,
@@ -359,7 +369,7 @@ describe('Wind Definition Validation', () => {
         defaultFeedRate: 1000,
         layers: [
           {
-            windType: 'helical',
+            windType: "helical",
             windAngle: 45,
             // Missing required fields
           },
@@ -372,8 +382,8 @@ describe('Wind Definition Validation', () => {
       result.errors.forEach((error) => {
         expect(error.field).toBeDefined();
         expect(error.message).toBeDefined();
-        expect(typeof error.field).toBe('string');
-        expect(typeof error.message).toBe('string');
+        expect(typeof error.field).toBe("string");
+        expect(typeof error.message).toBe("string");
       });
     });
   });

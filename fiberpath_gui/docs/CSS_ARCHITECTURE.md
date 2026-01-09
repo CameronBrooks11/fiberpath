@@ -52,7 +52,7 @@ Styles are loaded in cascade order from general to specific:
 
 ## File Structure
 
-```
+```text
 src/styles/
 ├── index.css           # Main entry point (imports all modules)
 ├── tokens.css          # Design tokens (CSS custom properties)

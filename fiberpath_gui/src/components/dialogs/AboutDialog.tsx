@@ -13,25 +13,25 @@ interface AboutDialogProps extends DialogBaseProps {
 
 /**
  * About dialog displaying application information and links.
- * 
+ *
  * Shows:
  * - Application name and version
  * - Description of FiberPath functionality
  * - Links to documentation and GitHub repository
  * - License information
  * - Contributor credits
- * 
+ *
  * The dialog is rendered as a portal to ensure proper z-index layering.
  * Clicking the overlay or the X button closes the dialog.
- * 
+ *
  * @example
  * ```tsx
- * <AboutDialog 
- *   isOpen={showAbout} 
- *   onClose={() => setShowAbout(false)} 
+ * <AboutDialog
+ *   isOpen={showAbout}
+ *   onClose={() => setShowAbout(false)}
  * />
  * ```
- * 
+ *
  * @param props - Component props
  * @param props.isOpen - Controls dialog visibility
  * @param props.onClose - Callback invoked when the dialog should close
@@ -59,25 +59,28 @@ export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
       <div className="dialog-content dialog-content--small">
         <div className="dialog-header">
           <h2>About FiberPath</h2>
-          <button className="dialog-close" onClick={onClose}>×</button>
+          <button className="dialog-close" onClick={onClose}>
+            ×
+          </button>
         </div>
-        
+
         <div className="dialog-body">
           <div className="about-section">
             <div className="about-logo">
               <div className="about-icon">🧵</div>
               <div className="about-title">
                 <h3>FiberPath</h3>
-                <p className="about-version">Version 0.3.0</p>
+                <p className="about-version">Version 0.4.0</p>
               </div>
             </div>
           </div>
 
           <div className="about-section">
             <p className="about-description">
-              Professional filament winding path planning and G-code generation software 
-              for composite manufacturing. Create optimized winding patterns for cylindrical 
-              mandrels with helical, hoop, and skip layers.
+              Professional filament winding path planning and G-code generation
+              software for composite manufacturing. Create optimized winding
+              patterns for cylindrical mandrels with helical, hoop, and skip
+              layers.
             </p>
           </div>
 
@@ -104,9 +107,7 @@ export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
           </div>
 
           <div className="about-section about-footer">
-            <p className="about-copyright">
-              © 2026 Cameron Brooks
-            </p>
+            <p className="about-copyright">© 2026 Cameron Brooks</p>
             <p className="about-license">
               Open source software licensed under AGPL v3.
             </p>

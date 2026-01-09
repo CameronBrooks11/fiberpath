@@ -37,7 +37,7 @@ def _load_fixture(name: str) -> list[str]:
     return (FIXTURE_DIR / name).read_text().splitlines()
 
 
-def test_plan_hoop_layer_matches_fixture():
+def test_plan_hoop_layer_matches_fixture() -> None:
     machine = _machine()
     plan_hoop_layer(
         machine,
@@ -49,7 +49,7 @@ def test_plan_hoop_layer_matches_fixture():
     assert machine.get_gcode() == _load_fixture("hoop_layer.gcode")
 
 
-def test_plan_helical_layer_matches_fixture():
+def test_plan_helical_layer_matches_fixture() -> None:
     machine = _machine(40.0)
     plan_helical_layer(
         machine,
@@ -70,7 +70,7 @@ def test_plan_helical_layer_matches_fixture():
     assert machine.get_gcode() == _load_fixture("helical_layer.gcode")
 
 
-def test_plan_skip_layer_matches_fixture():
+def test_plan_skip_layer_matches_fixture() -> None:
     machine = _machine()
     plan_skip_layer(
         machine,

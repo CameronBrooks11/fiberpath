@@ -3,7 +3,11 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../state/projectStore";
 import { useErrorNotification } from "../contexts/ErrorNotificationContext";
-import { getRecentFiles, formatRecentFileName, formatRecentFilePath } from "../lib/recentFiles";
+import {
+  getRecentFiles,
+  formatRecentFileName,
+  formatRecentFilePath,
+} from "../lib/recentFiles";
 import { createFileOperations } from "../lib/fileOperations";
 import { AboutDialog } from "./dialogs/AboutDialog";
 import { DiagnosticsDialog } from "./dialogs/DiagnosticsDialog";
@@ -23,7 +27,7 @@ export function MenuBar({
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [showDiagnosticsDialog, setShowDiagnosticsDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
-  
+
   // Use shallow comparison for multiple selectors
   const {
     project,
@@ -33,46 +37,62 @@ export function MenuBar({
     setFilePath,
     clearDirty,
     duplicateLayer,
-    removeLayer
-  } = useProjectStore(useShallow((state) => ({
-    project: state.project,
-    activeLayerId: state.project.activeLayerId,
-    newProject: state.newProject,
-    loadProject: state.loadProject,
-    setFilePath: state.setFilePath,
-    clearDirty: state.clearDirty,
-    duplicateLayer: state.duplicateLayer,
-    removeLayer: state.removeLayer
-  })));
-  
+    removeLayer,
+  } = useProjectStore(
+    useShallow((state) => ({
+      project: state.project,
+      activeLayerId: state.project.activeLayerId,
+      newProject: state.newProject,
+      loadProject: state.loadProject,
+      setFilePath: state.setFilePath,
+      clearDirty: state.clearDirty,
+      duplicateLayer: state.duplicateLayer,
+      removeLayer: state.removeLayer,
+    })),
+  );
+
   // Error notifications
   const { showError, showInfo } = useErrorNotification();
-  
+
   // Create file operation handlers (memoized to prevent recreation on every render)
-  const fileOps = useMemo(() => createFileOperations({
-    getProject: () => useProjectStore.getState().project,
-    newProject,
-    loadProject,
-    setFilePath,
-    clearDirty,
-    getActiveLayerId: () => useProjectStore.getState().project.activeLayerId,
-    duplicateLayer,
-    removeLayer,
-    updateRecentFiles: () => setRecentFiles(getRecentFiles()),
-    showError,
-    showInfo,
-  }), [newProject, loadProject, setFilePath, clearDirty, duplicateLayer, removeLayer, showError, showInfo]);
-  
+  const fileOps = useMemo(
+    () =>
+      createFileOperations({
+        getProject: () => useProjectStore.getState().project,
+        newProject,
+        loadProject,
+        setFilePath,
+        clearDirty,
+        getActiveLayerId: () =>
+          useProjectStore.getState().project.activeLayerId,
+        duplicateLayer,
+        removeLayer,
+        updateRecentFiles: () => setRecentFiles(getRecentFiles()),
+        showError,
+        showInfo,
+      }),
+    [
+      newProject,
+      loadProject,
+      setFilePath,
+      clearDirty,
+      duplicateLayer,
+      removeLayer,
+      showError,
+      showInfo,
+    ],
+  );
+
   const handleDocsLink = () => {
     void openExternal("https://cameronbrooks11.github.io/fiberpath");
   };
-  
+
   useEffect(() => {
     const handleToggle = (event: Event) => {
       const target = event.target as HTMLDetailsElement;
       if (target.open) {
         // Close all other menus when one opens
-        menuRefs.current.forEach(menu => {
+        menuRefs.current.forEach((menu) => {
           if (menu && menu !== target && menu.open) {
             menu.open = false;
           }
@@ -80,16 +100,16 @@ export function MenuBar({
       }
     };
 
-    menuRefs.current.forEach(menu => {
+    menuRefs.current.forEach((menu) => {
       if (menu) {
-        menu.addEventListener('toggle', handleToggle);
+        menu.addEventListener("toggle", handleToggle);
       }
     });
 
     return () => {
-      menuRefs.current.forEach(menu => {
+      menuRefs.current.forEach((menu) => {
         if (menu) {
-          menu.removeEventListener('toggle', handleToggle);
+          menu.removeEventListener("toggle", handleToggle);
         }
       });
     };
@@ -98,12 +118,12 @@ export function MenuBar({
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const clickedInsideMenu = menuRefs.current.some(menu => 
-        menu && menu.contains(event.target as Node)
+      const clickedInsideMenu = menuRefs.current.some(
+        (menu) => menu && menu.contains(event.target as Node),
       );
-      
+
       if (!clickedInsideMenu) {
-        menuRefs.current.forEach(menu => {
+        menuRefs.current.forEach((menu) => {
           if (menu && menu.open) {
             menu.open = false;
           }
@@ -111,9 +131,9 @@ export function MenuBar({
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
@@ -123,9 +143,12 @@ export function MenuBar({
         <span className="menubar__brand-icon">⬢</span>
         <span className="menubar__brand-name">FiberPath</span>
       </div>
-      
+
       <div className="menubar__menus">
-        <details className="menubar__menu" ref={el => menuRefs.current[0] = el}>
+        <details
+          className="menubar__menu"
+          ref={(el) => (menuRefs.current[0] = el)}
+        >
           <summary>File</summary>
           <div className="menubar__dropdown">
             <button onClick={fileOps.handleNewProject}>
@@ -156,8 +179,12 @@ export function MenuBar({
                     className="menubar__recent-file"
                     title={file.path}
                   >
-                    <span className="menubar__recent-name">{formatRecentFileName(file.path)}</span>
-                    <span className="menubar__recent-path">{formatRecentFilePath(file.path)}</span>
+                    <span className="menubar__recent-name">
+                      {formatRecentFileName(file.path)}
+                    </span>
+                    <span className="menubar__recent-path">
+                      {formatRecentFilePath(file.path)}
+                    </span>
                   </button>
                 ))}
               </>
@@ -165,22 +192,38 @@ export function MenuBar({
           </div>
         </details>
 
-        <details className="menubar__menu" ref={el => menuRefs.current[1] = el}>
+        <details
+          className="menubar__menu"
+          ref={(el) => (menuRefs.current[1] = el)}
+        >
           <summary>Edit</summary>
           <div className="menubar__dropdown">
-            <button disabled>Undo<span className="menubar__shortcut">Ctrl+Z</span></button>
-            <button disabled>Redo<span className="menubar__shortcut">Ctrl+Y</span></button>
+            <button disabled>
+              Undo<span className="menubar__shortcut">Ctrl+Z</span>
+            </button>
+            <button disabled>
+              Redo<span className="menubar__shortcut">Ctrl+Y</span>
+            </button>
             <hr />
-            <button onClick={fileOps.handleDuplicateLayer} disabled={!activeLayerId}>
+            <button
+              onClick={fileOps.handleDuplicateLayer}
+              disabled={!activeLayerId}
+            >
               Duplicate Layer<span className="menubar__shortcut">Ctrl+D</span>
             </button>
-            <button onClick={fileOps.handleDeleteLayer} disabled={!activeLayerId}>
+            <button
+              onClick={fileOps.handleDeleteLayer}
+              disabled={!activeLayerId}
+            >
               Delete Layer<span className="menubar__shortcut">Del</span>
             </button>
           </div>
         </details>
 
-        <details className="menubar__menu" ref={el => menuRefs.current[2] = el}>
+        <details
+          className="menubar__menu"
+          ref={(el) => (menuRefs.current[2] = el)}
+        >
           <summary>View</summary>
           <div className="menubar__dropdown">
             <button onClick={onToggleLeftPanel} disabled={!onToggleLeftPanel}>
@@ -191,13 +234,22 @@ export function MenuBar({
             </button>
             <hr />
             <button disabled>Reset Layout</button>
-            <button disabled>Zoom In<span className="menubar__shortcut">Ctrl++</span></button>
-            <button disabled>Zoom Out<span className="menubar__shortcut">Ctrl+-</span></button>
-            <button disabled>Zoom to Fit<span className="menubar__shortcut">Ctrl+0</span></button>
+            <button disabled>
+              Zoom In<span className="menubar__shortcut">Ctrl++</span>
+            </button>
+            <button disabled>
+              Zoom Out<span className="menubar__shortcut">Ctrl+-</span>
+            </button>
+            <button disabled>
+              Zoom to Fit<span className="menubar__shortcut">Ctrl+0</span>
+            </button>
           </div>
         </details>
 
-        <details className="menubar__menu" ref={el => menuRefs.current[3] = el}>
+        <details
+          className="menubar__menu"
+          ref={(el) => (menuRefs.current[3] = el)}
+        >
           <summary>Tools</summary>
           <div className="menubar__dropdown">
             <button onClick={fileOps.handleValidate}>
@@ -205,11 +257,16 @@ export function MenuBar({
             </button>
             <hr />
             <button disabled>Check for Updates</button>
-            <button disabled>Preferences<span className="menubar__shortcut">Ctrl+,</span></button>
+            <button disabled>
+              Preferences<span className="menubar__shortcut">Ctrl+,</span>
+            </button>
           </div>
         </details>
 
-        <details className="menubar__menu" ref={el => menuRefs.current[4] = el}>
+        <details
+          className="menubar__menu"
+          ref={(el) => (menuRefs.current[4] = el)}
+        >
           <summary>Help</summary>
           <div className="menubar__dropdown">
             <button onClick={handleDocsLink}>
@@ -227,16 +284,16 @@ export function MenuBar({
         </details>
       </div>
 
-      <AboutDialog 
-        isOpen={showAboutDialog} 
-        onClose={() => setShowAboutDialog(false)} 
+      <AboutDialog
+        isOpen={showAboutDialog}
+        onClose={() => setShowAboutDialog(false)}
       />
-      
-      <DiagnosticsDialog 
-        isOpen={showDiagnosticsDialog} 
-        onClose={() => setShowDiagnosticsDialog(false)} 
+
+      <DiagnosticsDialog
+        isOpen={showDiagnosticsDialog}
+        onClose={() => setShowDiagnosticsDialog(false)}
       />
-      
+
       {showExportDialog && (
         <ExportConfirmationDialog
           project={project}

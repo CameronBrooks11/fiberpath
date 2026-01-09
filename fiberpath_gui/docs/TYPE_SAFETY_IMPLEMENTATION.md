@@ -1,6 +1,6 @@
 # Type Safety & Runtime Validation Implementation
 
-**Phase 4 of Roadmap v3 - Completed January 8, 2026**
+Phase 4 of Roadmap v3 - Completed January 8, 2026
 
 ## Overview
 
@@ -18,7 +18,7 @@ All Tauri command responses now have Zod schemas for runtime validation:
 - **PlotPreviewPayloadSchema** - Validates `plot_preview` and `plot_definition` responses
 - **ValidationResultSchema** - Validates `validate_wind_definition` responses
 
-### Benefits:
+### Benefits of Runtime Validation
 
 - Catches unexpected API changes at runtime
 - Prevents corrupted data from propagating through app
@@ -46,7 +46,7 @@ Runtime validation added to:
 - `handleOpen()` - Validates loaded .wind files before converting to project
 - `handleOpenRecent()` - Same validation for recent files
 
-### Benefits:
+### Benefits of Validation
 
 - Detects corrupted or hand-edited .wind files before they break the GUI
 - Provides clear error messages about what's wrong with the file
@@ -56,7 +56,7 @@ Runtime validation added to:
 
 ### Error Hierarchy
 
-```
+```text
 FiberPathError (base)
 ├── FileError (file operations)
 ├── ValidationError (schema/validation failures)
@@ -91,6 +91,7 @@ FiberPathError (base)
    ```
 
 5. **ConnectionError** - Network/backend connection errors
+
    ```typescript
    constructor(message, endpoint?, context?)
    ```
@@ -169,14 +170,14 @@ isSkipLayer(layer: Layer): layer is Layer & { type: 'skip'; skip: SkipLayer }
 getLayerData(layer: Layer): HoopLayer | HelicalLayer | SkipLayer
 ```
 
-### Benefits:
+### Benefits of Type Guards
 
 - TypeScript compiler ensures correct property access after guard check
 - Prevents accessing `layer.helical` on hoop layers
 - Enables exhaustiveness checking in switch statements
 - Cleaner code than manual type checks
 
-### Usage Example:
+### Usage Example
 
 ```typescript
 if (isHelicalLayer(layer)) {
@@ -190,7 +191,7 @@ const data = getLayerData(layer); // HoopLayer | HelicalLayer | SkipLayer
 
 ## Architecture Improvements
 
-### Before Phase 4:
+**Before Phase 4**:
 
 - No runtime validation of Tauri responses
 - Generic `Error` or plain strings for all failures
@@ -198,7 +199,7 @@ const data = getLayerData(layer); // HoopLayer | HelicalLayer | SkipLayer
 - Manual type narrowing with `layer.type === 'helical'`
 - No validation of loaded .wind files beyond JSON parsing
 
-### After Phase 4:
+**After Phase 4**:
 
 - ✅ All Tauri responses validated at runtime with Zod
 - ✅ Typed error classes with context and hierarchy
@@ -236,14 +237,14 @@ const data = getLayerData(layer); // HoopLayer | HelicalLayer | SkipLayer
 
 ## Testing Considerations
 
-### Manual Testing Done:
+### Manual Testing Done
 
 - ✅ Load valid .wind files (validated and loaded successfully)
 - ✅ Invalid .wind files rejected with clear messages
 - ✅ Tauri command failures properly typed
 - ✅ No TypeScript compilation errors
 
-### Recommended Future Tests:
+### Recommended Future Tests
 
 1. Unit tests for all Zod schemas with valid/invalid data
 2. Unit tests for error class construction and properties

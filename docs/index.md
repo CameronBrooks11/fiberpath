@@ -2,7 +2,7 @@
 
 ## Download & Installation
 
-**Latest Release:** [v0.3.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+**Latest Release:** [v0.4.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
 
 - **Desktop GUI** – Download installers for Windows (.msi/.exe), macOS (.dmg), or Linux (.deb/.AppImage)
 - **Python Package** – `pip install fiberpath` or `uv pip install fiberpath`
@@ -10,8 +10,18 @@
 
 ---
 
-This folder hosts the primary knowledge base for the project. High-level content
-is split into user-facing guides, architectural notes, API references, and developer workflows.
+This folder hosts the primary knowledge base for the project. High-level content is split into user-facing guides, architectural notes, API references, and developer workflows.
+
+## What's New in v4.0
+
+**Marlin G-code Streaming** – The desktop GUI now includes a dedicated Stream tab for direct hardware control:
+
+- Serial port discovery and connection management
+- Manual G-code command execution with common operation shortcuts
+- File streaming with real-time progress monitoring and pause/resume support
+- Live command/response log for debugging and monitoring
+
+See [marlin-streaming.md](marlin-streaming.md) for detailed documentation.
 
 ## Available Guides
 
@@ -20,11 +30,11 @@ is split into user-facing guides, architectural notes, API references, and devel
 - `format-wind.md` – `.wind` file schema and validation rules.
 - `api.md` – REST entry points with sample payloads (kept in sync with the FastAPI schemas).
 - `planner-math.md` – derivations for hoop/helical/skip layer formulas and guardrails.
-- `roadmap.md` – phase-by-phase status of the rewrite (currently paused at Phase 5 completion).
+- `marlin-streaming.md` – Marlin hardware connection, manual control, and file streaming guide (v4.0).
+- `roadmap.md` – phase-by-phase status of the rewrite.
 
 Additional resources:
 
-- `fiberpath_gui/ARCHITECTURE.md` documents the Tauri + React desktop companion and the CLI bridge
-  commands.
-- The top-level `README.md` now lists hardware smoke-test steps for running the CLI/GUI against
-  Marlin controllers, and `CONTRIBUTING.md` outlines the development workflow.
+- `fiberpath_gui/docs/` contains GUI-specific documentation (architecture, testing, performance profiling).
+- The top-level `README.md` lists hardware smoke-test steps for running the CLI/GUI against Marlin controllers.
+- `CONTRIBUTING.md` outlines the development workflow.

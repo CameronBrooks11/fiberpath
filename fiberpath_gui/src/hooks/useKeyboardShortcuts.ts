@@ -14,7 +14,10 @@ export interface KeyboardShortcutHandlers {
  * Detects if the user is on macOS
  */
 const isMac = () => {
-  return typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  return (
+    typeof navigator !== "undefined" &&
+    navigator.platform.toUpperCase().indexOf("MAC") >= 0
+  );
 };
 
 /**
@@ -22,14 +25,14 @@ const isMac = () => {
  */
 const isInputElement = (target: EventTarget | null): boolean => {
   if (!target || !(target instanceof HTMLElement)) return false;
-  
+
   const tagName = target.tagName.toUpperCase();
   const isEditable = target.isContentEditable;
-  
+
   return (
-    tagName === 'INPUT' ||
-    tagName === 'TEXTAREA' ||
-    tagName === 'SELECT' ||
+    tagName === "INPUT" ||
+    tagName === "TEXTAREA" ||
+    tagName === "SELECT" ||
     isEditable
   );
 };
@@ -48,27 +51,27 @@ export function useKeyboardShortcuts(handlers: KeyboardShortcutHandlers) {
 
       // Determine which modifier key to check (Ctrl for Windows/Linux, Meta/Cmd for Mac)
       const modifierKey = isMac() ? event.metaKey : event.ctrlKey;
-      
+
       // Check for modifier + key combinations
       if (modifierKey && !event.altKey) {
         switch (event.key.toLowerCase()) {
-          case 'n':
+          case "n":
             // Ctrl/Cmd + N - New Project
             if (!event.shiftKey && handlers.onNew) {
               event.preventDefault();
               void handlers.onNew();
             }
             break;
-            
-          case 'o':
+
+          case "o":
             // Ctrl/Cmd + O - Open
             if (!event.shiftKey && handlers.onOpen) {
               event.preventDefault();
               void handlers.onOpen();
             }
             break;
-            
-          case 's':
+
+          case "s":
             if (event.shiftKey && handlers.onSaveAs) {
               // Ctrl/Cmd + Shift + S - Save As
               event.preventDefault();
@@ -79,16 +82,16 @@ export function useKeyboardShortcuts(handlers: KeyboardShortcutHandlers) {
               void handlers.onSave();
             }
             break;
-            
-          case 'e':
+
+          case "e":
             // Ctrl/Cmd + E - Export G-code
             if (!event.shiftKey && handlers.onExport) {
               event.preventDefault();
               void handlers.onExport();
             }
             break;
-            
-          case 'd':
+
+          case "d":
             // Ctrl/Cmd + D - Duplicate Layer
             if (!event.shiftKey && handlers.onDuplicate) {
               event.preventDefault();
@@ -97,11 +100,11 @@ export function useKeyboardShortcuts(handlers: KeyboardShortcutHandlers) {
             break;
         }
       }
-      
+
       // Check for non-modifier keys
       if (!modifierKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
         switch (event.key) {
-          case 'Delete':
+          case "Delete":
             // Delete key - Delete Layer
             if (handlers.onDelete) {
               event.preventDefault();
@@ -113,11 +116,11 @@ export function useKeyboardShortcuts(handlers: KeyboardShortcutHandlers) {
     };
 
     // Add event listener
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
 
     // Cleanup on unmount
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handlers]);
 }
@@ -127,11 +130,11 @@ export function useKeyboardShortcuts(handlers: KeyboardShortcutHandlers) {
  */
 export function getShortcutDisplay(shortcut: string): string {
   const mac = isMac();
-  
+
   // Replace modifier keys with platform-specific versions
   return shortcut
-    .replace(/Ctrl/g, mac ? '⌘' : 'Ctrl')
-    .replace(/Shift/g, mac ? '⇧' : 'Shift')
-    .replace(/Alt/g, mac ? '⌥' : 'Alt')
-    .replace(/Del/g, mac ? '⌫' : 'Del');
+    .replace(/Ctrl/g, mac ? "⌘" : "Ctrl")
+    .replace(/Shift/g, mac ? "⇧" : "Shift")
+    .replace(/Alt/g, mac ? "⌥" : "Alt")
+    .replace(/Del/g, mac ? "⌫" : "Del");
 }

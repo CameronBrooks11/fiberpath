@@ -19,7 +19,7 @@ def _reference_output(name: str = "simple-hoop") -> list[str]:
     return (REFERENCE_OUTPUTS / name / "output.gcode").read_text().splitlines()
 
 
-def test_plan_wind_returns_commands():
+def test_plan_wind_returns_commands() -> None:
     result = plan_wind(_reference_definition(), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
 
     assert result.commands[0].startswith("; Parameters")
@@ -36,12 +36,14 @@ def test_plan_wind_returns_commands():
         "skip-bias",
     ],
 )
-def test_plan_wind_matches_cyclone_reference(case: str):
-    result = plan_wind(_reference_definition(case), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
+def test_plan_wind_matches_cyclone_reference(case: str) -> None:
+    result = plan_wind(
+        _reference_definition(case), PlanOptions(dialect=MARLIN_XYZ_LEGACY)
+    )
     assert result.commands == _reference_output(case)
 
 
-def test_plan_wind_rejects_layers_after_terminal():
+def test_plan_wind_rejects_layers_after_terminal() -> None:
     definition = WindDefinition.model_validate(
         {
             "layers": [
@@ -58,7 +60,7 @@ def test_plan_wind_rejects_layers_after_terminal():
         plan_wind(definition)
 
 
-def test_plan_wind_rejects_invalid_skip_index():
+def test_plan_wind_rejects_invalid_skip_index() -> None:
     definition = WindDefinition.model_validate(
         {
             "layers": [

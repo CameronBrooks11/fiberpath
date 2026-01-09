@@ -123,7 +123,7 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 
 **Profile:**
 
-```
+```text
 1. Record
 2. Click "Add Layer" → Select "Helical"
 3. Stop recording
@@ -140,7 +140,7 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 
 **Profile:**
 
-```
+```text
 1. Record
 2. Change wind_angle in HelicalLayerEditor
 3. Stop recording
@@ -157,7 +157,7 @@ This guide explains how to profile the FiberPath GUI for performance issues usin
 
 **Profile:**
 
-```
+```text
 1. Record
 2. Drag layer from position 2 to position 5
 3. Stop recording

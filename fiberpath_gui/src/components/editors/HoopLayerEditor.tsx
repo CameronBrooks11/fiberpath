@@ -11,16 +11,16 @@ interface HoopLayerEditorProps extends LayerEditorBaseProps {
 
 /**
  * Editor component for hoop layer properties.
- * 
+ *
  * Hoop layers are circumferential windings around the mandrel.
  * The only configurable property is whether the layer is terminal
  * (first or last layer in the wind definition).
- * 
+ *
  * @example
  * ```tsx
  * <HoopLayerEditor layerId="layer-123" />
  * ```
- * 
+ *
  * @param props - Component props
  * @param props.layerId - The unique identifier of the hoop layer to edit
  * @returns The hoop layer editor UI, or null if the layer is not found or is not a hoop layer
@@ -28,13 +28,13 @@ interface HoopLayerEditorProps extends LayerEditorBaseProps {
 export function HoopLayerEditor({ layerId }: HoopLayerEditorProps) {
   const layers = useProjectStore((state) => state.project.layers);
   const updateLayer = useProjectStore((state) => state.updateLayer);
-  
-  const layer = layers.find(l => l.id === layerId);
-  
-  if (!layer || layer.type !== 'hoop' || !layer.hoop) {
+
+  const layer = layers.find((l) => l.id === layerId);
+
+  if (!layer || layer.type !== "hoop" || !layer.hoop) {
     return null;
   }
-  
+
   const handleTerminalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateLayer(layerId, {
       hoop: {
@@ -42,11 +42,11 @@ export function HoopLayerEditor({ layerId }: HoopLayerEditorProps) {
       },
     });
   };
-  
+
   return (
     <div className="layer-editor">
       <h3 className="layer-editor__title">Hoop Layer Properties</h3>
-      
+
       <div className="layer-editor__group">
         <label className="layer-editor__checkbox-label">
           <input
@@ -58,7 +58,8 @@ export function HoopLayerEditor({ layerId }: HoopLayerEditorProps) {
           <span className="layer-editor__checkbox-text">Terminal Layer</span>
         </label>
         <p className="layer-editor__hint">
-          Mark this as a terminal layer (first or last layer in the wind definition)
+          Mark this as a terminal layer (first or last layer in the wind
+          definition)
         </p>
       </div>
     </div>

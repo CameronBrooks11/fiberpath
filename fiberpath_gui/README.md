@@ -1,6 +1,24 @@
 # FiberPath Desktop GUI
 
-This Tauri + React workspace provides a cross-platform desktop companion for FiberPath. It shells out to the existing Python CLI so we can plan, plot, simulate, and stream without leaving a single window.
+This Tauri + React workspace provides a cross-platform desktop companion for FiberPath. It shells out to the existing Python CLI for planning, simulation, and visualization, while also providing direct Marlin G-code streaming capabilities.
+
+## Features
+
+### Main Tab - Wind Pattern Planning & Visualization
+
+- **Plan** – Select a `.wind` input file. The CLI generates G-code and returns a JSON summary.
+- **Plot Preview** – View PNG previews of G-code files with adjustable scale.
+- **Simulate** – Run the simulator to inspect motion time estimates.
+- **Layer Management** – Create and edit hoop, helical, and skip winding layers.
+
+### Stream Tab - Marlin G-code Streaming (v4.0)
+
+- **Serial Connection** – Discover and connect to Marlin-compatible devices.
+- **Manual Control** – Send custom G-code commands or use quick-access buttons (Home, Get Position, E-Stop, Disable Motors).
+- **File Streaming** – Stream G-code files directly to connected hardware with real-time progress monitoring.
+- **Pause/Resume** – Pause and resume streaming operations mid-execution.
+- **Live Log** – View command/response history with auto-scroll and clear functionality.
+- **Keyboard Shortcuts** – Efficient control with `Alt+1/2` for tab switching, `?` for help, and more.
 
 ## Prerequisites
 
@@ -16,12 +34,27 @@ npm install
 npm run tauri dev
 ```
 
-The `tauri dev` command spawns the Vite dev server and opens the desktop shell. Use the four panels to:
+The `tauri dev` command spawns the Vite dev server and opens the desktop shell.
 
-1. **Plan** – select a `.wind` input. The CLI writes G-code and returns a JSON summary.
-2. **Plot preview** – point at a `.gcode` file and adjust the scale slider to view PNG previews.
-3. **Simulate** – run the simulator and inspect motion estimates.
-4. **Stream** – start with `--dry-run` to validate queue handling before connecting to hardware.
+### Main Tab
+
+Use the four panels to plan, visualize, and simulate winding patterns:
+
+1. **Plan** – Select a `.wind` input file. The CLI generates G-code and returns a JSON summary.
+2. **Plot Preview** – Load a `.gcode` file and adjust the scale slider to view PNG previews.
+3. **Simulate** – Run the simulator to inspect motion time estimates.
+4. **Layer Editor** – Create and configure hoop, helical, and skip winding layers.
+
+### Stream Tab
+
+Connect to Marlin-compatible hardware and stream G-code:
+
+1. **Connect** – Refresh serial ports, select your device and baud rate, then click Connect.
+2. **Manual Control** – Test the connection with common commands (Home, Get Position) or send custom G-code.
+3. **Stream Files** – Select a G-code file, click Start Stream, and monitor progress in real-time.
+4. **Monitor** – View command/response log with timestamps and status updates.
+
+See [docs/marlin-streaming.md](docs/marlin-streaming.md) for detailed streaming documentation.
 
 ## Schema Management
 
