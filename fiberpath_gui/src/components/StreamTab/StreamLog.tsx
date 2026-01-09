@@ -9,22 +9,22 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, ArrowDown, ArrowDownToLine } from 'lucide-react';
 import { useStreamStore } from '../../stores/streamStore';
 import type { LogEntry } from '../../stores/streamStore';
 import './StreamLog.css';
 
 export function StreamLog() {
-  const { logEntries, clearLog } = useStreamStore();
+  const { logEntries, clearLog, autoScroll, toggleAutoScroll } = useStreamStore();
   const logEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new entries are added
+  // Auto-scroll to bottom when new entries are added (if enabled)
   useEffect(() => {
-    if (logEndRef.current) {
+    if (autoScroll && logEndRef.current) {
       logEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [logEntries]);
+  }, [logEntries, autoScroll]);
 
   const getEntryClassName = (entry: LogEntry) => {
     return `log-entry log-entry--${entry.type}`;
@@ -52,13 +52,23 @@ export function StreamLog() {
     <div className="stream-log">
       <div className="stream-log__header">
         <h3>Output Log</h3>
-        <button
-          onClick={clearLog}
-          className="clear-button"
-          title="Clear log"
-        >
-          <Trash2 size={16} />
-        </button>
+        <div className="stream-log__controls">
+          <button
+            onClick={toggleAutoScroll}
+            className={`auto-scroll-button ${autoScroll ? 'active' : ''}`}
+            title={autoScroll ? 'Auto-scroll enabled' : 'Auto-scroll disabled'}
+          >
+            {autoScroll ? <ArrowDownToLine size={16} /> : <ArrowDown size={16} />}
+          </button>
+          <button
+            onClick={clearLog}
+            className="clear-button"
+            title="Clear log"
+            disabled={logEntries.length === 0}
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
       </div>
       
       <div className="stream-log__content" ref={scrollContainerRef}>

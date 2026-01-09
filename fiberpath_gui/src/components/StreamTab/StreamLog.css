@@ -25,6 +25,12 @@
   margin: 0;
 }
 
+.stream-log__controls {
+  display: flex;
+  gap: 8px;
+}
+
+.auto-scroll-button,
 .clear-button {
   padding: 6px 8px;
   border: 1px solid var(--border-color);
@@ -37,10 +43,30 @@
   transition: all 0.2s;
 }
 
-.clear-button:hover {
+.auto-scroll-button:hover,
+.clear-button:hover:not(:disabled) {
   background: var(--bg-hover);
+  border-color: var(--text-secondary);
+}
+
+.auto-scroll-button.active {
+  background: #1e3a8a;
+  color: #60a5fa;
+  border-color: #3b82f6;
+}
+
+.auto-scroll-button.active:hover {
+  background: #1e40af;
+}
+
+.clear-button:hover:not(:disabled) {
   color: #ef4444;
   border-color: #ef4444;
+}
+
+.clear-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .stream-log__content {

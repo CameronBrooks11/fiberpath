@@ -181,6 +181,7 @@ export function FileStreamingSection() {
           onClick={handleSelectFile}
           disabled={isStreaming}
           className="select-file-button"
+          title="Select a G-code file to stream"
         >
           Select File
         </button>
@@ -214,6 +215,7 @@ export function FileStreamingSection() {
             onClick={handleStartStream}
             disabled={!isConnected || !filePath}
             className="start-button"
+            title="Start streaming the selected G-code file"
           >
             <Play size={18} />
             <span>Start Stream</span>
@@ -224,6 +226,7 @@ export function FileStreamingSection() {
               <button
                 onClick={handlePause}
                 className="pause-button"
+                title="Pause streaming (sends M0)"
               >
                 <Pause size={18} />
                 <span>Pause</span>
@@ -232,6 +235,7 @@ export function FileStreamingSection() {
               <button
                 onClick={handleResume}
                 className="resume-button"
+                title="Resume streaming (sends M108)"
               >
                 <Play size={18} />
                 <span>Resume</span>
@@ -240,6 +244,7 @@ export function FileStreamingSection() {
             <button
               onClick={handleStop}
               className="stop-button"
+              title="Stop streaming (not yet implemented)"
             >
               <Square size={18} />
               <span>Stop</span>

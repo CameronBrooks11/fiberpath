@@ -240,6 +240,7 @@ export function ConnectionSection() {
           onClick={handleConnect}
           disabled={!selectedPort || availablePorts.length === 0}
           className="connect-button"
+          title="Connect to the selected serial port"
         >
           Connect
         </button>
@@ -248,6 +249,7 @@ export function ConnectionSection() {
           onClick={handleDisconnect}
           disabled={status === 'connecting'}
           className="disconnect-button"
+          title="Disconnect from the current device"
         >
           Disconnect
         </button>

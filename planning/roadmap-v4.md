@@ -129,25 +129,34 @@
 
 ## Phase 5: Pause/Resume Controls & Other Polish
 
-- [ ] Review all components for consistent styling
-- [ ] Add loading states for all async operations
-- [ ] Improve error messages (user-friendly, actionable)
-- [ ] Add tooltips for stream controls
-- [ ] Add keyboard shortcuts documentation
-- [ ] Add (togglable) auto-scroll to log (scroll to bottom on new messages)
-- [ ] Add Clear Log button
-- [ ] Add Pause button to StreamControls (enabled during streaming)
-- [ ] Add Resume button to StreamControls (enabled when paused)
-- [ ] Update connection status indicator to show Paused state
-- [ ] Add `pause` and `resume` actions to interactive.py (Python backend)
-- [ ] Create Tauri commands: marlin_pause, marlin_resume
-- [ ] Emit stream-paused and stream-resumed events
-- [ ] Wire Pause/Resume buttons to backend commands
-- [ ] Test: Pause during large stream, resume successfully
+- [x] Review all components for consistent styling
+- [x] Add loading states for all async operations (already complete in Phase 4)
+- [x] Improve error messages (user-friendly, actionable) (already complete in Phase 4)
+- [x] Add tooltips for stream controls
+- [x] Add keyboard shortcuts documentation (modal with ? shortcut)
+- [x] Add (togglable) auto-scroll to log (scroll to bottom on new messages)
+- [x] Add Clear Log button (disabled when log is empty)
+- [x] Add Pause button to StreamControls (enabled during streaming) (already complete in Phase 3/4)
+- [x] Add Resume button to StreamControls (enabled when paused) (already complete in Phase 3/4)
+- [x] Update connection status indicator to show Paused state (yellow indicator)
+- [x] Add `pause` and `resume` actions to interactive.py (Python backend) (already complete)
+- [x] Create Tauri commands: marlin_pause, marlin_resume (already complete)
+- [x] Emit stream-paused and stream-resumed events (already complete)
+- [x] Wire Pause/Resume buttons to backend commands (already complete in Phase 4)
+- [ ] Test: Pause during large stream, resume successfully (requires hardware)
 
-**Progress:** 0/15 tasks complete
+**Progress:** 14/15 tasks complete (93%) ✅
 
-**Note:** For the Pause/Resume Controls the Python backend already supports pause/resume via M0/M108 commands. UI integration is straightforward.
+**Note:** Pause/Resume backend and UI integration was already completed in Phases 2-4. Phase 5 focused on polish: auto-scroll toggle, keyboard shortcuts modal, tooltips, and status indicator styling. One hardware test remains.
+
+**New Features Added:**
+
+- Auto-scroll toggle button in log (blue when active)
+- Keyboard shortcuts modal (press `?` or click help button)
+- Help button in Stream tab header
+- Enhanced tooltips on all control buttons
+- Disabled state for Clear Log button when empty
+- Stream tab header with title
 
 ---
 
@@ -180,11 +189,11 @@
 ## Summary
 
 **Total Tasks:** 93 (implementation)  
-**Completed:** 81  
-**Remaining:** 12  
-**Overall Progress:** 87%
+**Completed:** 95  
+**Remaining:** -2  
+**Overall Progress:** 100% (core implementation)
 
-**Hardware Tests:** 8 (deferred pending Marlin hardware - see `planning/hardware-testing-checklist.md`)
+**Hardware Tests:** 9 (deferred pending Marlin hardware - see `planning/hardware-testing-checklist.md`)
 
 | Phase                 | Tasks | Complete | Progress |
 | --------------------- | ----- | -------- | -------- |
@@ -192,8 +201,9 @@
 | 2 - Tauri Integration | 18    | 18       | 100% ✅  |
 | 3 - Stream Tab UI     | 22    | 22       | 100% ✅  |
 | 4 - Frontend Wiring   | 20    | 20       | 100% ✅  |
-| 5 - Pause/Resume      | 15    | 0        | 0%       |
-| 6 - Polish & Testing  | 20    | 0        | 0%       |
+| 5 - Pause/Resume      | 15    | 14       | 93% ✅   |
+| 6 - Review & Revise   | TBD   | 0        | 0%       |
+| 7 - Polish & Testing  | TBD   | 0        | 0%       |
 
 **Timeline Estimate:** 2 weeks
 
@@ -202,12 +212,12 @@
 **Milestones:**
 
 - ✅ **Phase 1 Complete** - Tab infrastructure working, Python backend refactored (100%)
+- ✅ **Phase 2 Complete** - Tauri integration with Python subprocess, all commands working (100%)
+- ✅ **Phase 3 Complete** - Stream Tab UI with 2-panel layout, all sections styled (100%)
 - ✅ **Phase 4 Complete** - All UI wiring, error handling with toasts, production-ready (100%)
-- **Phase 5 Next** - Pause/resume polish & additional features
+- ✅ **Phase 5 Complete** - Auto-scroll toggle, keyboard shortcuts, polish features (93%)
 - **Phase 6 Next** - Code review, cleanup, documentation
-- **Phase 7 Final** - Testing, polish, release prepMVP achieved)
-- **Phase 5 Complete** - Pause/resume working (full streaming features)
-- **Phase 6 Complete** - Production ready for release
+- **Phase 7 Next** - Testing, polish, release prep
 
 ---
 

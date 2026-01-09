@@ -37,6 +37,7 @@ interface StreamState {
   
   // Log
   logEntries: LogEntry[];
+  autoScroll: boolean;
   
   // Actions
   setStatus: (status: ConnectionStatus) => void;
@@ -49,6 +50,7 @@ interface StreamState {
   setCommandLoading: (loading: boolean) => void;
   addLogEntry: (entry: Omit<LogEntry, 'id' | 'timestamp'>) => void;
   clearLog: () => void;
+  toggleAutoScroll: () => void;
 }
 
 let logIdCounter = 0;
@@ -64,6 +66,7 @@ export const useStreamStore = create<StreamState>((set) => ({
   progress: null,
   commandLoading: false,
   logEntries: [],
+  autoScroll: true,
   
   // Actions
   setStatus: (status) => set({ status }),
@@ -95,4 +98,6 @@ export const useStreamStore = create<StreamState>((set) => ({
     })),
   
   clearLog: () => set({ logEntries: [] }),
+  
+  toggleAutoScroll: () => set((state) => ({ autoScroll: !state.autoScroll })),
 }));
