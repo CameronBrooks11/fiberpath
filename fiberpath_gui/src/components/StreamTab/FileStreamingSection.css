@@ -29,7 +29,7 @@
 .file-name {
   font-size: 13px;
   color: var(--text-primary);
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -83,7 +83,11 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-blue-500), var(--color-blue-400));
+  background: linear-gradient(
+    90deg,
+    var(--color-blue-500),
+    var(--color-blue-400)
+  );
   transition: width 0.3s ease;
 }
 
@@ -111,7 +115,7 @@
 
 .command-text {
   font-size: 12px;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;

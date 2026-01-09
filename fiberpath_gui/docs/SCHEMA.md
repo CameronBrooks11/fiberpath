@@ -6,7 +6,7 @@ Implemented a comprehensive JSON Schema system to ensure type safety between the
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ Python CLI (fiberpath/config/schemas.py)                     │
 │ - Pydantic models define schema                              │

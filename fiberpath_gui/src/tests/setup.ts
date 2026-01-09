@@ -1,6 +1,6 @@
-import { expect, afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import * as matchers from '@testing-library/jest-dom/matchers';
+import { expect, afterEach, vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import * as matchers from "@testing-library/jest-dom/matchers";
 
 // Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers);
@@ -13,14 +13,15 @@ afterEach(() => {
 // Mock crypto.randomUUID for tests
 if (!global.crypto) {
   (global as any).crypto = {
-    randomUUID: () => `test-uuid-${Math.random().toString(36).substring(2, 15)}`,
+    randomUUID: () =>
+      `test-uuid-${Math.random().toString(36).substring(2, 15)}`,
   };
 }
 
 // Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,

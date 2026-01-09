@@ -62,16 +62,22 @@ def plan_hoop_layer(
     tow_parameters: TowParameters,
 ) -> None:
     lock_degrees = 180.0
-    wind_angle = 90.0 - rad_to_deg(math.atan(mandrel_parameters.diameter / tow_parameters.width))
+    wind_angle = 90.0 - rad_to_deg(
+        math.atan(mandrel_parameters.diameter / tow_parameters.width)
+    )
     mandrel_rotations = mandrel_parameters.wind_length / tow_parameters.width
     far_mandrel = lock_degrees + mandrel_rotations * 360.0
     far_lock = far_mandrel + lock_degrees
     near_mandrel = far_lock + mandrel_rotations * 360.0
     near_lock = near_mandrel + lock_degrees
 
-    machine.move({Axis.CARRIAGE: 0.0, Axis.MANDREL: lock_degrees, Axis.DELIVERY_HEAD: 0.0})
+    machine.move(
+        {Axis.CARRIAGE: 0.0, Axis.MANDREL: lock_degrees, Axis.DELIVERY_HEAD: 0.0}
+    )
     machine.move({Axis.DELIVERY_HEAD: -wind_angle})
-    machine.move({Axis.CARRIAGE: mandrel_parameters.wind_length, Axis.MANDREL: far_mandrel})
+    machine.move(
+        {Axis.CARRIAGE: mandrel_parameters.wind_length, Axis.MANDREL: far_mandrel}
+    )
     machine.move({Axis.MANDREL: far_lock, Axis.DELIVERY_HEAD: 0.0})
 
     if layer.terminal:
@@ -132,7 +138,9 @@ def plan_helical_layer(
         return
 
     if not layer.skip_initial_near_lock:
-        machine.move({Axis.CARRIAGE: 0.0, Axis.MANDREL: lock_degrees, Axis.DELIVERY_HEAD: 0.0})
+        machine.move(
+            {Axis.CARRIAGE: 0.0, Axis.MANDREL: lock_degrees, Axis.DELIVERY_HEAD: 0.0}
+        )
         machine.set_position({Axis.MANDREL: 0.0})
 
     mandrel_position = 0.0
@@ -147,7 +155,9 @@ def plan_helical_layer(
             for pass_params in pass_parameters:
                 sign = pass_params["delivery_head_sign"]
                 machine.move({Axis.MANDREL: mandrel_position, Axis.DELIVERY_HEAD: 0.0})
-                machine.move({Axis.DELIVERY_HEAD: sign * delivery_head_pass_start_angle})
+                machine.move(
+                    {Axis.DELIVERY_HEAD: sign * delivery_head_pass_start_angle}
+                )
 
                 mandrel_position += lead_in_degrees
                 machine.move(
@@ -189,6 +199,10 @@ def plan_helical_layer(
 
 def plan_skip_layer(machine: WinderMachine, layer: SkipLayer) -> None:
     machine.move(
-        {Axis.CARRIAGE: 0.0, Axis.MANDREL: layer.mandrel_rotation, Axis.DELIVERY_HEAD: 0.0}
+        {
+            Axis.CARRIAGE: 0.0,
+            Axis.MANDREL: layer.mandrel_rotation,
+            Axis.DELIVERY_HEAD: 0.0,
+        }
     )
     machine.set_position({Axis.MANDREL: 0.0})

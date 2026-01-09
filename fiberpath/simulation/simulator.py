@@ -124,21 +124,33 @@ def simulate_program(
         tow_length_sq = carriage_delta**2 + mandrel_delta_mm**2
 
         if math.isclose(distance_sq, 0.0) and math.isclose(delivery_delta, 0.0):
-            last_carriage, last_mandrel, last_delivery = next_carriage, next_mandrel, next_delivery
+            last_carriage, last_mandrel, last_delivery = (
+                next_carriage,
+                next_mandrel,
+                next_delivery,
+            )
             continue
 
         distance = math.sqrt(distance_sq)
         if feed_rate <= 0:
-            raise SimulationError("Encountered non-positive feed rate during simulation")
+            raise SimulationError(
+                "Encountered non-positive feed rate during simulation"
+            )
 
         total_time += distance / feed_rate * 60.0
         total_distance += distance
         tow_length += math.sqrt(tow_length_sq)
         moves += 1
 
-        last_carriage, last_mandrel, last_delivery = next_carriage, next_mandrel, next_delivery
+        last_carriage, last_mandrel, last_delivery = (
+            next_carriage,
+            next_mandrel,
+            next_delivery,
+        )
 
-    average_feed_rate = total_distance / total_time * 60.0 if total_time > 0 else feed_rate
+    average_feed_rate = (
+        total_distance / total_time * 60.0 if total_time > 0 else feed_rate
+    )
 
     return SimulationResult(
         commands_executed=commands_executed,
@@ -172,7 +184,11 @@ def _detect_dialect(program: Sequence[str]) -> MarlinDialect:
         parts = stripped.split()
         if parts[0] in {"G0", "G1", "G92"}:
             # Check which axes are present
-            axes_found = {token[0] for token in parts[1:] if token[0].isalpha() and token[0] != "F"}
+            axes_found = {
+                token[0]
+                for token in parts[1:]
+                if token[0].isalpha() and token[0] != "F"
+            }
 
             # Check for rotational axes
             if "A" in axes_found or "B" in axes_found:

@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from math import gcd
 
-from fiberpath.config.schemas import HelicalLayer, LayerModel, MandrelParameters, TowParameters
+from fiberpath.config.schemas import (
+    HelicalLayer,
+    LayerModel,
+    MandrelParameters,
+    TowParameters,
+)
 
 from .calculations import HelicalKinematics, compute_helical_kinematics
 from .exceptions import LayerValidationError

@@ -1,5 +1,5 @@
-import { createContext, useContext, ReactNode } from 'react';
-import { useCliHealth, CliStatus } from '../hooks/useCliHealth';
+import { createContext, useContext, ReactNode } from "react";
+import { useCliHealth, CliStatus } from "../hooks/useCliHealth";
 
 interface CliHealthContextValue {
   status: CliStatus;
@@ -20,10 +20,10 @@ interface CliHealthProviderProps {
 
 /**
  * Provider component for CLI health status.
- * 
+ *
  * Automatically checks CLI health on mount and polls every 30 seconds.
  * Provides health status to all child components via context.
- * 
+ *
  * @example
  * ```tsx
  * <CliHealthProvider>
@@ -47,31 +47,33 @@ export function CliHealthProvider({ children }: CliHealthProviderProps) {
 
 /**
  * Hook to access CLI health status from context.
- * 
+ *
  * Must be used within a CliHealthProvider.
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
  *   const { status, version, isHealthy } = useCliHealthContext();
- *   
+ *
  *   if (!isHealthy) {
  *     return <div>CLI is not available</div>;
  *   }
- *   
+ *
  *   return <div>CLI {version} is ready</div>;
  * }
  * ```
- * 
+ *
  * @throws Error if used outside of CliHealthProvider
  * @returns CLI health context value
  */
 export function useCliHealthContext(): CliHealthContextValue {
   const context = useContext(CliHealthContext);
-  
+
   if (context === null) {
-    throw new Error('useCliHealthContext must be used within a CliHealthProvider');
+    throw new Error(
+      "useCliHealthContext must be used within a CliHealthProvider",
+    );
   }
-  
+
   return context;
 }

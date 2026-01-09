@@ -25,12 +25,21 @@ body,
 
 /* Background Pattern */
 body {
-  background: linear-gradient(27deg, #141414 5px, transparent 5px) 0 5px,
+  background:
+    linear-gradient(27deg, #141414 5px, transparent 5px) 0 5px,
     linear-gradient(207deg, #141414 5px, transparent 5px) 10px 0,
     linear-gradient(27deg, #1c1c1c 5px, transparent 5px) 0 10px,
     linear-gradient(207deg, #1c1c1c 5px, transparent 5px) 10px 5px,
     linear-gradient(90deg, #191919 10px, transparent 10px),
-    linear-gradient(#1e1e1e 25%, #181818 25%, #181818 50%, transparent 50%, transparent 75%, #222222 75%, #222222);
+    linear-gradient(
+      #1e1e1e 25%,
+      #181818 25%,
+      #181818 50%,
+      transparent 50%,
+      transparent 75%,
+      #222222 75%,
+      #222222
+    );
   background-color: #111111;
   background-size: 20px 20px;
 }
@@ -40,6 +49,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: radial-gradient(circle at top, rgb(18, 168, 154, 0.15), transparent 45%),
+  background:
+    radial-gradient(circle at top, rgb(18, 168, 154, 0.15), transparent 45%),
     radial-gradient(circle at 20% 20%, rgb(216, 181, 52, 0.15), transparent 40%);
 }

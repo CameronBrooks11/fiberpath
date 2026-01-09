@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+
 from fiberpath.planning.helpers import Axis, interpolate_coordinates
 from fiberpath.planning.machine import WinderMachine
 

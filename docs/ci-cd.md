@@ -3,6 +3,7 @@
 ## Overview
 
 The FiberPath CI/CD system has been completely reorganized for v3 to:
+
 - Eliminate redundancy and improve maintainability
 - Establish clear naming conventions
 - Separate concerns (CI vs packaging vs deployment)
@@ -16,6 +17,7 @@ The FiberPath CI/CD system has been completely reorganized for v3 to:
 Reusable setup steps used across multiple workflows:
 
 1. **setup-python/**
+
    - Sets up Python 3.11 with uv package manager
    - Creates virtual environment
    - Installs dependencies with caching
@@ -23,6 +25,7 @@ Reusable setup steps used across multiple workflows:
    - Used by: backend-ci, backend-publish, docs-ci, docs-deploy
 
 2. **setup-node/**
+
    - Sets up Node.js 20
    - Configures npm cache
    - Installs GUI dependencies
@@ -39,6 +42,7 @@ Reusable setup steps used across multiple workflows:
 #### CI Workflows (run on every push/PR)
 
 **backend-ci.yml** - Python Backend CI
+
 - Triggers: Push to main, PRs affecting Python code
 - Jobs:
   1. Lint & Type Check (Ruff, MyPy)
@@ -46,6 +50,7 @@ Reusable setup steps used across multiple workflows:
 - Status: [![Backend CI](https://github.com/USER/fiberpath/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/USER/fiberpath/actions/workflows/backend-ci.yml)
 
 **gui-ci.yml** - GUI CI
+
 - Triggers: Push to main, PRs affecting GUI code
 - Jobs:
   1. Lint & Type Check (ESLint, TypeScript)
@@ -53,6 +58,7 @@ Reusable setup steps used across multiple workflows:
 - Status: [![GUI CI](https://github.com/USER/fiberpath/actions/workflows/gui-ci.yml/badge.svg)](https://github.com/USER/fiberpath/actions/workflows/gui-ci.yml)
 
 **docs-ci.yml** - Documentation CI
+
 - Triggers: Push to main, PRs affecting docs
 - Jobs:
   1. Validate MkDocs build (--strict)
@@ -61,6 +67,7 @@ Reusable setup steps used across multiple workflows:
 #### Deployment Workflows
 
 **docs-deploy.yml** - Documentation Deployment
+
 - Triggers: Push to main affecting docs/, manual dispatch
 - Jobs:
   1. Build MkDocs site
@@ -71,6 +78,7 @@ Reusable setup steps used across multiple workflows:
 #### Packaging Workflows
 
 **gui-packaging.yml** - GUI Installer Creation
+
 - Triggers: Push to main affecting GUI, manual dispatch, releases
 - Jobs:
   1. Build installers for Windows/macOS/Linux (Tauri)
@@ -82,6 +90,7 @@ Reusable setup steps used across multiple workflows:
 #### Publishing Workflows
 
 **backend-publish.yml** - PyPI Publishing
+
 - Triggers: GitHub releases, manual dispatch
 - Jobs:
   1. Verify version matches tag
@@ -94,6 +103,7 @@ Reusable setup steps used across multiple workflows:
 #### Release Orchestration
 
 **release.yml** - Coordinated Release Management
+
 - Triggers: Manual dispatch with version input
 - Jobs:
   1. Validate version format and tag availability
@@ -101,7 +111,7 @@ Reusable setup steps used across multiple workflows:
   3. Trigger backend-publish (PyPI)
   4. Trigger gui-packaging (installers)
 - Inputs:
-  - version: Semantic version (e.g., 0.3.0)
+  - version: Semantic version (e.g., 0.3.14)
   - prerelease: Boolean flag
 - Permissions: contents:write, id-token:write
 - Status: [![Release](https://github.com/USER/fiberpath/actions/workflows/release.yml/badge.svg)](https://github.com/USER/fiberpath/actions/workflows/release.yml)
@@ -115,15 +125,15 @@ Format: `{component}-{purpose}.yml`
 
 ## Trigger Strategy
 
-| Workflow | Push (main) | Pull Request | Manual | Release |
-|----------|-------------|--------------|--------|---------|
-| backend-ci | ✅ | ✅ | ❌ | ❌ |
-| gui-ci | ✅ | ✅ | ❌ | ❌ |
-| docs-ci | ✅ | ✅ | ❌ | ❌ |
-| docs-deploy | ✅ | ❌ | ✅ | ❌ |
-| gui-packaging | ✅ | ❌ | ✅ | ✅ |
-| backend-publish | ❌ | ❌ | ✅ | ✅ |
-| release | ❌ | ❌ | ✅ | ❌ |
+| Workflow        | Push (main) | Pull Request | Manual | Release |
+| --------------- | ----------- | ------------ | ------ | ------- |
+| backend-ci      | ✅          | ✅           | ❌     | ❌      |
+| gui-ci          | ✅          | ✅           | ❌     | ❌      |
+| docs-ci         | ✅          | ✅           | ❌     | ❌      |
+| docs-deploy     | ✅          | ❌           | ✅     | ❌      |
+| gui-packaging   | ✅          | ❌           | ✅     | ✅      |
+| backend-publish | ❌          | ❌           | ✅     | ✅      |
+| release         | ❌          | ❌           | ✅     | ❌      |
 
 ## Path Filters
 
@@ -140,28 +150,31 @@ Workflows only run when relevant files change:
 ### Manual Release Steps
 
 1. **Prepare Release**
+
    - Update version in `pyproject.toml`
    - Update version in `fiberpath_gui/src-tauri/Cargo.toml`
    - Update `CHANGELOG.md` with release notes
-   - Commit changes: `git commit -m "Prepare release 0.3.0"`
+   - Commit changes: `git commit -m "Prepare release 0.3.14"`
 
 2. **Trigger Release Workflow**
+
    - Go to Actions → Release → Run workflow
-   - Enter version: `0.3.0`
+   - Enter version: `0.3.14`
    - Set prerelease: `false`
    - Click "Run workflow"
 
 3. **Automated Steps**
+
    - Validates version format
    - Checks if tag exists
    - Verifies version in pyproject.toml
-   - Creates Git tag (e.g., `v0.3.0`)
+   - Creates Git tag (e.g., `v0.3.14`)
    - Creates GitHub release with auto-generated notes
    - Triggers backend-publish (PyPI)
    - Triggers gui-packaging (installers)
 
 4. **Post-Release**
-   - Verify PyPI upload: https://pypi.org/project/fiberpath/
+   - Verify PyPI upload: [pypi.org/project/fiberpath](https://pypi.org/project/fiberpath/)
    - Download GUI installers from GitHub release
    - Test installers on Windows/macOS/Linux
    - Announce release
@@ -189,25 +202,28 @@ Before merging CI/CD changes to main:
 
 ## Improvements Over Previous System
 
-| Issue | Previous | New Solution |
-|-------|----------|--------------|
-| Redundancy | gui.yml and gui-tests.yml both ran linting/building | Single gui-ci.yml with all checks |
-| Naming | Inconsistent (ci.yml, gui.yml, docs-site.yml) | Consistent {component}-{purpose}.yml |
-| Setup duplication | Python/Node/Rust setup repeated in every workflow | Composite actions (DRY principle) |
-| PyPI publishing | Manual process | Automated with trusted publishing |
-| Release coordination | Manual trigger of each workflow | Single release.yml orchestrates all |
-| Documentation | No workflow docs | This document + badges in README |
+| Issue                | Previous                                            | New Solution                         |
+| -------------------- | --------------------------------------------------- | ------------------------------------ |
+| Redundancy           | gui.yml and gui-tests.yml both ran linting/building | Single gui-ci.yml with all checks    |
+| Naming               | Inconsistent (ci.yml, gui.yml, docs-site.yml)       | Consistent {component}-{purpose}.yml |
+| Setup duplication    | Python/Node/Rust setup repeated in every workflow   | Composite actions (DRY principle)    |
+| PyPI publishing      | Manual process                                      | Automated with trusted publishing    |
+| Release coordination | Manual trigger of each workflow                     | Single release.yml orchestrates all  |
+| Documentation        | No workflow docs                                    | This document + badges in README     |
 
 ## Caching Strategy
 
 ### Python (setup-python)
+
 - Virtual environment: `.venv/` cached by OS + Python version + pyproject.toml hash
 - uv cache: Built-in caching from astral-sh/setup-uv@v3
 
 ### Node.js (setup-node)
+
 - npm modules: `~/.npm` cached by actions/setup-node@v4 with package-lock.json hash
 
 ### Rust (setup-rust)
+
 - Cargo artifacts: `~/.cargo/` + `target/` cached by OS + Cargo.lock hash
 - Binaries, registry, git index
 

@@ -154,7 +154,7 @@ const { status, version, isHealthy } = useCliHealthContext();
 
 ## State Flow
 
-```
+```text
 App Launch
     ↓
 CliHealthProvider mounts
@@ -297,6 +297,7 @@ const health = useCliHealth({
    ```
 
 3. **Recovery:**
+
    ```bash
    # While GUI is running with unavailable CLI
    pip install fiberpath

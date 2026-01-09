@@ -34,7 +34,9 @@ class PySerialTransport:
     def __init__(self, port: str, baud_rate: int, timeout: float) -> None:
         try:
             import serial  # type: ignore
-        except ImportError as exc:  # pragma: no cover - dependency error surfaced to caller
+        except (
+            ImportError
+        ) as exc:  # pragma: no cover - dependency error surfaced to caller
             raise StreamError(
                 "pyserial is required for live streaming; install fiberpath with the CLI extras"
             ) from exc
@@ -244,7 +246,9 @@ class MarlinStreamer:
         if self._transport is None:
             if self._port is None:
                 raise StreamError("Serial port is required for live streaming")
-            self._transport = PySerialTransport(self._port, self._baud_rate, self._response_timeout)
+            self._transport = PySerialTransport(
+                self._port, self._baud_rate, self._response_timeout
+            )
 
         if not self._startup_handled:
             self._wait_for_marlin_ready()
@@ -288,14 +292,18 @@ class MarlinStreamer:
                 time_since_last_line = time.monotonic() - last_line_time
                 if time_since_last_line >= quiet_period:
                     if self._log is not None:
-                        self._log(f"Marlin ready (received {len(startup_lines)} startup lines)")
+                        self._log(
+                            f"Marlin ready (received {len(startup_lines)} startup lines)"
+                        )
                     return
 
         # If we got here, we either saw no startup or timed out
         if not startup_lines:
             # No startup lines seen - might be already initialized, wrong port, or wrong baud rate
             if self._log is not None:
-                self._log("No Marlin startup detected. Controller may already be initialized.")
+                self._log(
+                    "No Marlin startup detected. Controller may already be initialized."
+                )
         else:
             # We timed out while receiving startup - this could be problematic
             if self._log is not None:

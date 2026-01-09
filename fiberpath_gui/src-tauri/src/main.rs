@@ -22,20 +22,31 @@ enum FiberpathError {
 }
 
 #[tauri::command]
-async fn plan_wind(input_path: String, output_path: Option<String>, axis_format: Option<String>) -> Result<Value, String> {
+async fn plan_wind(
+    input_path: String,
+    output_path: Option<String>,
+    axis_format: Option<String>,
+) -> Result<Value, String> {
     let output_file = output_path.unwrap_or_else(|| temp_path("gcode"));
-    let mut args = vec!["plan".to_string(), input_path, "--output".into(), output_file.clone(), "--json".into()];
-    
+    let mut args = vec![
+        "plan".to_string(),
+        input_path,
+        "--output".into(),
+        output_file.clone(),
+        "--json".into(),
+    ];
+
     // Add axis format flag if specified
     if let Some(format) = axis_format {
         args.push("--axis-format".into());
         args.push(format);
     }
-    
+
     let output = exec_fiberpath(args).await.map_err(|err| err.to_string())?;
     parse_json_payload(output).map(|mut payload| {
         if let Value::Object(ref mut obj) = payload {
-            obj.entry("output".to_string()).or_insert(Value::String(output_file));
+            obj.entry("output".to_string())
+                .or_insert(Value::String(output_file));
         }
         payload
     })
@@ -57,7 +68,11 @@ struct PlotPreview {
 }
 
 #[tauri::command]
-async fn plot_preview(gcode_path: String, scale: f64, output_path: Option<String>) -> Result<PlotPreview, String> {
+async fn plot_preview(
+    gcode_path: String,
+    scale: f64,
+    output_path: Option<String>,
+) -> Result<PlotPreview, String> {
     let output_file = output_path.unwrap_or_else(|| temp_path("png"));
     let args = vec![
         "plot".into(),
@@ -68,7 +83,8 @@ async fn plot_preview(gcode_path: String, scale: f64, output_path: Option<String
         scale.to_string(),
     ];
     exec_fiberpath(args).await.map_err(|err| err.to_string())?;
-    let bytes = fs::read(&output_file).map_err(|err| FiberpathError::File(err.to_string()).to_string())?;
+    let bytes =
+        fs::read(&output_file).map_err(|err| FiberpathError::File(err.to_string()).to_string())?;
     Ok(PlotPreview {
         path: output_file,
         image_base64: Base64.encode(bytes),
@@ -77,8 +93,19 @@ async fn plot_preview(gcode_path: String, scale: f64, output_path: Option<String
 }
 
 #[tauri::command]
-async fn stream_program(gcode_path: String, port: Option<String>, baud_rate: u32, dry_run: bool) -> Result<Value, String> {
-    let mut args = vec!["stream".into(), gcode_path, "--baud-rate".into(), baud_rate.to_string(), "--json".into()];
+async fn stream_program(
+    gcode_path: String,
+    port: Option<String>,
+    baud_rate: u32,
+    dry_run: bool,
+) -> Result<Value, String> {
+    let mut args = vec![
+        "stream".into(),
+        gcode_path,
+        "--baud-rate".into(),
+        baud_rate.to_string(),
+        "--json".into(),
+    ];
     if dry_run {
         args.push("--dry-run".into());
     } else if let Some(port_value) = port {
@@ -90,17 +117,22 @@ async fn stream_program(gcode_path: String, port: Option<String>, baud_rate: u32
 }
 
 #[tauri::command]
-async fn plot_definition(definition_json: String, _visible_layer_count: usize, output_path: Option<String>) -> Result<PlotPreview, String> {
+async fn plot_definition(
+    definition_json: String,
+    _visible_layer_count: usize,
+    output_path: Option<String>,
+) -> Result<PlotPreview, String> {
     let mut warnings = Vec::new();
-    
+
     // Create temporary .wind file
     let wind_file = temp_path("wind");
-    fs::write(&wind_file, &definition_json)
-        .map_err(|err| FiberpathError::File(format!("Failed to write temp .wind file: {err}")).to_string())?;
-    
+    fs::write(&wind_file, &definition_json).map_err(|err| {
+        FiberpathError::File(format!("Failed to write temp .wind file: {err}")).to_string()
+    })?;
+
     // Create temporary .gcode file
     let gcode_file = temp_path("gcode");
-    
+
     // First, run plan to convert .wind to .gcode
     let plan_args = vec![
         "plan".into(),
@@ -108,8 +140,10 @@ async fn plot_definition(definition_json: String, _visible_layer_count: usize, o
         "--output".into(),
         gcode_file.clone(),
     ];
-    let plan_output = exec_fiberpath(plan_args).await.map_err(|err| format!("Planning failed: {err}"))?;
-    
+    let plan_output = exec_fiberpath(plan_args)
+        .await
+        .map_err(|err| format!("Planning failed: {err}"))?;
+
     // Capture stderr warnings from planner
     let stderr = String::from_utf8_lossy(&plan_output.stderr);
     if !stderr.is_empty() {
@@ -119,10 +153,10 @@ async fn plot_definition(definition_json: String, _visible_layer_count: usize, o
             }
         }
     }
-    
+
     // Generate output path for PNG
     let output_file = output_path.unwrap_or_else(|| temp_path("png"));
-    
+
     // Build plot command args with scale for better visibility
     let args = vec![
         "plot".into(),
@@ -132,19 +166,22 @@ async fn plot_definition(definition_json: String, _visible_layer_count: usize, o
         "--scale".into(),
         "0.5".into(), // Scale down for overview
     ];
-    
+
     // Execute plot command
-    exec_fiberpath(args).await.map_err(|err| format!("Plotting failed: {err}"))?;
-    
+    exec_fiberpath(args)
+        .await
+        .map_err(|err| format!("Plotting failed: {err}"))?;
+
     // Read and encode image
-    let bytes = fs::read(&output_file)
-        .map_err(|err| FiberpathError::File(format!("Failed to read plot output: {err}")).to_string())?;
-    
+    let bytes = fs::read(&output_file).map_err(|err| {
+        FiberpathError::File(format!("Failed to read plot output: {err}")).to_string()
+    })?;
+
     // Clean up temp files
     let _ = fs::remove_file(&wind_file);
     let _ = fs::remove_file(&gcode_file);
     let _ = fs::remove_file(&output_file);
-    
+
     Ok(PlotPreview {
         path: output_file,
         image_base64: Base64.encode(&bytes),
@@ -164,19 +201,21 @@ fn temp_path(extension: &str) -> String {
 
 async fn exec_fiberpath(args: Vec<String>) -> Result<Output, FiberpathError> {
     let joined = args.join(" ");
-    let output = tauri::async_runtime::spawn_blocking(move || std::process::Command::new("fiberpath").args(args).output())
-        .await
-        .map_err(|err| FiberpathError::Process(format!("Failed to run fiberpath: {err}")))?
-        .map_err(|err| {
-            let message = format!("{err}");
-            FiberpathError::Process(format!("{message} while running `{joined}`"))
-        })?;
-    
+    let output = tauri::async_runtime::spawn_blocking(move || {
+        std::process::Command::new("fiberpath").args(args).output()
+    })
+    .await
+    .map_err(|err| FiberpathError::Process(format!("Failed to run fiberpath: {err}")))?
+    .map_err(|err| {
+        let message = format!("{err}");
+        FiberpathError::Process(format!("{message} while running `{joined}`"))
+    })?;
+
     // Check if command succeeded
     if !output.status.success() {
         return Err(FiberpathError::Process(format_cli_error(&output)));
     }
-    
+
     Ok(output)
 }
 
@@ -193,36 +232,41 @@ fn format_cli_error(output: &Output) -> String {
     let stdout = String::from_utf8_lossy(&output.stdout);
     format!(
         "fiberpath exited with status {:?}\nstdout:\n{}\nstderr:\n{}",
-        output.status.code(), stdout.trim(), stderr.trim()
+        output.status.code(),
+        stdout.trim(),
+        stderr.trim()
     )
 }
 
 #[tauri::command]
 async fn save_wind_file(path: String, content: String) -> Result<(), String> {
-    fs::write(&path, content)
-        .map_err(|err| FiberpathError::File(format!("Failed to write .wind file: {err}")).to_string())
+    fs::write(&path, content).map_err(|err| {
+        FiberpathError::File(format!("Failed to write .wind file: {err}")).to_string()
+    })
 }
 
 #[tauri::command]
 async fn load_wind_file(path: String) -> Result<String, String> {
-    fs::read_to_string(&path)
-        .map_err(|err| FiberpathError::File(format!("Failed to read .wind file: {err}")).to_string())
+    fs::read_to_string(&path).map_err(|err| {
+        FiberpathError::File(format!("Failed to read .wind file: {err}")).to_string()
+    })
 }
 
 #[tauri::command]
 async fn validate_wind_definition(definition_json: String) -> Result<Value, String> {
     // Create temporary .wind file
     let wind_file = temp_path("wind");
-    fs::write(&wind_file, &definition_json)
-        .map_err(|err| FiberpathError::File(format!("Failed to write temp .wind file: {err}")).to_string())?;
-    
+    fs::write(&wind_file, &definition_json).map_err(|err| {
+        FiberpathError::File(format!("Failed to write temp .wind file: {err}")).to_string()
+    })?;
+
     // Run validate command
     let args = vec!["validate".into(), wind_file.clone(), "--json".into()];
     let output = exec_fiberpath(args).await.map_err(|err| err.to_string())?;
-    
+
     // Clean up temp file
     let _ = fs::remove_file(&wind_file);
-    
+
     parse_json_payload(output)
 }
 
@@ -245,24 +289,25 @@ async fn check_cli_health() -> Result<CliHealthResponse, String> {
     })
     .await
     .map_err(|err| format!("Failed to spawn health check: {err}"))?;
-    
+
     match output {
         Ok(out) if out.status.success() => {
             // CLI is available, try to extract version from help text
             let help_text = String::from_utf8_lossy(&out.stdout);
-            
+
             // Try to find version in help text (format: "fiberpath, version X.Y.Z" or similar)
-            let version = help_text.lines()
+            let version = help_text
+                .lines()
                 .find(|line| line.contains("version") || line.contains("Version"))
                 .map(|line| {
                     // Extract version number if found
                     line.split_whitespace()
-                        .find(|word| word.chars().next().map_or(false, |c| c.is_ascii_digit()))
+                        .find(|word| word.chars().next().is_some_and(|c| c.is_ascii_digit()))
                         .unwrap_or("unknown")
                         .to_string()
                 })
                 .or_else(|| Some("available".to_string()));
-            
+
             Ok(CliHealthResponse {
                 healthy: true,
                 version,
@@ -277,13 +322,11 @@ async fn check_cli_health() -> Result<CliHealthResponse, String> {
                 error_message: Some(format!("CLI returned error: {}", stderr.trim())),
             })
         }
-        Err(err) => {
-            Ok(CliHealthResponse {
-                healthy: false,
-                version: None,
-                error_message: Some(format!("CLI not found or not executable: {err}")),
-            })
-        }
+        Err(err) => Ok(CliHealthResponse {
+            healthy: false,
+            version: None,
+            error_message: Some(format!("CLI not found or not executable: {err}")),
+        }),
     }
 }
 

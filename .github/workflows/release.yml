@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Version to release (e.g., 0.3.0)
+        description: Version to release (e.g., 0.3.14)
         required: true
         type: string
       prerelease:
@@ -37,7 +37,7 @@ jobs:
         run: |
           VERSION="${{ inputs.version }}"
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
-            echo "Error: Invalid version format. Use semantic versioning (e.g., 0.3.0 or 0.3.0-rc.1)"
+            echo "Error: Invalid version format. Use semantic versioning (e.g., 0.3.14 or 0.3.14-rc.1)"
             exit 1
           fi
           TAG="v$VERSION"

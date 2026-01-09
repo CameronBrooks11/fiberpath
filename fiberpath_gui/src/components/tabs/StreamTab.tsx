@@ -3,4 +3,4 @@
  * This file maintains compatibility with App.tsx imports
  */
 
-export { StreamTab } from '../StreamTab/StreamTab';
+export { StreamTab } from "../StreamTab/StreamTab";

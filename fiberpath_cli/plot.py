@@ -5,12 +5,15 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
-from fiberpath.visualization.plotter import PlotConfig, PlotError, render_plot
 from rich.console import Console
+
+from fiberpath.visualization.plotter import PlotConfig, PlotError, render_plot
 
 console = Console()
 
-GCODE_ARGUMENT = typer.Argument(..., exists=True, readable=True, help="Input G-code file")
+GCODE_ARGUMENT = typer.Argument(
+    ..., exists=True, readable=True, help="Input G-code file"
+)
 OUTPUT_OPTION = typer.Option(Path("plot.png"), "--output", "-o", help="PNG destination")
 SCALE_OPTION = typer.Option(
     1.0, "--scale", help="Pixels per millimeter along carriage axis", min=0.1, max=5.0

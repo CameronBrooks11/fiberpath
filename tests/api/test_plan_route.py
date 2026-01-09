@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+
 from fiberpath_api.main import create_app
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,7 +46,9 @@ def test_simulate_and_validate_routes(tmp_path: Path) -> None:
 
     client = TestClient(create_app())
 
-    simulate_response = client.post("/simulate/from-file", json={"path": str(gcode_file)})
+    simulate_response = client.post(
+        "/simulate/from-file", json={"path": str(gcode_file)}
+    )
     assert simulate_response.status_code == 200, simulate_response.text
     simulate_payload = simulate_response.json()
     assert simulate_payload["commands"] == 5
@@ -55,6 +58,8 @@ def test_simulate_and_validate_routes(tmp_path: Path) -> None:
     wind_copy = tmp_path / "input.wind"
     wind_copy.write_text(wind_src.read_text(encoding="utf-8"), encoding="utf-8")
 
-    validate_response = client.post("/validate/from-file", json={"path": str(wind_copy)})
+    validate_response = client.post(
+        "/validate/from-file", json={"path": str(wind_copy)}
+    )
     assert validate_response.status_code == 200, validate_response.text
     assert validate_response.json()["status"] == "ok"

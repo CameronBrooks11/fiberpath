@@ -1,11 +1,11 @@
 /**
  * KeyboardShortcuts - Documentation for available keyboard shortcuts
- * 
+ *
  * Shows a modal with all available keyboard shortcuts for the Stream Tab
  */
 
-import { X, Keyboard } from 'lucide-react';
-import './KeyboardShortcuts.css';
+import { X, Keyboard } from "lucide-react";
+import "./KeyboardShortcuts.css";
 
 interface KeyboardShortcutsProps {
   onClose: () => void;
@@ -14,7 +14,10 @@ interface KeyboardShortcutsProps {
 export function KeyboardShortcuts({ onClose }: KeyboardShortcutsProps) {
   return (
     <div className="keyboard-shortcuts-overlay" onClick={onClose}>
-      <div className="keyboard-shortcuts-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="keyboard-shortcuts-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-header">
           <div className="header-title">
             <Keyboard size={20} />
@@ -92,7 +95,9 @@ export function KeyboardShortcuts({ onClose }: KeyboardShortcutsProps) {
         </div>
 
         <div className="modal-footer">
-          <p>Press <kbd>?</kbd> to show/hide this dialog</p>
+          <p>
+            Press <kbd>?</kbd> to show/hide this dialog
+          </p>
         </div>
       </div>
     </div>

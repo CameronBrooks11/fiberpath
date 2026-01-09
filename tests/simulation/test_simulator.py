@@ -3,13 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from fiberpath.simulation import SimulationError, simulate_program
-from fiberpath_cli.main import app
 from typer.testing import CliRunner
 
-HEADER = (
-    '; Parameters {"mandrel":{"diameter":50,"windLength":500},"tow":{"width":8,"thickness":0.4}}'
-)
+from fiberpath.simulation import SimulationError, simulate_program
+from fiberpath_cli.main import app
+
+HEADER = '; Parameters {"mandrel":{"diameter":50,"windLength":500},"tow":{"width":8,"thickness":0.4}}'
 PROGRAM = [
     HEADER,
     "G0 F6000",

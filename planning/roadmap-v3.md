@@ -265,4 +265,4 @@ v3 is complete when:
 
 **Status: 54/54 tasks complete (100%)** ✅
 
-**All phases complete!** Ready for v0.3.0 release.
+**All phases complete!** Ready for v0.3.x release.

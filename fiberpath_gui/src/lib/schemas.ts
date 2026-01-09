@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // ===========================
 // Tauri Command Response Schemas
@@ -63,10 +63,14 @@ export const ValidationResultSchema = z.object({
   valid: z.boolean().optional(),
   status: z.string().optional(),
   path: z.string().optional(),
-  errors: z.array(z.object({
-    field: z.string(),
-    message: z.string(),
-  })).optional(),
+  errors: z
+    .array(
+      z.object({
+        field: z.string(),
+        message: z.string(),
+      }),
+    )
+    .optional(),
 });
 
 // ===========================
@@ -120,17 +124,17 @@ export const SkipLayerSchema = z.object({
  * Schema for Layer object in .wind files
  * Uses discriminated union for layer types
  */
-export const LayerSchema = z.discriminatedUnion('type', [
+export const LayerSchema = z.discriminatedUnion("type", [
   z.object({
-    type: z.literal('hoop'),
+    type: z.literal("hoop"),
     hoop: HoopLayerSchema,
   }),
   z.object({
-    type: z.literal('helical'),
+    type: z.literal("helical"),
     helical: HelicalLayerSchema,
   }),
   z.object({
-    type: z.literal('skip'),
+    type: z.literal("skip"),
     skip: SkipLayerSchema,
   }),
 ]);
@@ -163,10 +167,16 @@ export type WindDefinition = z.infer<typeof WindDefinitionSchema>;
  * Validates and parses data against a schema
  * @throws {ValidationError} if validation fails
  */
-export function validateData<T>(schema: z.ZodSchema<T>, data: unknown, context: string): T {
+export function validateData<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown,
+  context: string,
+): T {
   const result = schema.safeParse(data);
   if (!result.success) {
-    const errors = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+    const errors = result.error.errors
+      .map((e) => `${e.path.join(".")}: ${e.message}`)
+      .join(", ");
     throw new ValidationError(`${context} validation failed: ${errors}`);
   }
   return result.data;
@@ -175,7 +185,10 @@ export function validateData<T>(schema: z.ZodSchema<T>, data: unknown, context: 
 /**
  * Type guard to check if data matches schema
  */
-export function isValidData<T>(schema: z.ZodSchema<T>, data: unknown): data is T {
+export function isValidData<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown,
+): data is T {
   return schema.safeParse(data).success;
 }
 
@@ -187,9 +200,12 @@ export function isValidData<T>(schema: z.ZodSchema<T>, data: unknown): data is T
  * Base error class for FiberPath application errors
  */
 export class FiberPathError extends Error {
-  constructor(message: string, public readonly context?: Record<string, unknown>) {
+  constructor(
+    message: string,
+    public readonly context?: Record<string, unknown>,
+  ) {
     super(message);
-    this.name = 'FiberPathError';
+    this.name = "FiberPathError";
     Object.setPrototypeOf(this, FiberPathError.prototype);
   }
 }
@@ -201,11 +217,11 @@ export class FileError extends FiberPathError {
   constructor(
     message: string,
     public readonly path?: string,
-    public readonly operation?: 'save' | 'load' | 'export',
-    context?: Record<string, unknown>
+    public readonly operation?: "save" | "load" | "export",
+    context?: Record<string, unknown>,
   ) {
     super(message, { ...context, path, operation });
-    this.name = 'FileError';
+    this.name = "FileError";
     Object.setPrototypeOf(this, FileError.prototype);
   }
 }
@@ -217,10 +233,10 @@ export class ValidationError extends FiberPathError {
   constructor(
     message: string,
     public readonly errors?: Array<{ field: string; message: string }>,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     super(message, { ...context, errors });
-    this.name = 'ValidationError';
+    this.name = "ValidationError";
     Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }
@@ -233,10 +249,10 @@ export class CommandError extends FiberPathError {
     message: string,
     public readonly command?: string,
     public readonly originalError?: unknown,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     super(message, { ...context, command, originalError });
-    this.name = 'CommandError';
+    this.name = "CommandError";
     Object.setPrototypeOf(this, CommandError.prototype);
   }
 }
@@ -248,10 +264,10 @@ export class ConnectionError extends FiberPathError {
   constructor(
     message: string,
     public readonly endpoint?: string,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     super(message, { ...context, endpoint });
-    this.name = 'ConnectionError';
+    this.name = "ConnectionError";
     Object.setPrototypeOf(this, ConnectionError.prototype);
   }
 }
@@ -272,15 +288,15 @@ export function parseError(error: unknown): string {
     return error.message;
   }
 
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     return error;
   }
 
-  if (error && typeof error === 'object' && 'message' in error) {
+  if (error && typeof error === "object" && "message" in error) {
     return String(error.message);
   }
 
-  return 'An unknown error occurred';
+  return "An unknown error occurred";
 }
 
 /**
@@ -303,7 +319,7 @@ export function isRetryableError(error: unknown): boolean {
   if (error instanceof CommandError) {
     // Check if it's a validation vs IO error
     const message = error.message.toLowerCase();
-    return !message.includes('validation') && !message.includes('invalid');
+    return !message.includes("validation") && !message.includes("invalid");
   }
 
   return true; // Default: retry unknown errors

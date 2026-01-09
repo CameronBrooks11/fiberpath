@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: radial-gradient(circle at top, rgb(18, 168, 154, 0.15), transparent 45%),
+  background:
+    radial-gradient(circle at top, rgb(18, 168, 154, 0.15), transparent 45%),
     radial-gradient(circle at 20% 20%, rgb(216, 181, 52, 0.15), transparent 40%);
 }
 
@@ -34,7 +35,9 @@
   background: linear-gradient(120deg, var(--bg-panel), var(--bg-panel-alt));
   border-right: 1px solid var(--border);
   overflow: hidden auto;
-  transition: width 0.3s ease, margin-left 0.3s ease;
+  transition:
+    width 0.3s ease,
+    margin-left 0.3s ease;
 }
 
 .main-layout__left-panel.collapsed {
@@ -47,7 +50,9 @@
   background: linear-gradient(120deg, var(--bg-panel), var(--bg-panel-alt));
   border-left: 1px solid var(--border);
   overflow: hidden auto;
-  transition: width 0.3s ease, margin-right 0.3s ease;
+  transition:
+    width 0.3s ease,
+    margin-right 0.3s ease;
 }
 
 .main-layout__right-panel.collapsed {
@@ -98,7 +103,7 @@
   .main-layout__left-panel {
     width: 280px;
   }
-  
+
   .main-layout__right-panel {
     width: 320px;
   }
@@ -109,20 +114,20 @@
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto;
   }
-  
+
   .main-layout__left-panel,
   .main-layout__right-panel {
     width: 100%;
     border: none;
     border-bottom: 1px solid var(--border);
   }
-  
+
   .main-layout__left-panel.collapsed,
   .main-layout__right-panel.collapsed {
     height: 0;
     overflow: hidden;
   }
-  
+
   .main-layout__bottom-panel {
     height: 200px;
   }
@@ -163,7 +168,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: 
+  background:
     linear-gradient(90deg, var(--border-soft) 1px, transparent 1px),
     linear-gradient(0deg, var(--border-soft) 1px, transparent 1px);
   background-size: 40px 40px;

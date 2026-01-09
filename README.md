@@ -4,7 +4,7 @@
 
 <!-- Version & License -->
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.4.0-blue)](https://github.com/CameronBrooks11/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE)
 
 <!-- CI/CD Status -->
@@ -37,7 +37,7 @@ FiberPath is a next-generation system for planning, simulating, and executing fi
 
 ## Download
 
-📦 **Latest Release:** [v0.3.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+📦 **Latest Release:** [v0.4.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
 
 - **Desktop GUI** – Windows (.msi/.exe), macOS (.dmg), Linux (.deb/.AppImage)
 - **Python CLI/API** – `pip install fiberpath` or `uv pip install fiberpath`

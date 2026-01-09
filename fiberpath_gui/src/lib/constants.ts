@@ -1,6 +1,6 @@
 /**
  * Application-wide constants
- * 
+ *
  * Centralized location for magic numbers and configuration values
  * to improve maintainability and consistency.
  */

@@ -1,5 +1,5 @@
-import { useErrorNotification } from '../contexts/ErrorNotificationContext';
-import '../styles/notifications.css';
+import { useErrorNotification } from "../contexts/ErrorNotificationContext";
+import "../styles/notifications.css";
 
 export function ErrorNotificationToast() {
   const { notifications, dismissNotification } = useErrorNotification();
@@ -10,7 +10,7 @@ export function ErrorNotificationToast() {
 
   return (
     <div className="notification-container">
-      {notifications.map(notification => (
+      {notifications.map((notification) => (
         <div
           key={notification.id}
           className={`notification notification-${notification.type}`}
@@ -19,9 +19,9 @@ export function ErrorNotificationToast() {
         >
           <div className="notification-content">
             <span className="notification-icon">
-              {notification.type === 'error' && '✕'}
-              {notification.type === 'warning' && '⚠'}
-              {notification.type === 'info' && 'ℹ'}
+              {notification.type === "error" && "✕"}
+              {notification.type === "warning" && "⚠"}
+              {notification.type === "info" && "ℹ"}
             </span>
             <span className="notification-message">{notification.message}</span>
           </div>

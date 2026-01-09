@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+
 from fiberpath.config import load_wind_definition
 from fiberpath.config.schemas import WindDefinition
 from fiberpath.gcode.dialects import MARLIN_XYZ_LEGACY
@@ -37,7 +38,9 @@ def test_plan_wind_returns_commands() -> None:
     ],
 )
 def test_plan_wind_matches_cyclone_reference(case: str) -> None:
-    result = plan_wind(_reference_definition(case), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
+    result = plan_wind(
+        _reference_definition(case), PlanOptions(dialect=MARLIN_XYZ_LEGACY)
+    )
     assert result.commands == _reference_output(case)
 
 

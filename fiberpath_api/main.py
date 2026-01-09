@@ -8,7 +8,7 @@ from .routes import plan, simulate, stream, validate
 
 
 def create_app() -> FastAPI:
-    application = FastAPI(title="FiberPath API", version="0.3.0")
+    application = FastAPI(title="FiberPath API", version="0.4.0")
     application.include_router(plan.router, prefix="/plan", tags=["planning"])
     application.include_router(simulate.router, prefix="/simulate", tags=["simulation"])
     application.include_router(validate.router, prefix="/validate", tags=["validation"])

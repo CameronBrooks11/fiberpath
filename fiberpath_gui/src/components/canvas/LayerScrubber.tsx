@@ -6,15 +6,21 @@ interface LayerScrubberProps {
   onLayerChange: (layer: number) => void;
 }
 
-export function LayerScrubber({ totalLayers, currentLayer, onLayerChange }: LayerScrubberProps) {
+export function LayerScrubber({
+  totalLayers,
+  currentLayer,
+  onLayerChange,
+}: LayerScrubberProps) {
   if (totalLayers === 0) {
     return null;
   }
-  
+
   return (
     <div className="layer-scrubber">
       <div className="layer-scrubber__label">
-        Preview Layers: {currentLayer === totalLayers ? 'All' : `1-${currentLayer}`} of {totalLayers}
+        Preview Layers:{" "}
+        {currentLayer === totalLayers ? "All" : `1-${currentLayer}`} of{" "}
+        {totalLayers}
       </div>
       <input
         type="range"

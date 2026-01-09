@@ -1,5 +1,6 @@
-from fiberpath_cli.main import app
 from typer.testing import CliRunner
+
+from fiberpath_cli.main import app
 
 
 def test_cli_help_succeeds() -> None:

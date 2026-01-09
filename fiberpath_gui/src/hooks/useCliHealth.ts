@@ -1,9 +1,9 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { invoke } from '@tauri-apps/api/core';
-import { CliHealthResponseSchema } from '../lib/schemas';
-import { CommandError } from '../lib/schemas';
+import { useEffect, useState, useCallback, useRef } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { CliHealthResponseSchema } from "../lib/schemas";
+import { CommandError } from "../lib/schemas";
 
-export type CliStatus = 'ready' | 'checking' | 'unavailable' | 'unknown';
+export type CliStatus = "ready" | "checking" | "unavailable" | "unknown";
 
 export interface CliHealthState {
   status: CliStatus;
@@ -23,13 +23,13 @@ export interface UseCliHealthOptions {
 
 /**
  * Hook for checking CLI backend health status.
- * 
+ *
  * Features:
  * - Automatic health check on mount (configurable)
  * - Optional periodic polling
  * - Manual refresh capability
  * - Error handling and recovery
- * 
+ *
  * @example
  * ```tsx
  * const { status, version, errorMessage, refresh } = useCliHealth({
@@ -37,12 +37,12 @@ export interface UseCliHealthOptions {
  *   pollingInterval: 30000,
  *   checkOnMount: true
  * });
- * 
+ *
  * if (status === 'unavailable') {
  *   return <div>CLI is unavailable: {errorMessage}</div>;
  * }
  * ```
- * 
+ *
  * @param options - Configuration options
  * @returns CLI health state and refresh function
  */
@@ -54,7 +54,7 @@ export function useCliHealth(options: UseCliHealthOptions = {}) {
   } = options;
 
   const [healthState, setHealthState] = useState<CliHealthState>({
-    status: 'unknown',
+    status: "unknown",
     version: null,
     errorMessage: null,
     lastChecked: null,
@@ -67,14 +67,14 @@ export function useCliHealth(options: UseCliHealthOptions = {}) {
    * Perform a health check against the CLI backend
    */
   const checkHealth = useCallback(async () => {
-    setHealthState(prev => ({ ...prev, status: 'checking' }));
+    setHealthState((prev) => ({ ...prev, status: "checking" }));
 
     try {
-      const response = await invoke<unknown>('check_cli_health');
-      
+      const response = await invoke<unknown>("check_cli_health");
+
       // Validate response with Zod schema
       const validated = CliHealthResponseSchema.safeParse(response);
-      
+
       if (!validated.success) {
         throw new Error(`Invalid response schema: ${validated.error.message}`);
       }
@@ -82,7 +82,7 @@ export function useCliHealth(options: UseCliHealthOptions = {}) {
       if (!isMountedRef.current) return;
 
       setHealthState({
-        status: validated.data.healthy ? 'ready' : 'unavailable',
+        status: validated.data.healthy ? "ready" : "unavailable",
         version: validated.data.version,
         errorMessage: validated.data.errorMessage,
         lastChecked: new Date(),
@@ -90,16 +90,16 @@ export function useCliHealth(options: UseCliHealthOptions = {}) {
     } catch (error) {
       if (!isMountedRef.current) return;
 
-      let errorMessage = 'Unknown error occurred';
-      
+      let errorMessage = "Unknown error occurred";
+
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
       }
 
       setHealthState({
-        status: 'unavailable',
+        status: "unavailable",
         version: null,
         errorMessage,
         lastChecked: new Date(),
@@ -149,7 +149,7 @@ export function useCliHealth(options: UseCliHealthOptions = {}) {
   // Cleanup on unmount - set this AFTER other effects
   useEffect(() => {
     isMountedRef.current = true; // Reset on mount
-    
+
     return () => {
       isMountedRef.current = false;
     };
@@ -161,8 +161,8 @@ export function useCliHealth(options: UseCliHealthOptions = {}) {
     errorMessage: healthState.errorMessage,
     lastChecked: healthState.lastChecked,
     refresh: checkHealth,
-    isHealthy: healthState.status === 'ready',
-    isChecking: healthState.status === 'checking',
-    isUnavailable: healthState.status === 'unavailable',
+    isHealthy: healthState.status === "ready",
+    isChecking: healthState.status === "checking",
+    isUnavailable: healthState.status === "unavailable",
   };
 }

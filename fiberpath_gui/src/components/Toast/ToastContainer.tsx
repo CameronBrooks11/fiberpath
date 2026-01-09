@@ -2,22 +2,22 @@
  * ToastContainer - Displays toast notifications
  */
 
-import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
-import { useToastStore, type ToastType } from '../../stores/toastStore';
-import './ToastContainer.css';
+import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from "lucide-react";
+import { useToastStore, type ToastType } from "../../stores/toastStore";
+import "./ToastContainer.css";
 
 export function ToastContainer() {
   const { toasts, removeToast } = useToastStore();
 
   const getIcon = (type: ToastType) => {
     switch (type) {
-      case 'success':
+      case "success":
         return <CheckCircle size={20} />;
-      case 'error':
+      case "error":
         return <AlertCircle size={20} />;
-      case 'warning':
+      case "warning":
         return <AlertTriangle size={20} />;
-      case 'info':
+      case "info":
       default:
         return <Info size={20} />;
     }

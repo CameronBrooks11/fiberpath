@@ -47,13 +47,15 @@ def send_error(message: str, code: str = "ERROR") -> None:
 
 def send_progress(progress: StreamProgress) -> None:
     """Send streaming progress event."""
-    send_response({
-        "status": "progress",
-        "commandsSent": progress.commands_sent,
-        "commandsTotal": progress.commands_total,
-        "command": progress.command,
-        "dryRun": progress.dry_run,
-    })
+    send_response(
+        {
+            "status": "progress",
+            "commandsSent": progress.commands_sent,
+            "commandsTotal": progress.commands_total,
+            "command": progress.command,
+            "dryRun": progress.dry_run,
+        }
+    )
 
 
 def interactive_mode() -> None:
@@ -82,12 +84,16 @@ def interactive_mode() -> None:
                             }
                             for p in ports
                         ]
-                        send_response({
-                            "status": "ok",
-                            "ports": ports_data,
-                        })
+                        send_response(
+                            {
+                                "status": "ok",
+                                "ports": ports_data,
+                            }
+                        )
                     except Exception as e:
-                        send_error(f"Failed to list ports: {e}", "PORT_DISCOVERY_FAILED")
+                        send_error(
+                            f"Failed to list ports: {e}", "PORT_DISCOVERY_FAILED"
+                        )
 
                 elif action == "connect":
                     # Connect to Marlin
@@ -96,7 +102,9 @@ def interactive_mode() -> None:
                     timeout = command.get("timeout", 10.0)
 
                     if not port:
-                        send_error("Port is required for connect action", "MISSING_PORT")
+                        send_error(
+                            "Port is required for connect action", "MISSING_PORT"
+                        )
                         continue
 
                     try:
@@ -109,11 +117,13 @@ def interactive_mode() -> None:
                             response_timeout_s=timeout,
                         )
                         streamer.connect()
-                        send_response({
-                            "status": "connected",
-                            "port": port,
-                            "baudRate": baud_rate,
-                        })
+                        send_response(
+                            {
+                                "status": "connected",
+                                "port": port,
+                                "baudRate": baud_rate,
+                            }
+                        )
                     except StreamError as e:
                         send_error(f"Connection failed: {e}", "CONNECTION_FAILED")
 
@@ -124,14 +134,18 @@ def interactive_mode() -> None:
                         streamer = None
                         send_response({"status": "disconnected"})
                     else:
-                        send_response({"status": "disconnected", "message": "Not connected"})
+                        send_response(
+                            {"status": "disconnected", "message": "Not connected"}
+                        )
 
                 elif action == "send":
                     # Send single G-code command
                     gcode = command.get("gcode")
 
                     if not gcode:
-                        send_error("G-code is required for send action", "MISSING_GCODE")
+                        send_error(
+                            "G-code is required for send action", "MISSING_GCODE"
+                        )
                         continue
 
                     if streamer is None or not streamer.is_connected:
@@ -140,11 +154,13 @@ def interactive_mode() -> None:
 
                     try:
                         responses = streamer.send_command(gcode)
-                        send_response({
-                            "status": "ok",
-                            "command": gcode,
-                            "responses": responses,
-                        })
+                        send_response(
+                            {
+                                "status": "ok",
+                                "command": gcode,
+                                "responses": responses,
+                            }
+                        )
                     except StreamError as e:
                         send_error(f"Command failed: {e}", "COMMAND_FAILED")
 
@@ -153,7 +169,9 @@ def interactive_mode() -> None:
                     file_path = command.get("file")
 
                     if not file_path:
-                        send_error("File path is required for stream action", "MISSING_FILE")
+                        send_error(
+                            "File path is required for stream action", "MISSING_FILE"
+                        )
                         continue
 
                     if streamer is None or not streamer.is_connected:
@@ -170,25 +188,30 @@ def interactive_mode() -> None:
 
                         # Send start event
                         non_comment_commands = [
-                            c for c in commands
+                            c
+                            for c in commands
                             if c.strip() and not c.strip().startswith(";")
                         ]
-                        send_response({
-                            "status": "streaming",
-                            "file": file_path,
-                            "totalCommands": len(non_comment_commands),
-                        })
+                        send_response(
+                            {
+                                "status": "streaming",
+                                "file": file_path,
+                                "totalCommands": len(non_comment_commands),
+                            }
+                        )
 
                         # Stream commands
                         for progress in streamer.iter_stream(commands):
                             send_progress(progress)
 
                         # Send completion event
-                        send_response({
-                            "status": "complete",
-                            "commandsSent": streamer.commands_sent,
-                            "commandsTotal": streamer.commands_total,
-                        })
+                        send_response(
+                            {
+                                "status": "complete",
+                                "commandsSent": streamer.commands_sent,
+                                "commandsTotal": streamer.commands_total,
+                            }
+                        )
 
                     except StreamError as e:
                         send_error(f"Streaming failed: {e}", "STREAM_FAILED")

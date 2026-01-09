@@ -6,8 +6,9 @@ import json
 import re
 from pathlib import Path
 
-from fiberpath_cli.main import app
 from typer.testing import CliRunner
+
+from fiberpath_cli.main import app
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT.parent / "examples"
@@ -21,7 +22,15 @@ def test_plan_xab_format_json(tmp_path: Path) -> None:
 
     result = runner.invoke(
         app,
-        ["plan", str(SIMPLE_WIND), "--output", str(output_file), "--axis-format", "xab", "--json"],
+        [
+            "plan",
+            str(SIMPLE_WIND),
+            "--output",
+            str(output_file),
+            "--axis-format",
+            "xab",
+            "--json",
+        ],
     )
 
     assert result.exit_code == 0, result.output
@@ -38,7 +47,15 @@ def test_plan_xyz_format_json(tmp_path: Path) -> None:
 
     result = runner.invoke(
         app,
-        ["plan", str(SIMPLE_WIND), "--output", str(output_file), "--axis-format", "xyz", "--json"],
+        [
+            "plan",
+            str(SIMPLE_WIND),
+            "--output",
+            str(output_file),
+            "--axis-format",
+            "xyz",
+            "--json",
+        ],
     )
 
     assert result.exit_code == 0, result.output
@@ -70,24 +87,42 @@ def test_xab_gcode_contains_rotational_axes(tmp_path: Path) -> None:
 
     result = runner.invoke(
         app,
-        ["plan", str(SIMPLE_WIND), "--output", str(output_file), "--axis-format", "xab"],
+        [
+            "plan",
+            str(SIMPLE_WIND),
+            "--output",
+            str(output_file),
+            "--axis-format",
+            "xab",
+        ],
     )
 
     assert result.exit_code == 0, result.output
     gcode = output_file.read_text(encoding="utf-8")
 
     # Check that G-code contains A and B axes (rotational)
-    assert re.search(r"G[01].*\sA[\d\.-]+", gcode), "XAB format should contain A axis moves"
-    assert re.search(r"G[01].*\sB[\d\.-]+", gcode), "XAB format should contain B axis moves"
+    assert re.search(
+        r"G[01].*\sA[\d\.-]+", gcode
+    ), "XAB format should contain A axis moves"
+    assert re.search(
+        r"G[01].*\sB[\d\.-]+", gcode
+    ), "XAB format should contain B axis moves"
 
     # Check that G-code does NOT contain Y or Z axes in move commands
     # (they might appear in comments but not in actual move commands)
-    move_lines = [line for line in gcode.split("\n") if line.strip().startswith("G0") or
-                  line.strip().startswith("G1")]
+    move_lines = [
+        line
+        for line in gcode.split("\n")
+        if line.strip().startswith("G0") or line.strip().startswith("G1")
+    ]
     for line in move_lines:
         if not line.startswith(";"):  # Ignore comments
-            assert " Y" not in line, f"XAB format should not contain Y axis in moves: {line}"
-            assert " Z" not in line, f"XAB format should not contain Z axis in moves: {line}"
+            assert (
+                " Y" not in line
+            ), f"XAB format should not contain Y axis in moves: {line}"
+            assert (
+                " Z" not in line
+            ), f"XAB format should not contain Z axis in moves: {line}"
 
 
 def test_xyz_gcode_contains_linear_axes(tmp_path: Path) -> None:
@@ -97,23 +132,41 @@ def test_xyz_gcode_contains_linear_axes(tmp_path: Path) -> None:
 
     result = runner.invoke(
         app,
-        ["plan", str(SIMPLE_WIND), "--output", str(output_file), "--axis-format", "xyz"],
+        [
+            "plan",
+            str(SIMPLE_WIND),
+            "--output",
+            str(output_file),
+            "--axis-format",
+            "xyz",
+        ],
     )
 
     assert result.exit_code == 0, result.output
     gcode = output_file.read_text(encoding="utf-8")
 
     # Check that G-code contains Y and Z axes (legacy linear)
-    assert re.search(r"G[01].*\sY[\d\.-]+", gcode), "XYZ format should contain Y axis moves"
-    assert re.search(r"G[01].*\sZ[\d\.-]+", gcode), "XYZ format should contain Z axis moves"
+    assert re.search(
+        r"G[01].*\sY[\d\.-]+", gcode
+    ), "XYZ format should contain Y axis moves"
+    assert re.search(
+        r"G[01].*\sZ[\d\.-]+", gcode
+    ), "XYZ format should contain Z axis moves"
 
     # Check that G-code does NOT contain A or B axes in move commands
-    move_lines = [line for line in gcode.split("\n") if line.strip().startswith("G0") or
-                  line.strip().startswith("G1")]
+    move_lines = [
+        line
+        for line in gcode.split("\n")
+        if line.strip().startswith("G0") or line.strip().startswith("G1")
+    ]
     for line in move_lines:
         if not line.startswith(";"):  # Ignore comments
-            assert " A" not in line, f"XYZ format should not contain A axis in moves: {line}"
-            assert " B" not in line, f"XYZ format should not contain B axis in moves: {line}"
+            assert (
+                " A" not in line
+            ), f"XYZ format should not contain A axis in moves: {line}"
+            assert (
+                " B" not in line
+            ), f"XYZ format should not contain B axis in moves: {line}"
 
 
 def test_both_formats_produce_same_metrics(tmp_path: Path) -> None:
@@ -124,11 +177,27 @@ def test_both_formats_produce_same_metrics(tmp_path: Path) -> None:
 
     result_xab = runner.invoke(
         app,
-        ["plan", str(SIMPLE_WIND), "--output", str(output_xab), "--axis-format", "xab", "--json"],
+        [
+            "plan",
+            str(SIMPLE_WIND),
+            "--output",
+            str(output_xab),
+            "--axis-format",
+            "xab",
+            "--json",
+        ],
     )
     result_xyz = runner.invoke(
         app,
-        ["plan", str(SIMPLE_WIND), "--output", str(output_xyz), "--axis-format", "xyz", "--json"],
+        [
+            "plan",
+            str(SIMPLE_WIND),
+            "--output",
+            str(output_xyz),
+            "--axis-format",
+            "xyz",
+            "--json",
+        ],
     )
 
     assert result_xab.exit_code == 0, result_xab.output

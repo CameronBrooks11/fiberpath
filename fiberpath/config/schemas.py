@@ -37,7 +37,9 @@ class HelicalLayer(BaseFiberPathModel):
     lock_degrees: PositiveFloat = Field(alias="lockDegrees")
     lead_in_mm: PositiveFloat = Field(alias="leadInMM")
     lead_out_degrees: PositiveFloat = Field(alias="leadOutDegrees")
-    skip_initial_near_lock: bool | None = Field(default=None, alias="skipInitialNearLock")
+    skip_initial_near_lock: bool | None = Field(
+        default=None, alias="skipInitialNearLock"
+    )
 
 
 class SkipLayer(BaseFiberPathModel):

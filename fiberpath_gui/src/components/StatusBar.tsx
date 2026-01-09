@@ -4,18 +4,20 @@ import { useCliHealthContext } from "../contexts/CliHealthContext";
 
 export function StatusBar() {
   // Extract only needed fields with shallow comparison
-  const { filePath, layerCount, isDirty } = useProjectStore(useShallow((state) => ({
-    filePath: state.project.filePath,
-    layerCount: state.project.layers.length,
-    isDirty: state.project.isDirty
-  })));
-  
+  const { filePath, layerCount, isDirty } = useProjectStore(
+    useShallow((state) => ({
+      filePath: state.project.filePath,
+      layerCount: state.project.layers.length,
+      isDirty: state.project.isDirty,
+    })),
+  );
+
   const { status: cliStatus } = useCliHealthContext();
-  
-  const projectName = filePath 
-    ? filePath.split(/[\\/]/).pop() || 'Untitled'
-    : 'Untitled';
-  
+
+  const projectName = filePath
+    ? filePath.split(/[\\/]/).pop() || "Untitled"
+    : "Untitled";
+
   const getCliStatusText = (): string => {
     switch (cliStatus) {
       case "ready":
@@ -55,16 +57,19 @@ export function StatusBar() {
           {isDirty && <span className="statusbar__dirty">*</span>}
         </span>
       </div>
-      
+
       {layerCount > 0 && (
         <div className="statusbar__item">
           <span className="statusbar__label">Layers:</span>
           <span className="statusbar__value">{layerCount}</span>
         </div>
       )}
-      
+
       <div className="statusbar__item" style={{ marginLeft: "auto" }}>
-        <span className="statusbar__indicator" style={{ background: getCliStatusColor() }} />
+        <span
+          className="statusbar__indicator"
+          style={{ background: getCliStatusColor() }}
+        />
         <span className="statusbar__value">{getCliStatusText()}</span>
       </div>
     </div>

@@ -1,6 +1,6 @@
 /**
  * ManualControlSection - Manual G-code command input and common commands
- * 
+ *
  * Features:
  * - Common command buttons (Home, Get Position, E-Stop, Disable Motors)
  * - Manual command input field
@@ -8,27 +8,23 @@
  * - Disabled when not connected
  */
 
-import { useState, KeyboardEvent } from 'react';
-import { Home, MapPin, AlertOctagon, Power, Send } from 'lucide-react';
-import { useStreamStore } from '../../stores/streamStore';
-import { useToastStore } from '../../stores/toastStore';
-import { sendCommand } from '../../lib/marlin-api';
-import { TOAST_DURATION_ERROR_MS } from '../../lib/constants';
-import { toastMessages } from '../../lib/toastMessages';
-import './ManualControlSection.css';
+import { useState, KeyboardEvent } from "react";
+import { Home, MapPin, AlertOctagon, Power, Send } from "lucide-react";
+import { useStreamStore } from "../../stores/streamStore";
+import { useToastStore } from "../../stores/toastStore";
+import { sendCommand } from "../../lib/marlin-api";
+import { TOAST_DURATION_ERROR_MS } from "../../lib/constants";
+import { toastMessages } from "../../lib/toastMessages";
+import "./ManualControlSection.css";
 
 export function ManualControlSection() {
-  const {
-    status,
-    commandLoading,
-    setCommandLoading,
-    addLogEntry,
-  } = useStreamStore();
+  const { status, commandLoading, setCommandLoading, addLogEntry } =
+    useStreamStore();
 
   const { addToast } = useToastStore();
-  const [commandInput, setCommandInput] = useState('');
+  const [commandInput, setCommandInput] = useState("");
 
-  const isConnected = status === 'connected' || status === 'paused';
+  const isConnected = status === "connected" || status === "paused";
 
   const handleSendCommand = async (gcode: string) => {
     if (!gcode.trim() || !isConnected || commandLoading) {
@@ -36,33 +32,33 @@ export function ManualControlSection() {
     }
 
     setCommandLoading(true);
-    
+
     // Add command to log
     addLogEntry({
-      type: 'command',
+      type: "command",
       content: gcode,
     });
 
     try {
       const responses = await sendCommand(gcode);
-      
+
       // Add responses to log
       responses.forEach((response) => {
         addLogEntry({
-          type: 'response',
+          type: "response",
           content: response,
         });
       });
-      
+
       // Show success toast for important commands
-      if (gcode === 'G28') {
+      if (gcode === "G28") {
         addToast({
-          type: 'success',
+          type: "success",
           message: toastMessages.command.homingComplete(),
         });
-      } else if (gcode === 'M112') {
+      } else if (gcode === "M112") {
         addToast({
-          type: 'warning',
+          type: "warning",
           message: toastMessages.command.emergencyStop(),
           duration: TOAST_DURATION_ERROR_MS,
         });
@@ -70,11 +66,11 @@ export function ManualControlSection() {
     } catch (error) {
       const errorMsg = String(error);
       addLogEntry({
-        type: 'error',
+        type: "error",
         content: `Command failed: ${errorMsg}`,
       });
       addToast({
-        type: 'error',
+        type: "error",
         message: toastMessages.command.failed(errorMsg),
       });
     } finally {
@@ -85,12 +81,12 @@ export function ManualControlSection() {
   const handleManualSend = async () => {
     if (commandInput.trim()) {
       await handleSendCommand(commandInput.trim());
-      setCommandInput(''); // Clear input after sending
+      setCommandInput(""); // Clear input after sending
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleManualSend();
     }
   };
@@ -98,10 +94,10 @@ export function ManualControlSection() {
   return (
     <div className="manual-control-section">
       <h3 className="section-title">MANUAL CONTROL</h3>
-      
+
       <div className="common-commands">
         <button
-          onClick={() => handleSendCommand('G28')}
+          onClick={() => handleSendCommand("G28")}
           disabled={!isConnected || commandLoading}
           className="command-button"
           title="Home all axes (G28)"
@@ -109,9 +105,9 @@ export function ManualControlSection() {
           <Home size={18} />
           <span>Home</span>
         </button>
-        
+
         <button
-          onClick={() => handleSendCommand('M114')}
+          onClick={() => handleSendCommand("M114")}
           disabled={!isConnected || commandLoading}
           className="command-button"
           title="Get current position (M114)"
@@ -119,9 +115,9 @@ export function ManualControlSection() {
           <MapPin size={18} />
           <span>Get Pos</span>
         </button>
-        
+
         <button
-          onClick={() => handleSendCommand('M112')}
+          onClick={() => handleSendCommand("M112")}
           disabled={!isConnected || commandLoading}
           className="command-button emergency-stop"
           title="Emergency stop (M112)"
@@ -129,9 +125,9 @@ export function ManualControlSection() {
           <AlertOctagon size={18} />
           <span>E-Stop</span>
         </button>
-        
+
         <button
-          onClick={() => handleSendCommand('M18')}
+          onClick={() => handleSendCommand("M18")}
           disabled={!isConnected || commandLoading}
           className="command-button"
           title="Disable stepper motors (M18)"
@@ -160,11 +156,7 @@ export function ManualControlSection() {
             className="send-button"
             title="Send command"
           >
-            {commandLoading ? (
-              <div className="spinner" />
-            ) : (
-              <Send size={18} />
-            )}
+            {commandLoading ? <div className="spinner" /> : <Send size={18} />}
           </button>
         </div>
       </div>

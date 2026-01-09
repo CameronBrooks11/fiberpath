@@ -1,6 +1,6 @@
 /**
  * FileStreamingSection - G-code file selection and streaming control
- * 
+ *
  * Features:
  * - File selection button (Tauri file dialog)
  * - Display selected filename
@@ -9,15 +9,15 @@
  * - Start/Pause/Resume/Stop buttons
  */
 
-import { useState } from 'react';
-import { Play, Pause, Square } from 'lucide-react';
-import { open } from '@tauri-apps/plugin-dialog';
-import { useStreamStore } from '../../stores/streamStore';
-import { useToastStore } from '../../stores/toastStore';
-import { streamFile, pauseStream, resumeStream } from '../../lib/marlin-api';
-import { TOAST_DURATION_ERROR_MS } from '../../lib/constants';
-import { toastMessages } from '../../lib/toastMessages';
-import './FileStreamingSection.css';
+import { useState } from "react";
+import { Play, Pause, Square } from "lucide-react";
+import { open } from "@tauri-apps/plugin-dialog";
+import { useStreamStore } from "../../stores/streamStore";
+import { useToastStore } from "../../stores/toastStore";
+import { streamFile, pauseStream, resumeStream } from "../../lib/marlin-api";
+import { TOAST_DURATION_ERROR_MS } from "../../lib/constants";
+import { toastMessages } from "../../lib/toastMessages";
+import "./FileStreamingSection.css";
 
 export function FileStreamingSection() {
   const {
@@ -33,43 +33,45 @@ export function FileStreamingSection() {
   const { addToast } = useToastStore();
   const [filePath, setFilePath] = useState<string | null>(null);
 
-  const isConnected = status === 'connected' || status === 'paused';
-  const isPaused = status === 'paused';
+  const isConnected = status === "connected" || status === "paused";
+  const isPaused = status === "paused";
 
   const handleSelectFile = async () => {
     try {
       const selected = await open({
         multiple: false,
-        filters: [{
-          name: 'G-code',
-          extensions: ['gcode', 'nc', 'ngc'],
-        }],
+        filters: [
+          {
+            name: "G-code",
+            extensions: ["gcode", "nc", "ngc"],
+          },
+        ],
       });
 
       if (selected) {
         setFilePath(selected);
-        
+
         // Extract filename from path
         const filename = selected.split(/[\\/]/).pop() || selected;
         setSelectedFile(filename);
-        
+
         addLogEntry({
-          type: 'info',
+          type: "info",
           content: `File selected: ${filename}`,
         });
         addToast({
-          type: 'info',
+          type: "info",
           message: toastMessages.file.selected(filename),
         });
       }
     } catch (error) {
       const errorMsg = String(error);
       addLogEntry({
-        type: 'error',
+        type: "error",
         content: `File selection failed: ${errorMsg}`,
       });
       addToast({
-        type: 'error',
+        type: "error",
         message: toastMessages.file.selectionFailed(errorMsg),
         duration: TOAST_DURATION_ERROR_MS,
       });
@@ -84,17 +86,17 @@ export function FileStreamingSection() {
     try {
       await streamFile(filePath);
       addToast({
-        type: 'info',
+        type: "info",
         message: toastMessages.streaming.started(),
       });
     } catch (error) {
       const errorMsg = String(error);
       addLogEntry({
-        type: 'error',
+        type: "error",
         content: `Failed to start streaming: ${errorMsg}`,
       });
       addToast({
-        type: 'error',
+        type: "error",
         message: toastMessages.streaming.failed(errorMsg),
         duration: TOAST_DURATION_ERROR_MS,
       });
@@ -104,23 +106,23 @@ export function FileStreamingSection() {
   const handlePause = async () => {
     try {
       await pauseStream();
-      setStatus('paused');
+      setStatus("paused");
       addLogEntry({
-        type: 'info',
-        content: 'Streaming paused (M0 sent)',
+        type: "info",
+        content: "Streaming paused (M0 sent)",
       });
       addToast({
-        type: 'warning',
+        type: "warning",
         message: toastMessages.streaming.paused(),
       });
     } catch (error) {
       const errorMsg = String(error);
       addLogEntry({
-        type: 'error',
+        type: "error",
         content: `Pause failed: ${errorMsg}`,
       });
       addToast({
-        type: 'error',
+        type: "error",
         message: toastMessages.streaming.pauseFailed(errorMsg),
       });
     }
@@ -129,23 +131,23 @@ export function FileStreamingSection() {
   const handleResume = async () => {
     try {
       await resumeStream();
-      setStatus('connected');
+      setStatus("connected");
       addLogEntry({
-        type: 'info',
-        content: 'Streaming resumed (M108 sent)',
+        type: "info",
+        content: "Streaming resumed (M108 sent)",
       });
       addToast({
-        type: 'success',
+        type: "success",
         message: toastMessages.streaming.resumed(),
       });
     } catch (error) {
       const errorMsg = String(error);
       addLogEntry({
-        type: 'error',
+        type: "error",
         content: `Resume failed: ${errorMsg}`,
       });
       addToast({
-        type: 'error',
+        type: "error",
         message: toastMessages.streaming.resumeFailed(errorMsg),
       });
     }
@@ -153,11 +155,11 @@ export function FileStreamingSection() {
 
   const handleStop = () => {
     addLogEntry({
-      type: 'error',
-      content: 'Stop not yet implemented',
+      type: "error",
+      content: "Stop not yet implemented",
     });
     addToast({
-      type: 'warning',
+      type: "warning",
       message: toastMessages.streaming.stopNotImplemented(),
     });
   };
@@ -170,12 +172,12 @@ export function FileStreamingSection() {
   return (
     <div className="file-streaming-section">
       <h3 className="section-title">FILE STREAMING</h3>
-      
+
       <div className="file-selection">
         <div className="file-info">
           <span className="file-label">File:</span>
           <span className="file-name">
-            {selectedFile || 'No file selected'}
+            {selectedFile || "No file selected"}
           </span>
         </div>
         <button
@@ -193,8 +195,8 @@ export function FileStreamingSection() {
           <div className="progress-section">
             <label>Progress:</label>
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
+              <div
+                className="progress-fill"
                 style={{ width: `${getProgressPercentage()}%` }}
               />
             </div>

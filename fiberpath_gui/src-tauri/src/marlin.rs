@@ -121,8 +121,7 @@ impl MarlinSubprocess {
         let json_str = serde_json::to_string(&command)
             .map_err(|e| MarlinError::SendFailed(format!("Failed to serialize command: {}", e)))?;
 
-        writeln!(self.stdin, "{}", json_str)
-            .map_err(|e| MarlinError::SendFailed(e.to_string()))?;
+        writeln!(self.stdin, "{}", json_str).map_err(|e| MarlinError::SendFailed(e.to_string()))?;
 
         self.stdin
             .flush()
@@ -174,10 +173,7 @@ impl MarlinState {
     }
 
     pub fn send_command(&mut self, command: serde_json::Value) -> Result<(), MarlinError> {
-        let subprocess = self
-            .subprocess
-            .as_mut()
-            .ok_or(MarlinError::NotRunning)?;
+        let subprocess = self.subprocess.as_mut().ok_or(MarlinError::NotRunning)?;
 
         subprocess.send_command(command)
     }
@@ -211,7 +207,9 @@ pub async fn marlin_list_ports() -> Result<Vec<SerialPort>, String> {
     subprocess.cleanup();
 
     match response {
-        MarlinResponse::Ok { ports: Some(ports), .. } => Ok(ports),
+        MarlinResponse::Ok {
+            ports: Some(ports), ..
+        } => Ok(ports),
         MarlinResponse::Error { message, .. } => Err(message),
         other => Err(format!("Unexpected response from list_ports: {:?}", other)),
     }
@@ -302,7 +300,10 @@ pub async fn marlin_send_command(
             ..
         } => Ok(responses),
         MarlinResponse::Error { message, .. } => Err(message),
-        other => Err(format!("Unexpected response from send_command: {:?}", other)),
+        other => Err(format!(
+            "Unexpected response from send_command: {:?}",
+            other
+        )),
     }
 }
 
@@ -376,9 +377,7 @@ pub async fn marlin_stream_file(
 }
 
 #[tauri::command]
-pub async fn marlin_pause(
-    state: tauri::State<'_, Arc<Mutex<MarlinState>>>,
-) -> Result<(), String> {
+pub async fn marlin_pause(state: tauri::State<'_, Arc<Mutex<MarlinState>>>) -> Result<(), String> {
     let mut marlin_state = state.lock().map_err(|e| e.to_string())?;
 
     let command = serde_json::json!({
@@ -399,9 +398,7 @@ pub async fn marlin_pause(
 }
 
 #[tauri::command]
-pub async fn marlin_resume(
-    state: tauri::State<'_, Arc<Mutex<MarlinState>>>,
-) -> Result<(), String> {
+pub async fn marlin_resume(state: tauri::State<'_, Arc<Mutex<MarlinState>>>) -> Result<(), String> {
     let mut marlin_state = state.lock().map_err(|e| e.to_string())?;
 
     let command = serde_json::json!({

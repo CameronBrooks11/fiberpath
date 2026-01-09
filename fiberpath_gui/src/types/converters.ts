@@ -1,20 +1,33 @@
-import type { Layer, HoopLayer as GUIHoopLayer, HelicalLayer as GUIHelicalLayer, SkipLayer as GUISkipLayer, FiberPathProject } from './project';
-import type { FiberPathWindDefinition, HoopLayer, HelicalLayer, SkipLayer } from './wind-schema';
+import type {
+  Layer,
+  HoopLayer as GUIHoopLayer,
+  HelicalLayer as GUIHelicalLayer,
+  SkipLayer as GUISkipLayer,
+  FiberPathProject,
+} from "./project";
+import type {
+  FiberPathWindDefinition,
+  HoopLayer,
+  HelicalLayer,
+  SkipLayer,
+} from "./wind-schema";
 
 /**
  * Convert internal GUI layer format to .wind schema format
  */
-export function convertLayerToWindSchema(layer: Layer): HoopLayer | HelicalLayer | SkipLayer {
-  if (layer.type === 'hoop') {
+export function convertLayerToWindSchema(
+  layer: Layer,
+): HoopLayer | HelicalLayer | SkipLayer {
+  if (layer.type === "hoop") {
     const hoopData = layer.hoop as GUIHoopLayer | undefined;
     return {
-      windType: 'hoop',
+      windType: "hoop",
       terminal: hoopData?.terminal ?? false,
     };
-  } else if (layer.type === 'helical') {
+  } else if (layer.type === "helical") {
     const helicalData = layer.helical as GUIHelicalLayer | undefined;
     return {
-      windType: 'helical',
+      windType: "helical",
       windAngle: helicalData?.wind_angle ?? 45,
       patternNumber: helicalData?.pattern_number ?? 3,
       skipIndex: helicalData?.skip_index ?? 2,
@@ -23,14 +36,14 @@ export function convertLayerToWindSchema(layer: Layer): HoopLayer | HelicalLayer
       leadOutDegrees: helicalData?.lead_out_degrees ?? 5,
       skipInitialNearLock: helicalData?.skip_initial_near_lock ?? null,
     };
-  } else if (layer.type === 'skip') {
+  } else if (layer.type === "skip") {
     const skipData = layer.skip as GUISkipLayer | undefined;
     return {
-      windType: 'skip',
+      windType: "skip",
       mandrelRotation: skipData?.mandrel_rotation ?? 90,
     };
   }
-  
+
   // Should never reach here - TypeScript ensures all layer types are handled
   throw new Error(`Unknown layer type: ${layer.type}`);
 }
@@ -45,14 +58,14 @@ export function projectToWindDefinition(
     layers: Layer[];
     defaultFeedRate: number;
   },
-  visibleLayerCount?: number
+  visibleLayerCount?: number,
 ): FiberPathWindDefinition {
-  const layersToInclude = visibleLayerCount 
+  const layersToInclude = visibleLayerCount
     ? project.layers.slice(0, visibleLayerCount)
     : project.layers;
-  
+
   return {
-    schemaVersion: '1.0',
+    schemaVersion: "1.0",
     mandrelParameters: {
       diameter: project.mandrel.diameter,
       windLength: project.mandrel.wind_length,
@@ -69,19 +82,21 @@ export function projectToWindDefinition(
 /**
  * Convert .wind schema layer format back to internal GUI format
  */
-export function convertWindSchemaToLayer(schemaLayer: HoopLayer | HelicalLayer | SkipLayer): Layer {
-  if (schemaLayer.windType === 'hoop') {
+export function convertWindSchemaToLayer(
+  schemaLayer: HoopLayer | HelicalLayer | SkipLayer,
+): Layer {
+  if (schemaLayer.windType === "hoop") {
     return {
       id: crypto.randomUUID(),
-      type: 'hoop',
+      type: "hoop",
       hoop: {
         terminal: schemaLayer.terminal ?? false,
       },
     };
-  } else if (schemaLayer.windType === 'helical') {
+  } else if (schemaLayer.windType === "helical") {
     return {
       id: crypto.randomUUID(),
-      type: 'helical',
+      type: "helical",
       helical: {
         wind_angle: schemaLayer.windAngle,
         pattern_number: schemaLayer.patternNumber,
@@ -92,16 +107,16 @@ export function convertWindSchemaToLayer(schemaLayer: HoopLayer | HelicalLayer |
         skip_initial_near_lock: schemaLayer.skipInitialNearLock ?? false,
       },
     };
-  } else if (schemaLayer.windType === 'skip') {
+  } else if (schemaLayer.windType === "skip") {
     return {
       id: crypto.randomUUID(),
-      type: 'skip',
+      type: "skip",
       skip: {
         mandrel_rotation: schemaLayer.mandrelRotation,
       },
     };
   }
-  
+
   // Should never reach here - TypeScript ensures all windTypes are handled
   throw new Error(`Unknown wind type: ${schemaLayer.windType}`);
 }
@@ -109,7 +124,10 @@ export function convertWindSchemaToLayer(schemaLayer: HoopLayer | HelicalLayer |
 /**
  * Convert .wind definition format to GUI project format
  */
-export function windDefinitionToProject(windDef: FiberPathWindDefinition, filePath: string | null = null): FiberPathProject {
+export function windDefinitionToProject(
+  windDef: FiberPathWindDefinition,
+  filePath: string | null = null,
+): FiberPathProject {
   return {
     filePath,
     isDirty: false,
@@ -123,7 +141,7 @@ export function windDefinitionToProject(windDef: FiberPathWindDefinition, filePa
     },
     layers: windDef.layers.map(convertWindSchemaToLayer),
     defaultFeedRate: windDef.defaultFeedRate,
-    axisFormat: 'xab', // Default, could be stored in wind file in future
+    axisFormat: "xab", // Default, could be stored in wind file in future
     activeLayerId: null,
   };
 }

@@ -317,7 +317,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .export-validation__status .status-icon {
@@ -339,7 +341,7 @@
   font-size: 0.875rem;
   color: var(--error);
   padding: 0.25rem 0;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 .export-validation__message {

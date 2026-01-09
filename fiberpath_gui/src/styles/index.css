@@ -18,14 +18,14 @@
  * 11. notifications.css - Toast notifications
  */
 
-@import './tokens.css';
-@import './reset.css';
-@import './typography.css';
-@import './buttons.css';
-@import './forms.css';
-@import './panels.css';
-@import './canvas.css';
-@import './layout.css';
-@import './tabs.css';
-@import './dialogs.css';
-@import './notifications.css';
+@import "./tokens.css";
+@import "./reset.css";
+@import "./typography.css";
+@import "./buttons.css";
+@import "./forms.css";
+@import "./panels.css";
+@import "./canvas.css";
+@import "./layout.css";
+@import "./tabs.css";
+@import "./dialogs.css";
+@import "./notifications.css";
