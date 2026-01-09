@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
-from typing import Protocol, cast
+from typing import Protocol
 
 DEFAULT_BAUD_RATE = 250_000
 DEFAULT_RESPONSE_TIMEOUT = 10.0  # Allow time for slow moves (e.g., large rotations)
