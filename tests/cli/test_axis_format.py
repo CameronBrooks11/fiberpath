@@ -6,9 +6,8 @@ import json
 import re
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fiberpath_cli.main import app
+from typer.testing import CliRunner
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT.parent / "examples"

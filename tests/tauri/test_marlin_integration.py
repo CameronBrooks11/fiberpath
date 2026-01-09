@@ -90,7 +90,7 @@ def test_subprocess_lifecycle() -> None:
         proc.terminate()
         try:
             proc.wait(timeout=2)
-            print(f"✓ Subprocess terminated cleanly")
+            print("✓ Subprocess terminated cleanly")
         except subprocess.TimeoutExpired:
             proc.kill()
             proc.wait()

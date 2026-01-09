@@ -5,9 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
-from rich.console import Console
-
 from fiberpath.visualization.plotter import PlotConfig, PlotError, render_plot
+from rich.console import Console
 
 console = Console()
 

@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
-
 from fiberpath.execution import MarlinStreamer, StreamError, StreamProgress
 
 from .output import echo_json

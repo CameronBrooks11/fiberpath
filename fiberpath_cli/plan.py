@@ -6,13 +6,12 @@ from dataclasses import asdict
 from pathlib import Path
 
 import typer
-from rich.console import Console
-from rich.table import Table
-
 from fiberpath.config import WindFileError, load_wind_definition
 from fiberpath.gcode import write_gcode
 from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, MARLIN_XYZ_LEGACY
 from fiberpath.planning import PlanOptions, plan_wind
+from rich.console import Console
+from rich.table import Table
 
 from .output import echo_json
 

@@ -6,7 +6,6 @@ from dataclasses import asdict
 from pathlib import Path
 
 import typer
-
 from fiberpath.simulation import SimulationError, simulate_program
 
 from .output import echo_json

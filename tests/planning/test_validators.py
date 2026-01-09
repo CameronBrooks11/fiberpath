@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from fiberpath.config.schemas import HelicalLayer, MandrelParameters, TowParameters
 from fiberpath.planning.exceptions import LayerValidationError
 from fiberpath.planning.validators import validate_helical_layer

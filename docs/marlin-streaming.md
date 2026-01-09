@@ -288,8 +288,6 @@ See `planning/hardware-testing-checklist.md` for comprehensive pre-deployment te
 
 - [FiberPath Architecture](architecture.md) – Overall system design
 - [API Documentation](api.md) – REST endpoints for planning and simulation
-- [GUI Architecture](../fiberpath_gui/docs/ARCHITECTURE.md) – Tauri + React design
-- [Roadmap v4](../planning/roadmap-v4.md) – Marlin streaming implementation details
 
 ---
 

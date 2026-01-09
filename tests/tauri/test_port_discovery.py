@@ -55,7 +55,7 @@ def test_port_discovery():
         else:
             print(f"Error: {response.get('message')}")
             print(f"Error code: {response.get('error_code')}")
-            assert False, "Port discovery failed"
+            raise AssertionError("Port discovery failed")
 
     finally:
         process.terminate()

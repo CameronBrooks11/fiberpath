@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fiberpath_cli.main import app
+from typer.testing import CliRunner
 
 
 def test_stream_command_dry_run(tmp_path: Path) -> None:

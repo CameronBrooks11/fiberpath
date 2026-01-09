@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
-
 from fiberpath.execution import MarlinStreamer, StreamError
+from pydantic import BaseModel, Field
 
 router = APIRouter()
 

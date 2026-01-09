@@ -3,15 +3,17 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fiberpath_cli.main import app
+from typer.testing import CliRunner
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT.parent / "examples"
 SIMPLE_WIND = EXAMPLES / "simple_cylinder" / "input.wind"
 
-SIM_HEADER = '; Parameters {"mandrel":{"diameter":50,"windLength":500},"tow":{"width":8,"thickness":0.4}}'
+SIM_HEADER = (
+    '; Parameters {"mandrel":{"diameter":50,"windLength":500},'
+    '"tow":{"width":8,"thickness":0.4}}'
+)
 SIM_PROGRAM = [SIM_HEADER, "G0 F6000", "G0 X10", "G0 Y180", "G0 X10 Y360"]
 
 

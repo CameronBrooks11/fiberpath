@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import pytest
-
 from fiberpath.config import load_wind_definition
 from fiberpath.config.schemas import WindDefinition
 from fiberpath.gcode.dialects import (

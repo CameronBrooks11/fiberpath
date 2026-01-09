@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fiberpath.config import load_wind_definition
 from fiberpath.planning import plan_wind
 from fiberpath.visualization.plotter import (
@@ -12,6 +10,7 @@ from fiberpath.visualization.plotter import (
     render_plot,
 )
 from fiberpath_cli.main import app
+from typer.testing import CliRunner
 
 FIXTURE = (
     Path(__file__).parents[1]

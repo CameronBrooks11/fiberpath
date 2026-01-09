@@ -264,6 +264,7 @@
   - Run `black` and `isort` on Python files
   - Run `prettier` on TypeScript/TSX files
   - Run `rustfmt` on Rust files
+- [x] **Run ruff check** - All checks passed
 - [x] **Run Python test suite** - Verify all 75 tests pass
 - [x] **Run TypeScript compilation** - Verify `npx tsc --noEmit` passes with 0 errors
 - [x] **Run Rust checks** - Verify `cargo check` and `cargo clippy` pass (fixed clippy warning)

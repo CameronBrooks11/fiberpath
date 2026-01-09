@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
-
 from fiberpath.config import WindFileError, load_wind_definition
 
 from .output import echo_json

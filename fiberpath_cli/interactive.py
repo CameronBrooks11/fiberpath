@@ -31,7 +31,6 @@ from pathlib import Path
 from typing import Any
 
 import serial.tools.list_ports
-
 from fiberpath.execution import MarlinStreamer, StreamError, StreamProgress
 
 
