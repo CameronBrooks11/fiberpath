@@ -12,10 +12,9 @@
 - [ ] Document Zustand store architecture and state flow patterns
 - [ ] Create architecture diagrams (component hierarchy, data flow)
 - [ ] Document keyboard shortcut system implementation details
-- [ ] Create CONTRIBUTING.md with code style guidelines, testing requirements, and PR process
 - [ ] Add inline comments for complex algorithms (validation, layer conversion)
 
-**Progress:** 0/6 tasks complete
+**Progress:** 0/5 tasks complete
 
 ---
 
@@ -69,7 +68,7 @@
 - [ ] Add cross-field validation (e.g., pattern number vs mandrel circumference compatibility)
 - [ ] Add comprehensive edge case validation (empty projects, extreme values, invalid combinations)
 
-**Progress:** 0/6 tasks complete
+**Progress:** 0/7 tasks complete
 
 **Note:** Build upon existing JSON Schema validation (37 tests in validation.test.ts)
 
@@ -108,23 +107,21 @@
 
 ## Phase 8: Testing & Release Process
 
-- [ ] Establish versioning and release process (semantic versioning, CHANGELOG, PyPI packaging)
-- [ ] Set up automated release builds with GitHub Actions
 - [ ] Create download links on docs website from GitHub releases
 - [ ] Write example-driven tutorials (docs/tutorials/\*.md) showing complete workflows
 - [ ] Add comprehensive GUI usage section to README with screenshots
 - [ ] Add high-quality screenshots to docs/ folder
 - [ ] Create video demo showing layer authoring workflow
 - [ ] Update CHANGELOG.md with all changes since last release
-- [ ] Version bump to 0.3.0 after v5 completion
+- [ ] Version bump to 0.5.0 after v5 completion
 
-**Progress:** 0/9 tasks complete
+**Progress:** 0/7 tasks complete
 
 ---
 
 ## Overall Progress
 
-**Status:** 0/53 tasks complete (0%)
+**Status:** 0/51 tasks complete (0%)
 
 ---
 
