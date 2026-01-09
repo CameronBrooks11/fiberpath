@@ -8,6 +8,7 @@ import { StreamTab } from "./components/tabs/StreamTab";
 import { MenuBar } from "./components/MenuBar";
 import { StatusBar } from "./components/StatusBar";
 import { CliHealthWarning } from "./components/CliHealthWarning";
+import { ToastContainer } from "./components/Toast/ToastContainer";
 import { LeftPanel } from "./components/panels/LeftPanel";
 import { RightPanel } from "./components/panels/RightPanel";
 import { BottomPanel } from "./components/panels/BottomPanel";
@@ -197,6 +198,7 @@ export default function App() {
       statusBar={<StatusBar />}
     >
       <CliHealthWarning />
+      <ToastContainer />
       {showExportDialog && (
         <ExportConfirmationDialog
           project={project}

@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { Play, Pause, Square } from 'lucide-react';
 import { open } from '@tauri-apps/plugin-dialog';
 import { useStreamStore } from '../../stores/streamStore';
+import { useToastStore } from '../../stores/toastStore';
 import { streamFile, pauseStream, resumeStream } from '../../lib/marlin-api';
 import './FileStreamingSection.css';
 
@@ -27,6 +28,7 @@ export function FileStreamingSection() {
     addLogEntry,
   } = useStreamStore();
 
+  const { addToast } = useToastStore();
   const [filePath, setFilePath] = useState<string | null>(null);
 
   const isConnected = status === 'connected' || status === 'paused';
@@ -43,22 +45,31 @@ export function FileStreamingSection() {
       });
 
       if (selected) {
-        const path = typeof selected === 'string' ? selected : selected.path;
-        setFilePath(path);
+        setFilePath(selected);
         
         // Extract filename from path
-        const filename = path.split(/[\\/]/).pop() || path;
+        const filename = selected.split(/[\\/]/).pop() || selected;
         setSelectedFile(filename);
         
         addLogEntry({
           type: 'info',
           content: `File selected: ${filename}`,
         });
+        addToast({
+          type: 'info',
+          message: `Selected: ${filename}`,
+        });
       }
     } catch (error) {
+      const errorMsg = String(error);
       addLogEntry({
         type: 'error',
-        content: `File selection failed: ${error}`,
+        content: `File selection failed: ${errorMsg}`,
+      });
+      addToast({
+        type: 'error',
+        message: `File selection failed: ${errorMsg}`,
+        duration: 6000,
       });
     }
   };
@@ -70,10 +81,20 @@ export function FileStreamingSection() {
 
     try {
       await streamFile(filePath);
+      addToast({
+        type: 'info',
+        message: 'Streaming started',
+      });
     } catch (error) {
+      const errorMsg = String(error);
       addLogEntry({
         type: 'error',
-        content: `Failed to start streaming: ${error}`,
+        content: `Failed to start streaming: ${errorMsg}`,
+      });
+      addToast({
+        type: 'error',
+        message: `Failed to start streaming: ${errorMsg}`,
+        duration: 6000,
       });
     }
   };
@@ -86,10 +107,19 @@ export function FileStreamingSection() {
         type: 'info',
         content: 'Streaming paused (M0 sent)',
       });
+      addToast({
+        type: 'warning',
+        message: 'Streaming paused',
+      });
     } catch (error) {
+      const errorMsg = String(error);
       addLogEntry({
         type: 'error',
-        content: `Pause failed: ${error}`,
+        content: `Pause failed: ${errorMsg}`,
+      });
+      addToast({
+        type: 'error',
+        message: `Pause failed: ${errorMsg}`,
       });
     }
   };
@@ -102,10 +132,19 @@ export function FileStreamingSection() {
         type: 'info',
         content: 'Streaming resumed (M108 sent)',
       });
+      addToast({
+        type: 'success',
+        message: 'Streaming resumed',
+      });
     } catch (error) {
+      const errorMsg = String(error);
       addLogEntry({
         type: 'error',
-        content: `Resume failed: ${error}`,
+        content: `Resume failed: ${errorMsg}`,
+      });
+      addToast({
+        type: 'error',
+        message: `Resume failed: ${errorMsg}`,
       });
     }
   };
@@ -115,6 +154,10 @@ export function FileStreamingSection() {
     addLogEntry({
       type: 'error',
       content: 'Stop not yet implemented',
+    });
+    addToast({
+      type: 'warning',
+      message: 'Stop functionality coming in Phase 5',
     });
   };
 

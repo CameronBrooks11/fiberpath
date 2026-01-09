@@ -95,43 +95,47 @@
 
 ## Phase 4: Frontend Integration & Testing
 
-- [ ] Wire port selector to list_serial_ports (refresh on mount + Refresh button)
-- [ ] Wire Connect button to marlin_connect
-- [ ] Wire Disconnect button to marlin_disconnect
-- [ ] Wire common command buttons to marlin_send_command (Home → "G28", Get Position → "M114", etc.)
-- [ ] Wire manual command input to marlin_send_command (Enter key + Send button)
-- [ ] Clear command input field after successful send
-- [ ] Show loading indicator on Send button while command executes
-- [ ] Display manual command in log with 'command' type (blue, bold)
-- [ ] Display command responses in log with 'response' type (green)
-- [ ] Disable manual control section when not connected
-- [ ] Wire Select File to Tauri file dialog (filter: \*.gcode)
-- [ ] Wire Start Stream to marlin_stream_file
-- [ ] Listen to stream-progress events and update UI
-- [ ] Update progress bar on each stream event (N/Total)
-- [ ] Update current command display on each stream event
-- [ ] Display streaming output in log with 'stream' type (gray)
-- [ ] Handle connection errors with user-friendly toasts/messages
-- [ ] Handle command errors with error type in log (red, bold)
-- [ ] Handle streaming errors with user-friendly messages
-- [ ] Add loading states for all async operations
-- [ ] Test: Connect to Marlin hardware (if available)
-- [ ] Test: Send M114, verify response displays in log
-- [ ] Test: Click Home button, verify G28 sent and machine homes
-- [ ] Test: Manual command with Enter key works
-- [ ] Test: Stream small G-code file (<100 commands)
-- [ ] Test: Stream large G-code file (>1000 commands)
-- [ ] Test: Connection lifecycle (connect, disconnect, reconnect)
-- [ ] Test: Tab switching during operations doesn't break state
+- [x] Wire port selector to list_serial_ports (refresh on mount + Refresh button)
+- [x] Wire Connect button to marlin_connect
+- [x] Wire Disconnect button to marlin_disconnect
+- [x] Wire common command buttons to marlin_send_command (Home → "G28", Get Position → "M114", etc.)
+- [x] Wire manual command input to marlin_send_command (Enter key + Send button)
+- [x] Clear command input field after successful send
+- [x] Show loading indicator on Send button while command executes
+- [x] Display manual command in log with 'command' type (blue, bold)
+- [x] Display command responses in log with 'response' type (green)
+- [x] Disable manual control section when not connected
+- [x] Wire Select File to Tauri file dialog (filter: \*.gcode)
+- [x] Wire Start Stream to marlin_stream_file
+- [x] Listen to stream-progress events and update UI
+- [x] Update progress bar on each stream event (N/Total)
+- [x] Update current command display on each stream event
+- [x] Display streaming output in log with 'stream' type (gray)
+- [x] Handle connection errors with user-friendly toasts/messages
+- [x] Handle command errors with error type in log (red, bold)
+- [x] Handle streaming errors with user-friendly messages
+- [x] Add loading states for all async operations
 
-**Progress:** 0/28 tasks complete
+**Progress:** 20/20 UI implementation tasks complete (100%) ✅
 
-**Note:** Manual control wiring is essential - must test connection before streaming, home machine, and have emergency stop available.
+**Hardware Testing:** 8 integration tests pending (requires physical Marlin hardware)
+
+- See `planning/hardware-testing-checklist.md` for quick testing guide
+- Tests: Connection, manual commands, file streaming, pause/resume, error handling, tab navigation
+
+**Note:** All UI wiring and error handling complete with comprehensive toast notification system. Toast notifications provide visual feedback for all operations (connection, commands, file selection, streaming progress/completion). Core implementation is production-ready pending hardware validation.
 
 ---
 
-## Phase 5: Pause/Resume Controls
+## Phase 5: Pause/Resume Controls & Other Polish
 
+- [ ] Review all components for consistent styling
+- [ ] Add loading states for all async operations
+- [ ] Improve error messages (user-friendly, actionable)
+- [ ] Add tooltips for stream controls
+- [ ] Add keyboard shortcuts documentation
+- [ ] Add (togglable) auto-scroll to log (scroll to bottom on new messages)
+- [ ] Add Clear Log button
 - [ ] Add Pause button to StreamControls (enabled during streaming)
 - [ ] Add Resume button to StreamControls (enabled when paused)
 - [ ] Update connection status indicator to show Paused state
@@ -141,29 +145,28 @@
 - [ ] Wire Pause/Resume buttons to backend commands
 - [ ] Test: Pause during large stream, resume successfully
 
-**Progress:** 0/8 tasks complete
+**Progress:** 0/15 tasks complete
 
-**Note:** Python backend already supports pause/resume via M0/M108 commands. UI integration is straightforward.
+**Note:** For the Pause/Resume Controls the Python backend already supports pause/resume via M0/M108 commands. UI integration is straightforward.
 
 ---
 
-## Phase 6: Polish, Testing & Documentation
+## Phase 6: Review & Revise of GUI Codebase
 
-- [ ] Review all components for consistent styling
-- [ ] Add loading states for all async operations
-- [ ] Improve error messages (user-friendly, actionable)
-- [ ] Add tooltips for stream controls
-- [ ] Add keyboard shortcuts documentation
-- [ ] Test on Windows/macOS/Linux
-- [ ] Fix platform-specific issues
+- [ ] Start by reviewing all code in GUI, I MEAN ALL OF IT; we are looking for inconsistencies, bad practices, and areas for improvement, clean up, reducing redundancy, etc. following best practices and all that. From that review fill out the todo steps for this phase below...
+- [ ]
+
+---
+
+## Phase 7: Polish, Testing & Documentation
+
 - [ ] Test all tab navigation paths
 - [ ] Test connection lifecycle (connect, disconnect, reconnect)
 - [ ] Test streaming with various file sizes (<100, 1000+, 10000+ commands)
 - [ ] Test pause/resume cycle
 - [ ] Test error scenarios (invalid port, connection lost, invalid G-code)
 - [ ] Test concurrent operations (can't stream while already streaming)
-- [ ] Add auto-scroll to log (scroll to bottom on new messages)
-- [ ] Add Clear Log button
+
 - [ ] Update GUI README with streaming features
 - [ ] Add Marlin streaming section to docs
 - [ ] Add troubleshooting guide (common errors, solutions)
@@ -176,18 +179,20 @@
 
 ## Summary
 
-**Total Tasks:** 101  
-**Completed:** 61  
-**Remaining:** 40  
-**Overall Progress:** 60%
+**Total Tasks:** 93 (implementation)  
+**Completed:** 81  
+**Remaining:** 12  
+**Overall Progress:** 87%
+
+**Hardware Tests:** 8 (deferred pending Marlin hardware - see `planning/hardware-testing-checklist.md`)
 
 | Phase                 | Tasks | Complete | Progress |
 | --------------------- | ----- | -------- | -------- |
 | 1 - Infrastructure    | 21    | 21       | 100% ✅  |
 | 2 - Tauri Integration | 18    | 18       | 100% ✅  |
 | 3 - Stream Tab UI     | 22    | 22       | 100% ✅  |
-| 4 - Frontend Wiring   | 28    | 0        | 0%       |
-| 5 - Pause/Resume      | 8     | 0        | 0%       |
+| 4 - Frontend Wiring   | 20    | 20       | 100% ✅  |
+| 5 - Pause/Resume      | 15    | 0        | 0%       |
 | 6 - Polish & Testing  | 20    | 0        | 0%       |
 
 **Timeline Estimate:** 2 weeks
@@ -197,9 +202,10 @@
 **Milestones:**
 
 - ✅ **Phase 1 Complete** - Tab infrastructure working, Python backend refactored (100%)
-- ✅ **Phase 2 Complete** - Tauri integration with Python subprocess, all commands working (100%)
-- ✅ **Phase 3 Complete** - Stream Tab UI fully implemented with all sections (100%)
-- **Phase 4 Complete** - Basic streaming functional (MVP achieved)
+- ✅ **Phase 4 Complete** - All UI wiring, error handling with toasts, production-ready (100%)
+- **Phase 5 Next** - Pause/resume polish & additional features
+- **Phase 6 Next** - Code review, cleanup, documentation
+- **Phase 7 Final** - Testing, polish, release prepMVP achieved)
 - **Phase 5 Complete** - Pause/resume working (full streaming features)
 - **Phase 6 Complete** - Production ready for release
 

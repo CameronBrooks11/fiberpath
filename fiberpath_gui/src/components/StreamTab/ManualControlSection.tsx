@@ -11,6 +11,7 @@
 import { useState, KeyboardEvent } from 'react';
 import { Home, MapPin, AlertOctagon, Power, Send } from 'lucide-react';
 import { useStreamStore } from '../../stores/streamStore';
+import { useToastStore } from '../../stores/toastStore';
 import { sendCommand } from '../../lib/marlin-api';
 import './ManualControlSection.css';
 
@@ -22,6 +23,7 @@ export function ManualControlSection() {
     addLogEntry,
   } = useStreamStore();
 
+  const { addToast } = useToastStore();
   const [commandInput, setCommandInput] = useState('');
 
   const isConnected = status === 'connected' || status === 'paused';
@@ -49,10 +51,29 @@ export function ManualControlSection() {
           content: response,
         });
       });
+      
+      // Show success toast for important commands
+      if (gcode === 'G28') {
+        addToast({
+          type: 'success',
+          message: 'Homing complete',
+        });
+      } else if (gcode === 'M112') {
+        addToast({
+          type: 'warning',
+          message: 'Emergency stop activated!',
+          duration: 6000,
+        });
+      }
     } catch (error) {
+      const errorMsg = String(error);
       addLogEntry({
         type: 'error',
-        content: `Command failed: ${error}`,
+        content: `Command failed: ${errorMsg}`,
+      });
+      addToast({
+        type: 'error',
+        message: `Command failed: ${errorMsg}`,
       });
     } finally {
       setCommandLoading(false);

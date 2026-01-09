@@ -50,12 +50,13 @@
 
 ## Phase 2: Code Organization
 
+- [ ] Start this phase by reviewing the current state of the entire GUI directory and modify/add to the following tasks below as needed based on that review.
 - [ ] Refactor App.tsx into smaller focused components (currently 305 lines)
 - [ ] Extract MenuBar menu definitions to configuration file
 - [ ] Create feature-based folder structure (features/layers/, features/export/, features/project/)
 - [ ] Organize hooks by category (hooks/state/, hooks/commands/, hooks/ui/)
 
-**Progress:** 0/4 tasks complete
+**Progress:** 0/? tasks complete
 
 **Note:** Consider separating layer components, export dialogs, and project management into focused modules
 
@@ -110,6 +111,8 @@
 - [ ] Review and revise styling for consistency (margins, fonts, colors - professional appearance)
 - [ ] Add panel resize handles for customizable workspace layout
 - [ ] Performance test with large layer stacks (50+ layers stress test)
+- [ ] Test on Windows/macOS/Linux
+- [ ] Fix platform-specific issues
 - [ ] Cross-platform smoke tests (Windows, macOS, Linux) especially keyboard shortcuts
 - [ ] Improve validation error messages with specific context (show actual values that caused errors)
 

@@ -12,6 +12,7 @@
 import { useState, useEffect } from 'react';
 import { RefreshCw, Circle } from 'lucide-react';
 import { useStreamStore } from '../../stores/streamStore';
+import { useToastStore } from '../../stores/toastStore';
 import { 
   listSerialPorts, 
   startInteractive, 
@@ -33,6 +34,7 @@ export function ConnectionSection() {
     addLogEntry,
   } = useStreamStore();
 
+  const { addToast } = useToastStore();
   const [refreshing, setRefreshing] = useState(false);
 
   // Load ports on mount
@@ -50,10 +52,21 @@ export function ConnectionSection() {
       if (!selectedPort && ports.length > 0) {
         setSelectedPort(ports[0].port);
       }
+      
+      if (ports.length === 0) {
+        addToast({
+          type: 'warning',
+          message: 'No serial ports found. Check your connections.',
+        });
+      }
     } catch (error) {
       addLogEntry({
         type: 'error',
         content: `Failed to list ports: ${error}`,
+      });
+      addToast({
+        type: 'error',
+        message: `Failed to list ports: ${error}`,
       });
     } finally {
       setRefreshing(false);
@@ -66,10 +79,18 @@ export function ConnectionSection() {
         type: 'error',
         content: 'Please select a port',
       });
+      addToast({
+        type: 'error',
+        message: 'Please select a serial port before connecting',
+      });
       return;
     }
 
     setStatus('connecting');
+    addLogEntry({
+      type: 'info',
+      content: `Connecting to ${selectedPort} at ${baudRate} baud...`,
+    });
     
     try {
       // Start the interactive subprocess first
@@ -83,11 +104,21 @@ export function ConnectionSection() {
         type: 'info',
         content: `Connected to ${selectedPort} at ${baudRate} baud`,
       });
+      addToast({
+        type: 'success',
+        message: `Connected to ${selectedPort}`,
+      });
     } catch (error) {
       setStatus('disconnected');
+      const errorMsg = String(error);
       addLogEntry({
         type: 'error',
-        content: `Connection failed: ${error}`,
+        content: `Connection failed: ${errorMsg}`,
+      });
+      addToast({
+        type: 'error',
+        message: `Connection failed: ${errorMsg}`,
+        duration: 6000,
       });
     }
   };
@@ -100,10 +131,19 @@ export function ConnectionSection() {
         type: 'info',
         content: 'Disconnected',
       });
+      addToast({
+        type: 'info',
+        message: 'Disconnected from device',
+      });
     } catch (error) {
+      const errorMsg = String(error);
       addLogEntry({
         type: 'error',
-        content: `Disconnect failed: ${error}`,
+        content: `Disconnect failed: ${errorMsg}`,
+      });
+      addToast({
+        type: 'error',
+        message: `Disconnect failed: ${errorMsg}`,
       });
     }
   };

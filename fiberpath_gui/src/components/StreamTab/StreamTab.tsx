@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { StreamControls } from './StreamControls';
 import { StreamLog } from './StreamLog';
 import { useStreamStore } from '../../stores/streamStore';
+import { useToastStore } from '../../stores/toastStore';
 import { 
   onStreamStarted, 
   onStreamProgress, 
@@ -25,6 +26,7 @@ export function StreamTab() {
     setStatus, 
     addLogEntry 
   } = useStreamStore();
+  const { addToast } = useToastStore();
 
   useEffect(() => {
     // Set up event listeners for streaming events
@@ -51,6 +53,15 @@ export function StreamTab() {
             content: `[${progress.commandsSent}/${progress.commandsTotal}] ${progress.command}`,
           });
         }
+        
+        // Show milestone toasts (25%, 50%, 75%)
+        const percentage = (progress.commandsSent / progress.commandsTotal) * 100;
+        if (percentage === 25 || percentage === 50 || percentage === 75) {
+          addToast({
+            type: 'info',
+            message: `Streaming ${Math.round(percentage)}% complete`,
+          });
+        }
       }),
       
       onStreamComplete((complete) => {
@@ -60,6 +71,10 @@ export function StreamTab() {
         addLogEntry({
           type: 'info',
           content: `Streaming complete: ${complete.commandsSent}/${complete.commandsTotal} commands sent`,
+        });
+        addToast({
+          type: 'success',
+          message: `Streaming complete: ${complete.commandsSent} commands sent`,
         });
       }),
       
@@ -71,6 +86,11 @@ export function StreamTab() {
           type: 'error',
           content: `Streaming error: ${error.message}`,
         });
+        addToast({
+          type: 'error',
+          message: `Streaming error: ${error.message}`,
+          duration: 6000,
+        });
       }),
     ];
 
@@ -80,7 +100,7 @@ export function StreamTab() {
         unlisteners.forEach((unlisten) => unlisten());
       });
     };
-  }, [setIsStreaming, setProgress, setStatus, addLogEntry]);
+  }, [setIsStreaming, setProgress, setStatus, addLogEntry, addToast]);
 
   return (
     <div className="main-layout__workspace">

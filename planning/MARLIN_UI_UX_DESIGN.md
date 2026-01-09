@@ -34,6 +34,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 ```
 
 **Rationale:**
+
 - **Left panel (controls):** Fixed width for consistency, contains all interactive elements
 - **Right panel (log):** Expands to fill space, shows command/response history
 - **Vertical separation:** Clear functional distinction (input vs output)
@@ -47,6 +48,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 **Purpose:** Establish serial connection to Marlin controller
 
 **Elements:**
+
 ```
 ┌─────────────────────────────┐
 │ CONNECTION                  │
@@ -61,21 +63,26 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 ```
 
 **Components:**
+
 - **Port Selector:** Dropdown populated by `marlin_list_ports`
+
   - Shows: "COM3 - Arduino Mega (USB VID:PID=2341:0042)"
   - Format: `{port} - {description}`
   - Empty state: "No ports found"
 
-- **Refresh Button (↻):** 
+- **Refresh Button (↻):**
+
   - Icon: `RefreshCw` from lucide-react
   - Action: Re-query available ports
   - Tooltip: "Refresh ports"
 
 - **Baud Rate Selector:** Dropdown with common rates
+
   - Options: 115200, 250000, 500000
   - Default: 250000 (most common for Marlin)
 
 - **Status Indicator:**
+
   - ● Red "Disconnected" (initial)
   - ● Green "Connected to {port}" (after connect)
   - ● Orange "Connecting..." (during connection)
@@ -87,6 +94,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
   - Loading state: Shows spinner during connection
 
 **Interaction Flow:**
+
 1. User selects port from dropdown
 2. Optionally changes baud rate
 3. Clicks Connect
@@ -95,6 +103,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 6. On failure: Error toast, status remains "Disconnected"
 
 **Error Handling:**
+
 - Port not found: "Port {port} not found. Check connection."
 - Connection timeout: "Connection timed out. Check baud rate and port."
 - Permission denied: "Cannot access {port}. Check permissions."
@@ -106,6 +115,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 **Purpose:** Send individual G-code commands for testing and machine preparation
 
 **Elements:**
+
 ```
 ┌─────────────────────────────┐
 │ MANUAL CONTROL              │
@@ -122,18 +132,21 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 **Common Command Buttons:**
 
 1. **Home (G28)**
+
    - Icon: `Home` from lucide-react
    - Tooltip: "Home all axes (G28)"
    - Action: Sends "G28" command
    - Use case: Required before most operations
 
 2. **Get Position (M114)**
+
    - Icon: `MapPin` from lucide-react
    - Tooltip: "Get current position (M114)"
    - Action: Sends "M114" command
    - Use case: Verify machine state before/after operations
 
 3. **Emergency Stop (M112)**
+
    - Icon: `AlertOctagon` from lucide-react
    - Tooltip: "Emergency stop (M112)"
    - Action: Sends "M112" command immediately
@@ -147,12 +160,14 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
    - Use case: After streaming, prevent motor overheating
 
 **Button Layout:**
+
 - 2×2 grid for common commands
 - Equal button sizes (square-ish)
 - Icon + label for clarity
 - Adequate spacing (8-12px gaps)
 
 **Command Input Field:**
+
 - Single-line text input
 - Placeholder: "Enter G-code command (e.g., G0 X10 Y20)"
 - Width: Full section width minus Send button
@@ -160,17 +175,20 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 - Clears after successful send
 
 **Send Button:**
+
 - Label: "Send" or icon only (`Send` from lucide-react)
 - Loading state: Spinner replaces icon/label
 - Disabled when: Not connected OR command empty OR loading
 
 **Behavior:**
+
 - All elements disabled when not connected
 - Loading indicator on button during command execution
 - Input clears after successful send
 - Focus returns to input for rapid commands
 
 **Error Handling:**
+
 - Command fails: Error message in log (red)
 - Timeout: "Command timed out. Check connection."
 - Invalid command: Marlin error shown in log
@@ -182,6 +200,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 **Purpose:** Stream complete G-code files to Marlin with progress tracking
 
 **Elements:**
+
 ```
 ┌─────────────────────────────┐
 │ FILE STREAMING              │
@@ -200,18 +219,21 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 ```
 
 **File Selection:**
+
 - Button: "Select File" (opens Tauri file dialog)
 - Filter: `*.gcode` files only
 - Display: Filename only (not full path)
 - State: Shows "No file selected" initially
 
 **Progress Bar:**
+
 - Visual: Horizontal bar with fill
 - Label: "N / Total" format (e.g., "42 / 100")
 - Updates: Real-time on each `stream-progress` event
 - Color: Blue fill for progress
 
 **Current Command Display:**
+
 - Label: "Current:"
 - Shows: Most recent G-code command being executed
 - Updates: Real-time during streaming
@@ -223,13 +245,14 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
    - Enabled when: Connected AND file selected AND not streaming
    - Action: Sends `marlin_stream_file` command
    - Loading state: "Streaming..." with spinner
-   
 2. **Pause**
+
    - Enabled when: Streaming (not paused)
    - Action: Sends M0 via `marlin_pause`
    - Result: Status → "Paused", button becomes "Resume"
 
 3. **Resume**
+
    - Enabled when: Paused
    - Action: Sends M108 via `marlin_resume`
    - Result: Status → "Connected", streaming continues
@@ -240,11 +263,13 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
    - Confirmation: "Stop streaming? Progress will be lost."
 
 **Button Layout:**
+
 - Start Stream: Full width, primary action
 - Pause/Resume: Half width (left)
 - Stop: Half width (right), destructive color
 
 **Streaming States:**
+
 - **Idle:** Start Stream enabled, Pause/Stop disabled
 - **Streaming:** Start Stream disabled, Pause enabled, Stop enabled
 - **Paused:** Start Stream disabled, Resume enabled, Stop enabled
@@ -256,6 +281,7 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 **Purpose:** Display all command output, responses, and status messages with clear visual distinction
 
 **Elements:**
+
 ```
 ┌────────────────────────────────────┐
 │ Output Log                  [Clear]│
@@ -277,36 +303,42 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 ### Entry Types & Styling
 
 **1. Info (Connection/Status)**
+
 - Prefix: `[Info]` or `[●]`
 - Color: Gray (#64748b)
 - Font: Regular
 - Example: "Connected to COM3", "Streaming started"
 
 **2. Command (User Input)**
+
 - Prefix: `[>]` or `[Command]`
 - Color: Blue (#60a5fa)
 - Font: Bold, Monospace
 - Example: "> M114", "> G28"
 
 **3. Response (Marlin Output)**
+
 - Prefix: `[<]` or `[Response]`
 - Color: Green (#4ade80)
 - Font: Regular, Monospace
 - Example: "< X:0.00 Y:0.00 Z:0.00", "< ok"
 
 **4. Stream (File Commands)**
+
 - Prefix: `[Stream]` or none
 - Color: Light Gray (#94a3b8)
 - Font: Regular, Monospace, Smaller
 - Example: "G1 X10 Y20 F3000", "ok"
 
 **5. Progress (Stream Status)**
+
 - Prefix: `[Progress]` or `[→]`
 - Color: Cyan (#22d3ee)
 - Font: Regular
 - Example: "Progress: 42 / 100 (42%)"
 
 **6. Error (Failures)**
+
 - Prefix: `[Error]` or `[!]`
 - Color: Red (#f87171)
 - Font: Bold
@@ -315,23 +347,27 @@ The Stream tab provides a **complete, minimal G-code controller** for Marlin-bas
 ### Log Behavior
 
 **Auto-scroll:**
+
 - Automatically scrolls to bottom on new entries
 - User can scroll up to read history
 - If user scrolls up, auto-scroll pauses
 - "Scroll to bottom" button appears when not at bottom
 
 **Clear Button:**
+
 - Location: Top-right of log panel
 - Action: Clears all log entries
 - Confirmation: None (entries are temporary)
 - Icon: `Trash2` from lucide-react
 
 **Performance:**
+
 - Virtualized rendering for large logs (1000+ entries)
 - Entry limit: 5000 entries, oldest removed first
 - Entries stored in Zustand store
 
 **Copy/Export (v5):**
+
 - v4: Manual selection + Ctrl+C
 - v5: "Copy All" and "Export to File" buttons
 
@@ -349,7 +385,7 @@ interface StreamStore {
   port: string | null;
   baudRate: number;
   ports: SerialPort[];
-  
+
   // Streaming
   streaming: boolean;
   paused: boolean;
@@ -359,13 +395,13 @@ interface StreamStore {
     total: number;
   };
   currentCommand: string | null;
-  
+
   // Manual Control
   commandLoading: boolean;
-  
+
   // Log
   log: LogEntry[];
-  
+
   // Actions
   setConnected: (connected: boolean) => void;
   setPort: (port: string) => void;
@@ -382,7 +418,7 @@ interface StreamStore {
 
 interface LogEntry {
   id: string;
-  type: 'info' | 'command' | 'response' | 'stream' | 'progress' | 'error';
+  type: "info" | "command" | "response" | "stream" | "progress" | "error";
   content: string;
   timestamp: number;
 }
@@ -482,14 +518,17 @@ interface SerialPort {
 ### Window Sizes
 
 **Minimum Width:** 900px
+
 - Left panel: 350px (compressed)
 - Right panel: 550px (minimum readable)
 
 **Typical Width:** 1200px+
+
 - Left panel: 400px
 - Right panel: 800px
 
 **Maximum Width:** Unlimited
+
 - Left panel: 400px (fixed)
 - Right panel: Expands to fill
 
@@ -540,6 +579,7 @@ interface SerialPort {
 ### Color Palette
 
 **Status Indicators:**
+
 - Green (#22c55e): Connected, Success
 - Red (#ef4444): Disconnected, Error, E-Stop
 - Orange (#f97316): Connecting, Warning
@@ -547,6 +587,7 @@ interface SerialPort {
 - Gray (#64748b): Neutral, Info
 
 **Log Entry Types:**
+
 - Command: Blue (#60a5fa)
 - Response: Green (#4ade80)
 - Stream: Light Gray (#94a3b8)
@@ -555,6 +596,7 @@ interface SerialPort {
 - Info: Gray (#64748b)
 
 **Interactive Elements:**
+
 - Primary button: Blue background (#3b82f6)
 - Destructive button: Red background (#ef4444)
 - E-Stop button: Orange/Red (#f97316)
@@ -563,10 +605,12 @@ interface SerialPort {
 ### Typography
 
 **Fonts:**
+
 - UI Text: System font stack (default)
 - Monospace: 'Consolas', 'Monaco', 'Courier New', monospace
 
 **Sizes:**
+
 - Section headers: 14px, uppercase, bold
 - Button labels: 13px
 - Input fields: 14px
@@ -575,11 +619,13 @@ interface SerialPort {
 ### Spacing
 
 **Sections:**
+
 - Between sections: 20px vertical gap
 - Section padding: 16px
 - Border: 1px solid #e2e8f0
 
 **Controls:**
+
 - Button gaps: 8px
 - Input padding: 8px 12px
 - Button padding: 8px 16px
@@ -593,11 +639,13 @@ interface SerialPort {
 **Challenge:** Large files generate thousands of log entries
 
 **Solution:**
+
 - Virtualized scrolling (react-window)
 - Max 5000 entries in memory
 - Compact stream entries (smaller font, less detail)
 
 **Metrics:**
+
 - 10,000 command file: ~10,000 log entries
 - Target: 60 FPS during streaming
 - Entry rendering: <1ms per entry
@@ -607,6 +655,7 @@ interface SerialPort {
 **Challenge:** High-frequency updates during streaming
 
 **Solution:**
+
 - Throttle UI updates to 60 FPS (16ms intervals)
 - Batch log entries (add 10 at once vs 10 individual adds)
 - Update progress bar on requestAnimationFrame
@@ -618,28 +667,34 @@ interface SerialPort {
 ### Connection Errors
 
 **Port not found:**
+
 - Toast: "Port {port} not found. Check connection and try again."
 - Action: Disconnect, show port selector
 
 **Connection timeout:**
+
 - Toast: "Connection timed out. Verify baud rate is correct."
 - Action: Disconnect, allow retry
 
 **Permission denied:**
+
 - Toast: "Cannot access {port}. Close other apps using this port."
 - Action: Disconnect, show troubleshooting link
 
 ### Streaming Errors
 
 **File not found:**
+
 - Toast: "File not found. Please select a valid G-code file."
 - Action: Clear file selection
 
 **Connection lost during stream:**
+
 - Toast: "Connection lost. Streaming stopped at command {N}."
 - Action: Disconnect, log error, stop streaming
 
 **Marlin error response:**
+
 - Log: "[Error] {marlin_error_message}"
 - Action: Continue streaming OR stop if critical
 
@@ -672,6 +727,7 @@ interface SerialPort {
 **Solution:** Separate sections for connection → testing → streaming
 
 **Benefits:**
+
 - Clear workflow progression (top to bottom)
 - Each section independent and self-contained
 - Visual hierarchy matches mental model
@@ -683,6 +739,7 @@ interface SerialPort {
 **Solution:** One-click buttons for most common commands
 
 **Benefits:**
+
 - Faster operation (click vs type + enter)
 - Prevents typos (G28 vs G23, M114 vs M144)
 - Onboards new users (buttons show what's possible)
@@ -694,6 +751,7 @@ interface SerialPort {
 **Solution:** Dedicated scrollable log panel
 
 **Benefits:**
+
 - Log can grow without affecting controls
 - Users can scroll history while controls remain visible
 - Clear input/output separation
@@ -703,6 +761,7 @@ interface SerialPort {
 **v4 Decision:** Visualization adds complexity without immediate value
 
 **Rationale:**
+
 - Users need working controller first
 - 3D viz is nice-to-have, not essential
 - Can add in v5 after gathering user feedback
