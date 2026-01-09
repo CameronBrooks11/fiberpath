@@ -3,6 +3,7 @@
  */
 
 import { create } from 'zustand';
+import { MAX_LOG_ENTRIES, DEFAULT_BAUD_RATE } from '../lib/constants';
 import type { SerialPort } from '../lib/tauri-types';
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'paused';
@@ -59,7 +60,7 @@ export const useStreamStore = create<StreamState>((set) => ({
   // Initial state
   status: 'disconnected',
   selectedPort: null,
-  baudRate: 250000,
+  baudRate: DEFAULT_BAUD_RATE,
   availablePorts: [],
   isStreaming: false,
   selectedFile: null,
@@ -94,7 +95,7 @@ export const useStreamStore = create<StreamState>((set) => ({
           id: `log-${logIdCounter++}`,
           timestamp: Date.now(),
         },
-      ].slice(-5000), // Keep max 5000 entries
+      ].slice(-MAX_LOG_ENTRIES), // Keep max entries from constants
     })),
   
   clearLog: () => set({ logEntries: [] }),

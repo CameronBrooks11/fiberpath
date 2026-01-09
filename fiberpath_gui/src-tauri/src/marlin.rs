@@ -17,9 +17,6 @@ pub enum MarlinError {
     ReadFailed(String),
     #[error("Invalid JSON response: {0}")]
     InvalidJson(String),
-    #[error("Command error: {0}")]
-    #[allow(dead_code)]
-    CommandError(String),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -190,13 +187,6 @@ impl MarlinState {
 
         subprocess.read_response()
     }
-
-    #[allow(dead_code)]
-    pub fn stop_subprocess(&mut self) {
-        if let Some(subprocess) = self.subprocess.take() {
-            subprocess.cleanup();
-        }
-    }
 }
 
 // Tauri commands
@@ -223,7 +213,7 @@ pub async fn marlin_list_ports() -> Result<Vec<SerialPort>, String> {
     match response {
         MarlinResponse::Ok { ports: Some(ports), .. } => Ok(ports),
         MarlinResponse::Error { message, .. } => Err(message),
-        _ => Err("Unexpected response from list_ports".to_string()),
+        other => Err(format!("Unexpected response from list_ports: {:?}", other)),
     }
 }
 
@@ -261,7 +251,7 @@ pub async fn marlin_connect(
     match response {
         MarlinResponse::Connected { .. } => Ok(()),
         MarlinResponse::Error { message, .. } => Err(message),
-        _ => Err("Unexpected response from connect".to_string()),
+        other => Err(format!("Unexpected response from connect: {:?}", other)),
     }
 }
 
@@ -284,7 +274,7 @@ pub async fn marlin_disconnect(
     match response {
         MarlinResponse::Disconnected { .. } => Ok(()),
         MarlinResponse::Error { message, .. } => Err(message),
-        _ => Err("Unexpected response from disconnect".to_string()),
+        other => Err(format!("Unexpected response from disconnect: {:?}", other)),
     }
 }
 
@@ -312,7 +302,7 @@ pub async fn marlin_send_command(
             ..
         } => Ok(responses),
         MarlinResponse::Error { message, .. } => Err(message),
-        _ => Err("Unexpected response from send_command".to_string()),
+        other => Err(format!("Unexpected response from send_command: {:?}", other)),
     }
 }
 
@@ -404,7 +394,7 @@ pub async fn marlin_pause(
     match response {
         MarlinResponse::Paused => Ok(()),
         MarlinResponse::Error { message, .. } => Err(message),
-        _ => Err("Unexpected response from pause".to_string()),
+        other => Err(format!("Unexpected response from pause: {:?}", other)),
     }
 }
 
@@ -427,6 +417,6 @@ pub async fn marlin_resume(
     match response {
         MarlinResponse::Resumed => Ok(()),
         MarlinResponse::Error { message, .. } => Err(message),
-        _ => Err("Unexpected response from resume".to_string()),
+        other => Err(format!("Unexpected response from resume: {:?}", other)),
     }
 }

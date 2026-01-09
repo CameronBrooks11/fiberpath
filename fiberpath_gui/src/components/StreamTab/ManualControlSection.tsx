@@ -13,6 +13,8 @@ import { Home, MapPin, AlertOctagon, Power, Send } from 'lucide-react';
 import { useStreamStore } from '../../stores/streamStore';
 import { useToastStore } from '../../stores/toastStore';
 import { sendCommand } from '../../lib/marlin-api';
+import { TOAST_DURATION_ERROR_MS } from '../../lib/constants';
+import { toastMessages } from '../../lib/toastMessages';
 import './ManualControlSection.css';
 
 export function ManualControlSection() {
@@ -56,13 +58,13 @@ export function ManualControlSection() {
       if (gcode === 'G28') {
         addToast({
           type: 'success',
-          message: 'Homing complete',
+          message: toastMessages.command.homingComplete(),
         });
       } else if (gcode === 'M112') {
         addToast({
           type: 'warning',
-          message: 'Emergency stop activated!',
-          duration: 6000,
+          message: toastMessages.command.emergencyStop(),
+          duration: TOAST_DURATION_ERROR_MS,
         });
       }
     } catch (error) {
@@ -73,7 +75,7 @@ export function ManualControlSection() {
       });
       addToast({
         type: 'error',
-        message: `Command failed: ${errorMsg}`,
+        message: toastMessages.command.failed(errorMsg),
       });
     } finally {
       setCommandLoading(false);

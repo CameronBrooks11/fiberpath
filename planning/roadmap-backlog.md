@@ -203,6 +203,69 @@
 
 ---
 
+## Category 6: Technical Debt & Refactoring
+
+### Rust Async Timeout for Subprocess Operations
+
+**Priority:** Low  
+**Effort:** High (3-4 hours)  
+**Deferred From:** v4.0 Phase 6
+
+**Description:** Add timeout protection to `MarlinSubprocess.read_response()` in `src-tauri/src/marlin.rs`
+
+**Problem:**
+
+Currently uses synchronous `BufReader::read_line()` which can block indefinitely if Python subprocess hangs:
+
+```rust
+pub fn read_response(&self) -> Result<MarlinResponse, MarlinError> {
+    let mut stdout_reader = self.stdout_reader.lock()?;
+    let mut line = String::new();
+    stdout_reader.read_line(&mut line)?; // ⚠️ Can block indefinitely
+    // ...
+}
+```
+
+**Why Deferred:**
+
+- Python subprocess already has timeout protection (non-critical)
+- Requires tokio async/await refactor (complex, 3-4 hours)
+- All Tauri commands would need to become async
+- Current implementation works in practice
+- Better as separate focused PR with comprehensive testing
+
+**Proposed Solution:**
+
+```rust
+use tokio::time::{timeout, Duration};
+use tokio::io::AsyncBufReadExt;
+
+pub async fn read_response(&self) -> Result<MarlinResponse, MarlinError> {
+    let mut stdout_reader = self.stdout_reader.lock().await?;
+    let mut line = String::new();
+    
+    timeout(Duration::from_secs(5), stdout_reader.read_line(&mut line))
+        .await
+        .map_err(|_| MarlinError::Timeout)?
+        .map_err(|e| MarlinError::ReadFailed(e.to_string()))?;
+    // Parse response...
+}
+```
+
+**Implementation Checklist (When Prioritized):**
+
+- [ ] Add `tokio` with `time` and `io-util` features to Cargo.toml
+- [ ] Convert `MarlinSubprocess::read_response()` to async
+- [ ] Convert all Tauri commands to async handlers
+- [ ] Add timeout constants to configuration
+- [ ] Update error types to include `Timeout` variant
+- [ ] Add tests for timeout scenarios
+- [ ] Update documentation
+
+**Best For:** v4.1 or v5.0 as polish improvement
+
+---
+
 ## Summary
 
 **Total Backlog Items:** ~70+ tasks across 8 categories

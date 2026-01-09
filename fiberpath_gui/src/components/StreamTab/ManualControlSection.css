@@ -2,9 +2,9 @@
 
 .manual-control-section {
   padding: 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #0c0c0e;
+  background: var(--color-console-bg-dark);
 }
 
 .common-commands {
@@ -22,18 +22,18 @@
   padding: 10px 12px;
   font-size: 13px;
   font-weight: 600;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
-  background: #18181b;
-  color: var(--text-primary);
+  background: var(--color-console-bg-mid);
+  color: var(--color-text);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .command-button:hover:not(:disabled) {
-  background: var(--bg-hover);
-  border-color: #3b82f6;
-  color: #3b82f6;
+  background: var(--color-bg-hover);
+  border-color: var(--color-blue-500);
+  color: var(--color-blue-500);
 }
 
 .command-button:disabled {
@@ -42,14 +42,14 @@
 }
 
 .command-button.emergency-stop {
-  color: #f97316;
-  border-color: #f97316;
+  color: var(--color-warning-orange);
+  border-color: var(--color-warning-orange);
 }
 
 .command-button.emergency-stop:hover:not(:disabled) {
-  background: #fef2f2;
-  border-color: #ef4444;
-  color: #ef4444;
+  background: var(--color-error-red-bg);
+  border-color: var(--color-error-red);
+  color: var(--color-error-red);
 }
 
 .manual-input-group {
@@ -74,15 +74,15 @@
   padding: 8px 12px;
   font-size: 13px;
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
-  background: #18181b;
-  color: var(--text-primary);
+  background: var(--color-console-bg-mid);
+  color: var(--color-text);
 }
 
 .command-input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--color-blue-500);
 }
 
 .command-input:disabled {
@@ -91,15 +91,15 @@
 }
 
 .command-input::placeholder {
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   opacity: 0.6;
 }
 
 .send-button {
   padding: 8px 12px;
-  border: 1px solid #3b82f6;
+  border: 1px solid var(--color-blue-500);
   border-radius: 4px;
-  background: #3b82f6;
+  background: var(--color-blue-500);
   color: white;
   cursor: pointer;
   display: flex;
@@ -109,8 +109,8 @@
 }
 
 .send-button:hover:not(:disabled) {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--color-blue-600);
+  border-color: var(--color-blue-600);
 }
 
 .send-button:disabled {

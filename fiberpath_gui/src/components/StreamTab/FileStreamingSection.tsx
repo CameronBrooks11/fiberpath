@@ -15,6 +15,8 @@ import { open } from '@tauri-apps/plugin-dialog';
 import { useStreamStore } from '../../stores/streamStore';
 import { useToastStore } from '../../stores/toastStore';
 import { streamFile, pauseStream, resumeStream } from '../../lib/marlin-api';
+import { TOAST_DURATION_ERROR_MS } from '../../lib/constants';
+import { toastMessages } from '../../lib/toastMessages';
 import './FileStreamingSection.css';
 
 export function FileStreamingSection() {
@@ -57,7 +59,7 @@ export function FileStreamingSection() {
         });
         addToast({
           type: 'info',
-          message: `Selected: ${filename}`,
+          message: toastMessages.file.selected(filename),
         });
       }
     } catch (error) {
@@ -68,8 +70,8 @@ export function FileStreamingSection() {
       });
       addToast({
         type: 'error',
-        message: `File selection failed: ${errorMsg}`,
-        duration: 6000,
+        message: toastMessages.file.selectionFailed(errorMsg),
+        duration: TOAST_DURATION_ERROR_MS,
       });
     }
   };
@@ -83,7 +85,7 @@ export function FileStreamingSection() {
       await streamFile(filePath);
       addToast({
         type: 'info',
-        message: 'Streaming started',
+        message: toastMessages.streaming.started(),
       });
     } catch (error) {
       const errorMsg = String(error);
@@ -93,8 +95,8 @@ export function FileStreamingSection() {
       });
       addToast({
         type: 'error',
-        message: `Failed to start streaming: ${errorMsg}`,
-        duration: 6000,
+        message: toastMessages.streaming.failed(errorMsg),
+        duration: TOAST_DURATION_ERROR_MS,
       });
     }
   };
@@ -109,7 +111,7 @@ export function FileStreamingSection() {
       });
       addToast({
         type: 'warning',
-        message: 'Streaming paused',
+        message: toastMessages.streaming.paused(),
       });
     } catch (error) {
       const errorMsg = String(error);
@@ -119,7 +121,7 @@ export function FileStreamingSection() {
       });
       addToast({
         type: 'error',
-        message: `Pause failed: ${errorMsg}`,
+        message: toastMessages.streaming.pauseFailed(errorMsg),
       });
     }
   };
@@ -134,7 +136,7 @@ export function FileStreamingSection() {
       });
       addToast({
         type: 'success',
-        message: 'Streaming resumed',
+        message: toastMessages.streaming.resumed(),
       });
     } catch (error) {
       const errorMsg = String(error);
@@ -144,20 +146,19 @@ export function FileStreamingSection() {
       });
       addToast({
         type: 'error',
-        message: `Resume failed: ${errorMsg}`,
+        message: toastMessages.streaming.resumeFailed(errorMsg),
       });
     }
   };
 
   const handleStop = () => {
-    // TODO: Implement stop functionality in Phase 5
     addLogEntry({
       type: 'error',
       content: 'Stop not yet implemented',
     });
     addToast({
       type: 'warning',
-      message: 'Stop functionality coming in Phase 5',
+      message: toastMessages.streaming.stopNotImplemented(),
     });
   };
 

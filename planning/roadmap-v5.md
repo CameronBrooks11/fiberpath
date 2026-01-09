@@ -36,7 +36,7 @@
 
 ---
 
-## Phase 2: Documentation
+## Phase 2: Documentation & Project History
 
 - [ ] Add JSDoc comments to all exported functions and components
 - [ ] Document Zustand store architecture and state flow patterns
@@ -44,11 +44,22 @@
 - [ ] Document keyboard shortcut system implementation details
 - [ ] Add inline comments for complex algorithms (validation, layer conversion)
 
-**Progress:** 0/5 tasks complete
+**Progress:** 0/6 tasks complete
 
 ---
 
-## Phase 2: Code Organization
+## Phase 3: Retroactive changelog
+
+- [ ] **Create CHANGELOG.md retroactively** based on all roadmaps (v1-v4)
+  - Document major features from v1 (Core Planning & G-code Generation)
+  - Document v2 (CLI Commands, Simulation, API)
+  - Document v3 (GUI with Tauri/React, Main Tab Features)
+  - Document v4 (Tabbed Interface, Marlin Streaming)
+  - Use semantic versioning convention (## [X.X.X] - YYYY-MM-DD)
+
+---
+
+## Phase 4: Code Organization
 
 - [ ] Start this phase by reviewing the current state of the entire GUI directory and modify/add to the following tasks below as needed based on that review.
 - [ ] Refactor App.tsx into smaller focused components (currently 305 lines)
@@ -62,7 +73,7 @@
 
 ---
 
-## Phase 3: Performance Optimization
+## Phase 5: Performance Optimization
 
 - [ ] Add React.memo to pure components (LayerRow, form components)
 - [ ] Virtualize LayerStack for large layer counts using react-window
@@ -75,7 +86,7 @@
 
 ---
 
-## Phase 4: Developer Experience
+## Phase 6: Developer Experience
 
 - [ ] Add ESLint with recommended React and TypeScript rules
 - [ ] Add Prettier for automatic code formatting
@@ -89,7 +100,7 @@
 
 ---
 
-## Phase 5: Enhanced Validation
+## Phase 7: Enhanced Validation
 
 - [ ] Review current Tools > Validate Wind Definition implementation and determine how it can be improved to be actually useful to user
 - [ ] Document validation strategy (client-side vs server-side ownership)
@@ -105,7 +116,7 @@
 
 ---
 
-## Phase 6: UX & Polish
+## Phase 8: UX & Polish
 
 - [ ] Light / dark mode toggle (implement CSS variables and theme switcher)
 - [ ] Review and revise styling for consistency (margins, fonts, colors - professional appearance)
@@ -120,7 +131,7 @@
 
 ---
 
-## Phase 7: Accessibility (a11y) Compliance
+## Phase 9: Accessibility (a11y) Compliance
 
 - [ ] Add ARIA labels to all buttons, inputs, and interactive elements
 - [ ] Add ARIA live regions for status updates and notifications
@@ -138,7 +149,7 @@
 
 ---
 
-## Phase 9: Advanced Stream Visualization (Optional)
+## Phase 10: Advanced Stream Visualization (Optional)
 
 - [ ] Evaluate if 3D streaming visualization adds real value (user feedback)
 - [ ] If valuable: Add three.js and @react-three/fiber dependencies
@@ -160,7 +171,7 @@
 
 ---
 
-## Phase 10: Testing & Release Process
+## Phase 11: Testing & Release Process
 
 - [ ] Create download links on docs website from GitHub releases
 - [ ] Write example-driven tutorials (docs/tutorials/\*.md) showing complete workflows
@@ -181,7 +192,7 @@
 **Phase Summary:**
 
 - Phase 1: Streaming Feature Completion (20 tasks)
-- Phase 2: Documentation (5 tasks)
+- Phase 2: Documentation & Project History (6 tasks)
 - Phase 3: Code Organization (4 tasks)
 - Phase 4: Performance Optimization (5 tasks)
 - Phase 5: Testing & Release (8 tasks)

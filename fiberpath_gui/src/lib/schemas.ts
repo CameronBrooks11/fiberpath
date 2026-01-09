@@ -267,19 +267,19 @@ export function parseError(error: unknown): string {
   if (error instanceof FiberPathError) {
     return error.message;
   }
-  
+
   if (error instanceof Error) {
     return error.message;
   }
-  
+
   if (typeof error === 'string') {
     return error;
   }
-  
+
   if (error && typeof error === 'object' && 'message' in error) {
     return String(error.message);
   }
-  
+
   return 'An unknown error occurred';
 }
 
@@ -290,21 +290,21 @@ export function isRetryableError(error: unknown): boolean {
   if (error instanceof ValidationError) {
     return false; // Validation errors won't fix themselves
   }
-  
+
   if (error instanceof FileError) {
     // Retry file operations (might be temporary lock)
     return true;
   }
-  
+
   if (error instanceof ConnectionError) {
     return true; // Network issues might resolve
   }
-  
+
   if (error instanceof CommandError) {
     // Check if it's a validation vs IO error
     const message = error.message.toLowerCase();
     return !message.includes('validation') && !message.includes('invalid');
   }
-  
+
   return true; // Default: retry unknown errors
 }

@@ -76,7 +76,6 @@ export function useCliHealth(options: UseCliHealthOptions = {}) {
       const validated = CliHealthResponseSchema.safeParse(response);
       
       if (!validated.success) {
-        console.error('CLI health check schema validation failed:', validated.error);
         throw new Error(`Invalid response schema: ${validated.error.message}`);
       }
 
@@ -89,8 +88,6 @@ export function useCliHealth(options: UseCliHealthOptions = {}) {
         lastChecked: new Date(),
       });
     } catch (error) {
-      console.error('CLI health check failed:', error);
-      
       if (!isMountedRef.current) return;
 
       let errorMessage = 'Unknown error occurred';

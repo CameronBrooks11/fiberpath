@@ -19,6 +19,8 @@ import {
   connectMarlin, 
   disconnectMarlin 
 } from '../../lib/marlin-api';
+import { TOAST_DURATION_ERROR_MS } from '../../lib/constants';
+import { toastMessages } from '../../lib/toastMessages';
 import './ConnectionSection.css';
 
 export function ConnectionSection() {
@@ -56,7 +58,7 @@ export function ConnectionSection() {
       if (ports.length === 0) {
         addToast({
           type: 'warning',
-          message: 'No serial ports found. Check your connections.',
+          message: toastMessages.connection.noPortsFound(),
         });
       }
     } catch (error) {
@@ -66,7 +68,7 @@ export function ConnectionSection() {
       });
       addToast({
         type: 'error',
-        message: `Failed to list ports: ${error}`,
+        message: toastMessages.connection.listPortsFailed(String(error)),
       });
     } finally {
       setRefreshing(false);
@@ -81,7 +83,7 @@ export function ConnectionSection() {
       });
       addToast({
         type: 'error',
-        message: 'Please select a serial port before connecting',
+        message: toastMessages.connection.noPortSelected(),
       });
       return;
     }
@@ -106,7 +108,7 @@ export function ConnectionSection() {
       });
       addToast({
         type: 'success',
-        message: `Connected to ${selectedPort}`,
+        message: toastMessages.connection.success(selectedPort),
       });
     } catch (error) {
       setStatus('disconnected');
@@ -117,8 +119,8 @@ export function ConnectionSection() {
       });
       addToast({
         type: 'error',
-        message: `Connection failed: ${errorMsg}`,
-        duration: 6000,
+        message: toastMessages.connection.failed(errorMsg),
+        duration: TOAST_DURATION_ERROR_MS,
       });
     }
   };
@@ -133,7 +135,7 @@ export function ConnectionSection() {
       });
       addToast({
         type: 'info',
-        message: 'Disconnected from device',
+        message: toastMessages.connection.disconnected(),
       });
     } catch (error) {
       const errorMsg = String(error);

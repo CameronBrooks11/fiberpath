@@ -2,9 +2,9 @@
 
 .connection-section {
   padding: 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #0c0c0e;
+  background: var(--color-console-bg-dark);
 }
 
 .connection-row {
@@ -32,10 +32,10 @@
   flex: 1;
   padding: 8px 12px;
   font-size: 13px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
-  background: #18181b;
-  color: var(--text-primary);
+  background: var(--color-console-bg-mid);
+  color: var(--color-text);
   cursor: pointer;
 }
 
@@ -47,10 +47,10 @@
 
 .refresh-button {
   padding: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
-  background: #18181b;
-  color: var(--text-primary);
+  background: var(--color-console-bg-mid);
+  color: var(--color-text);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -59,7 +59,7 @@
 }
 
 .refresh-button:hover:not(:disabled) {
-  background: var(--bg-hover);
+  background: var(--color-bg-hover);
 }
 
 .refresh-button:disabled {
@@ -86,14 +86,14 @@
   gap: 8px;
   margin: 16px 0;
   padding: 8px 12px;
-  background: #18181b;
+  background: var(--color-console-bg-mid);
   border-radius: 4px;
 }
 
 .status-text {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text);
 }
 
 .connect-button,
@@ -109,12 +109,12 @@
 }
 
 .connect-button {
-  background: #3b82f6;
+  background: var(--color-blue-500);
   color: white;
 }
 
 .connect-button:hover:not(:disabled) {
-  background: #2563eb;
+  background: var(--color-blue-600);
 }
 
 .connect-button:disabled {
@@ -123,12 +123,12 @@
 }
 
 .disconnect-button {
-  background: #64748b;
+  background: var(--color-slate-500);
   color: white;
 }
 
 .disconnect-button:hover:not(:disabled) {
-  background: #475569;
+  background: var(--color-slate-600);
 }
 
 .disconnect-button:disabled {

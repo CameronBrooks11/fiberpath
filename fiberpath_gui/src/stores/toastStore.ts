@@ -3,6 +3,7 @@
  */
 
 import { create } from 'zustand';
+import { TOAST_DURATION_DEFAULT_MS } from '../lib/constants';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -32,8 +33,8 @@ export const useToastStore = create<ToastState>((set) => ({
       toasts: [...state.toasts, newToast],
     }));
     
-    // Auto-remove after duration (default 4 seconds)
-    const duration = toast.duration ?? 4000;
+    // Auto-remove after duration
+    const duration = toast.duration ?? TOAST_DURATION_DEFAULT_MS;
     setTimeout(() => {
       set((state) => ({
         toasts: state.toasts.filter((t) => t.id !== id),

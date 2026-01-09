@@ -31,7 +31,8 @@ export function convertLayerToWindSchema(layer: Layer): HoopLayer | HelicalLayer
     };
   }
   
-  throw new Error(`Unknown layer type: ${(layer as any).type}`);
+  // Should never reach here - TypeScript ensures all layer types are handled
+  throw new Error(`Unknown layer type: ${layer.type}`);
 }
 
 /**
@@ -101,7 +102,8 @@ export function convertWindSchemaToLayer(schemaLayer: HoopLayer | HelicalLayer |
     };
   }
   
-  throw new Error(`Unknown wind type: ${(schemaLayer as any).windType}`);
+  // Should never reach here - TypeScript ensures all windTypes are handled
+  throw new Error(`Unknown wind type: ${schemaLayer.windType}`);
 }
 
 /**
