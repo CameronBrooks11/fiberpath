@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { Trash2, ArrowDown, ArrowDownToLine } from 'lucide-react';
+import { Trash2, ScrollText } from 'lucide-react';
 import { useStreamStore } from '../../stores/streamStore';
 import type { LogEntry } from '../../stores/streamStore';
 import './StreamLog.css';
@@ -56,9 +56,9 @@ export function StreamLog() {
           <button
             onClick={toggleAutoScroll}
             className={`auto-scroll-button ${autoScroll ? 'active' : ''}`}
-            title={autoScroll ? 'Auto-scroll enabled' : 'Auto-scroll disabled'}
+            title={autoScroll ? 'Auto-scroll enabled (click to disable)' : 'Auto-scroll disabled (click to enable)'}
           >
-            {autoScroll ? <ArrowDownToLine size={16} /> : <ArrowDown size={16} />}
+            <ScrollText size={16} />
           </button>
           <button
             onClick={clearLog}
