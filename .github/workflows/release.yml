@@ -125,8 +125,45 @@ jobs:
   publish-backend:
     name: Publish Backend to PyPI
     needs: [validate, create-release]
-    uses: ./.github/workflows/backend-publish.yml
-    secrets: inherit
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/fiberpath/
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python
+        with:
+          dependencies: ".[dev]"
+
+      - name: Verify version matches tag
+        run: |
+          TAG_VERSION="${{ inputs.version }}"
+          PACKAGE_VERSION=$(uv run python -c "import fiberpath; print(fiberpath.__version__)")
+          if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+            echo "Error: Tag version ($TAG_VERSION) doesn't match package version ($PACKAGE_VERSION)"
+            exit 1
+          fi
+          echo "Version check passed: $PACKAGE_VERSION"
+
+      - name: Build distribution packages
+        run: uv build
+
+      - name: Verify build artifacts
+        run: |
+          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
+            echo "Error: No distribution files in dist/"
+            exit 1
+          fi
+          echo "Built packages:"
+          ls -lh dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          print-hash: true
 
   build-gui-installers:
     name: Build GUI Installers
