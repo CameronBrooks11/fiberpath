@@ -8,6 +8,7 @@ Protocol:
     Output (stdout): JSON responses, one per line
 
 Actions:
+    - list_ports: List available serial ports
     - connect: Establish connection to Marlin
     - disconnect: Close connection
     - send: Send single G-code command
@@ -16,6 +17,7 @@ Actions:
     - resume: Resume streaming
 
 Example:
+    {"action": "list_ports"}
     {"action": "connect", "port": "COM3", "baudRate": 250000}
     {"action": "send", "gcode": "G28"}
     {"action": "stream", "file": "path/to/file.gcode"}
@@ -27,6 +29,8 @@ import json
 import sys
 from pathlib import Path
 from typing import Any
+
+import serial.tools.list_ports
 
 from fiberpath.execution import MarlinStreamer, StreamError, StreamProgress
 
@@ -66,7 +70,26 @@ def interactive_mode() -> None:
                 command = json.loads(line)
                 action = command.get("action")
 
-                if action == "connect":
+                if action == "list_ports":
+                    # List available serial ports
+                    try:
+                        ports = serial.tools.list_ports.comports()
+                        ports_data = [
+                            {
+                                "port": p.device,
+                                "description": p.description,
+                                "hwid": p.hwid,
+                            }
+                            for p in ports
+                        ]
+                        send_response({
+                            "status": "ok",
+                            "ports": ports_data,
+                        })
+                    except Exception as e:
+                        send_error(f"Failed to list ports: {e}", "PORT_DISCOVERY_FAILED")
+
+                elif action == "connect":
                     # Connect to Marlin
                     port = command.get("port")
                     baud_rate = command.get("baudRate", 250_000)

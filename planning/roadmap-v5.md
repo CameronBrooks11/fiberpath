@@ -19,20 +19,20 @@
 - [ ] Add Save Settings and Reset to Defaults buttons
 - [ ] Test settings persistence across app restarts
 - [ ] Add timestamps to log messages
-- [ ] Add log filtering (show all, errors only, commands only)
+- [ ] Add log filtering (show all, errors only, commands only, responses only)
 - [ ] Add Export Log button (save to .txt file)
 - [ ] Add Copy Log button (clipboard API)
-- [ ] Create CommandInput component for manual G-code commands
-- [ ] Add command history (up/down arrows to recall)
-- [ ] Add common command buttons (Home, Get Position, Emergency Stop)
-- [ ] Create command response parser (extract coordinates from M114)
-- [ ] Display parsed position data in UI
+- [ ] Add command history to manual control (up/down arrows, last 50 commands)
+- [ ] Store command history in streamStore, persist across sessions
+- [ ] Create command response parser (extract X/Y/Z coordinates from M114)
+- [ ] Display parsed position data in dedicated UI element
 - [ ] Add StreamStatistics component (ETA, elapsed time, progress %)
+- [ ] Calculate ETA based on average command time
 - [ ] Update statistics in real-time during streaming
 
 **Progress:** 0/20 tasks complete
 
-**Note:** Features moved from v4 to ship core streaming fast. Add these based on initial user feedback.
+**Note:** Quality-of-life enhancements for streaming. v4 already has essential manual control (command input + common buttons). These add convenience (command history, parsed responses, statistics).
 
 ---
 

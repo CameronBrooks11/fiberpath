@@ -1,9 +1,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod marlin;
+
 use base64::{engine::general_purpose::STANDARD as Base64, Engine};
+use marlin::MarlinState;
 use serde_json::Value;
 use std::fs;
 use std::process::Output;
+use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 use thiserror::Error;
 
@@ -284,9 +288,12 @@ async fn check_cli_health() -> Result<CliHealthResponse, String> {
 }
 
 fn main() {
+    let marlin_state = Arc::new(Mutex::new(MarlinState::new()));
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
+        .manage(marlin_state)
         .invoke_handler(tauri::generate_handler![
             plan_wind,
             simulate_program,
@@ -296,7 +303,15 @@ fn main() {
             save_wind_file,
             load_wind_file,
             validate_wind_definition,
-            check_cli_health
+            check_cli_health,
+            marlin::marlin_list_ports,
+            marlin::marlin_start_interactive,
+            marlin::marlin_connect,
+            marlin::marlin_disconnect,
+            marlin::marlin_send_command,
+            marlin::marlin_stream_file,
+            marlin::marlin_pause,
+            marlin::marlin_resume,
         ])
         .run(tauri::generate_context!())
         .expect("error while running FiberPath GUI");

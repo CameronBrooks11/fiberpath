@@ -1,0 +1,128 @@
+/* ManualControlSection.css */
+
+.manual-control-section {
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #0c0c0e;
+}
+
+.common-commands {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.command-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: #18181b;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.command-button:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.command-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.command-button.emergency-stop {
+  color: #f97316;
+  border-color: #f97316;
+}
+
+.command-button.emergency-stop:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.manual-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.manual-input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.input-row {
+  display: flex;
+  gap: 4px;
+}
+
+.command-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: #18181b;
+  color: var(--text-primary);
+}
+
+.command-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.command-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.command-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.send-button {
+  padding: 8px 12px;
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.send-button:hover:not(:disabled) {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}

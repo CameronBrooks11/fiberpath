@@ -1,0 +1,137 @@
+/* ConnectionSection.css */
+
+.connection-section {
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #0c0c0e;
+}
+
+.connection-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.connection-row label {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 50px;
+  color: var(--text-primary);
+}
+
+.port-select-group {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.port-select,
+.baud-select {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: #18181b;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.port-select:disabled,
+.baud-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-button {
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: #18181b;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.refresh-button:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.refresh-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-button .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 8px 12px;
+  background: #18181b;
+  border-radius: 4px;
+}
+
+.status-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.connect-button,
+.disconnect-button {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.connect-button {
+  background: #3b82f6;
+  color: white;
+}
+
+.connect-button:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.connect-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.disconnect-button {
+  background: #64748b;
+  color: white;
+}
+
+.disconnect-button:hover:not(:disabled) {
+  background: #475569;
+}
+
+.disconnect-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

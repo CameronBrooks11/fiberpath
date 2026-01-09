@@ -1,0 +1,190 @@
+/* FileStreamingSection.css */
+
+.file-streaming-section {
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #0c0c0e;
+}
+
+.file-selection {
+  margin-bottom: 16px;
+}
+
+.file-info {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #18181b;
+  border-radius: 4px;
+}
+
+.file-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.file-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-file-button {
+  width: 100%;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: #18181b;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.select-file-button:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.select-file-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.progress-section {
+  margin-bottom: 12px;
+}
+
+.progress-section label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #18181b;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.current-command {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: #18181b;
+  border-radius: 4px;
+}
+
+.current-command label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.command-text {
+  font-size: 12px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stream-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.start-button,
+.pause-button,
+.resume-button,
+.stop-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.start-button {
+  width: 100%;
+  background: #22c55e;
+  color: white;
+}
+
+.start-button:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+.start-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stream-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.pause-button {
+  background: #eab308;
+  color: white;
+}
+
+.pause-button:hover {
+  background: #ca8a04;
+}
+
+.resume-button {
+  background: #22c55e;
+  color: white;
+}
+
+.resume-button:hover {
+  background: #16a34a;
+}
+
+.stop-button {
+  background: #ef4444;
+  color: white;
+}
+
+.stop-button:hover {
+  background: #dc2626;
+}
