@@ -35,6 +35,7 @@ dev = [
     "pytest-cov>=4.1",
     "ruff>=0.7",
     "mypy>=1.10",
+    "types-pyserial>=3.5",
     "pre-commit>=3.7",
     "httpx>=0.27",
 ]
@@ -78,3 +79,8 @@ addopts = "-ra --maxfail=1"
 [tool.coverage.run]
 source = ["fiberpath", "fiberpath_cli", "fiberpath_api"]
 branch = true
+
+[dependency-groups]
+dev = [
+    "types-pyserial>=3.5.0.20251001",
+]

@@ -7,21 +7,25 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 
-def send_command(proc: subprocess.Popen, command: dict) -> None:
+def send_command(proc: subprocess.Popen[str], command: dict[str, Any]) -> None:
     """Send JSON command to subprocess stdin."""
     json_str = json.dumps(command)
+    assert proc.stdin is not None
     proc.stdin.write(json_str + "\n")
     proc.stdin.flush()
 
 
-def read_response(proc: subprocess.Popen) -> dict:
+def read_response(proc: subprocess.Popen[str]) -> dict[str, Any]:
     """Read JSON response from subprocess stdout."""
+    assert proc.stdout is not None
     line = proc.stdout.readline()
     if not line:
         raise EOFError("No response from subprocess")
-    return json.loads(line)
+    response: dict[str, Any] = json.loads(line)
+    return response
 
 
 def test_subprocess_lifecycle() -> None:

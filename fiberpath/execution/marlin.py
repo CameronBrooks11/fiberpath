@@ -33,7 +33,7 @@ class PySerialTransport:
 
     def __init__(self, port: str, baud_rate: int, timeout: float) -> None:
         try:
-            import serial  # type: ignore
+            import serial
         except (
             ImportError
         ) as exc:  # pragma: no cover - dependency error surfaced to caller
@@ -58,7 +58,7 @@ class PySerialTransport:
         if timeout is not None:
             previous_timeout = self._serial.timeout
             self._serial.timeout = timeout
-        raw = cast(bytes, self._serial.readline())
+        raw = self._serial.readline()
         if timeout is not None and previous_timeout is not None:
             self._serial.timeout = previous_timeout
         if not raw:

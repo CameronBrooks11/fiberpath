@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 
-def test_port_discovery():
+def test_port_discovery() -> None:
     """Test that list_ports returns Windows COM ports."""
     # Find the interactive.py script
     repo_root = Path(__file__).parent.parent.parent
@@ -25,10 +25,12 @@ def test_port_discovery():
     try:
         # Send list_ports command
         command = json.dumps({"action": "list_ports"}) + "\n"
+        assert process.stdin is not None
         process.stdin.write(command)
         process.stdin.flush()
 
         # Read response
+        assert process.stdout is not None
         response_line = process.stdout.readline()
         response = json.loads(response_line)
 
