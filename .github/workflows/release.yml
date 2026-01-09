@@ -169,4 +169,6 @@ jobs:
     name: Build GUI Installers
     needs: [validate, create-release]
     uses: ./.github/workflows/gui-packaging.yml
+    with:
+      release_tag: ${{ needs.validate.outputs.tag }}
     secrets: inherit
