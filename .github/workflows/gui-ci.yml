@@ -2,7 +2,7 @@ name: GUI CI
 
 on:
   push:
-    branches: [main, tabsgui]
+    branches: [main, stream-rehaul]
     paths:
       - "fiberpath_gui/**"
       - ".github/workflows/gui-ci.yml"
