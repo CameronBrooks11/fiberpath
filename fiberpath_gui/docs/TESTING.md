@@ -181,8 +181,8 @@ it("should complete full workflow", () => {
 
 Tests run automatically on:
 
-- Push to `main` or `tabsgui` branches
-- Pull requests to `main` or `tabsgui`
+- Push to `main` or `vX.Y.Z-dev` branches
+- Pull requests to `main` or `vX.Y.Z-dev`
 
 GitHub Actions workflow (`.github/workflows/gui-tests.yml`):
 

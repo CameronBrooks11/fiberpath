@@ -76,7 +76,7 @@ MAJOR CHANGES AROUND CONNECTION CONCTRIC MANAGEMENT AND STREAMING STATE HANDLING
 ## Summary
 
 **Total Tasks:** 31/31 complete (100%) ✅  
-**Branch:** main  
+**Branch:** stream-rehaul  
 **Status:** Complete
 
 ### Key Achievements
