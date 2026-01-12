@@ -13,7 +13,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-secondary);
-  margin: 0 0 12px 0;
+  margin: 0 0 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
 }

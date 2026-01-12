@@ -19,7 +19,7 @@
   border-radius: 8px;
   background: var(--color-console-bg-mid);
   border: 1px solid var(--color-border);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.3);
   animation: slideIn 0.3s ease;
 }
 
@@ -28,6 +28,7 @@
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -60,7 +61,7 @@
 }
 
 .toast__close:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(255, 255, 255, 0.1);
   color: var(--color-text);
 }
 

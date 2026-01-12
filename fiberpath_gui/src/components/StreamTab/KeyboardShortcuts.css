@@ -2,11 +2,8 @@
 
 .keyboard-shortcuts-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  inset: 0;
+  background: rgb(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,7 +21,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 25px -5px rgb(0, 0, 0, 0.3);
 }
 
 .modal-header {
@@ -87,7 +84,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-secondary);
-  margin: 0 0 16px 0;
+  margin: 0 0 16px;
 }
 
 .shortcut-list,
@@ -123,7 +120,7 @@
 kbd,
 code {
   padding: 4px 8px;
-  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-family: Consolas, Monaco, "Courier New", monospace;
   font-size: 13px;
   border-radius: 4px;
   font-weight: 600;

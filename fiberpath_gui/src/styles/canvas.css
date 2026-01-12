@@ -284,8 +284,7 @@
   gap: var(--spacing-sm);
   z-index: var(--z-controls);
   max-height: calc(100% - 2 * var(--spacing-lg));
-  overflow-y: auto;
-  overflow-x: visible;
+  overflow: visible auto;
 }
 
 .canvas-controls__btn {
