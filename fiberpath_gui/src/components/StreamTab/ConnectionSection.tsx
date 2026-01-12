@@ -29,11 +29,13 @@ export function ConnectionSection() {
     selectedPort,
     baudRate,
     availablePorts,
+    isStreaming,
     setStatus,
     setSelectedPort,
     setBaudRate,
     setAvailablePorts,
     addLogEntry,
+    clearStreamingState,
   } = useStreamStore();
 
   const { addToast } = useToastStore();
@@ -110,6 +112,10 @@ export function ConnectionSection() {
         type: "success",
         message: toastMessages.connection.success(selectedPort),
       });
+
+      // Clear any previous streaming state (file selection, progress)
+      // This ensures a fresh start after reconnecting
+      clearStreamingState();
     } catch (error) {
       setStatus("disconnected");
       const errorMsg = String(error);

@@ -331,7 +331,7 @@ async fn check_cli_health() -> Result<CliHealthResponse, String> {
 }
 
 fn main() {
-    let marlin_state = Arc::new(Mutex::new(MarlinState::new()));
+    let marlin_state: MarlinState = Arc::new(Mutex::new(None));
 
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
@@ -355,6 +355,8 @@ fn main() {
             marlin::marlin_stream_file,
             marlin::marlin_pause,
             marlin::marlin_resume,
+            marlin::marlin_stop,
+            marlin::marlin_cancel,
         ])
         .run(tauri::generate_context!())
         .expect("error while running FiberPath GUI");

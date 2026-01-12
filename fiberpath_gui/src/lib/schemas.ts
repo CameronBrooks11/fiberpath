@@ -78,74 +78,70 @@ export const ValidationResultSchema = z.object({
 // ===========================
 
 /**
- * Schema for Mandrel object in .wind files
+ * Schema for MandrelParameters object in .wind files (Python backend format)
  */
-export const MandrelSchema = z.object({
+export const MandrelParametersSchema = z.object({
   diameter: z.number().positive(),
-  wind_length: z.number().positive(),
+  windLength: z.number().positive(),
 });
 
 /**
- * Schema for Tow object in .wind files
+ * Schema for TowParameters object in .wind files (Python backend format)
  */
-export const TowSchema = z.object({
+export const TowParametersSchema = z.object({
   width: z.number().positive(),
   thickness: z.number().positive(),
 });
 
 /**
- * Schema for HoopLayer object in .wind files
+ * Schema for HoopLayer in .wind files (Python backend format)
  */
-export const HoopLayerSchema = z.object({
-  terminal: z.boolean(),
+export const WindHoopLayerSchema = z.object({
+  windType: z.literal("hoop"),
+  terminal: z.boolean().optional().default(false),
 });
 
 /**
- * Schema for HelicalLayer object in .wind files
+ * Schema for HelicalLayer in .wind files (Python backend format)
  */
-export const HelicalLayerSchema = z.object({
-  wind_angle: z.number().min(0).max(90),
-  pattern_number: z.number().int().positive(),
-  skip_index: z.number().int().nonnegative(),
-  lock_degrees: z.number().nonnegative(),
-  lead_in_mm: z.number().nonnegative(),
-  lead_out_degrees: z.number().nonnegative(),
-  skip_initial_near_lock: z.boolean(),
+export const WindHelicalLayerSchema = z.object({
+  windType: z.literal("helical"),
+  windAngle: z.number().min(0).max(90),
+  patternNumber: z.number().int().positive(),
+  skipIndex: z.number().int().nonnegative(),
+  lockDegrees: z.number().nonnegative(),
+  leadInMM: z.number().nonnegative(),
+  leadOutDegrees: z.number().nonnegative(),
+  skipInitialNearLock: z.boolean().optional(),
 });
 
 /**
- * Schema for SkipLayer object in .wind files
+ * Schema for SkipLayer in .wind files (Python backend format)
  */
-export const SkipLayerSchema = z.object({
-  mandrel_rotation: z.number(),
+export const WindSkipLayerSchema = z.object({
+  windType: z.literal("skip"),
+  mandrelRotation: z.number(),
 });
 
 /**
- * Schema for Layer object in .wind files
- * Uses discriminated union for layer types
+ * Schema for Layer discriminated union in .wind files (Python backend format)
  */
-export const LayerSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("hoop"),
-    hoop: HoopLayerSchema,
-  }),
-  z.object({
-    type: z.literal("helical"),
-    helical: HelicalLayerSchema,
-  }),
-  z.object({
-    type: z.literal("skip"),
-    skip: SkipLayerSchema,
-  }),
+export const WindLayerSchema = z.discriminatedUnion("windType", [
+  WindHoopLayerSchema,
+  WindHelicalLayerSchema,
+  WindSkipLayerSchema,
 ]);
 
 /**
- * Schema for complete .wind file structure
+ * Schema for complete .wind file structure (Python backend format)
+ * This matches the format saved by projectToWindDefinition() and expected by the Python CLI
  */
 export const WindDefinitionSchema = z.object({
-  mandrel: MandrelSchema,
-  tow: TowSchema,
-  layers: z.array(LayerSchema),
+  schemaVersion: z.literal("1.0").optional(),
+  mandrelParameters: MandrelParametersSchema,
+  towParameters: TowParametersSchema,
+  defaultFeedRate: z.number().positive(),
+  layers: z.array(WindLayerSchema),
 });
 
 // ===========================

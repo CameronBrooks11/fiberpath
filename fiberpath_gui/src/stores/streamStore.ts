@@ -40,6 +40,9 @@ interface StreamState {
   // Manual Control
   commandLoading: boolean;
 
+  // Streaming Controls
+  streamControlLoading: boolean;
+
   // Log
   logEntries: LogEntry[];
   autoScroll: boolean;
@@ -53,9 +56,11 @@ interface StreamState {
   setSelectedFile: (file: string | null) => void;
   setProgress: (progress: StreamProgress | null) => void;
   setCommandLoading: (loading: boolean) => void;
+  setStreamControlLoading: (loading: boolean) => void;
   addLogEntry: (entry: Omit<LogEntry, "id" | "timestamp">) => void;
   clearLog: () => void;
   toggleAutoScroll: () => void;
+  clearStreamingState: () => void;
 }
 
 let logIdCounter = 0;
@@ -70,6 +75,7 @@ export const useStreamStore = create<StreamState>((set) => ({
   selectedFile: null,
   progress: null,
   commandLoading: false,
+  streamControlLoading: false,
   logEntries: [],
   autoScroll: true,
 
@@ -90,6 +96,8 @@ export const useStreamStore = create<StreamState>((set) => ({
 
   setCommandLoading: (loading) => set({ commandLoading: loading }),
 
+  setStreamControlLoading: (loading) => set({ streamControlLoading: loading }),
+
   addLogEntry: (entry) =>
     set((state) => ({
       logEntries: [
@@ -105,4 +113,11 @@ export const useStreamStore = create<StreamState>((set) => ({
   clearLog: () => set({ logEntries: [] }),
 
   toggleAutoScroll: () => set((state) => ({ autoScroll: !state.autoScroll })),
+
+  clearStreamingState: () =>
+    set({
+      selectedFile: null,
+      progress: null,
+      isStreaming: false,
+    }),
 }));
