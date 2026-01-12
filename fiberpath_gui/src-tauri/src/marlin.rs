@@ -136,7 +136,7 @@ impl MarlinResponse {
 }
 
 /// Handles request-response correlation with single reader pattern
-/// 
+///
 /// Architecture:
 /// - ONE thread reads ALL responses from stdout
 /// - Responses with requestId are routed to waiting handlers
@@ -157,11 +157,7 @@ impl ResponseRouter {
     }
 
     /// Start the response reader thread
-    fn spawn_reader(
-        &self,
-        stdout: ChildStdout,
-        app: AppHandle,
-    ) -> std::thread::JoinHandle<()> {
+    fn spawn_reader(&self, stdout: ChildStdout, app: AppHandle) -> std::thread::JoinHandle<()> {
         let pending_responses = self.pending_responses.clone();
 
         std::thread::spawn(move || {
@@ -220,8 +216,10 @@ impl ResponseRouter {
     ) -> Result<MarlinResponse, MarlinError> {
         let request_id = self.next_request_id.fetch_add(1, Ordering::SeqCst);
 
-        let (tx, rx): (oneshot::Sender<MarlinResponse>, oneshot::Receiver<MarlinResponse>) =
-            oneshot::channel();
+        let (tx, rx): (
+            oneshot::Sender<MarlinResponse>,
+            oneshot::Receiver<MarlinResponse>,
+        ) = oneshot::channel();
 
         self.pending_responses
             .lock()
@@ -387,14 +385,10 @@ pub async fn marlin_connect(
 }
 
 #[tauri::command]
-pub async fn marlin_disconnect(
-    state: tauri::State<'_, MarlinState>,
-) -> Result<(), String> {
+pub async fn marlin_disconnect(state: tauri::State<'_, MarlinState>) -> Result<(), String> {
     let (stdin, response_router) = {
         let marlin_state = state.lock().map_err(|e| e.to_string())?;
-        let subprocess = marlin_state
-            .as_ref()
-            .ok_or("Not connected")?;
+        let subprocess = marlin_state.as_ref().ok_or("Not connected")?;
         (subprocess.stdin.clone(), subprocess.response_router.clone())
     };
 
@@ -421,9 +415,7 @@ pub async fn marlin_send_command(
 ) -> Result<Vec<String>, String> {
     let (stdin, response_router) = {
         let marlin_state = state.lock().map_err(|e| e.to_string())?;
-        let subprocess = marlin_state
-            .as_ref()
-            .ok_or("Not connected")?;
+        let subprocess = marlin_state.as_ref().ok_or("Not connected")?;
         (subprocess.stdin.clone(), subprocess.response_router.clone())
     };
 
@@ -458,9 +450,7 @@ pub async fn marlin_stream_file(
 ) -> Result<(), String> {
     let (stdin, response_router) = {
         let marlin_state = state.lock().map_err(|e| e.to_string())?;
-        let subprocess = marlin_state
-            .as_ref()
-            .ok_or("Not connected")?;
+        let subprocess = marlin_state.as_ref().ok_or("Not connected")?;
         (subprocess.stdin.clone(), subprocess.response_router.clone())
     };
 
@@ -475,19 +465,23 @@ pub async fn marlin_stream_file(
         .map_err(|e| e.to_string())?;
 
     match response {
-        MarlinResponse::Streaming { file, total_commands, .. } => {
+        MarlinResponse::Streaming {
+            file,
+            total_commands,
+            ..
+        } => {
             // Emit stream-started event to frontend
-            let _ = app.emit("stream-started", serde_json::json!({
-                "file": file,
-                "totalCommands": total_commands
-            }));
+            let _ = app.emit(
+                "stream-started",
+                serde_json::json!({
+                    "file": file,
+                    "totalCommands": total_commands
+                }),
+            );
             Ok(())
         }
         MarlinResponse::Error { message, .. } => Err(message),
-        other => Err(format!(
-            "Unexpected response from stream_file: {:?}",
-            other
-        )),
+        other => Err(format!("Unexpected response from stream_file: {:?}", other)),
     }
 }
 
@@ -495,9 +489,7 @@ pub async fn marlin_stream_file(
 pub async fn marlin_pause(state: tauri::State<'_, MarlinState>) -> Result<(), String> {
     let (stdin, response_router) = {
         let marlin_state = state.lock().map_err(|e| e.to_string())?;
-        let subprocess = marlin_state
-            .as_ref()
-            .ok_or("Not connected")?;
+        let subprocess = marlin_state.as_ref().ok_or("Not connected")?;
         (subprocess.stdin.clone(), subprocess.response_router.clone())
     };
 
@@ -521,9 +513,7 @@ pub async fn marlin_pause(state: tauri::State<'_, MarlinState>) -> Result<(), St
 pub async fn marlin_resume(state: tauri::State<'_, MarlinState>) -> Result<(), String> {
     let (stdin, response_router) = {
         let marlin_state = state.lock().map_err(|e| e.to_string())?;
-        let subprocess = marlin_state
-            .as_ref()
-            .ok_or("Not connected")?;
+        let subprocess = marlin_state.as_ref().ok_or("Not connected")?;
         (subprocess.stdin.clone(), subprocess.response_router.clone())
     };
 
@@ -547,9 +537,7 @@ pub async fn marlin_resume(state: tauri::State<'_, MarlinState>) -> Result<(), S
 pub async fn marlin_stop(state: tauri::State<'_, MarlinState>) -> Result<(), String> {
     let (stdin, response_router) = {
         let marlin_state = state.lock().map_err(|e| e.to_string())?;
-        let subprocess = marlin_state
-            .as_ref()
-            .ok_or("Not connected")?;
+        let subprocess = marlin_state.as_ref().ok_or("Not connected")?;
         (subprocess.stdin.clone(), subprocess.response_router.clone())
     };
 
@@ -573,9 +561,7 @@ pub async fn marlin_stop(state: tauri::State<'_, MarlinState>) -> Result<(), Str
 pub async fn marlin_cancel(state: tauri::State<'_, MarlinState>) -> Result<(), String> {
     let (stdin, response_router) = {
         let marlin_state = state.lock().map_err(|e| e.to_string())?;
-        let subprocess = marlin_state
-            .as_ref()
-            .ok_or("Not connected")?;
+        let subprocess = marlin_state.as_ref().ok_or("Not connected")?;
         (subprocess.stdin.clone(), subprocess.response_router.clone())
     };
 
