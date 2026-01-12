@@ -7,7 +7,7 @@
     "frontendDist": "../dist"
   },
   "productName": "FiberPath GUI",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "identifier": "com.fiberpath.desktop",
   "bundle": {
     "active": true,

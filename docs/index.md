@@ -2,7 +2,7 @@
 
 ## Download & Installation
 
-**Latest Release:** [v0.4.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+**Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
 
 - **Desktop GUI** – Download installers for Windows (.msi/.exe), macOS (.dmg), or Linux (.deb/.AppImage)
 - **Python Package** – `pip install fiberpath` or `uv pip install fiberpath`
