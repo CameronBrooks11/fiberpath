@@ -49,12 +49,6 @@ docs = [
 [project.scripts]
 fiberpath = "fiberpath_cli.main:app"
 
-[project.entry-points."uv.tool"]
-lint = "ruff check"
-format = "ruff format"
-typecheck = "mypy"
-test = "pytest -v"
-
 [tool.hatch.build.targets.wheel]
 packages = [
     "fiberpath",

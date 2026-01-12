@@ -4,16 +4,14 @@ Quick reference for all linting, formatting, type checking, and testing commands
 
 ## Python Backend
 
-Commands run from project root with `uv run <command>`:
+Commands run from project root with `uv run <tool>`:
 
-| Command            | Alias         | Tool   | Purpose                                  |
-| ------------------ | ------------- | ------ | ---------------------------------------- |
-| `uv run lint`      | `ruff check`  | Ruff   | Linting (style, imports, best practices) |
-| `uv run format`    | `ruff format` | Ruff   | Code formatting (replaces black)         |
-| `uv run typecheck` | `mypy`        | MyPy   | Static type checking (strict mode)       |
-| `uv run test`      | `pytest -v`   | Pytest | Run test suite with verbose output       |
-
-**Alias Location:** `pyproject.toml` → `[project.entry-points."uv.tool"]`
+| Command              | Tool   | Purpose                                  |
+| -------------------- | ------ | ---------------------------------------- |
+| `uv run ruff check`  | Ruff   | Linting (style, imports, best practices) |
+| `uv run ruff format` | Ruff   | Code formatting (replaces black)         |
+| `uv run mypy`        | MyPy   | Static type checking (strict mode)       |
+| `uv run pytest -v`   | Pytest | Run test suite with verbose output       |
 
 **Config Locations:**
 
@@ -22,14 +20,10 @@ Commands run from project root with `uv run <command>`:
 - Pytest: `[tool.pytest.ini_options]` in `pyproject.toml`
 - Coverage: `[tool.coverage.run]` in `pyproject.toml`
 
-**Direct Commands (no alias):**
+**Additional Commands:**
 
 ```sh
-uv run ruff check              # Lint only
-uv run ruff format             # Format only
 uv run ruff check --fix        # Auto-fix linting issues
-uv run mypy                    # Type check
-uv run pytest -v               # Run tests
 uv run pytest -v --cov         # Run tests with coverage
 uv build                       # Build Python package (dist/)
 ```
@@ -63,7 +57,7 @@ Commands run from `fiberpath_gui/` directory with `npm run <script>`:
 
 **Full Check Sequence:**
 
-```sh
+````sh
 cd fiberpath_gui
 npm run lint              # TypeScript type check
 npm run lint:css          # CSS lint
@@ -73,8 +67,17 @@ npm test                  # Run tests
 npm run build             # Production build
 
 # Or run all checks at once:
-npm run check:all && npm test
-```
+## Combined Pre-Commit Workflow
+
+Run from project root before committing:
+
+```sh
+# Python stack
+uv run ruff check && uv run ruff format && uv run mypy && uv run pytest -v
+
+# GUI stack
+cd fiberpath_gui && npm run check:all && npm test && cd ..
+````
 
 ## CI/CD Equivalents
 
@@ -93,21 +96,21 @@ uv run pytest -v --cov --cov-report=xml
 ```sh
 cd fiberpath_gui
 npm run lint                     # TypeScript
-npm run lint:css                 # Stylelint (not in CI yet, TODO)
+npm run lint:css                 # Stylelint (not in CI yet)
 npm test                         # Vitest
 npm run test:coverage            # Coverage report
 npm run build                    # Vite build
 ```
 
-**Note:** Rust formatting/linting (`cargo fmt`, `cargo clippy`) not yet in CI workflows. TODO.
+**Note:** Rust formatting/linting (`cargo fmt`, `cargo clippy`) not yet in CI workflows.
 
 ## Quick Command Summary
 
-| Task           | Python                                             | GUI                                                                    |
-| -------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
-| **Format**     | `uv run format`                                    | `npm run format:fix` (Rust only)                                       |
-| **Lint**       | `uv run lint`                                      | `npm run lint` (TS), `npm run lint:css` (CSS), `npm run clippy` (Rust) |
-| **Type Check** | `uv run typecheck`                                 | `npm run lint` (tsc)                                                   |
-| **Test**       | `uv run test`                                      | `npm test`                                                             |
-| **Build**      | `uv build`                                         | `npm run build`                                                        |
-| **All Checks** | `uv run lint && uv run format && uv run typecheck` | `npm run check:all`                                                    |
+| Task           | Python                                                   | GUI                                                                    |
+| -------------- | -------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Format**     | `uv run ruff format`                                     | `npm run format:fix` (Rust only)                                       |
+| **Lint**       | `uv run ruff check`                                      | `npm run lint` (TS), `npm run lint:css` (CSS), `npm run clippy` (Rust) |
+| **Type Check** | `uv run mypy`                                            | `npm run lint` (tsc)                                                   |
+| **Test**       | `uv run pytest -v`                                       | `npm test`                                                             |
+| **Build**      | `uv build`                                               | `npm run build`                                                        |
+| **All Checks** | `uv run ruff check && uv run ruff format && uv run mypy` | `npm run check:all`                                                    |
