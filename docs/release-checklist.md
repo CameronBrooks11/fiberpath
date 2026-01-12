@@ -2,9 +2,16 @@
 
 ## Pre-Release
 
+- [ ] Run all linters, type checkers, and formatters locally:
+  - **Python Backend:** `uv run ruff check` (linting), `uv run ruff format` (formatting), `uv run mypy` (type checking)
+  - **TypeScript/React GUI:** `cd fiberpath_gui && npm run lint` (TypeScript check), `npm run lint:css` (CSS linting)
+  - **Rust Backend:** `cd fiberpath_gui/src-tauri && cargo clippy` (linting), `cargo fmt --check` (formatting)
+- [ ] Run all test suites locally:
+  - **Python:** `uv run pytest -v`
+  - **GUI:** `cd fiberpath_gui && npm test`
 - [ ] All CI workflows passing on target branch (backend-ci, gui-ci, docs-ci, gui-packaging)
 - [ ] All planned features from roadmap completed and tested
-- [ ] Manual testing on Windows/macOS/Linux (GUI streaming, planning workflows)
+- [ ] Manual end-to-end testing on Windows/macOS/Linux (GUI streaming, planning workflows, CLI commands)
 
 ## Version Updates
 
@@ -37,11 +44,16 @@ Refresh dependency locks after version updates:
 
 ## Quality Checks
 
-- [ ] Run full test suite locally: `uv run pytest -v`
-- [ ] Verify Python package builds: `uv build` (check `dist/` output)
-- [ ] Test GUI installers on target platforms (use workflow artifacts or local builds)
-- [ ] Verify API starts successfully: `uvicorn fiberpath_api.main:app`
-- [ ] Smoke test CLI commands: `fiberpath plan`, `fiberpath simulate`, `fiberpath stream --dry-run`
+- [ ] Verify Python package builds cleanly: `uv build` (check `dist/` output)
+- [ ] Verify GUI builds successfully: `cd fiberpath_gui && npm run build`
+- [ ] Test GUI installers on target platforms (download workflow artifacts or build locally with `npm run tauri build`)
+- [ ] Smoke test core workflows:
+  - **Planning:** `fiberpath plan examples/simple_cylinder/input.wind -o test.gcode`
+  - **Simulation:** `fiberpath simulate test.gcode`
+  - **Plotting:** `fiberpath plot test.gcode --output test.png`
+  - **Streaming (dry-run):** `fiberpath stream test.gcode --dry-run`
+  - **API:** `uvicorn fiberpath_api.main:app` (verify starts without errors)
+- [ ] Test GUI application launches and loads example files correctly
 
 ## Release Workflow
 
