@@ -28,6 +28,4 @@ def load_wind_definition(path: str | Path) -> WindDefinition:
     try:
         return WindDefinition.model_validate(payload)
     except ValidationError as exc:
-        raise WindFileError(
-            f"Wind definition at {location} failed validation: {exc}"
-        ) from exc
+        raise WindFileError(f"Wind definition at {location} failed validation: {exc}") from exc

@@ -16,9 +16,7 @@ class StreamRequest(BaseModel):
         description="Serial port or pyserial URL. Required when dry_run is false.",
     )
     baud_rate: int = Field(default=250_000, ge=1, description="Controller baud rate.")
-    dry_run: bool = Field(
-        default=True, description="Skip serial I/O and only count commands."
-    )
+    dry_run: bool = Field(default=True, description="Skip serial I/O and only count commands.")
 
 
 class StreamResponse(BaseModel):
@@ -30,9 +28,7 @@ class StreamResponse(BaseModel):
 @router.post("/", response_model=StreamResponse)
 def start_stream(payload: StreamRequest) -> StreamResponse:
     if not payload.dry_run and payload.port is None:
-        raise HTTPException(
-            status_code=400, detail="port is required when dry_run is false"
-        )
+        raise HTTPException(status_code=400, detail="port is required when dry_run is false")
 
     commands = payload.gcode.splitlines()
     streamer = MarlinStreamer(port=payload.port, baud_rate=payload.baud_rate)
