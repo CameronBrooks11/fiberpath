@@ -54,9 +54,7 @@ def test_xab_format_generates_correct_axis_letters() -> None:
 
     # Check subsequent move commands use A and B, not Y and Z
     move_commands = [
-        cmd
-        for cmd in result.commands[2:]
-        if cmd.startswith("G0") and not cmd.startswith("G0 F")
+        cmd for cmd in result.commands[2:] if cmd.startswith("G0") and not cmd.startswith("G0 F")
     ]
 
     assert len(move_commands) > 0, "No move commands found"
@@ -67,12 +65,8 @@ def test_xab_format_generates_correct_axis_letters() -> None:
         assert has_valid_axis, f"Command '{cmd}' missing valid axis (X/A/B)"
 
         # Should never have Y or Z (except in comments)
-        assert (
-            "Y" not in cmd
-        ), f"Command '{cmd}' should not contain Y axis in XAB format"
-        assert (
-            "Z" not in cmd
-        ), f"Command '{cmd}' should not contain Z axis in XAB format"
+        assert "Y" not in cmd, f"Command '{cmd}' should not contain Y axis in XAB format"
+        assert "Z" not in cmd, f"Command '{cmd}' should not contain Z axis in XAB format"
 
 
 # Test 3: Test AxisMapping properties
@@ -156,9 +150,9 @@ def test_both_formats_produce_same_command_count() -> None:
     result_xyz = plan_wind(definition, PlanOptions(dialect=MARLIN_XYZ_LEGACY))
     result_xab = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
 
-    assert len(result_xyz.commands) == len(
-        result_xab.commands
-    ), "XYZ and XAB should produce same number of commands"
+    assert len(result_xyz.commands) == len(result_xab.commands), (
+        "XYZ and XAB should produce same number of commands"
+    )
 
 
 # Test 7: Test both formats produce same time and tow metrics
@@ -170,28 +164,28 @@ def test_both_formats_produce_same_metrics() -> None:
     result_xab = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
 
     # Time should be identical
-    assert (
-        abs(result_xyz.total_time_s - result_xab.total_time_s) < 1e-6
-    ), "Total time should be identical"
+    assert abs(result_xyz.total_time_s - result_xab.total_time_s) < 1e-6, (
+        "Total time should be identical"
+    )
 
     # Tow usage should be identical
-    assert (
-        abs(result_xyz.total_tow_m - result_xab.total_tow_m) < 1e-6
-    ), "Total tow usage should be identical"
+    assert abs(result_xyz.total_tow_m - result_xab.total_tow_m) < 1e-6, (
+        "Total tow usage should be identical"
+    )
 
     # Layer metrics should match
     assert len(result_xyz.layers) == len(result_xab.layers), "Layer count should match"
 
     for layer_xyz, layer_xab in zip(result_xyz.layers, result_xab.layers, strict=True):
-        assert (
-            layer_xyz.commands == layer_xab.commands
-        ), f"Layer {layer_xyz.index} command count mismatch"
-        assert (
-            abs(layer_xyz.time_s - layer_xab.time_s) < 1e-6
-        ), f"Layer {layer_xyz.index} time mismatch"
-        assert (
-            abs(layer_xyz.tow_m - layer_xab.tow_m) < 1e-6
-        ), f"Layer {layer_xyz.index} tow usage mismatch"
+        assert layer_xyz.commands == layer_xab.commands, (
+            f"Layer {layer_xyz.index} command count mismatch"
+        )
+        assert abs(layer_xyz.time_s - layer_xab.time_s) < 1e-6, (
+            f"Layer {layer_xyz.index} time mismatch"
+        )
+        assert abs(layer_xyz.tow_m - layer_xab.tow_m) < 1e-6, (
+            f"Layer {layer_xyz.index} tow usage mismatch"
+        )
 
 
 # Test 8: Test custom axis mapping
@@ -219,9 +213,7 @@ def test_custom_axis_mapping() -> None:
 
     # Check that C and A appear in move commands
     move_commands = [
-        cmd
-        for cmd in result.commands[2:]
-        if cmd.startswith("G0") and not cmd.startswith("G0 F")
+        cmd for cmd in result.commands[2:] if cmd.startswith("G0") and not cmd.startswith("G0 F")
     ]
 
     for cmd in move_commands:
@@ -242,9 +234,7 @@ def test_default_dialect_is_xyz_legacy() -> None:
     result_xab = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
 
     # Should be identical
-    assert (
-        result_default.commands == result_xab.commands
-    ), "Default should be XAB_STANDARD"
+    assert result_default.commands == result_xab.commands, "Default should be XAB_STANDARD"
 
 
 # Test 10: Test verbose mode works with both dialects
@@ -260,20 +250,16 @@ def test_verbose_mode_with_both_dialects() -> None:
     )
 
     # XYZ verbose
-    result_xyz = plan_wind(
-        definition, PlanOptions(verbose=True, dialect=MARLIN_XYZ_LEGACY)
-    )
+    result_xyz = plan_wind(definition, PlanOptions(verbose=True, dialect=MARLIN_XYZ_LEGACY))
     comments_xyz = [cmd for cmd in result_xyz.commands if cmd.startswith(";")]
     assert len(comments_xyz) > 0, "Verbose mode should produce comments"
 
     # XAB verbose
-    result_xab = plan_wind(
-        definition, PlanOptions(verbose=True, dialect=MARLIN_XAB_STANDARD)
-    )
+    result_xab = plan_wind(definition, PlanOptions(verbose=True, dialect=MARLIN_XAB_STANDARD))
     comments_xab = [cmd for cmd in result_xab.commands if cmd.startswith(";")]
     assert len(comments_xab) > 0, "Verbose mode should produce comments"
 
     # Comment count should be same
-    assert len(comments_xyz) == len(
-        comments_xab
-    ), "Both formats should produce same number of comments in verbose mode"
+    assert len(comments_xyz) == len(comments_xab), (
+        "Both formats should produce same number of comments in verbose mode"
+    )

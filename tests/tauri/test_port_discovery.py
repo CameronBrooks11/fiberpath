@@ -49,9 +49,7 @@ def test_port_discovery() -> None:
 
                 # On Windows, ports should be COMx
                 if sys.platform == "win32":
-                    assert port["port"].startswith(
-                        "COM"
-                    ), f"Expected COM port, got {port['port']}"
+                    assert port["port"].startswith("COM"), f"Expected COM port, got {port['port']}"
 
             print("\n✅ Port discovery test PASSED")
         else:
