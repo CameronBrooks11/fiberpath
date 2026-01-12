@@ -5,12 +5,12 @@ import {
   StreamSummarySchema,
   PlotPreviewPayloadSchema,
   ValidationResultSchema,
-  MandrelSchema,
-  TowSchema,
-  HoopLayerSchema,
-  HelicalLayerSchema,
-  SkipLayerSchema,
-  LayerSchema,
+  MandrelParametersSchema,
+  TowParametersSchema,
+  WindHoopLayerSchema,
+  WindHelicalLayerSchema,
+  WindSkipLayerSchema,
+  WindLayerSchema,
   WindDefinitionSchema,
   validateData,
   isValidData,
@@ -118,134 +118,136 @@ describe("schemas", () => {
   });
 
   describe("Wind File Structure Schemas", () => {
-    describe("MandrelSchema", () => {
+    describe("MandrelParametersSchema", () => {
       it("should validate valid mandrel", () => {
-        const data = { diameter: 100, wind_length: 200 };
-        const result = MandrelSchema.safeParse(data);
+        const data = { diameter: 100, windLength: 200 };
+        const result = MandrelParametersSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
 
       it("should reject zero diameter", () => {
-        const data = { diameter: 0, wind_length: 200 };
-        const result = MandrelSchema.safeParse(data);
+        const data = { diameter: 0, windLength: 200 };
+        const result = MandrelParametersSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
 
-      it("should reject negative wind_length", () => {
-        const data = { diameter: 100, wind_length: -50 };
-        const result = MandrelSchema.safeParse(data);
+      it("should reject negative windLength", () => {
+        const data = { diameter: 100, windLength: -50 };
+        const result = MandrelParametersSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
     });
 
-    describe("HelicalLayerSchema", () => {
+    describe("WindHelicalLayerSchema", () => {
       it("should validate valid helical layer", () => {
         const data = {
-          wind_angle: 45,
-          pattern_number: 3,
-          skip_index: 2,
-          lock_degrees: 5,
-          lead_in_mm: 10,
-          lead_out_degrees: 5,
-          skip_initial_near_lock: false,
+          windType: "helical" as const,
+          windAngle: 45,
+          patternNumber: 3,
+          skipIndex: 2,
+          lockDegrees: 5,
+          leadInMM: 10,
+          leadOutDegrees: 5,
+          skipInitialNearLock: false,
         };
 
-        const result = HelicalLayerSchema.safeParse(data);
+        const result = WindHelicalLayerSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
 
-      it("should reject wind_angle > 90", () => {
+      it("should reject windAngle > 90", () => {
         const data = {
-          wind_angle: 95,
-          pattern_number: 3,
-          skip_index: 2,
-          lock_degrees: 5,
-          lead_in_mm: 10,
-          lead_out_degrees: 5,
-          skip_initial_near_lock: false,
+          windType: "helical" as const,
+          windAngle: 95,
+          patternNumber: 3,
+          skipIndex: 2,
+          lockDegrees: 5,
+          leadInMM: 10,
+          leadOutDegrees: 5,
+          skipInitialNearLock: false,
         };
 
-        const result = HelicalLayerSchema.safeParse(data);
+        const result = WindHelicalLayerSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
 
-      it("should reject wind_angle < 0", () => {
+      it("should reject windAngle < 0", () => {
         const data = {
-          wind_angle: -5,
-          pattern_number: 3,
-          skip_index: 2,
-          lock_degrees: 5,
-          lead_in_mm: 10,
-          lead_out_degrees: 5,
-          skip_initial_near_lock: false,
+          windType: "helical" as const,
+          windAngle: -5,
+          patternNumber: 3,
+          skipIndex: 2,
+          lockDegrees: 5,
+          leadInMM: 10,
+          leadOutDegrees: 5,
+          skipInitialNearLock: false,
         };
 
-        const result = HelicalLayerSchema.safeParse(data);
+        const result = WindHelicalLayerSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
 
-      it("should reject zero pattern_number", () => {
+      it("should reject zero patternNumber", () => {
         const data = {
-          wind_angle: 45,
-          pattern_number: 0,
-          skip_index: 2,
-          lock_degrees: 5,
-          lead_in_mm: 10,
-          lead_out_degrees: 5,
-          skip_initial_near_lock: false,
+          windType: "helical" as const,
+          windAngle: 45,
+          patternNumber: 0,
+          skipIndex: 2,
+          lockDegrees: 5,
+          leadInMM: 10,
+          leadOutDegrees: 5,
+          skipInitialNearLock: false,
         };
 
-        const result = HelicalLayerSchema.safeParse(data);
+        const result = WindHelicalLayerSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
     });
 
-    describe("LayerSchema", () => {
+    describe("WindLayerSchema", () => {
       it("should validate hoop layer", () => {
         const data = {
-          type: "hoop",
-          hoop: { terminal: true },
+          windType: "hoop" as const,
+          terminal: true,
         };
 
-        const result = LayerSchema.safeParse(data);
+        const result = WindLayerSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
 
       it("should validate helical layer", () => {
         const data = {
-          type: "helical",
-          helical: {
-            wind_angle: 60,
-            pattern_number: 5,
-            skip_index: 3,
-            lock_degrees: 8,
-            lead_in_mm: 15,
-            lead_out_degrees: 7,
-            skip_initial_near_lock: true,
-          },
+          windType: "helical" as const,
+          windAngle: 60,
+          patternNumber: 5,
+          skipIndex: 3,
+          lockDegrees: 8,
+          leadInMM: 15,
+          leadOutDegrees: 7,
+          skipInitialNearLock: true,
         };
 
-        const result = LayerSchema.safeParse(data);
+        const result = WindLayerSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
 
       it("should validate skip layer", () => {
         const data = {
-          type: "skip",
-          skip: { mandrel_rotation: 90 },
+          windType: "skip" as const,
+          mandrelRotation: 90,
         };
 
-        const result = LayerSchema.safeParse(data);
+        const result = WindLayerSchema.safeParse(data);
         expect(result.success).toBe(true);
       });
 
-      it("should reject layer with mismatched type and data", () => {
+      it("should reject layer with invalid windType", () => {
         const data = {
-          type: "hoop",
-          helical: { wind_angle: 45 },
+          windType: "invalid",
+          terminal: false,
         };
 
-        const result = LayerSchema.safeParse(data);
+        const result = WindLayerSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
     });
@@ -253,21 +255,20 @@ describe("schemas", () => {
     describe("WindDefinitionSchema", () => {
       it("should validate complete wind definition", () => {
         const data = {
-          mandrel: { diameter: 100, wind_length: 200 },
-          tow: { width: 3, thickness: 0.25 },
+          mandrelParameters: { diameter: 100, windLength: 200 },
+          towParameters: { width: 3, thickness: 0.25 },
+          defaultFeedRate: 1000,
           layers: [
-            { type: "hoop", hoop: { terminal: false } },
+            { windType: "hoop" as const, terminal: false },
             {
-              type: "helical",
-              helical: {
-                wind_angle: 45,
-                pattern_number: 3,
-                skip_index: 2,
-                lock_degrees: 5,
-                lead_in_mm: 10,
-                lead_out_degrees: 5,
-                skip_initial_near_lock: false,
-              },
+              windType: "helical" as const,
+              windAngle: 45,
+              patternNumber: 3,
+              skipIndex: 2,
+              lockDegrees: 5,
+              leadInMM: 10,
+              leadOutDegrees: 5,
+              skipInitialNearLock: false,
             },
           ],
         };
@@ -278,10 +279,11 @@ describe("schemas", () => {
 
       it("should reject wind definition with invalid layer", () => {
         const data = {
-          mandrel: { diameter: 100, wind_length: 200 },
-          tow: { width: 3, thickness: 0.25 },
+          mandrelParameters: { diameter: 100, windLength: 200 },
+          towParameters: { width: 3, thickness: 0.25 },
+          defaultFeedRate: 1000,
           layers: [
-            { type: "helical", helical: { wind_angle: 120 } }, // Invalid: wind_angle > 90
+            { windType: "helical" as const, windAngle: 120, patternNumber: 1, skipIndex: 0, lockDegrees: 0, leadInMM: 0, leadOutDegrees: 0 }, // Invalid: windAngle > 90
           ],
         };
 
@@ -294,25 +296,25 @@ describe("schemas", () => {
   describe("Validation Helper Functions", () => {
     describe("validateData", () => {
       it("should return data when validation succeeds", () => {
-        const data = { diameter: 100, wind_length: 200 };
-        const result = validateData(MandrelSchema, data, "test mandrel");
+        const data = { diameter: 100, windLength: 200 };
+        const result = validateData(MandrelParametersSchema, data, "test mandrel");
 
         expect(result).toEqual(data);
       });
 
       it("should throw ValidationError when validation fails", () => {
-        const data = { diameter: -50, wind_length: 200 };
+        const data = { diameter: -50, windLength: 200 };
 
         expect(() => {
-          validateData(MandrelSchema, data, "test mandrel");
+          validateData(MandrelParametersSchema, data, "test mandrel");
         }).toThrow(ValidationError);
       });
 
       it("should include context in error message", () => {
-        const data = { diameter: 0, wind_length: -100 };
+        const data = { diameter: 0, windLength: -100 };
 
         try {
-          validateData(MandrelSchema, data, "test mandrel");
+          validateData(MandrelParametersSchema, data, "test mandrel");
           expect.fail("Should have thrown");
         } catch (error) {
           expect(error).toBeInstanceOf(ValidationError);
@@ -323,21 +325,21 @@ describe("schemas", () => {
 
     describe("isValidData", () => {
       it("should return true for valid data", () => {
-        const data = { diameter: 100, wind_length: 200 };
-        expect(isValidData(MandrelSchema, data)).toBe(true);
+        const data = { diameter: 100, windLength: 200 };
+        expect(isValidData(MandrelParametersSchema, data)).toBe(true);
       });
 
       it("should return false for invalid data", () => {
-        const data = { diameter: -50, wind_length: 200 };
-        expect(isValidData(MandrelSchema, data)).toBe(false);
+        const data = { diameter: -50, windLength: 200 };
+        expect(isValidData(MandrelParametersSchema, data)).toBe(false);
       });
 
       it("should act as type guard", () => {
-        const data: unknown = { diameter: 100, wind_length: 200 };
+        const data: unknown = { diameter: 100, windLength: 200 };
 
-        if (isValidData(MandrelSchema, data)) {
-          // TypeScript should know data is Mandrel type here
-          expect(data.diameter).toBe(100);
+        if (isValidData(MandrelParametersSchema, data)) {
+          // TypeScript should know data is validated type here
+          expect((data as { diameter: number }).diameter).toBe(100);
         }
       });
     });
