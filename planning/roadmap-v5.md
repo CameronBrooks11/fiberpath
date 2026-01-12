@@ -1,228 +1,136 @@
-# FiberPath Roadmap v5 - Streaming Enhancements & Core Polish
+# FiberPath Roadmap v5 - Streaming State & Control Refinements
 
-**Focus:** Essential quality-of-life improvements and streaming feature completion  
+**Focus:** Fix critical streaming state management issues and improve pause/resume/cancel workflow  
 **Prerequisites:** v4 (Basic Marlin Streaming) must be complete  
-**Timeline:** 2-3 weeks  
-**Priority:** High - immediate improvements after v4 ships
+**Timeline:** 1 week  
+**Priority:** Critical - resolve production-blocking issues before feature additions
 
 ---
 
-## Phase 1: Streaming Feature Completion
+MAJOR CHANGES AROUND CONNECTION CONCTRIC MANAGEMENT AND STREAMING STATE HANDLING CAME BEFORE THIS, NEED TO UPDATE TO REFLECT THAT.
 
-- [ ] Add Settings tab to TabBar (3 tabs: Main, Stream, Settings)
-- [ ] Create settingsStore (Zustand) for persistent preferences
-- [ ] Create SettingsTab with streaming/general/export sections
-- [ ] Add Tauri commands: load_settings, save_settings (JSON in app_data)
-- [ ] Add streaming settings (defaultBaudRate, defaultTimeout, verboseLogging)
-- [ ] Add general settings (autoSaveInterval, recentFilesLimit)
-- [ ] Add export settings (defaultNamingPattern)
-- [ ] Add Save Settings and Reset to Defaults buttons
-- [ ] Test settings persistence across app restarts
-- [ ] Add timestamps to log messages
-- [ ] Add log filtering (show all, errors only, commands only, responses only)
-- [ ] Add Export Log button (save to .txt file)
-- [ ] Add Copy Log button (clipboard API)
-- [ ] Add command history to manual control (up/down arrows, last 50 commands)
-- [ ] Store command history in streamStore, persist across sessions
-- [ ] Create command response parser (extract X/Y/Z coordinates from M114)
-- [ ] Display parsed position data in dedicated UI element
-- [ ] Add StreamStatistics component (ETA, elapsed time, progress %)
-- [ ] Calculate ETA based on average command time
-- [ ] Update statistics in real-time during streaming
+## Phase 1: Pause/Resume Architecture Fix
 
-**Progress:** 0/20 tasks complete
+**Problem:** Progress events queue up during pause, causing 400+ phantom commands to display after pause button clicked, making system appear broken.
 
-**Note:** Quality-of-life enhancements for streaming. v4 already has essential manual control (command input + common buttons). These add convenience (command history, parsed responses, statistics).
+- [x] Identify root cause: Queue-based progress architecture creates unbounded lag
+- [x] Design solution: Replace event queue with shared state polling
+- [x] Remove `progress_queue` from StreamingSession
+- [x] Add `_last_command` field to track current command for display
+- [x] Implement `get_progress()` method returning current state
+- [x] Update main loop to poll `get_progress()` every 0.1s instead of draining queue
+- [x] Test: Pause shows instant stop with no phantom progress
+- [x] Test: Resume continues from exact position
+- [x] Verify zero-lag architecture (UI matches reality immediately)
+
+**Progress:** 9/9 tasks complete (100%) ✅
+
+**Impact:** Eliminates queue lag entirely - pause is now instantaneous and accurate.
 
 ---
 
-## Phase 2: Documentation & Project History
+## Phase 2: Cancel Job Feature
 
-- [ ] Add JSDoc comments to all exported functions and components
-- [ ] Document Zustand store architecture and state flow patterns
-- [ ] Create architecture diagrams (component hierarchy, data flow)
-- [ ] Document keyboard shortcut system implementation details
-- [ ] Add inline comments for complex algorithms (validation, layer conversion)
+**Problem:** Only emergency stop (M112 + disconnect) available during pause. Need clean cancellation option.
 
-**Progress:** 0/6 tasks complete
+- [x] Add `"cancel"` action to interactive.py backend
+- [x] Implement graceful worker thread shutdown without M112
+- [x] Add `MarlinResponse::Cancelled` variant to Rust enum
+- [x] Create `marlin_cancel` Tauri command
+- [x] Register command in Tauri builder
+- [x] Add `cancelStream()` to marlin-api.ts
+- [x] Implement `handleCancel()` in FileStreamingSection
+- [x] Add conditional button rendering: "Cancel Job" when paused, "Stop" when streaming
+- [x] Style cancel button (orange) vs stop button (red) for visual distinction
+- [x] Add `--color-warning-orange-hover` CSS variable
+- [x] Test: Cancel while paused stays connected and ready for new job
+- [x] Test: Stop while streaming executes M112 and disconnects
 
----
+**Progress:** 12/12 tasks complete (100%) ✅
 
-## Phase 3: Retroactive changelog
-
-- [ ] **Create CHANGELOG.md retroactively** based on all roadmaps (v1-v4)
-  - Document major features from v1 (Core Planning & G-code Generation)
-  - Document v2 (CLI Commands, Simulation, API)
-  - Document v3 (GUI with Tauri/React, Main Tab Features)
-  - Document v4 (Tabbed Interface, Marlin Streaming)
-  - Use semantic versioning convention (## [X.X.X] - YYYY-MM-DD)
-
----
-
-## Phase 4: Code Organization
-
-- [ ] Start this phase by reviewing the current state of the entire GUI directory and modify/add to the following tasks below as needed based on that review.
-- [ ] Refactor App.tsx into smaller focused components (currently 305 lines)
-- [ ] Extract MenuBar menu definitions to configuration file
-- [ ] Create feature-based folder structure (features/layers/, features/export/, features/project/)
-- [ ] Organize hooks by category (hooks/state/, hooks/commands/, hooks/ui/)
-
-**Progress:** 0/? tasks complete
-
-**Note:** Consider separating layer components, export dialogs, and project management into focused modules
+**Impact:** Provides proper workflow distinction between planned cancellation and emergency stop.
 
 ---
 
-## Phase 5: Performance Optimization
+## Phase 3: State Cleanup & Reset
 
-- [ ] Add React.memo to pure components (LayerRow, form components)
-- [ ] Virtualize LayerStack for large layer counts using react-window
-- [ ] Implement lazy loading for dialogs with React.lazy and code splitting
-- [ ] Optimize preview image handling (implement caching, cancel pending requests)
-- [ ] Profile bundle size and implement tree-shaking optimizations
-- [ ] Add performance budget enforcement in CI
+**Problem:** After emergency stop, file/progress remain visible. After cancel, restarting shows blank commands.
 
-**Progress:** 0/6 tasks complete
+- [x] Add `clearStreamingState()` action to streamStore
+- [x] Call `clearStreamingState()` on successful reconnection
+- [x] Add manual X button to clear selected file anytime
+- [x] Style clear file button (subtle, visible only when file selected)
+- [x] Fix cancel state reset: Clear `streamer._paused` flag in backend
+- [x] Fix cancel state reset: Set `status = "connected"` in frontend
+- [x] Fix cancel state reset: Clear progress display after cancel
+- [x] Test: Emergency stop → reconnect → clean slate
+- [x] Test: Cancel → start same file → streams properly (no blank commands)
+- [x] Test: Manual clear button works anytime (except during streaming)
 
----
+**Progress:** 10/10 tasks complete (100%) ✅
 
-## Phase 6: Developer Experience
-
-- [ ] Add ESLint with recommended React and TypeScript rules
-- [ ] Add Prettier for automatic code formatting
-- [ ] Set up pre-commit hooks with lint-staged and husky
-- [ ] Create VSCode workspace settings with recommended extensions
-- [ ] Add Storybook for isolated component development and documentation
-- [ ] Document common development tasks (adding layer types, menu items, commands)
-- [ ] Set up debugging configurations for VSCode
-
-**Progress:** 0/7 tasks complete
+**Impact:** Proper state management ensures system is always in expected state after any operation.
 
 ---
 
-## Phase 7: Enhanced Validation
+## Summary
 
-- [ ] Review current Tools > Validate Wind Definition implementation and determine how it can be improved to be actually useful to user
-- [ ] Document validation strategy (client-side vs server-side ownership)
-- [ ] Create reusable validation hooks for forms (useValidatedInput, useValidatedForm)
-- [ ] Implement field-level validation with debouncing for better UX
-- [ ] Show validation errors inline in forms instead of console only
-- [ ] Add cross-field validation (e.g., pattern number vs mandrel circumference compatibility)
-- [ ] Add comprehensive edge case validation (empty projects, extreme values, invalid combinations)
+**Total Tasks:** 31/31 complete (100%) ✅  
+**Branch:** main  
+**Status:** Complete
 
-**Progress:** 0/7 tasks complete
+### Key Achievements
 
-**Note:** Build upon existing JSON Schema validation (37 tests in validation.test.ts)
+1. **Zero-Lag Architecture**: Replaced queue-based progress with shared state polling, eliminating all phantom progress during pause
+2. **Proper Cancel Workflow**: Added Cancel Job button as distinct from Emergency Stop, providing clean exit option
+3. **State Consistency**: Fixed all state reset issues - cancel, stop, and reconnect now properly clean up for next operation
 
----
+### Technical Debt Resolved
 
-## Phase 8: UX & Polish
+- Queue lag (400+ commands delayed during pause)
+- Pause flag not cleared after cancel (blocking new streams)
+- Frontend status stuck in "paused" after cancel
+- File/progress persistence after emergency stop
 
-- [ ] Light / dark mode toggle (implement CSS variables and theme switcher)
-- [ ] Review and revise styling for consistency (margins, fonts, colors - professional appearance)
-- [ ] Add panel resize handles for customizable workspace layout
-- [ ] Performance test with large layer stacks (50+ layers stress test)
-- [ ] Test on Windows/macOS/Linux
-- [ ] Fix platform-specific issues
-- [ ] Cross-platform smoke tests (Windows, macOS, Linux) especially keyboard shortcuts
-- [ ] Improve validation error messages with specific context (show actual values that caused errors)
+### User Experience Improvements
 
-**Progress:** 0/6 tasks complete
+- Pause is now instantaneous and accurate
+- Cancel vs Stop distinction clear (orange vs red, different titles)
+- Clean slate after reconnect
+- Manual file clear option added
+- Can restart same file immediately after cancel
 
 ---
 
-## Phase 9: Accessibility (a11y) Compliance
+## Phase 4: Release Preparation (v0.5.0)
 
-- [ ] Add ARIA labels to all buttons, inputs, and interactive elements
-- [ ] Add ARIA live regions for status updates and notifications
-- [ ] Test full keyboard navigation for all workflows (tab order, enter/escape handling)
-- [ ] Implement focus management for dialogs (trap focus, restore on close)
-- [ ] Add visible focus indicators for keyboard navigation
-- [ ] Test with screen reader (NVDA or JAWS)
-- [ ] Ensure color contrast meets WCAG AA standards
-- [ ] Add alt text for visualization preview images
-- [ ] Support high contrast mode (Windows/macOS)
+**Focus:** Prepare for release with proper versioning and documentation
 
-**Progress:** 0/9 tasks complete
+- [ ] Update version numbers to 0.5.0
+  - [ ] Update `fiberpath_gui/package.json` from 0.4.0 → 0.5.0
+  - [ ] Update `pyproject.toml` from 0.4.0 → 0.5.0
+  - [ ] Update `fiberpath_gui/src-tauri/Cargo.toml` from 0.4.0 → 0.5.0
+- [ ] Run full test suite and verify all pass (currently: 75/75 ✅)
+- [ ] Build frontend and verify no errors (currently: passing ✅)
+- [ ] Build Rust backend and verify no errors
+- [ ] Test key workflows end-to-end:
+  - [ ] Connect → Stream → Pause → Resume → Complete
+  - [ ] Connect → Stream → Pause → Cancel → Stream again
+  - [ ] Connect → Stream → Stop → Reconnect (clean state)
+  - [ ] Manual clear file button
+- [ ] Update CHANGELOG.md with v0.5.0 release notes
+- [ ] Tag release: `git tag -a v0.5.0 -m "Release v0.5.0: Streaming State & Control Refinements"`
 
-**Note:** Accessibility is crucial for professional software. This phase ensures FiberPath is usable by everyone, including users with disabilities.
+**Progress:** 0/12 tasks complete
 
----
-
-## Phase 10: Advanced Stream Visualization (Optional)
-
-- [ ] Evaluate if 3D streaming visualization adds real value (user feedback)
-- [ ] If valuable: Add three.js and @react-three/fiber dependencies
-- [ ] Refactor StreamTab to 3-panel layout (controls | log | visualization)
-- [ ] Set up Canvas with camera, lights, OrbitControls
-- [ ] Add coordinate axes helper and grid
-- [ ] Create gcode-parser.ts utility for movement commands
-- [ ] Parse G0/G1 commands, handle G90/G91 positioning
-- [ ] Create Toolpath component with BufferGeometry
-- [ ] Color-code by move type (travel=red, extrude=blue)
-- [ ] Add current position marker during streaming
-- [ ] Optimize rendering performance (60fps target)
-- [ ] Add Show/Hide toggle and Reset Camera button
-- [ ] Test with various G-code file sizes
-
-**Progress:** 0/13 tasks complete
-
-**Note:** Only implement if user testing shows demand. Current plot visualization in Main tab may be sufficient.
+**Impact:** Formal release with proper semantic versioning marking completion of streaming refinements.
 
 ---
 
-## Phase 11: Testing & Release Process
+## Final Summary
 
-- [ ] Create download links on docs website from GitHub releases
-- [ ] Write example-driven tutorials (docs/tutorials/\*.md) showing complete workflows
-- [ ] Add comprehensive GUI usage section to README with screenshots
-- [ ] Add high-quality screenshots to docs/ folder
-- [ ] Create video demo showing layer authoring workflow
-- [ ] Update CHANGELOG.md with all changes since last release
-- [ ] Version bump to 0.5.0 after v5 completion
+**Total Tasks:** 31/43 (72% complete)  
+**Core Features:** 100% ✅  
+**Release Prep:** Pending
 
-**Progress:** 0/7 tasks complete
-
----
-
-## Overall Progress
-
-**Status:** 0/42 tasks complete (0%)
-
-**Phase Summary:**
-
-- Phase 1: Streaming Feature Completion (20 tasks)
-- Phase 2: Documentation & Project History (6 tasks)
-- Phase 3: Code Organization (4 tasks)
-- Phase 4: Performance Optimization (5 tasks)
-- Phase 5: Testing & Release (8 tasks)
-
-**Timeline:** 2-3 weeks after v4 complete
-
----
-
-## Scope Note
-
-**Moved to v6 (Medium Priority):**
-
-- Developer experience tools (ESLint, Prettier, Storybook)
-- Enhanced validation (field-level, cross-field)
-- UX enhancements (light/dark mode, panel resize, undo/redo)
-- Accessibility improvements (ARIA, screen reader, WCAG)
-- Advanced layer strategies UI
-- Custom G-code headers/footers
-- Batch processing
-- Cloud sync research
-
-**Moved to Backlog (Low Priority / Speculative):**
-
-- 3D streaming visualization (32 tasks, unclear value)
-- WebGL rendering
-- Multi-language support (i18n)
-- Coverage analysis visualization
-- CAD software plugins
-- AI/ML-based optimization
-
-**v5 Focus:** Complete streaming features that users will want immediately, improve code quality, ensure cross-platform stability.
-
-**Last Updated:** 2026-01-09
+**Next:** Proceed to v6 (Streaming Enhancements & Core Polish) for quality-of-life improvements.
