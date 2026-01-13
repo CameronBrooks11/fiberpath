@@ -1,40 +1,128 @@
-# FiberPath Documentation
+---
+hide:
+  - navigation
+  - toc
+---
 
-## Download & Installation
+<!-- markdownlint-disable -->
+<!-- This page uses custom HTML and MkDocs Material card grids -->
 
-**Latest Release:** [v0.4.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+<div style="text-align: center; padding: 3rem 0 2rem 0;" markdown>
 
-- **Desktop GUI** – Download installers for Windows (.msi/.exe), macOS (.dmg), or Linux (.deb/.AppImage)
-- **Python Package** – `pip install fiberpath` or `uv pip install fiberpath`
-- **Source Code** – Clone the repository and install with `uv pip install .[dev,cli,api]`
+# FiberPath
+
+### Modern filament winding planner, simulator, and tooling
+
+[Get Started](getting-started.md){ .md-button .md-button--primary }
+[View on GitHub :fontawesome-brands-github:](https://github.com/CameronBrooks11/fiberpath){ .md-button }
+
+</div>
 
 ---
 
-This folder hosts the primary knowledge base for the project. High-level content is split into user-facing guides, architectural notes, API references, and developer workflows.
+## Quick Start
 
-## What's New in v4.0
+<div class="grid cards" markdown>
 
-**Marlin G-code Streaming** – The desktop GUI now includes a dedicated Stream tab for direct hardware control:
+- :material-download:{ .lg .middle } **Download & Install**
 
-- Serial port discovery and connection management
-- Manual G-code command execution with common operation shortcuts
-- File streaming with real-time progress monitoring and pause/resume support
-- Live command/response log for debugging and monitoring
+  ***
 
-See [marlin-streaming.md](marlin-streaming.md) for detailed documentation.
+  **Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
 
-## Available Guides
+  - **Desktop GUI** – Windows, macOS, Linux installers
+  - **Python Package** – `pip install fiberpath`
+  - **Source** – Clone and build from GitHub
 
-- `architecture.md` – planner/simulator/streaming overview with data-flow diagrams.
-- `concepts.md` – glossary of filament-winding terminology used across the codebase.
-- `format-wind.md` – `.wind` file schema and validation rules.
-- `api.md` – REST entry points with sample payloads (kept in sync with the FastAPI schemas).
-- `planner-math.md` – derivations for hoop/helical/skip layer formulas and guardrails.
-- `marlin-streaming.md` – Marlin hardware connection, manual control, and file streaming guide (v4.0).
-- `roadmap.md` – phase-by-phase status of the rewrite.
+  [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
-Additional resources:
+- :material-new-box:{ .lg .middle } **What's New in v0.5.0**
 
-- `fiberpath_gui/docs/` contains GUI-specific documentation (architecture, testing, performance profiling).
-- The top-level `README.md` lists hardware smoke-test steps for running the CLI/GUI against Marlin controllers.
-- `CONTRIBUTING.md` outlines the development workflow.
+  ***
+
+  **Enhanced Streaming Control** with refined state management:
+
+  - Graceful job cancellation vs emergency stop
+  - Zero-lag progress updates (no queue lag)
+  - Clean state handling after operations
+  - Manual file control with clear UI
+
+  [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
+
+- :material-book-open-page-variant:{ .lg .middle } **User Guides**
+
+  ***
+
+  Learn how to work with FiberPath's core features
+
+  - [Wind Format](guides/wind-format.md) – File schema & validation
+  - [Axis Mapping](guides/axis-mapping.md) – Coordinate systems
+  - [Marlin Streaming](guides/marlin-streaming.md) – Hardware control
+  - [Visualization](guides/visualization.md) – Preview & plotting
+
+- :material-code-json:{ .lg .middle } **API Reference**
+
+  ***
+
+  Technical documentation and specifications
+
+  - [Concepts](reference/concepts.md) – Terminology glossary
+  - [API Reference](reference/api.md) – REST endpoints
+  - [Planner Math](reference/planner-math.md) – Algorithms & formulas
+
+- :material-layers-triple:{ .lg .middle } **Architecture**
+
+  ***
+
+  Understand the system design and internals
+
+  - [System Overview](architecture/overview.md) – Stack & data flow
+  - [Axis System](architecture/axis-system.md) – Logical vs physical
+
+  [:octicons-arrow-right-24: Architecture Docs](architecture/overview.md)
+
+- :material-hammer-wrench:{ .lg .middle } **Development**
+
+  ***
+
+  Contribute to FiberPath development
+
+  - [Contributing](development/contributing.md) – Guidelines & setup
+  - [Tooling](development/tooling.md) – Dev environment
+  - [CI/CD](development/ci-cd.md) – Build workflows
+
+  [:octicons-arrow-right-24: Developer Docs](development/contributing.md)
+
+</div>
+
+---
+
+## Features
+
+<div class="grid cards" markdown>
+
+- **:material-file-code: Wind File Format**
+
+  Define winding patterns with a simple, validated YAML schema
+
+- **:material-axis-arrow: Multi-Axis Control**
+
+  Support for XYZ and XAB coordinate systems with flexible mapping
+
+- **:material-connection: Marlin Streaming**
+
+  Direct hardware control with real-time progress and state management
+
+- **:material-chart-line: Visualization**
+
+  Preview and plot toolpaths before manufacturing
+
+- **:material-puzzle: Modular Architecture**
+
+  CLI, API, and GUI components work standalone or together
+
+- **:material-cog-refresh: Layer Strategies**
+
+  Configurable winding algorithms with mathematical precision
+
+</div>

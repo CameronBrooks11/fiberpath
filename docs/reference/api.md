@@ -13,10 +13,22 @@ POST /plan/from-file
 Request body:
 
 ```json
-{ "path": "/absolute/path/to/input.wind" }
+{
+  "path": "/absolute/path/to/input.wind",
+  "axis_format": "xab",
+  "verbose": false
+}
 ```
 
-Response body (fields abbreviated):
+**Fields:**
+
+- `path` (required): Absolute path to `.wind` file
+- `axis_format` (optional): Axis coordinate format - `"xab"` (default, standard rotational) or `"xyz"` (legacy compatibility)
+- `verbose` (optional): Include detailed layer metrics in response (default: `false`)
+
+See [Axis Mapping Guide](../guides/axis-mapping.md) for format details.
+
+Response body:
 
 ```json
 {
@@ -24,6 +36,7 @@ Response body (fields abbreviated):
   "output": "/absolute/path/to/input.gcode",
   "timeSeconds": 42.5,
   "towMeters": 8.1,
+  "axisFormat": "xab",
   "layers": [
     {
       "index": 1,
@@ -45,7 +58,9 @@ POST /simulate/from-file
 Request:
 
 ```json
-{ "path": "/absolute/path/to/output.gcode" }
+{
+  "path": "/absolute/path/to/output.gcode"
+}
 ```
 
 Response:
@@ -55,11 +70,20 @@ Response:
   "commands": 789,
   "moves": 300,
   "estimated_time_s": 95.2,
-  "total_distance_mm": 1234.5,
-  "tow_length_mm": 1234.5,
+  "total_distance_mm": 8234.5,
+  "tow_length_mm": 8100.0,
   "average_feed_rate_mmpm": 7200.0
 }
 ```
+
+**Response Fields:**
+
+- `commands`: Total G-code commands processed
+- `moves`: Number of movement commands (G0/G1)
+- `estimated_time_s`: Estimated execution time in seconds
+- `total_distance_mm`: Combined motion distance of all axes
+- `tow_length_mm`: Total fiber material used in millimeters
+- `average_feed_rate_mmpm`: Mean speed across all moves in mm/min
 
 ## Validation
 
@@ -67,17 +91,38 @@ Response:
 POST /validate/from-file
 ```
 
+Validates a `.wind` file against the schema without generating G-code.
+
 Request:
 
 ```json
-{ "path": "/absolute/path/to/input.wind" }
+{
+  "path": "/absolute/path/to/input.wind"
+}
 ```
 
-Response:
+Response (success):
 
 ```json
-{ "status": "ok", "path": "/absolute/path/to/input.wind" }
+{
+  "status": "ok",
+  "path": "/absolute/path/to/input.wind"
+}
 ```
+
+Response (validation error):
+
+```json
+{
+  "status": "error",
+  "detail": "Validation error description"
+}
+```
+
+HTTP status codes:
+
+- `200 OK`: File is valid
+- `400 Bad Request`: Validation failed (see `detail` field)
 
 ## Streaming
 

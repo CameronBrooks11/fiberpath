@@ -77,9 +77,7 @@ class WinderMachine:
             self._move_segment(complete_end)
             return
 
-        carriage_delta = abs(
-            self._last_position[Axis.CARRIAGE] - complete_end[Axis.CARRIAGE]
-        )
+        carriage_delta = abs(self._last_position[Axis.CARRIAGE] - complete_end[Axis.CARRIAGE])
         num_segments = int(round(carriage_delta)) + 1
         if self._verbose:
             self.insert_comment(

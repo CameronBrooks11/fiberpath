@@ -18,16 +18,24 @@ import { toastMessages } from "../../lib/toastMessages";
 import "./ManualControlSection.css";
 
 export function ManualControlSection() {
-  const { status, commandLoading, setCommandLoading, addLogEntry } =
+  const { status, isStreaming, commandLoading, setCommandLoading, addLogEntry } =
     useStreamStore();
 
   const { addToast } = useToastStore();
   const [commandInput, setCommandInput] = useState("");
 
   const isConnected = status === "connected" || status === "paused";
+  // Disable manual controls during active streaming (safety), but allow during pause
+  const manualControlsEnabled = isConnected && (!isStreaming || status === "paused");
 
   const handleSendCommand = async (gcode: string) => {
+    console.log('[ManualControl] ========== START handleSendCommand ==========');
+    console.log('[ManualControl] gcode:', gcode);
+    console.log('[ManualControl] isConnected:', isConnected);
+    console.log('[ManualControl] commandLoading:', commandLoading);
+    
     if (!gcode.trim() || !isConnected || commandLoading) {
+      console.log('[ManualControl] Aborting: gcode empty, not connected, or already loading');
       return;
     }
 
@@ -65,6 +73,7 @@ export function ManualControlSection() {
       }
     } catch (error) {
       const errorMsg = String(error);
+      console.error('Command failed:', error);
       addLogEntry({
         type: "error",
         content: `Command failed: ${errorMsg}`,
@@ -98,7 +107,7 @@ export function ManualControlSection() {
       <div className="common-commands">
         <button
           onClick={() => handleSendCommand("G28")}
-          disabled={!isConnected || commandLoading}
+          disabled={!manualControlsEnabled || commandLoading}
           className="command-button"
           title="Home all axes (G28)"
         >
@@ -108,7 +117,7 @@ export function ManualControlSection() {
 
         <button
           onClick={() => handleSendCommand("M114")}
-          disabled={!isConnected || commandLoading}
+          disabled={!manualControlsEnabled || commandLoading}
           className="command-button"
           title="Get current position (M114)"
         >
@@ -118,9 +127,9 @@ export function ManualControlSection() {
 
         <button
           onClick={() => handleSendCommand("M112")}
-          disabled={!isConnected || commandLoading}
+          disabled={!manualControlsEnabled || commandLoading}
           className="command-button emergency-stop"
-          title="Emergency stop (M112)"
+          title="Emergency stop (M112) - WARNING: Will disconnect controller"
         >
           <AlertOctagon size={18} />
           <span>E-Stop</span>
@@ -128,7 +137,7 @@ export function ManualControlSection() {
 
         <button
           onClick={() => handleSendCommand("M18")}
-          disabled={!isConnected || commandLoading}
+          disabled={!manualControlsEnabled || commandLoading}
           className="command-button"
           title="Disable stepper motors (M18)"
         >
@@ -147,12 +156,12 @@ export function ManualControlSection() {
             onChange={(e) => setCommandInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Enter G-code command (e.g., G0 X10 Y20)"
-            disabled={!isConnected || commandLoading}
+            disabled={!manualControlsEnabled || commandLoading}
             className="command-input"
           />
           <button
             onClick={handleManualSend}
-            disabled={!isConnected || commandLoading || !commandInput.trim()}
+            disabled={!manualControlsEnabled || commandLoading || !commandInput.trim()}
             className="send-button"
             title="Send command"
           >

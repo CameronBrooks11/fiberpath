@@ -8,18 +8,40 @@ site_dir: site
 
 nav:
   - Home: index.md
-  - Roadmap: roadmap.md
-  - Concepts:
-      - Glossary: concepts.md
-      - Wind Format: format-wind.md
+  - Getting Started: getting-started.md
+  - User Guides:
+      - Wind Format: guides/wind-format.md
+      - Axis Mapping: guides/axis-mapping.md
+      - Marlin Streaming: guides/marlin-streaming.md
+      - Visualization: guides/visualization.md
+  - Reference:
+      - Concepts: reference/concepts.md
+      - API Reference: reference/api.md
+      - Planner Math: reference/planner-math.md
   - Architecture:
-      - System Overview: architecture.md
-      - Planner Math: planner-math.md
-  - Guides:
-      - Marlin Streaming: marlin-streaming.md
-  - API Reference: api.md
-  - Packaging: packaging.md
-  - CI/CD: ci-cd.md
+      - System Overview: architecture/overview.md
+      - Axis System: architecture/axis-system.md
+  - Development:
+      - Contributing: development/contributing.md
+      - Tooling: development/tooling.md
+      - Release Process: development/release-process.md
+      - Packaging: development/packaging.md
+      - CI/CD: development/ci-cd.md
+  - GUI:
+      - Overview: gui/overview.md
+      - Development: gui/development.md
+      - Testing: gui/testing.md
+      - Architecture:
+          - Tech Stack: gui/architecture/tech-stack.md
+          - State Management: gui/architecture/state-management.md
+          - CLI Integration: gui/architecture/cli-integration.md
+          - Streaming State: gui/architecture/streaming-state.md
+      - Guides:
+          - Schema Validation: gui/guides/schemas.md
+          - Styling: gui/guides/styling.md
+          - Performance: gui/guides/performance.md
+      - Reference:
+          - Type Safety: gui/reference/type-safety.md
 
 theme:
   name: material
@@ -37,11 +59,16 @@ plugins:
 
 markdown_extensions:
   - admonition
+  - attr_list
+  - md_in_html
   - toc:
       permalink: true
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.highlight
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 extra:
   social:

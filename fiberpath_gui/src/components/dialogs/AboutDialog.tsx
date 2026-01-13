@@ -1,5 +1,7 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
+import { getVersion } from "@tauri-apps/api/app";
 import { createPortal } from "react-dom";
+import { useEffect, useState } from "react";
 import type { DialogBaseProps } from "../../types/components";
 import "../../styles/dialogs.css";
 
@@ -38,6 +40,12 @@ interface AboutDialogProps extends DialogBaseProps {
  * @returns The about dialog portal, or null if not open
  */
 export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
+  const [version, setVersion] = useState<string>("Loading...");
+
+  useEffect(() => {
+    void getVersion().then(setVersion);
+  }, []);
+
   if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -70,7 +78,7 @@ export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
               <div className="about-icon">🧵</div>
               <div className="about-title">
                 <h3>FiberPath</h3>
-                <p className="about-version">Version 0.4.0</p>
+                <p className="about-version">Version {version}</p>
               </div>
             </div>
           </div>

@@ -188,18 +188,6 @@ Previous workflows moved to `.github/workflows/archive/`:
 - **gui-tests.yml** - Old GUI testing (redundant with gui.yml)
 - **docs-site.yml** - Old docs deployment (replaced by docs-ci + docs-deploy)
 
-## Testing Strategy
-
-Before merging CI/CD changes to main:
-
-1. Create test branch: `git checkout -b test-ci-workflows`
-2. Push to GitHub: `git push -u origin test-ci-workflows`
-3. Update workflow triggers to include test branch temporarily
-4. Verify each workflow runs successfully
-5. Check artifacts are created correctly
-6. Test composite actions are reused properly
-7. Merge to main once validated
-
 ## Improvements Over Previous System
 
 | Issue                | Previous                                            | New Solution                         |

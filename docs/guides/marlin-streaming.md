@@ -2,16 +2,17 @@
 
 ## Overview
 
-FiberPath v4.0 introduces direct Marlin G-code streaming capabilities through the desktop GUI. The Stream tab provides a complete interface for connecting to Marlin-compatible hardware, sending manual commands, and streaming G-code files with real-time progress monitoring.
+FiberPath v0.5.0 introduces enhanced Marlin G-code streaming with refined state management and control workflows. The Stream tab provides a complete interface for connecting to Marlin-compatible hardware, sending manual commands, and streaming G-code files with real-time progress monitoring.
 
 ## Features
 
 - **Serial Port Discovery** – Automatically detect available COM ports and USB serial devices
 - **Connection Management** – Connect/disconnect with configurable baud rates
 - **Manual Control** – Send custom G-code commands or use quick-access buttons for common operations
-- **File Streaming** – Stream G-code files with real-time progress tracking
-- **Pause/Resume** – Safely pause and resume streaming operations mid-execution
+- **File Streaming** – Stream G-code files with zero-lag progress tracking
+- **Pause/Resume/Cancel** – Sophisticated streaming control with distinct pause and cancel operations
 - **Live Logging** – View command/response history with timestamps and status indicators
+- **State Management** – Clean state handling after stop/cancel/reconnect operations
 - **Keyboard Shortcuts** – Efficient control with `Alt+1/2` for tabs, `Ctrl+Enter` to send commands, `?` for help
 
 ---
@@ -22,7 +23,7 @@ FiberPath v4.0 introduces direct Marlin G-code streaming capabilities through th
 
 - Marlin-compatible hardware (3D printer, CNC, filament winder, etc.)
 - USB serial connection
-- FiberPath Desktop GUI v4.0 or later
+- FiberPath Desktop GUI v0.5.0 or later
 
 ### Connection Setup
 
@@ -86,47 +87,66 @@ Once connected, use the Manual Control section to test communication and execute
 
 ## File Streaming
 
-Stream complete G-code files to hardware with real-time progress monitoring.
+Stream complete G-code files to hardware with zero-lag progress monitoring and refined control workflow.
 
 ### Streaming Workflow
 
 1. **Select G-code File**
 
    - Click **Select G-code File** button
-   - Choose a `.gcode` file from your filesystem
-   - Selected filename will display below the button
+   - Choose a `.gcode`, `.nc`, or `.ngc` file from your filesystem
+   - Selected filename displays with a clear button (X) to deselect
 
 2. **Start Streaming**
 
    - Click **Start Stream** (enabled when connected and file selected)
    - Progress bar shows commands sent vs. total
-   - Current command displays in real-time
+   - Current command displays in real-time with zero lag
    - Log panel shows each command/response
 
 3. **Monitor Progress**
 
    - Progress updates display as `N / Total commands`
-   - Milestone notifications at 25%, 50%, 75%, 100%
+   - Command display updates instantly (no queue lag)
    - Log entries show timestamps and status indicators
 
-4. **Pause/Resume**
+4. **Pause/Cancel/Stop Controls**
 
-   - Click **Pause** during streaming to safely halt execution
-   - Click **Resume** to continue from the paused position
-   - Status indicator turns yellow when paused
+   The streaming interface provides sophisticated control options:
 
-5. **Stop Streaming**
-   - Click **Stop** to terminate streaming early
-   - A confirmation prevents accidental stops
+   **While Streaming:**
+
+   - **Pause Button (Yellow)** – Sends M0 to Marlin, blocks Python streaming loop
+   - **Stop Button (Red)** – Emergency M112, disconnects hardware (use with caution)
+
+   **While Paused:**
+
+   - **Resume Button (Green)** – Sends M108 to Marlin, continues streaming
+   - **Cancel Job Button (Orange)** – Graceful exit, stays connected, ready for new file
+
+### Control Button Behavior
+
+| State         | Pause/Resume   | Cancel/Stop         | Description                      |
+| ------------- | -------------- | ------------------- | -------------------------------- |
+| **Streaming** | Pause (Yellow) | Stop (Red)          | Normal streaming state           |
+| **Paused**    | Resume (Green) | Cancel Job (Orange) | Job paused, can resume or cancel |
+| **Connected** | Start Stream   | -                   | Ready to stream                  |
+
+**Key Differences:**
+
+- **Cancel Job**: Clean exit while paused, connection maintained, no hardware command
+- **Emergency Stop**: Sends M112 to Marlin, requires disconnect/reconnect
 
 ### Progress Monitoring
 
-The Stream tab provides multiple progress indicators:
+The Stream tab provides zero-lag progress indicators:
 
 - **Progress Bar** – Visual representation of completion percentage
-- **Command Counter** – Displays `N / Total` commands sent
-- **Current Command** – Shows the last command sent to hardware
+- **Command Counter** – Displays `N / Total` commands sent (updates instantly)
+- **Current Command** – Shows the last command sent to hardware (no queue lag)
 - **Log Panel** – Complete command/response history with timestamps
+
+**v0.5.0 Enhancement**: Progress monitoring uses direct state polling instead of event queues, eliminating the lag where hundreds of commands would appear during pause. Progress now reflects reality instantly.
 
 ### Stream Log Features
 
@@ -217,10 +237,11 @@ Press `?` or click the help button in the Stream tab header to view all keyboard
 
 FiberPath uses a Python subprocess (`fiberpath_cli/interactive.py`) to communicate with Marlin over serial:
 
-1. **Connection** – Opens serial port at specified baud rate with 5-second timeout
+1. **Connection** – Opens serial port at specified baud rate with 10-second timeout
 2. **Command Sending** – Sends G-code line-by-line, waits for `ok` response
 3. **Response Reading** – Reads serial responses, filters for `ok`, `error`, or status messages
 4. **Error Handling** – Detects `error:` responses and halts streaming
+5. **Pause Control** – Sends M0 to Marlin, blocks Python streaming loop until resumed
 
 ### Streaming Architecture
 
@@ -234,11 +255,16 @@ Frontend (React)          Tauri Rust Backend          Python Subprocess
      │                           │<─ read JSON from stdout ──<│
      │<─ return response ────────<│                            │
      │                           │                            │
-     ├─ marlin_stream_file() ───>├─ send commands + emit ───>├─ stream G-code
-     │                           │   progress events          │  line-by-line
-     │<─ stream-progress ────────<│                            │
+     ├─ marlin_stream_file() ───>├─ send commands + poll ───>├─ stream G-code
+     │                           │   progress state           │  line-by-line
+     │<─ stream-progress ────────<│   (every 0.1s)            │  (blocking when paused)
      │<─ stream-complete ─────────<│                            │
+     │                           │                            │
+     ├─ marlin_cancel() ─────────>├─ graceful shutdown ─────>├─ stop worker thread
+     │                           │   (stay connected)         │  (no M112)
 ```
+
+**v0.5.0 Architecture Change**: Progress now uses shared state polling (0.1s intervals) instead of event queues. The main loop reads `streamer.commands_sent` directly from the MarlinStreamer instance, providing zero-lag progress updates. When paused, the streaming worker blocks in `iter_stream()` until resumed.
 
 ### Timeout Configuration
 
@@ -249,21 +275,24 @@ Frontend (React)          Tauri Rust Backend          Python Subprocess
 
 ### Safety Features
 
-- **Emergency Stop:** `M112` immediately halts all motion
-- **Pause/Resume:** Uses `M25` and `M24` for safe stream control
+- **Emergency Stop:** `M112` immediately halts all motion and disconnects (use only in emergencies)
+- **Pause/Resume:** Python blocks streaming loop when paused; M0/M108 control Marlin buffer
+- **Cancel Job:** Graceful exit from paused state without sending M112, connection maintained
 - **Error Detection:** Monitors for `error:` responses and stops streaming
 - **Connection State:** Prevents commands when disconnected
+- **State Cleanup:** Automatically clears file/progress on reconnect after emergency stop
 
 ---
 
 ## Best Practices
 
-1. **Always Home Before Winding** – Use `G28` to establish axis origins
+1. **Always Home Before Winding** – Use `G28` to establish axis origins (Note: Requires hardware endstops)
 2. **Test Connection First** – Send `M114` to verify communication before streaming
 3. **Monitor Progress** – Watch the log for errors or unexpected responses
 4. **Use Pause for Inspection** – Safely pause to check fiber placement or hardware
-5. **Emergency Stop is Final** – Use `M112` only in true emergencies (requires hardware reset)
-6. **Disconnect Before Unplugging** – Always use Disconnect button before removing USB
+5. **Cancel vs Emergency Stop** – Use Cancel Job for planned exits, Emergency Stop only for true emergencies
+6. **Clear File Selection** – Use the X button to deselect files between jobs
+7. **Disconnect Before Unplugging** – Always use Disconnect button before removing USB
 
 ---
 
@@ -286,16 +315,26 @@ See `planning/hardware-testing-checklist.md` for comprehensive pre-deployment te
 
 ## Related Documentation
 
-- [FiberPath Architecture](architecture.md) – Overall system design
-- [API Documentation](api.md) – REST endpoints for planning and simulation
+- [FiberPath Architecture](../architecture/overview.md) – Overall system design
+- [API Documentation](../reference/api.md) – REST endpoints for planning and simulation
 
 ---
 
 ## Version History
 
-- **v4.0.0** (2026-01-09) – Initial release of Marlin streaming features
-  - Serial port discovery and connection management
-  - Manual control with common command buttons
-  - File streaming with pause/resume support
-  - Live logging and progress monitoring
-  - Keyboard shortcuts and help modal
+**v0.5.0** (2026-01-11) – Streaming State & Control Refinements
+
+- Zero-lag progress monitoring (replaced event queue with state polling)
+- Cancel Job feature (graceful exit while paused, stays connected)
+- Enhanced state management (clear file/progress on reconnect)
+- Fixed pause state reset bug (properly clears flags after cancel)
+- Manual file clear button added (X button next to filename)
+- Improved button workflow (Cancel vs Stop distinction)
+
+**v4.0.0** (2026-01-09) – Initial Marlin Streaming
+
+- Serial port discovery and connection management
+- Manual control with common command buttons
+- File streaming with pause/resume support
+- Live logging and progress monitoring
+- Keyboard shortcuts and help modal

@@ -25,9 +25,7 @@ if TYPE_CHECKING:
 @dataclass(slots=True)
 class PlanOptions:
     verbose: bool = False
-    dialect: MarlinDialect = field(
-        default_factory=lambda: _get_default_dialect()
-    )  # noqa: E731
+    dialect: MarlinDialect = field(default_factory=lambda: _get_default_dialect())  # noqa: E731
 
 
 def _get_default_dialect() -> MarlinDialect:
@@ -57,9 +55,7 @@ class PlanResult:
     layers: list[LayerMetrics]
 
 
-def plan_wind(
-    definition: WindDefinition, options: PlanOptions | None = None
-) -> PlanResult:
+def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) -> PlanResult:
     options = options or PlanOptions()
     machine = WinderMachine(
         mandrel_diameter=definition.mandrel_parameters.diameter,

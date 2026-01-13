@@ -19,9 +19,7 @@ BASE_LAYER = {
 
 
 def test_validate_helical_layer_rejects_skip_index_ge_pattern() -> None:
-    layer = HelicalLayer.model_validate(
-        {**BASE_LAYER, "skipIndex": 4, "patternNumber": 4}
-    )
+    layer = HelicalLayer.model_validate({**BASE_LAYER, "skipIndex": 4, "patternNumber": 4})
     tow = TowParameters.model_validate({"width": 6.0, "thickness": 0.5})
 
     with pytest.raises(LayerValidationError):

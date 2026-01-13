@@ -79,10 +79,7 @@ def render_plot(
 
     drawer = ImageDraw.Draw(image)
     for segment in segments:
-        points = [
-            _screen_point(point, config.scale, config.height_degrees)
-            for point in segment
-        ]
+        points = [_screen_point(point, config.scale, config.height_degrees) for point in segment]
         drawer.line(points, fill=config.primary_color, width=primary_width)
         drawer.line(points, fill=config.secondary_color, width=secondary_width)
 
@@ -106,9 +103,7 @@ def compute_plot_signature(
     metadata = _extract_metadata(program)
     segments = _collect_segments(program, height_degrees, dialect)
     digest = _hash_segments(segments)
-    return PlotSignature(
-        metadata=metadata, segments_rendered=len(segments), digest=digest
-    )
+    return PlotSignature(metadata=metadata, segments_rendered=len(segments), digest=digest)
 
 
 def save_plot(
@@ -169,17 +164,14 @@ def _collect_segments(
                 next_y = float(token[1:])
         if math.isclose(next_x, x_pos) and math.isclose(next_y, y_pos):
             continue
-        segments.extend(
-            _split_segment((x_pos, y_pos), (next_x, next_y), height_degrees)
-        )
+        segments.extend(_split_segment((x_pos, y_pos), (next_x, next_y), height_degrees))
         x_pos, y_pos = next_x, next_y
     return segments
 
 
 def _hash_segments(segments: Sequence[list[tuple[float, float]]]) -> str:
     normalized = [
-        [[round(point[0], 6), round(point[1], 6)] for point in segment]
-        for segment in segments
+        [[round(point[0], 6), round(point[1], 6)] for point in segment] for segment in segments
     ]
     payload = json.dumps(normalized, separators=(",", ":")).encode("utf-8")
     return sha256(payload).hexdigest()
@@ -255,11 +247,7 @@ def _detect_dialect(program: Sequence[str]) -> MarlinDialect:
         parts = stripped.split()
         if parts[0] in {"G0", "G1", "G92"}:
             # Check which axes are present
-            axes_found = {
-                token[0]
-                for token in parts[1:]
-                if token[0].isalpha() and token[0] != "F"
-            }
+            axes_found = {token[0] for token in parts[1:] if token[0].isalpha() and token[0] != "F"}
 
             # Check for rotational axes
             if "A" in axes_found or "B" in axes_found:

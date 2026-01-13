@@ -20,13 +20,9 @@ FIXTURE = (
     / "output.gcode"
 )
 
-SIMPLE_CYLINDER_WIND = (
-    Path(__file__).parents[2] / "examples" / "simple_cylinder" / "input.wind"
-)
+SIMPLE_CYLINDER_WIND = Path(__file__).parents[2] / "examples" / "simple_cylinder" / "input.wind"
 
-REFERENCE_SIGNATURE_DIGEST = (
-    "bc2495ba15965b8b0e3a2616957741ef0801fc62a6a8284e30955635d2426af0"
-)
+REFERENCE_SIGNATURE_DIGEST = "bc2495ba15965b8b0e3a2616957741ef0801fc62a6a8284e30955635d2426af0"
 SIMPLE_CYLINDER_SIGNATURE_DIGEST = (
     "f5516bc0b68cd25c8ab7014c05109c926f8183ad00ba1d25ee4b56835a73900f"
 )

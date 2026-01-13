@@ -31,15 +31,11 @@ def compute_helical_kinematics(
     tow_arc_length = tow_parameters.width / math.cos(deg_to_rad(layer.wind_angle))
     num_circuits = math.ceil(mandrel_circumference / tow_arc_length)
     pattern_step_degrees = 360.0 * (1 / num_circuits)
-    pass_rotation_mm = mandrel_parameters.wind_length * math.tan(
-        deg_to_rad(layer.wind_angle)
-    )
+    pass_rotation_mm = mandrel_parameters.wind_length * math.tan(deg_to_rad(layer.wind_angle))
     pass_rotation_degrees = 360.0 * (pass_rotation_mm / mandrel_circumference)
     pass_degrees_per_mm = pass_rotation_degrees / mandrel_parameters.wind_length
     lead_in_degrees = pass_degrees_per_mm * layer.lead_in_mm
-    main_pass_degrees = pass_degrees_per_mm * (
-        mandrel_parameters.wind_length - layer.lead_in_mm
-    )
+    main_pass_degrees = pass_degrees_per_mm * (mandrel_parameters.wind_length - layer.lead_in_mm)
 
     return HelicalKinematics(
         mandrel_circumference=mandrel_circumference,

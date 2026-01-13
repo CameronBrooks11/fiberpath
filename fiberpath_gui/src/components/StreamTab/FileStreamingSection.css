@@ -14,6 +14,7 @@
 .file-info {
   display: flex;
   gap: 8px;
+  align-items: center;
   margin-bottom: 8px;
   padding: 8px 12px;
   background: var(--color-console-bg-mid);
@@ -29,11 +30,38 @@
 .file-name {
   font-size: 13px;
   color: var(--text-primary);
-  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-family: Consolas, Monaco, "Courier New", monospace;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.clear-file-button {
+  flex-shrink: 0;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-file-button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-red-500);
+}
+
+.clear-file-button:active {
+  transform: scale(0.95);
 }
 
 .select-file-button {
@@ -115,7 +143,7 @@
 
 .command-text {
   font-size: 12px;
-  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-family: Consolas, Monaco, "Courier New", monospace;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -131,6 +159,7 @@
 .start-button,
 .pause-button,
 .resume-button,
+.cancel-button,
 .stop-button {
   display: flex;
   align-items: center;
@@ -184,6 +213,29 @@
   background: var(--color-success-green-hover);
 }
 
+.cancel-button {
+  background: var(--color-warning-orange);
+  color: white;
+}
+
+.cancel-button:hover {
+  background: var(--color-warning-orange-hover);
+}
+
+.cancel-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancel-button .spinner {
+  border: 2px solid rgb(255, 255, 255, 0.3);
+  border-top-color: white;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
 .stop-button {
   background: var(--color-error-red);
   color: white;
@@ -191,4 +243,29 @@
 
 .stop-button:hover {
   background: var(--color-error-red-hover);
+}
+
+.pause-button:disabled,
+.resume-button:disabled,
+.stop-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Spinner for loading states */
+.pause-button .spinner,
+.resume-button .spinner,
+.stop-button .spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgb(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

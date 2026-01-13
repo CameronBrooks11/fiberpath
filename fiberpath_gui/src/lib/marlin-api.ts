@@ -50,7 +50,13 @@ export async function disconnectMarlin(): Promise<void> {
  * Send a single G-code command to the Marlin controller
  */
 export async function sendCommand(gcode: string): Promise<string[]> {
-  return await invoke<string[]>("marlin_send_command", { gcode });
+  try {
+    const result = await invoke<string[]>("marlin_send_command", { gcode });
+    return result;
+  } catch (error) {
+    console.error("Command failed:", error);
+    throw error;
+  }
 }
 
 /**
@@ -72,6 +78,20 @@ export async function pauseStream(): Promise<void> {
  */
 export async function resumeStream(): Promise<void> {
   await invoke("marlin_resume");
+}
+
+/**
+ * Cancel streaming (clean exit, stays connected)
+ */
+export async function cancelStream(): Promise<void> {
+  await invoke("marlin_cancel");
+}
+
+/**
+ * Stop streaming (sends M112 emergency stop)
+ */
+export async function stopStream(): Promise<void> {
+  await invoke("marlin_stop");
 }
 
 /**

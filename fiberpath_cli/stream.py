@@ -21,9 +21,7 @@ def stream_command(
         "-p",
         help="Serial port or pyserial URL (required unless --dry-run).",
     ),
-    baud_rate: int = typer.Option(
-        250_000, "--baud-rate", "-b", help="Marlin baud rate."
-    ),
+    baud_rate: int = typer.Option(250_000, "--baud-rate", "-b", help="Marlin baud rate."),
     response_timeout: float = typer.Option(
         10.0,
         "--timeout",
@@ -35,9 +33,7 @@ def stream_command(
         "--dry-run",
         help="Skip serial I/O and just report what would be streamed.",
     ),
-    verbose: bool = typer.Option(
-        False, "--verbose", help="Print every streamed command."
-    ),
+    verbose: bool = typer.Option(False, "--verbose", help="Print every streamed command."),
     json_output: bool = typer.Option(
         False,
         "--json",
@@ -47,9 +43,7 @@ def stream_command(
     """Stream the provided G-code file to a Marlin device."""
 
     if not dry_run and port is None:
-        raise typer.BadParameter(
-            "--port is required for live streaming", param_hint="--port"
-        )
+        raise typer.BadParameter("--port is required for live streaming", param_hint="--port")
 
     commands = gcode_file.read_text(encoding="utf-8").splitlines()
     log_callback = None if json_output else (typer.echo if verbose else None)
@@ -70,9 +64,7 @@ def stream_command(
         # Stream commands with pause/resume support
         try:
             for update in streamer.iter_stream(commands, dry_run=dry_run):
-                if not json_output and _should_print_progress(
-                    update, verbose=progress_verbose
-                ):
+                if not json_output and _should_print_progress(update, verbose=progress_verbose):
                     typer.echo(_format_progress(update))
         except KeyboardInterrupt:  # pragma: no cover - user-driven flow
             if dry_run:
@@ -82,9 +74,7 @@ def stream_command(
             # Reset and retry streaming
             streamer.reset_progress()
             for update in streamer.iter_stream(commands, dry_run=dry_run):
-                if not json_output and _should_print_progress(
-                    update, verbose=progress_verbose
-                ):
+                if not json_output and _should_print_progress(update, verbose=progress_verbose):
                     typer.echo(_format_progress(update))
     except StreamError as exc:
         typer.echo(f"Streaming failed: {exc}", err=True)

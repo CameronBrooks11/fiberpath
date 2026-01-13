@@ -118,8 +118,8 @@ A helical layer winds at a specified angle, creating a spiral pattern around the
 
 - `windType`: Must be `"helical"`
 - `windAngle`: Wind angle in degrees (0° < angle ≤ 90°)
-- `patternNumber`: Number of circuits in the pattern (must be > 0, integer)
-- `skipIndex`: Skip index for pattern generation (must be > 0, integer, coprime with `patternNumber`)
+- `patternNumber`: Number of circuits in the pattern (integer ≥ 1)
+- `skipIndex`: Skip index for pattern generation (integer ≥ 1, must be coprime with `patternNumber`)
 - `lockDegrees`: Lock rotation in degrees (must be > 0)
 - `leadInMM`: Lead-in distance in mm (must be > 0)
 - `leadOutDegrees`: Lead-out rotation in degrees (must be > 0)
@@ -328,9 +328,9 @@ The `schemaVersion` field allows for future format evolution:
 
 ## Related Documentation
 
-- **[Architecture](architecture.md)**: System design and component interaction
-- **[API Documentation](api.md)**: REST API endpoints for validation and planning
-- **[Concepts](concepts.md)**: Winding theory and geometric calculations
+- **[Architecture](../architecture/overview.md)**: System design and component interaction
+- **[API Documentation](../reference/api.md)**: REST API endpoints for validation and planning
+- **[Concepts](../reference/concepts.md)**: Winding theory and geometric calculations
 
 ## Validation Tools
 

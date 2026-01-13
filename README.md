@@ -4,7 +4,7 @@
 
 <!-- Version & License -->
 
-[![Version](https://img.shields.io/badge/version-0.4.0-blue)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.5.0-blue)](https://github.com/CameronBrooks11/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE)
 
 <!-- CI/CD Status -->
@@ -37,7 +37,7 @@ FiberPath is a next-generation system for planning, simulating, and executing fi
 
 ## Download
 
-📦 **Latest Release:** [v0.4.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+📦 **Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
 
 - **Desktop GUI** – Windows (.msi/.exe), macOS (.dmg), Linux (.deb/.AppImage)
 - **Python CLI/API** – `pip install fiberpath` or `uv pip install fiberpath`
@@ -47,10 +47,12 @@ FiberPath is a next-generation system for planning, simulating, and executing fi
 ## Local Development
 
 ```sh
-uv pip install .[dev,cli,api]
-python -m fiberpath_cli.main --help
+uv pip install -e .[dev,cli,api]
+fiberpath --help
 pytest
 ```
+
+After installation, the `fiberpath` command is available on your PATH. For development, use `-e` for editable install.
 
 > See [uv docs](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions or replace `uv` with `pip` if you prefer the standard installer.
 
@@ -61,7 +63,7 @@ fiberpath plan examples/simple_cylinder/input.wind -o simple.gcode
 fiberpath plot simple.gcode --output simple.png --scale 0.8
 ```
 
-The `plot` command unwraps mandrel coordinates into a PNG so you can visually inspect a toolpath before streaming it to hardware. Plotting extracts mandrel/tow settings from the `; Parameters ...` header emitted by `plan`. See `docs/assets/simple-cylinder.png` for a sample.
+The `plot` command unwraps mandrel coordinates into a PNG so you can visually inspect a toolpath before streaming it to hardware. Plotting extracts mandrel/tow settings from the `; Parameters ...` header emitted by `plan`.
 
 ## Axis Format Selection
 
@@ -92,7 +94,7 @@ fiberpath plan input.wind -o output.gcode --axis-format xyz
 
 A cross-platform Tauri + React application for planning, plotting, simulating, and streaming G-code to Marlin hardware.
 
-Prerequisites: Node.js 18+, Rust toolchain, and `fiberpath` available on `PATH` (`uv pip install -e .[cli]` or equivalent).
+Prerequisites: Node.js 18+, Rust toolchain, and `fiberpath` CLI installed (`uv pip install -e .` from repository root).
 
 ```sh
 cd fiberpath_gui

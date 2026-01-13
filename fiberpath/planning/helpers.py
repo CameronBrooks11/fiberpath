@@ -42,9 +42,7 @@ def serialize_coordinate(coordinate: Coordinate) -> str:
     return "{" + serialized + "}"
 
 
-def interpolate_coordinates(
-    start: Coordinate, end: Coordinate, steps: int
-) -> list[Coordinate]:
+def interpolate_coordinates(start: Coordinate, end: Coordinate, steps: int) -> list[Coordinate]:
     if steps <= 0:
         raise ValueError("Steps cannot be less than 1")
     if steps == 1:
