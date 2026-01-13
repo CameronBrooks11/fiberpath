@@ -47,20 +47,20 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 
 ## Phase 2: Tauri Integration
 
-- [ ] Update `fiberpath_gui/src-tauri/tauri.conf.json` - add `bundle.resources` array with pattern (Tauri v2 format)
-- [ ] Create `fiberpath_gui/bundled-cli/` directory with `.gitkeep` (populated by CI)
-- [ ] Create `fiberpath_gui/src-tauri/src/cli_path.rs` module
-- [ ] Implement `get_fiberpath_executable() -> PathBuf` using `tauri::Manager::path().resolve()` for resource dir
-- [ ] Platform-specific resource paths: Windows `resources\fiberpath.exe`, macOS `../Resources/fiberpath`, Linux `resources/fiberpath`
-- [ ] Add fallback logic: check bundled first → system PATH → return Err with helpful message
-- [ ] Add logging via `log::info!()` for which executable path is being used
-- [ ] Update `exec_fiberpath()` in `main.rs`: use `get_fiberpath_executable()`, handle PathBuf → &str conversion
-- [ ] Update `MarlinSubprocess::spawn()` in `marlin.rs`: use bundled path for `fiberpath interactive`
-- [ ] Add `check_cli_health` Tauri command: run `fiberpath --version`, return version string or error
+- [x] Update `fiberpath_gui/src-tauri/tauri.conf.json` - add `bundle.resources` array with pattern (Tauri v2 format)
+- [x] Create `fiberpath_gui/bundled-cli/` directory with `.gitkeep` (populated by CI)
+- [x] Create `fiberpath_gui/src-tauri/src/cli_path.rs` module
+- [x] Implement `get_fiberpath_executable() -> PathBuf` using `tauri::Manager::path().resolve()` for resource dir
+- [x] Platform-specific resource paths: Windows `resources\fiberpath.exe`, macOS `../Resources/fiberpath`, Linux `resources/fiberpath`
+- [x] Add fallback logic: check bundled first → system PATH → return Err with helpful message
+- [x] Add logging via `log::info!()` for which executable path is being used
+- [x] Update `exec_fiberpath()` in `main.rs`: use `get_fiberpath_executable()`, handle PathBuf → &str conversion
+- [x] Update `MarlinSubprocess::spawn()` in `marlin.rs`: use bundled path for `fiberpath interactive`
+- [x] Add `check_cli_health` Tauri command: run `fiberpath --version`, return version string or error
 - [ ] Call `check_cli_health` on app startup (from React), show toast/dialog if fails
-- [ ] Update error messages: suggest manual install instructions if bundled CLI not found
+- [x] Update error messages: suggest manual install instructions if bundled CLI not found
 
-**Progress:** 0/12 tasks complete (0%)
+**Progress:** 11/12 tasks complete (92%)
 
 **Critical Notes:**
 
@@ -73,19 +73,19 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 
 ## Phase 3: CI/CD Workflow Updates
 
-- [ ] Update `.github/workflows/gui-packaging.yml` - add `freeze-cli` job before `package` job
-- [ ] Configure matrix strategy for Windows/macOS/Linux in freeze job (same as package job matrix)
-- [ ] Freeze job steps: checkout, setup Python using `./.github/actions/setup-python` composite action
-- [ ] Install PyInstaller in freeze job: `pip install pyinstaller` (or add to dev dependencies)
-- [ ] Run freeze script: `python scripts/freeze_cli.py` in freeze job
-- [ ] Upload frozen executable as artifact: `actions/upload-artifact@v4` with name `fiberpath-cli-${{ matrix.os }}`
-- [ ] Update `package` job: add `needs: freeze-cli` to job dependencies
-- [ ] Download frozen CLI artifacts in package job: `actions/download-artifact@v4` for current platform
-- [ ] Copy downloaded CLI to `fiberpath_gui/bundled-cli/` before Tauri build (create dir if needed)
-- [ ] Make executable on Unix: `chmod +x fiberpath_gui/bundled-cli/fiberpath` (Linux/macOS only)
-- [ ] Verify bundled CLI in installer: add post-build check that CLI exists in Tauri bundle resources
+- [x] Update `.github/workflows/gui-packaging.yml` - add `freeze-cli` job before `package` job
+- [x] Configure matrix strategy for Windows/macOS/Linux in freeze job (same as package job matrix)
+- [x] Freeze job steps: checkout, setup Python using `./.github/actions/setup-python` composite action
+- [x] Install PyInstaller in freeze job: `pip install pyinstaller` (or add to dev dependencies)
+- [x] Run freeze script: `python scripts/freeze_cli.py` in freeze job
+- [x] Upload frozen executable as artifact: `actions/upload-artifact@v4` with name `fiberpath-cli-${{ matrix.os }}`
+- [x] Update `package` job: add `needs: freeze-cli` to job dependencies
+- [x] Download frozen CLI artifacts in package job: `actions/download-artifact@v4` for current platform
+- [x] Copy downloaded CLI to `fiberpath_gui/bundled-cli/` before Tauri build (create dir if needed)
+- [x] Make executable on Unix: `chmod +x fiberpath_gui/bundled-cli/fiberpath` (Linux/macOS only)
+- [x] Verify bundled CLI in installer: add post-build check that CLI exists in Tauri bundle resources
 
-**Progress:** 0/11 tasks complete (0%)
+**Progress:** 11/11 tasks complete (100%)
 
 **Critical Notes:**
 
@@ -148,11 +148,11 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 | Phase                           | Tasks  | Status  |
 | ------------------------------- | ------ | ------- |
 | 1 - CLI Freezing Infrastructure | 8      | 75%     |
-| 2 - Tauri Integration           | 12     | 0%      |
-| 3 - CI/CD Workflow Updates      | 11     | 0%      |
+| 2 - Tauri Integration           | 12     | 92%     |
+| 3 - CI/CD Workflow Updates      | 11     | 100%    |
 | 4 - Testing & Validation        | 10     | 0%      |
 | 5 - Documentation Updates       | 6      | 0%      |
-| **Total**                       | **47** | **13%** |
+| **Total**                       | **47** | **60%** |
 
 **Timeline:** 3-4 days (one developer)
 

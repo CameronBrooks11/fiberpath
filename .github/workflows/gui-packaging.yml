@@ -4,11 +4,15 @@ on:
   push:
     branches: [main, v0.5.1-dev]
     paths:
+      - "fiberpath/**"
+      - "fiberpath_cli/**"
       - "fiberpath_gui/**"
       - "!fiberpath_gui/docs/**"
+      - "scripts/freeze_cli.py"
       - ".github/workflows/gui-packaging.yml"
       - ".github/actions/setup-node/**"
       - ".github/actions/setup-rust/**"
+      - ".github/actions/setup-python/**"
   workflow_call:
     inputs:
       release_tag:
@@ -20,8 +24,52 @@ on:
     types: [published]
 
 jobs:
+  freeze-cli:
+    name: Freeze CLI (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python
+        with:
+          dependencies: ".[dev]"
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
+      - name: Freeze CLI with PyInstaller
+        run: python scripts/freeze_cli.py
+
+      - name: Verify frozen executable
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            ls -lh dist/fiberpath.exe
+            file dist/fiberpath.exe || true
+          else
+            ls -lh dist/fiberpath
+            file dist/fiberpath
+            chmod +x dist/fiberpath
+          fi
+
+      - name: Upload frozen CLI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fiberpath-cli-${{ matrix.os }}
+          path: dist/fiberpath*
+          if-no-files-found: error
+          retention-days: 7
+
   package:
     name: Build Installers (${{ matrix.os }})
+    needs: freeze-cli
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     strategy:
@@ -35,6 +83,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Download frozen CLI artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: fiberpath-cli-${{ matrix.os }}
+          path: fiberpath_gui/bundled-cli
+
+      - name: Make CLI executable (Unix)
+        if: runner.os != 'Windows'
+        run: chmod +x bundled-cli/fiberpath
+
+      - name: Verify bundled CLI
+        shell: bash
+        run: |
+          echo "Contents of bundled-cli directory:"
+          ls -lah bundled-cli/
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            test -f bundled-cli/fiberpath.exe || { echo "ERROR: fiberpath.exe not found!"; exit 1; }
+          else
+            test -f bundled-cli/fiberpath || { echo "ERROR: fiberpath not found!"; exit 1; }
+            test -x bundled-cli/fiberpath || { echo "ERROR: fiberpath not executable!"; exit 1; }
+          fi
+          echo "✓ Bundled CLI verified"
+
       - name: Setup Node.js environment
         uses: ./.github/actions/setup-node
 
@@ -45,6 +116,21 @@ jobs:
 
       - name: Build Tauri bundles
         run: npm run package
+
+      - name: Verify CLI bundled in Tauri app
+        shell: bash
+        run: |
+          echo "Checking if CLI was bundled into Tauri resources..."
+          # The exact path varies by platform and bundle type, so we search for it
+          if find src-tauri/target/release/bundle -name "fiberpath*" -type f 2>/dev/null | grep -q .; then
+            echo "✓ CLI found in bundle resources:"
+            find src-tauri/target/release/bundle -name "fiberpath*" -type f -exec ls -lh {} \;
+          else
+            echo "ERROR: CLI not found in bundle resources!"
+            echo "Bundle structure:"
+            find src-tauri/target/release/bundle -type d | head -20
+            exit 1
+          fi
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

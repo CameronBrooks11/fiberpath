@@ -1,0 +1,2 @@
+# This directory is populated by CI with frozen CLI executables
+# During development, the system PATH fiberpath is used as fallback

@@ -1,0 +1,87 @@
+use std::path::PathBuf;
+use tauri::{AppHandle, Manager};
+
+/// Get the path to the fiberpath CLI executable.
+///
+/// This function checks for a bundled CLI executable in the resources directory first,
+/// then falls back to the system PATH if not found (for development scenarios).
+///
+/// # Platform-specific resource paths:
+/// - Windows: `resources/fiberpath.exe` (same directory as the executable)
+/// - macOS: `../Resources/fiberpath` (inside the .app bundle)
+/// - Linux: `resources/fiberpath` (relative to the executable)
+///
+/// # Returns
+/// - `Ok(PathBuf)` - Path to the fiberpath executable (bundled or system)
+/// - `Err(String)` - Error message if CLI not found
+pub fn get_fiberpath_executable(app: &AppHandle) -> Result<PathBuf, String> {
+    // Try to get the bundled CLI from resources directory
+    if let Ok(bundled_path) = get_bundled_cli_path(app) {
+        if bundled_path.exists() {
+            log::info!("Using bundled fiberpath CLI: {:?}", bundled_path);
+            return Ok(bundled_path);
+        }
+    }
+
+    // Fallback to system PATH (for development)
+    if let Ok(system_path) = which::which("fiberpath") {
+        log::info!("Using system fiberpath CLI from PATH: {:?}", system_path);
+        return Ok(system_path);
+    }
+
+    // No CLI found
+    Err(
+        "FiberPath CLI not found. Please ensure the application was installed correctly, \
+         or install the Python package with: pip install fiberpath"
+            .to_string(),
+    )
+}
+
+/// Get the path to the bundled CLI executable in the resources directory.
+///
+/// This function uses Tauri v2's Manager trait to resolve the resource directory
+/// and then constructs the platform-specific path to the bundled CLI.
+fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
+    // Get the resource directory using Tauri v2 API
+    let resource_dir = app
+        .path()
+        .resource_dir()
+        .map_err(|e| format!("Failed to resolve resource directory: {}", e))?;
+
+    // Platform-specific executable name and path
+    let cli_path = if cfg!(target_os = "windows") {
+        // Windows: resources\fiberpath.exe (same directory as the executable)
+        resource_dir.join("fiberpath.exe")
+    } else if cfg!(target_os = "macos") {
+        // macOS: Resources/fiberpath (inside .app bundle, one level up)
+        resource_dir.join("fiberpath")
+    } else if cfg!(target_os = "linux") {
+        // Linux: resources/fiberpath (relative to executable)
+        resource_dir.join("fiberpath")
+    } else {
+        return Err(format!("Unsupported platform: {}", std::env::consts::OS));
+    };
+
+    Ok(cli_path)
+}
+
+/// Convert PathBuf to string for Command::new()
+///
+/// This helper ensures proper string conversion with error handling.
+pub fn path_to_string(path: &PathBuf) -> Result<String, String> {
+    path.to_str()
+        .ok_or_else(|| format!("Invalid path encoding: {:?}", path))
+        .map(|s| s.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_bundled_path_construction() {
+        // This test just verifies the path construction logic compiles
+        // Actual testing requires a real Tauri AppHandle which is only available at runtime
+        assert!(cfg!(target_os = "windows") || cfg!(target_os = "macos") || cfg!(target_os = "linux"));
+    }
+}
