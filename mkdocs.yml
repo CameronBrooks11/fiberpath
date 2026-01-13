@@ -30,7 +30,7 @@ nav:
   - GUI:
       - Overview: gui/overview.md
       - Development: gui/development.md
-      - Testing: gui/TESTING.md
+      - Testing: gui/testing.md
       - Architecture:
           - Tech Stack: gui/architecture/tech-stack.md
           - State Management: gui/architecture/state-management.md

@@ -41,7 +41,7 @@ docs/
 │
 ├── guides/                     # User-facing guides
 │   ├── wind-format.md          # Moved from root format-wind.md ✓
-│   ├── axis-mapping.md         # NEW (empty placeholder) 
+│   ├── axis-mapping.md         # NEW (empty placeholder)
 │   ├── marlin-streaming.md     # Moved from root ✓
 │   └── visualization.md        # NEW (empty placeholder)
 │
@@ -253,12 +253,14 @@ docs/
 **Date Completed:** 2026-01-12
 
 ### Files Created (4)
+
 1. `docs/getting-started.md` - Installation and first workflow guide
 2. `docs/guides/axis-mapping.md` - Comprehensive XAB vs XYZ guide
 3. `docs/guides/visualization.md` - Plotting and preview documentation
 4. `docs/architecture/axis-system.md` - Technical axis mapping deep dive
 
 ### Files Updated (6)
+
 1. `docs/index.md` - v0.5.0 features, new nav structure
 2. `docs/reference/concepts.md` - Streamlined glossary, removed redundant axis info
 3. `docs/architecture/overview.md` - Added link to axis-system.md
@@ -267,6 +269,7 @@ docs/
 6. `planning/docs-revision.md` - This plan with completion tracking
 
 ### Structure Changes
+
 - Organized into 4 clear sections: User Guides, Reference, Architecture, Development
 - Moved contributing.md from root to development/
 - Renamed format-wind.md → guides/wind-format.md
@@ -274,6 +277,7 @@ docs/
 - Renamed release-checklist.md → development/release-process.md
 
 ### Content Updates
+
 - All version references: v4.0 → v0.5.0
 - Documented Cancel Job feature (orange button, graceful cancellation)
 - Documented zero-lag progress (shared state polling)
@@ -281,6 +285,7 @@ docs/
 - Cross-linked all related documentation sections
 
 ### Validation Results
+
 - ✅ `mkdocs build --strict` - Clean build, no errors/warnings
 - ✅ All internal links resolve correctly
 - ✅ Navigation logical for both new users and developers
@@ -288,6 +293,7 @@ docs/
 - ✅ Examples and code snippets tested
 
 ### User Experience Improvements
+
 - New users have clear getting-started path
 - Axis mapping confusion eliminated with dedicated guide
 - Technical details separated from user guides
@@ -307,6 +313,7 @@ docs/
 **Location:** `fiberpath_gui/docs-old/` (8 files)
 
 **Content Inventory:**
+
 1. **ARCHITECTURE.md** (54 lines) - Outdated, mentions v4.0 design, lacks v5.0 streaming features
 2. **TESTING.md** (282 lines) - Good but needs update for new tests, current coverage stats
 3. **CSS_ARCHITECTURE.md** (373 lines) - Comprehensive design token system, still valid
@@ -317,6 +324,7 @@ docs/
 8. **TYPE_SAFETY_IMPLEMENTATION.md** (291 lines) - Implementation notes, needs condensing
 
 **Issues Identified:**
+
 - ❌ Docs in `docs-old/` not in `docs/` (wrong location)
 - ❌ Mix of user docs, dev docs, and historical implementation notes
 - ❌ No clear audience separation (end user vs GUI developer)
@@ -350,6 +358,7 @@ fiberpath_gui/docs/
 ### Revision Principles
 
 1. **Audience Clarity:**
+
    - `overview.md` → End users wanting to understand the GUI
    - `development.md` → Contributors getting started
    - `architecture/*` → Developers needing system understanding
@@ -357,12 +366,14 @@ fiberpath_gui/docs/
    - `reference/*` → Developers looking up implementation details
 
 2. **Conciseness:**
+
    - Remove verbose implementation narratives
    - Focus on "how" and "why" not "what we did when"
    - Move historical analysis to separate archive if needed
    - Keep practical examples and code snippets
 
 3. **Current Accuracy:**
+
    - Update all references to v0.5.0
    - Document streaming state management (Cancel Job, zero-lag)
    - Update schema examples to camelCase
@@ -377,6 +388,7 @@ fiberpath_gui/docs/
 ### File-by-File Revision Plan
 
 #### NEW: overview.md
+
 - [ ] Purpose: What the GUI does (plan, plot, simulate, stream)
 - [ ] High-level architecture diagram (React → Tauri → CLI)
 - [ ] Technology stack summary
@@ -384,6 +396,7 @@ fiberpath_gui/docs/
 - [ ] Link to main docs for user guides
 
 #### NEW: development.md
+
 - [ ] Prerequisites (Node.js, Rust, Python CLI)
 - [ ] Setup commands (npm install, npm run tauri dev)
 - [ ] Building (npm run tauri build)
@@ -393,6 +406,7 @@ fiberpath_gui/docs/
 - [ ] Link to architecture/ for deep dives
 
 #### REVISED: testing.md
+
 - [ ] How to run tests (commands, watch mode, coverage)
 - [ ] Writing new tests (unit, integration, structure)
 - [ ] Current coverage stats (96 tests, 72%)
@@ -400,6 +414,7 @@ fiberpath_gui/docs/
 - [ ] Remove verbose test file listings (keep summary)
 
 #### NEW: architecture/tech-stack.md
+
 - [ ] React 18 + TypeScript
 - [ ] Vite build system
 - [ ] Tauri 2.0 (Rust backend)
@@ -408,6 +423,7 @@ fiberpath_gui/docs/
 - [ ] Design token system (CSS custom properties)
 
 #### NEW: architecture/state-management.md
+
 - [ ] Condensed from STORE_SPLITTING_ANALYSIS.md
 - [ ] Zustand store structure (project, UI, metadata)
 - [ ] Shallow selectors and performance
@@ -415,6 +431,7 @@ fiberpath_gui/docs/
 - [ ] Remove "should we split" analysis (historical)
 
 #### NEW: architecture/cli-integration.md
+
 - [ ] Condensed from CLI_HEALTH_CHECK.md
 - [ ] How GUI invokes CLI (Tauri commands)
 - [ ] CLI health monitoring system
@@ -422,6 +439,7 @@ fiberpath_gui/docs/
 - [ ] Remove verbose implementation details
 
 #### NEW: architecture/streaming-state.md
+
 - [ ] Move from root docs/marlin-streaming-state.md
 - [ ] Frontend streaming state (connected, streaming, paused)
 - [ ] Backend Python streaming (MarlinStreamer)
@@ -430,6 +448,7 @@ fiberpath_gui/docs/
 - [ ] Zero-lag progress architecture
 
 #### REVISED: guides/schemas.md
+
 - [ ] Revised from SCHEMA.md
 - [ ] Zod schema system overview
 - [ ] Wind file validation (camelCase requirements)
@@ -438,6 +457,7 @@ fiberpath_gui/docs/
 - [ ] Remove verbose setup history
 
 #### REVISED: guides/styling.md
+
 - [ ] Revised from CSS_ARCHITECTURE.md
 - [ ] Design token system (colors, spacing, typography)
 - [ ] Modular CSS architecture
@@ -446,6 +466,7 @@ fiberpath_gui/docs/
 - [ ] Keep token reference, condense principles
 
 #### REVISED: guides/performance.md
+
 - [ ] Revised from PERFORMANCE_PROFILING.md
 - [ ] Keep: How to profile with React DevTools
 - [ ] Keep: Common performance issues and fixes
@@ -454,6 +475,7 @@ fiberpath_gui/docs/
 - [ ] Remove: Verbose "what we did" narrative
 
 #### REVISED: reference/type-safety.md
+
 - [ ] Revised from TYPE_SAFETY_IMPLEMENTATION.md
 - [ ] Zod schema patterns
 - [ ] Custom error classes
@@ -466,11 +488,13 @@ fiberpath_gui/docs/
 Once GUI docs are revised:
 
 1. **Sync Script** (`scripts/sync-gui-docs.py`):
+
    - Copies `fiberpath_gui/docs/**/*.md` → `docs/gui/`
    - Preserves directory structure
    - Runs before every mkdocs build
 
 2. **Main Docs Navigation** (add to `mkdocs.yml`):
+
    ```yaml
    - GUI:
        - Overview: gui/overview.md
@@ -509,30 +533,31 @@ Once GUI docs are revised:
 ### Implementation Order
 
 1. **Move and clean** (docs-old → docs, rename files)
-2. **Create new structure** (overview, development, architecture/*, guides/*, reference/*)
+2. **Create new structure** (overview, development, architecture/_, guides/_, reference/\*)
 3. **Revise existing** (condense verbose docs, update for v0.5.0)
 4. **Create sync script** (scripts/sync-gui-docs.py)
 5. **Update main mkdocs.yml** (add GUI section)
 6. **Test build** (verify sync works, links resolve)
 7. **Archive old docs** (move docs-old to archive or delete)
 
-
-
 **Goal:** Include `fiberpath_gui/docs/` in main documentation build under `docs/gui/` path without duplication.
 
 ### Options Evaluated
 
 **1. Symbolic Link**
+
 - Create `docs/gui` → `../fiberpath_gui/docs`
 - Pros: No duplication, simple
 - Cons: Windows compatibility issues, Git symlink handling
 
 **2. Pre-Build Sync Script**
+
 - Script copies `fiberpath_gui/docs/*.md` to `docs/gui/` before build
 - Pros: Works everywhere, simple, no extra dependencies
 - Cons: Duplication in build artifacts (not in source)
 
 **3. MkDocs Monorepo Plugin**
+
 - Use `mkdocs-monorepo-plugin` to reference external docs
 - Pros: Designed for this use case, clean
 - Cons: Additional dependency, configuration complexity
@@ -559,12 +584,14 @@ for md_file in gui_docs.glob("*.md"):
 ```
 
 **Integration Points:**
+
 1. Add to `mkdocs.yml` nav under Development section
 2. Run in CI before `mkdocs build` (all workflows)
 3. Add to `docs/development/contributing.md` as pre-build step
 4. Update `.gitignore` to exclude `docs/gui/` (generated)
 
 **Implementation Checklist:**
+
 - [ ] Create `scripts/sync-gui-docs.py`
 - [ ] Update `.gitignore` with `docs/gui/`
 - [ ] Add nav entry in `mkdocs.yml` under Development
@@ -575,6 +602,7 @@ for md_file in gui_docs.glob("*.md"):
 - [ ] Test local build: `python scripts/sync-gui-docs.py && mkdocs build`
 
 **Benefits:**
+
 - GUI docs appear under `/fiberpath/gui/` in deployed site
 - No source duplication (only in build artifacts)
 - Works on all platforms
@@ -593,12 +621,14 @@ for md_file in gui_docs.glob("*.md"):
 **Completed:** 2026-01-12
 
 ### Files Created (4)
+
 - `docs/getting-started.md` – Installation and first workflow guide
 - `docs/guides/axis-mapping.md` – XAB vs XYZ comprehensive guide
 - `docs/guides/visualization.md` – Plotting and preview documentation
 - `docs/architecture/axis-system.md` – Technical axis mapping deep dive
 
 ### Files Updated (6)
+
 - `docs/index.md` – Updated to v0.5.0, new navigation, feature highlights
 - `docs/reference/concepts.md` – Removed redundant axis details, pure glossary
 - `docs/reference/api.md` – Added axis_format parameter documentation
@@ -607,6 +637,7 @@ for md_file in gui_docs.glob("*.md"):
 - `mkdocs.yml` – Complete nav restructure with 4-tier organization
 
 ### Documentation Structure
+
 ```
 docs/
 ├── index.md                          ✓ Updated
@@ -616,7 +647,7 @@ docs/
 │   ├── axis-mapping.md              ✓ New
 │   ├── marlin-streaming.md          ✓ Updated (moved)
 │   └── visualization.md              ✓ New
-├── reference/                        ✓ Organized  
+├── reference/                        ✓ Organized
 │   ├── concepts.md                   ✓ Updated
 │   ├── api.md                        ✓ Updated
 │   └── planner-math.md              (existing)
@@ -632,6 +663,7 @@ docs/
 ```
 
 ### Key Improvements
+
 1. **Clear user journey:** Home → Getting Started → Guides → Reference
 2. **Consolidated axis mapping:** Single source of truth with user guide + technical deep dive
 3. **v0.5.0 consistency:** All features documented, version references updated
@@ -649,25 +681,19 @@ docs/
 #### GUI Documentation Created (11 files)
 
 **Main Documentation:**
+
 1. `fiberpath_gui/docs/overview.md` - Purpose, architecture, tech stack overview
 2. `fiberpath_gui/docs/development.md` - Setup, running, building, testing workflows
 3. `fiberpath_gui/docs/testing.md` - Test stack, running tests, writing patterns
 
-**Architecture Section:**
-4. `fiberpath_gui/docs/architecture/tech-stack.md` - React 18, Vite, Tauri 2.0, Zustand, Zod
-5. `fiberpath_gui/docs/architecture/state-management.md` - Single Zustand store, selectors, patterns
-6. `fiberpath_gui/docs/architecture/cli-integration.md` - Tauri commands, CLI bridge, error handling
-7. `fiberpath_gui/docs/architecture/streaming-state.md` - Marlin state, zero-lag, v0.5.0 features
+**Architecture Section:** 4. `fiberpath_gui/docs/architecture/tech-stack.md` - React 18, Vite, Tauri 2.0, Zustand, Zod 5. `fiberpath_gui/docs/architecture/state-management.md` - Single Zustand store, selectors, patterns 6. `fiberpath_gui/docs/architecture/cli-integration.md` - Tauri commands, CLI bridge, error handling 7. `fiberpath_gui/docs/architecture/streaming-state.md` - Marlin state, zero-lag, v0.5.0 features
 
-**Guides Section:**
-8. `fiberpath_gui/docs/guides/schemas.md` - Zod validation, camelCase requirements, testing
-9. `fiberpath_gui/docs/guides/styling.md` - Design tokens, CSS modules, component patterns
-10. `fiberpath_gui/docs/guides/performance.md` - React DevTools profiling, optimization
+**Guides Section:** 8. `fiberpath_gui/docs/guides/schemas.md` - Zod validation, camelCase requirements, testing 9. `fiberpath_gui/docs/guides/styling.md` - Design tokens, CSS modules, component patterns 10. `fiberpath_gui/docs/guides/performance.md` - React DevTools profiling, optimization
 
-**Reference Section:**
-11. `fiberpath_gui/docs/reference/type-safety.md` - TypeScript patterns, discriminated unions
+**Reference Section:** 11. `fiberpath_gui/docs/reference/type-safety.md` - TypeScript patterns, discriminated unions
 
 #### Content Accuracy
+
 - ✅ All v0.5.0 references (not v4.0)
 - ✅ Cancel Job documented (graceful cancellation vs emergency stop)
 - ✅ Zero-lag progress documented (shared state polling, 100ms updates)
@@ -678,6 +704,7 @@ docs/
 - ✅ Code examples from actual implementation
 
 #### Revision Results
+
 - **From:** 8 files, ~1800 lines, verbose implementation narratives
 - **To:** 11 files, ~3200 lines, concise how-to guides
 - **Audience:** Clear separation (end users, GUI developers, contributors)
@@ -685,6 +712,7 @@ docs/
 - **Quality:** Practical examples, troubleshooting sections, best practices
 
 #### Remaining Work
+
 1. Create sync script (`scripts/sync-gui-docs.py`)
 2. Update `mkdocs.yml` with GUI section (9 pages)
 3. Update `.gitignore` to exclude `docs/gui/` (generated)
