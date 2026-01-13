@@ -214,9 +214,7 @@ def check_pyinstaller() -> None:
         print(f"PyInstaller {PyInstaller.__version__} found")
     except ImportError:
         print("PyInstaller not found, installing...")
-        subprocess.run(
-            [sys.executable, "-m", "pip", "install", "pyinstaller"], check=True
-        )
+        subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller"], check=True)
         print("PyInstaller installed successfully")
 
 
