@@ -61,7 +61,7 @@
 
 ## Phase 4: Code Organization
 
-- [ ] Start this phase by reviewing the current state of the entire GUI directory and modify/add to the following tasks below as needed based on that review.
+- [ ] Start this phase by reviewing the current state of the entire GUI directory and modify/add to the following tasks below as needed based on that review (ones below arent just ideas not exhaustive or even necessarily correct).
 - [ ] Refactor App.tsx into smaller focused components (currently 305 lines)
 - [ ] Extract MenuBar menu definitions to configuration file
 - [ ] Create feature-based folder structure (features/layers/, features/export/, features/project/)
