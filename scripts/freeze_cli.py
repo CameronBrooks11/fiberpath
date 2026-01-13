@@ -111,33 +111,43 @@ def build_executable() -> None:
     # PyInstaller command
     # Entry point is the Typer app object, NOT __main__.py
     pyinstaller_args = [
-        sys.executable, "-m", "PyInstaller",
+        sys.executable,
+        "-m",
+        "PyInstaller",
         "--onefile",  # Single executable file
-        "--name", config["name"],
+        "--name",
+        config["name"],
         config["console_mode"],  # Platform-specific console mode
         "--clean",  # Clean PyInstaller cache
         "--noconfirm",  # Overwrite without asking
         # Add hidden imports
         *[f"--hidden-import={imp}" for imp in hidden_imports],
         # Entry point: Typer app object (NOT __main__.py)
-        "--add-data", f"{ROOT_DIR / 'fiberpath'}:fiberpath",
-        "--add-data", f"{ROOT_DIR / 'fiberpath_cli'}:fiberpath_cli",
+        "--add-data",
+        f"{ROOT_DIR / 'fiberpath'}:fiberpath",
+        "--add-data",
+        f"{ROOT_DIR / 'fiberpath_cli'}:fiberpath_cli",
         # Collect all fiberpath packages
-        "--collect-all", "fiberpath",
-        "--collect-all", "fiberpath_cli",
+        "--collect-all",
+        "fiberpath",
+        "--collect-all",
+        "fiberpath_cli",
         # Entry point script (will be created temporarily)
-        "--path", str(ROOT_DIR),
+        "--path",
+        str(ROOT_DIR),
     ]
 
     # Create temporary entry point script
     entry_script = ROOT_DIR / "_freeze_entry.py"
-    entry_script.write_text("""
+    entry_script.write_text(
+        """
 # Temporary entry point for PyInstaller
 from fiberpath_cli.main import app
 
 if __name__ == "__main__":
     app()
-""")
+"""
+    )
 
     pyinstaller_args.append(str(entry_script))
 
@@ -181,13 +191,13 @@ if __name__ == "__main__":
     size_mb = output_exe.stat().st_size / (1024 * 1024)
 
     print("\n" + "=" * 60)
-    print("✓ Build successful!")
+    print("[OK] Build successful!")
     print("=" * 60)
     print(f"Executable: {output_exe}")
     print(f"Size: {size_mb:.1f} MB")
 
     if size_mb > 80:
-        print(f"\n⚠ Warning: Executable size ({size_mb:.1f} MB) exceeds 80 MB target")
+        print(f"\n[WARNING] Executable size ({size_mb:.1f} MB) exceeds 80 MB target")
 
     print("\nTo test the executable:")
     print(f"  {output_exe} --help")
@@ -200,12 +210,12 @@ def check_pyinstaller() -> None:
     """Check if PyInstaller is installed, install if not."""
     try:
         import PyInstaller
+
         print(f"PyInstaller {PyInstaller.__version__} found")
     except ImportError:
         print("PyInstaller not found, installing...")
         subprocess.run(
-            [sys.executable, "-m", "pip", "install", "pyinstaller"],
-            check=True
+            [sys.executable, "-m", "pip", "install", "pyinstaller"], check=True
         )
         print("PyInstaller installed successfully")
 

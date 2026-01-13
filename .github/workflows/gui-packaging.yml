@@ -39,7 +39,7 @@ jobs:
       - name: Setup Python environment
         uses: ./.github/actions/setup-python
         with:
-          dependencies: ".[dev]"
+          dependencies: "."
 
       - name: Install PyInstaller
         run: pip install pyinstaller
