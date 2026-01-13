@@ -51,7 +51,7 @@ FiberPath uses GitHub Actions with 7 specialized workflows:
 - **backend-publish.yml** - PyPI publishing with trusted publishing (releases only)
 - **release.yml** - Coordinated release orchestration (manual dispatch)
 
-All workflows use reusable composite actions (`.github/actions/`) for setup steps. See [docs/ci-cd.md](docs/ci-cd.md) for complete architecture documentation.
+All workflows use reusable composite actions (`.github/actions/`) for setup steps. See [ci-cd.md](ci-cd.md) for complete architecture documentation.
 
 **Branch Triggers:**
 

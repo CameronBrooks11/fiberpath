@@ -12,16 +12,20 @@ together and where to extend them.
 │ fiberpath_gui    │ ─────► │ Commands: plan/plot/...    │
 └──────────────────┘        └────────────┬───────────────┘
                                          │ (import)
-┌──────────────────────┐                 ▼
-│ FastAPI service      │        ┌────────────────────────┐
-│ fiberpath_api        │  JSON  │ Core engine (Python)   │
-└──────────────────────┘ ◄──────│ Planning/Sim/G-code    │
-                                 └────────────────────────┘
+                                         ▼
+                            ┌────────────────────────────┐
+                            │ Core engine (Python)       │
+                            │ Planning/Sim/G-code        │
+                            └────────────┬───────────────┘
+                                         ▲ (import)
+┌──────────────────────┐                 │
+│ FastAPI service      │  REST           │
+│ fiberpath_api        │ ────────────────┘
+└──────────────────────┘
 ```
 
 - **Core Engine (`fiberpath/`)** – Immutable planners, geometry helpers, machine abstractions, and
-  G-code emitters. The modules are designed to run without side effects so they can be imported from
-  both CLI and API layers.
+  G-code emitters. The modules are designed to run without side effects so they can be imported from both CLI and API layers.
 - **Interface Layer** – `fiberpath_cli` hosts the Typer commands, while `fiberpath_api` turns the
   same operations into REST endpoints. The desktop GUI wraps the CLI and communicates via Tauri IPC
   to keep Python the single source of truth.
@@ -56,6 +60,8 @@ The dialect is selected via:
 - Core: `PlanOptions(dialect=MARLIN_XAB_STANDARD|MARLIN_XYZ_LEGACY)`
 
 This design allows the same planning logic to produce G-code for different machine configurations without modification.
+
+**See [Axis System Architecture](axis-system.md) for technical details** on the mapping system, dialect implementation, and extension points.
 
 ## Data Flow
 

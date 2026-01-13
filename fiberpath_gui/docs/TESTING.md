@@ -1,281 +1,411 @@
-# Testing Documentation
+# Testing Guide
 
-## Overview
+Comprehensive testing documentation for FiberPath GUI test suite.
 
-This project has a comprehensive test suite covering all critical functionality with 113 tests across 5 test files.
+## Test Stack
 
-## Test Coverage
-
-### Unit Tests (106 tests)
-
-#### 1. Schema Validation Tests (`src/lib/schemas.test.ts` - 43 tests)
-
-Tests for Zod schemas and error utilities:
-
-- Tauri command response schemas (PlanSummary, SimulationSummary, StreamSummary, PlotPreview, ValidationResult)
-- Wind file structure schemas (Mandrel, Tow, Layers, WindDefinition)
-- Validation helpers (validateData, isValidData)
-- Custom error classes (FiberPathError, FileError, ValidationError, CommandError, ConnectionError)
-- Error parsing utilities (parseError, isRetryableError)
-
-#### 2. Data Conversion Tests (`src/types/converters.test.ts` - 17 tests)
-
-Tests for data transformation functions:
-
-- Layer conversion (UI ↔ Wind schema)
-  - Hoop layers with defaults
-  - Helical layers with full parameters
-  - Skip layers
-- Project conversion (Project ↔ WindDefinition)
-  - Complete conversion including visible layer count
-  - Edge cases (empty projects, single layer)
-- Round-trip conversion (data preservation)
-
-#### 3. State Management Tests (`src/state/projectStore.test.ts` - 29 tests)
-
-Tests for Zustand store mutations:
-
-- Project lifecycle (initialize, load, new project)
-- Mandrel updates (diameter, wind_length)
-- Tow updates (width, thickness)
-- Machine settings (feed rate, axis format)
-- Layer operations (add, remove, update, duplicate, reorder)
-- UI state (active layer selection)
-- Dirty state management
-- File metadata (filePath, lastModified)
-
-#### 4. Validation Tests (`src/lib/validation.test.ts` - 17 tests)
-
-Tests for input validation:
-
-- Number validation (positive, range, integer)
-- Mandrel parameter validation
-- Tow parameter validation
-- Layer parameter validation by type
-
-### Integration Tests (7 tests)
-
-#### Workflow Tests (`src/tests/integration/workflows.test.ts` - 7 tests)
-
-End-to-end workflow tests:
-
-1. **New → Add → Save → Load**: Complete project lifecycle
-2. **Load → Edit → Save**: Modify existing project
-3. **Layer Operations**: Complex multi-layer manipulations
-4. **Export**: Visible layer count filtering
-5. **State Persistence**: Dirty state tracking
-6. **Error Recovery**: Invalid data and non-existent layers
+- **Framework:** Vitest (Vite-native test runner)
+- **Assertions:** Expect API (Jest-compatible)
+- **React Testing:** @testing-library/react
+- **Environment:** jsdom (simulated DOM)
+- **Coverage:** v8 provider
 
 ## Running Tests
 
-```bash
-# Run tests once
-npm test -- --run
+### All Tests
 
-# Run tests in watch mode
+```sh
 npm test
-
-# Run with coverage report
-npm run test:coverage
-
-# Run specific test file
-npm test -- src/lib/schemas.test.ts
 ```
 
-## Test Architecture
+Runs all tests in `src/**/*.{test,spec}.{ts,tsx}` and displays summary.
 
-### Test Setup
+### Watch Mode
 
-- **Framework**: Vitest v2.1.9
-- **Environment**: jsdom (for React Testing Library)
-- **Matchers**: vitest + @testing-library/jest-dom
-- **Setup File**: `src/tests/setup.ts`
+```sh
+npm test -- --watch
+```
 
-### Coverage Requirements
+Re-runs tests on file changes. Useful during development.
 
-- Statements: 70%
-- Branches: 70%
-- Functions: 70%
-- Lines: 70%
+### Specific Test File
 
-Coverage reports are generated in:
+```sh
+npm test -- schemas.test.ts
+npm test -- validation.test.ts
+npm test -- projectStore.test.ts
+```
 
-- Text: Console output
-- JSON: `coverage/coverage-final.json`
-- HTML: `coverage/index.html`
-- LCOV: `coverage/lcov.info` (for CI/Codecov)
+### With Coverage
 
-### Test Patterns
+```sh
+npm test -- --coverage
+```
 
-#### State Management Tests
+Generates coverage report in `coverage/` directory.
+
+### UI Mode
+
+```sh
+npm test -- --ui
+```
+
+Opens interactive test UI in browser for exploring tests and results.
+
+## Test Organization
+
+### Current Test Suite
+
+```sh
+src/
+├── lib/
+│   ├── schemas.test.ts        # 43 tests - Zod schema validation
+│   └── validation.test.ts     # JSON schema validation (AJV)
+├── state/
+│   └── projectStore.test.ts   # Zustand store actions
+├── types/
+│   └── converters.test.ts     # Type conversion utilities
+└── tests/
+    └── integration/
+        └── workflows.test.ts  # End-to-end workflows
+```
+
+### Test Counts
+
+- **Schema validation:** 43 tests (Zod runtime validation)
+- **State management:** ~15 tests (store actions)
+- **Validation:** ~25 tests (JSON schema)
+- **Type converters:** ~10 tests
+- **Integration:** ~5 tests
+
+**Total:** ~100 tests, all passing ✅
+
+## Writing Tests
+
+### Schema Validation Tests
+
+**Purpose:** Verify Zod schemas accept valid data and reject invalid data.
 
 ```typescript
-beforeEach(() => {
-  // CRITICAL: Create fresh project for each test
-  useProjectStore.setState({ project: createEmptyProject() });
-  vi.clearAllMocks();
-});
+import { describe, it, expect } from "vitest";
+import { MandrelParametersSchema } from "./schemas";
 
-it("should handle mutations", () => {
-  // Get initial state
-  let state = useProjectStore.getState();
+describe("MandrelParametersSchema", () => {
+  it("should validate correct mandrel parameters", () => {
+    const valid = {
+      diameter: 150,
+      windLength: 800,
+    };
 
-  // Perform mutation
-  state.updateMandrel({ diameter: 150 });
+    const result = MandrelParametersSchema.safeParse(valid);
+    expect(result.success).toBe(true);
+  });
 
-  // IMPORTANT: Refresh state after mutation
-  state = useProjectStore.getState();
+  it("should reject negative diameter", () => {
+    const invalid = {
+      diameter: -10,
+      windLength: 800,
+    };
 
-  // Assert on refreshed state
-  expect(state.project.mandrel.diameter).toBe(150);
+    const result = MandrelParametersSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toContain("positive");
+    }
+  });
 });
 ```
 
-#### Schema Validation Tests
+### Store Tests
+
+**Purpose:** Verify Zustand actions correctly update state.
 
 ```typescript
-it("should validate valid data", () => {
-  const validData = {
-    /* ... */
-  };
-  const result = validateData(MySchema, validData, "test");
-  expect(result).toEqual(validData);
-});
+import { describe, it, expect, beforeEach } from "vitest";
+import { useProjectStore } from "./projectStore";
 
-it("should throw ValidationError for invalid data", () => {
-  const invalidData = {
-    /* ... */
-  };
-  expect(() => validateData(MySchema, invalidData, "test")).toThrow(
-    ValidationError
-  );
+describe("projectStore", () => {
+  beforeEach(() => {
+    // Reset store to initial state
+    useProjectStore.setState({
+      project: null,
+      activeLayerId: null,
+      isDirty: false,
+      filePath: null,
+    });
+  });
+
+  it("should create new project", () => {
+    const store = useProjectStore.getState();
+    store.newProject();
+
+    expect(store.project).not.toBeNull();
+    expect(store.project?.layers).toHaveLength(1);
+    expect(store.isDirty).toBe(false);
+  });
+
+  it("should mark project as dirty after update", () => {
+    const store = useProjectStore.getState();
+    store.newProject();
+    store.updateMandrel({ diameter: 200 });
+
+    expect(store.isDirty).toBe(true);
+  });
 });
 ```
 
-#### Integration Tests
+### Component Tests
+
+**Purpose:** Verify React components render correctly and handle interactions.
 
 ```typescript
-it("should complete full workflow", () => {
-  let state = useProjectStore.getState();
+import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MyComponent } from './MyComponent';
 
-  // Step 1: Setup
-  state.updateMandrel({ diameter: 100, wind_length: 200 });
-  state = useProjectStore.getState();
+describe('MyComponent', () => {
+  it('should render with props', () => {
+    render(<MyComponent title="Test" />);
+    expect(screen.getByText('Test')).toBeInTheDocument();
+  });
 
-  // Step 2: Add layers
-  const id = state.addLayer("hoop");
-  state = useProjectStore.getState();
+  it('should handle click', () => {
+    const onClick = vi.fn();
+    render(<MyComponent onClick={onClick} />);
 
-  // Step 3: Convert and validate
-  const windDef = projectToWindDefinition(state.project);
-  expect(windDef.mandrelParameters.diameter).toBe(100);
-  expect(windDef.layers).toHaveLength(1);
-
-  // Step 4: Load and verify
-  const loadedProject = windDefinitionToProject(windDef);
-  expect(loadedProject.mandrel.diameter).toBe(100);
+    fireEvent.click(screen.getByRole('button'));
+    expect(onClick).toHaveBeenCalledOnce();
+  });
 });
 ```
 
-## CI/CD Integration
+### Integration Tests
 
-Tests run automatically on:
+**Purpose:** Test complete workflows across multiple components/stores.
 
-- Push to `main` or `vX.Y.Z-dev` branches
-- Pull requests to `main` or `vX.Y.Z-dev`
+```typescript
+import { describe, it, expect } from "vitest";
+import { useProjectStore } from "../state/projectStore";
 
-GitHub Actions workflow (`.github/workflows/gui-tests.yml`):
+describe("Plan Workflow", () => {
+  it("should create project, add layer, and update mandrel", () => {
+    const store = useProjectStore.getState();
 
-1. Type checking with `tsc --noEmit`
-2. Test execution with coverage
-3. Build verification
-4. Codecov upload
+    // Step 1: New project
+    store.newProject();
+    expect(store.project).not.toBeNull();
 
-## Test Quality Guidelines
+    // Step 2: Add helical layer
+    store.addLayer({
+      windType: "helical",
+      windAngle: 45,
+      terminal: false,
+    });
+    expect(store.project?.layers).toHaveLength(2);
 
-### What Makes a Good Test
+    // Step 3: Update mandrel
+    store.updateMandrel({ diameter: 200, windLength: 1000 });
+    expect(store.project?.mandrelParameters.diameter).toBe(200);
 
-✅ **Tests business logic**, not implementation details  
-✅ **Independent** - can run in any order  
-✅ **Fast** - completes in milliseconds  
-✅ **Clear intent** - obvious what's being tested  
-✅ **Proper cleanup** - resets state between tests  
-✅ **Meaningful assertions** - verifies actual behavior
+    // Verify dirty state
+    expect(store.isDirty).toBe(true);
+  });
+});
+```
 
-### What to Avoid
+## Test Patterns
 
-❌ **Testing presentation logic** that TypeScript already validates  
-❌ **Excessive mocking** that makes tests brittle  
-❌ **Testing third-party libraries**  
-❌ **Snapshot tests** without clear purpose  
-❌ **Tests that require complex setup** for minimal value
+### Valid/Invalid Data Pairs
 
-## Test Results
+For every schema, test both valid and invalid inputs:
 
-Current status: **113/113 tests passing (100%)** ✅
+```typescript
+describe("HelicalLayerSchema", () => {
+  const validCases = [
+    { windAngle: 45, terminal: false },
+    { windAngle: 30, terminal: true, skipEvery: 2 },
+  ];
 
-Breakdown:
+  const invalidCases = [
+    { windAngle: 100, terminal: false }, // Angle > 90
+    { windAngle: -10, terminal: false }, // Negative angle
+    { windAngle: 45 }, // Missing terminal
+  ];
 
-- `schemas.test.ts`: 43/43 passing
-- `validation.test.ts`: 17/17 passing
-- `projectStore.test.ts`: 29/29 passing
-- `converters.test.ts`: 17/17 passing
-- `workflows.test.ts`: 7/7 passing
+  validCases.forEach((data, i) => {
+    it(`should accept valid case ${i + 1}`, () => {
+      const result = HelicalLayerSchema.safeParse(data);
+      expect(result.success).toBe(true);
+    });
+  });
 
-## Future Testing Considerations
+  invalidCases.forEach((data, i) => {
+    it(`should reject invalid case ${i + 1}`, () => {
+      const result = HelicalLayerSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+  });
+});
+```
 
-### Potential Additions
+### Mocking Tauri Commands
 
-1. **E2E Tests**: Full application workflows with real Tauri backend
-2. **Visual Regression**: Screenshot comparison for UI components
-3. **Performance Tests**: Verify operations complete within time budgets
-4. **Accessibility Tests**: axe-core integration for WCAG compliance
+When testing components that call Tauri commands:
 
-### Why Component Tests Were Removed
+```typescript
+import { vi } from "vitest";
+import { invoke } from "@tauri-apps/api/core";
 
-Component tests (MenuBar.test.tsx, LayerStack.test.tsx) were removed because:
+vi.mock("@tauri-apps/api/core", () => ({
+  invoke: vi.fn(),
+}));
 
-- Required extensive mocking (Tauri, contexts, DnD library)
-- Tested presentation logic already validated by TypeScript
-- Business logic already covered by unit tests
-- High maintenance burden for minimal value
-- Made tests brittle and hard to understand
+it("should call plan command", async () => {
+  vi.mocked(invoke).mockResolvedValue({ success: true });
 
-The decision aligns with testing best practices: focus on valuable tests that verify actual behavior, not implementation details.
+  const result = await planProject(projectData);
 
-## Troubleshooting
+  expect(invoke).toHaveBeenCalledWith("plan_project", {
+    windDef: expect.any(Object),
+  });
+});
+```
 
-### Common Issues
+### Testing Error Handling
 
-**Issue**: Tests fail with "Invalid Chai property: toBeInTheDocument"  
-**Solution**: Ensure `src/tests/setup.ts` is loaded and extends expect with jest-dom matchers
+Verify components handle errors gracefully:
 
-**Issue**: Integration tests fail with stale state  
-**Solution**: Ensure `beforeEach` creates fresh project with `createEmptyProject()` and refresh state after mutations with `state = useProjectStore.getState()`
+```typescript
+it('should display error message on validation failure', () => {
+  const invalidData = { diameter: -10 };
 
-**Issue**: Schema validation tests fail unexpectedly  
-**Solution**: Check that test data matches schema constraints exactly, including required fields and type constraints
+  render(<MandrelForm initialData={invalidData} />);
 
-### Debugging Tests
+  expect(screen.getByText(/diameter must be positive/i)).toBeInTheDocument();
+});
+```
 
-```bash
-# Run tests with verbose output
+## Coverage Goals
+
+### Target Coverage
+
+- **Statements:** 80%+
+- **Branches:** 75%+
+- **Functions:** 80%+
+- **Lines:** 80%+
+
+### Critical Areas (100% coverage required)
+
+- Schema validation (`src/lib/schemas.ts`)
+- Error handling (`src/lib/validation.ts`)
+- State management (`src/state/projectStore.ts`)
+
+### Lower Priority (50%+ acceptable)
+
+- UI components (focus on critical paths)
+- Styling modules
+- Type definitions
+
+## Debugging Tests
+
+### View Test Output
+
+```sh
 npm test -- --reporter=verbose
-
-# Run single test with debugging
-npm test -- --reporter=verbose src/lib/schemas.test.ts -t "should validate"
-
-# Check coverage for specific file
-npm run test:coverage -- src/lib/schemas.ts
 ```
 
-## Contributing
+Shows individual test names and durations.
 
-When adding new features:
+### Debug Single Test
 
-1. Write tests **before** implementing (TDD)
-2. Ensure tests are independent and fast
-3. Cover edge cases and error conditions
-4. Update this documentation if adding new test patterns
-5. Verify all tests pass before committing
-6. Aim for >70% coverage for new code
+Add `.only` to focus one test:
+
+```typescript
+it.only("should validate mandrel", () => {
+  // This is the only test that will run
+});
+```
+
+### Print Debug Info
+
+```typescript
+it("should update state", () => {
+  store.updateMandrel({ diameter: 200 });
+
+  console.log("State:", store.project); // Visible in test output
+
+  expect(store.project?.mandrelParameters.diameter).toBe(200);
+});
+```
+
+### Use Vitest UI
+
+```sh
+npm test -- --ui
+```
+
+Opens browser UI showing:
+
+- Test hierarchy
+- Pass/fail status
+- Console output
+- Code coverage
+- Re-run buttons
+
+## CI Integration
+
+Tests run automatically on every push and PR via GitHub Actions:
+
+```yaml
+# .github/workflows/test.yml
+- name: Run tests
+  run: npm test -- --run
+```
+
+**PR Requirements:**
+
+- ✅ All tests must pass
+- ✅ No new TypeScript errors
+- ✅ Coverage must not decrease
+
+## Common Issues
+
+### "Cannot find module '@/lib/schemas'"
+
+**Solution:** Check path alias in `vitest.config.ts`:
+
+```typescript
+resolve: {
+  alias: {
+    '@': path.resolve(__dirname, './src'),
+  },
+}
+```
+
+### Tests fail but code works
+
+**Solution:** May be testing implementation details. Focus on behavior:
+
+```typescript
+// Bad: Testing internal state
+expect(component.state.count).toBe(1);
+
+// Good: Testing visible behavior
+expect(screen.getByText("Count: 1")).toBeInTheDocument();
+```
+
+### Mock not working
+
+**Solution:** Ensure mock is hoisted before imports:
+
+```typescript
+vi.mock("@tauri-apps/api/core"); // Must be at top
+
+import { MyComponent } from "./MyComponent";
+```
+
+## Next Steps
+
+- [Schema Validation Guide](guides/schemas.md) - Writing schemas
+- [State Management](architecture/state-management.md) - Store patterns
+- [Type Safety](reference/type-safety.md) - TypeScript patterns

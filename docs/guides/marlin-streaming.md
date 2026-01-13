@@ -315,14 +315,14 @@ See `planning/hardware-testing-checklist.md` for comprehensive pre-deployment te
 
 ## Related Documentation
 
-- [FiberPath Architecture](architecture.md) – Overall system design
-- [API Documentation](api.md) – REST endpoints for planning and simulation
+- [FiberPath Architecture](../architecture/overview.md) – Overall system design
+- [API Documentation](../reference/api.md) – REST endpoints for planning and simulation
 
 ---
 
 ## Version History
 
-0.5.0\*\* (2026-01-11) – Streaming State & Control Refinements
+**v0.5.0** (2026-01-11) – Streaming State & Control Refinements
 
 - Zero-lag progress monitoring (replaced event queue with state polling)
 - Cancel Job feature (graceful exit while paused, stays connected)
@@ -331,10 +331,10 @@ See `planning/hardware-testing-checklist.md` for comprehensive pre-deployment te
 - Manual file clear button added (X button next to filename)
 - Improved button workflow (Cancel vs Stop distinction)
 
-- \*\*v0.4
-- **v4.0.0** (2026-01-09) – Initial release of Marlin streaming features
-  - Serial port discovery and connection management
-  - Manual control with common command buttons
-  - File streaming with pause/resume support
-  - Live logging and progress monitoring
-  - Keyboard shortcuts and help modal
+**v4.0.0** (2026-01-09) – Initial Marlin Streaming
+
+- Serial port discovery and connection management
+- Manual control with common command buttons
+- File streaming with pause/resume support
+- Live logging and progress monitoring
+- Keyboard shortcuts and help modal
