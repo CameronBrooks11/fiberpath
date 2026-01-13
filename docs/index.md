@@ -6,14 +6,13 @@ hide:
 
 <!-- markdownlint-disable -->
 <!--
-  Landing page layout notes (Material for MkDocs):
+  Material for MkDocs landing page
 
-  - DO NOT FORMAT THIS FILE WITH PRETTIER OR SIMILAR TOOLS.
-
-  - Card grids expect `---` (a horizontal rule) as the internal separator between a card title and its body.
-    Using `***` can lead to inconsistent spacing because it may not map cleanly to the theme’s expected styling.
-
-  - `md_in_html` is enabled so Markdown inside the HTML containers below will render correctly.
+  IMPORTANT:
+  - DO NOT apply formatting tools (Prettier, etc) to this file
+  - Card grids MUST NOT contain horizontal rules (`---` or `***`)
+  - Spacing is handled automatically via paragraphs and lists
+  - Do not insert <hr> inside cards
 -->
 
 <div style="text-align: center; padding: 3rem 0 2rem 0;" markdown>
@@ -33,62 +32,74 @@ hide:
 
 <div class="grid cards" markdown>
 
-- :material-download:{ .lg .middle } **Download & Install**
-  ---
-  **Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+-   :material-download:{ .lg .middle } **Download & Install**
 
-  - **Desktop GUI** – Windows, macOS, Linux installers
-  - **Python Package** – `pip install fiberpath`
-  - **Source** – Clone and build from GitHub
+    ---
 
-  [:octicons-arrow-right-24: Installation Guide](getting-started.md)
+    **Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
-- :material-new-box:{ .lg .middle } **What's New in v0.5.0**
-  ---
-  **Enhanced Streaming Control** with refined state management:
+    - **Desktop GUI** – Windows, macOS, Linux installers
+    - **Python Package** – `pip install fiberpath`
+    - **Source** – Clone and build from GitHub
 
-  - Graceful job cancellation vs emergency stop
-  - Zero-lag progress updates (no queue lag)
-  - Clean state handling after operations
-  - Manual file control with clear UI
+    [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
-  [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
+-   :material-new-box:{ .lg .middle } **What's New in v0.5.0**
 
-- :material-book-open-page-variant:{ .lg .middle } **User Guides**
-  ---
-  Learn how to work with FiberPath's core features
+    ---
 
-  - [Wind Format](guides/wind-format.md) – File schema & validation
-  - [Axis Mapping](guides/axis-mapping.md) – Coordinate systems
-  - [Marlin Streaming](guides/marlin-streaming.md) – Hardware control
-  - [Visualization](guides/visualization.md) – Preview & plotting
+    Enhanced streaming control with refined state management:
 
-- :material-code-json:{ .lg .middle } **API Reference**
-  ---
-  Technical documentation and specifications
+    - Graceful job cancellation vs emergency stop
+    - Zero-lag progress updates (no queue lag)
+    - Clean state handling after operations
+    - Manual file control with clear UI
 
-  - [Concepts](reference/concepts.md) – Terminology glossary
-  - [API Reference](reference/api.md) – REST endpoints
-  - [Planner Math](reference/planner-math.md) – Algorithms & formulas
+    [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 
-- :material-layers-triple:{ .lg .middle } **Architecture**
-  ---
-  Understand the system design and internals
+-   :material-book-open-page-variant:{ .lg .middle } **User Guides**
 
-  - [System Overview](architecture/overview.md) – Stack & data flow
-  - [Axis System](architecture/axis-system.md) – Logical vs physical
+    ---
 
-  [:octicons-arrow-right-24: Architecture Docs](architecture/overview.md)
+    Learn how to work with FiberPath's core features:
 
-- :material-hammer-wrench:{ .lg .middle } **Development**
-  ---
-  Contribute to FiberPath development
+    - [Wind Format](guides/wind-format.md) – File schema & validation
+    - [Axis Mapping](guides/axis-mapping.md) – Coordinate systems
+    - [Marlin Streaming](guides/marlin-streaming.md) – Hardware control
+    - [Visualization](guides/visualization.md) – Preview & plotting
 
-  - [Contributing](development/contributing.md) – Guidelines & setup
-  - [Tooling](development/tooling.md) – Dev environment
-  - [CI/CD](development/ci-cd.md) – Build workflows
+-   :material-code-json:{ .lg .middle } **API Reference**
 
-  [:octicons-arrow-right-24: Developer Docs](development/contributing.md)
+    ---
+
+    Technical documentation and specifications:
+
+    - [Concepts](reference/concepts.md) – Terminology glossary
+    - [API Reference](reference/api.md) – REST endpoints
+    - [Planner Math](reference/planner-math.md) – Algorithms & formulas
+
+-   :material-layers-triple:{ .lg .middle } **Architecture**
+
+    ---
+
+    Understand the system design and internals:
+
+    - [System Overview](architecture/overview.md) – Stack & data flow
+    - [Axis System](architecture/axis-system.md) – Logical vs physical
+
+    [:octicons-arrow-right-24: Architecture Docs](architecture/overview.md)
+
+-   :material-hammer-wrench:{ .lg .middle } **Development**
+
+    ---
+
+    Contribute to FiberPath development:
+
+    - [Contributing](development/contributing.md) – Guidelines & setup
+    - [Tooling](development/tooling.md) – Dev environment
+    - [CI/CD](development/ci-cd.md) – Build workflows
+
+    [:octicons-arrow-right-24: Developer Docs](development/contributing.md)
 
 </div>
 
@@ -98,28 +109,40 @@ hide:
 
 <div class="grid cards" markdown>
 
-- :material-file-code: **Wind File Format**
-  ---
-  Define winding patterns with a simple, validated YAML schema
+-   :material-file-code: **Wind File Format**
 
-- :material-axis-arrow: **Multi-Axis Control**
-  ---
-  Support for XYZ and XAB coordinate systems with flexible mapping
+    ---
 
-- :material-connection: **Marlin Streaming**
-  ---
-  Direct hardware control with real-time progress and state management
+    Define winding patterns with a simple, validated YAML schema
 
-- :material-chart-line: **Visualization**
-  ---
-  Preview and plot toolpaths before manufacturing
+-   :material-axis-arrow: **Multi-Axis Control**
 
-- :material-puzzle: **Modular Architecture**
-  ---
-  CLI, API, and GUI components work standalone or together
+    ---
 
-- :material-cog-refresh: **Layer Strategies**
-  ---
-  Configurable winding algorithms with mathematical precision
+    Support for XYZ and XAB coordinate systems with flexible mapping
+
+-   :material-connection: **Marlin Streaming**
+
+    ---
+
+    Direct hardware control with real-time progress and state management
+
+-   :material-chart-line: **Visualization**
+
+    ---
+
+    Preview and plot toolpaths before manufacturing
+
+-   :material-puzzle: **Modular Architecture**
+
+    ---
+
+    CLI, API, and GUI components work standalone or together
+
+-   :material-cog-refresh: **Layer Strategies**
+
+    ---
+
+    Configurable winding algorithms with mathematical precision
 
 </div>
