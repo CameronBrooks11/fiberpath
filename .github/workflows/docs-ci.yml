@@ -2,7 +2,7 @@ name: Docs CI
 
 on:
   push:
-    branches: [main, stream-rehaul]
+    branches: [main, v0.5.1-dev]
     paths:
       - "docs/**"
       - "fiberpath_gui/docs/**"

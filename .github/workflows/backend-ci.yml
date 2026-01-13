@@ -2,7 +2,7 @@ name: Backend CI
 
 on:
   push:
-    branches: [main, stream-rehaul]
+    branches: [main, v0.5.1-dev]
     paths:
       - "fiberpath/**"
       - "fiberpath_api/**"
