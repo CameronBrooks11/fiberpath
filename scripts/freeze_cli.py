@@ -28,7 +28,7 @@ BUILD_DIR = ROOT_DIR / "build"
 def get_platform_config() -> dict[str, str | list[str]]:
     """Get platform-specific PyInstaller configuration."""
     system = platform.system()
-    
+
     if system == "Windows":
         return {
             "name": "fiberpath",
@@ -53,7 +53,7 @@ def get_platform_config() -> dict[str, str | list[str]]:
 
 def get_hidden_imports() -> list[str]:
     """Get list of hidden imports for PyInstaller.
-    
+
     PyInstaller's static analysis may miss dynamically imported modules.
     We explicitly include all fiberpath subpackages to ensure they're bundled.
     """
@@ -107,7 +107,7 @@ def build_executable() -> None:
     """Build the frozen executable using PyInstaller."""
     config = get_platform_config()
     hidden_imports = get_hidden_imports()
-    
+
     # PyInstaller command
     # Entry point is the Typer app object, NOT __main__.py
     pyinstaller_args = [
@@ -128,7 +128,7 @@ def build_executable() -> None:
         # Entry point script (will be created temporarily)
         "--path", str(ROOT_DIR),
     ]
-    
+
     # Create temporary entry point script
     entry_script = ROOT_DIR / "_freeze_entry.py"
     entry_script.write_text("""
@@ -138,9 +138,9 @@ from fiberpath_cli.main import app
 if __name__ == "__main__":
     app()
 """)
-    
+
     pyinstaller_args.append(str(entry_script))
-    
+
     print("=" * 60)
     print("FiberPath CLI Freezing with PyInstaller")
     print("=" * 60)
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     print(f"Python: {sys.version.split()[0]}")
     print(f"Output: {DIST_DIR / config['name']}{config['extension']}")
     print()
-    
+
     # Clean previous builds
     if BUILD_DIR.exists():
         print("Cleaning build directory...")
@@ -156,11 +156,11 @@ if __name__ == "__main__":
     if DIST_DIR.exists():
         print("Cleaning dist directory...")
         shutil.rmtree(DIST_DIR)
-    
+
     print("\nRunning PyInstaller...")
     print(" ".join(pyinstaller_args))
     print()
-    
+
     try:
         subprocess.run(pyinstaller_args, check=True, cwd=ROOT_DIR)
     finally:
@@ -171,24 +171,24 @@ if __name__ == "__main__":
         spec_file = ROOT_DIR / f"{config['name']}.spec"
         if spec_file.exists():
             spec_file.unlink()
-    
+
     # Verify output
     output_exe = DIST_DIR / f"{config['name']}{config['extension']}"
     if not output_exe.exists():
         raise RuntimeError(f"Build failed: {output_exe} not found")
-    
+
     # Get file size
     size_mb = output_exe.stat().st_size / (1024 * 1024)
-    
+
     print("\n" + "=" * 60)
     print("✓ Build successful!")
     print("=" * 60)
     print(f"Executable: {output_exe}")
     print(f"Size: {size_mb:.1f} MB")
-    
+
     if size_mb > 80:
         print(f"\n⚠ Warning: Executable size ({size_mb:.1f} MB) exceeds 80 MB target")
-    
+
     print("\nTo test the executable:")
     print(f"  {output_exe} --help")
     print(f"  {output_exe} --version")
