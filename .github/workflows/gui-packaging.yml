@@ -120,16 +120,34 @@ jobs:
       - name: Verify CLI bundled in Tauri app
         shell: bash
         run: |
-          echo "Checking if CLI was bundled into Tauri resources..."
-          # The exact path varies by platform and bundle type, so we search for it
-          if find src-tauri/target/release/bundle -name "fiberpath*" -type f 2>/dev/null | grep -q .; then
-            echo "✓ CLI found in bundle resources:"
-            find src-tauri/target/release/bundle -name "fiberpath*" -type f -exec ls -lh {} \;
+          echo "Checking if Tauri build succeeded with bundled CLI..."
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            # Windows: Verify actual installer files were created
+            MSI_COUNT=$(find src-tauri/target/release/bundle/msi -name "*.msi" 2>/dev/null | wc -l)
+            NSIS_COUNT=$(find src-tauri/target/release/bundle/nsis -name "*.exe" 2>/dev/null | wc -l)
+            
+            if [ "$MSI_COUNT" -gt 0 ] || [ "$NSIS_COUNT" -gt 0 ]; then
+              echo "[OK] Windows installers created successfully:"
+              find src-tauri/target/release/bundle -type f \( -name "*.msi" -o -name "*.exe" \) -exec ls -lh {} \;
+            else
+              echo "ERROR: No Windows installer files (.msi or .exe) found!"
+              echo "MSI directory contents:"
+              ls -la src-tauri/target/release/bundle/msi/ 2>/dev/null || echo "  Directory not found"
+              echo "NSIS directory contents:"
+              ls -la src-tauri/target/release/bundle/nsis/ 2>/dev/null || echo "  Directory not found"
+              exit 1
+            fi
           else
-            echo "ERROR: CLI not found in bundle resources!"
-            echo "Bundle structure:"
-            find src-tauri/target/release/bundle -type d | head -20
-            exit 1
+            # macOS/Linux: Search for bundled CLI file in app bundle
+            if find src-tauri/target/release/bundle -name "fiberpath" -type f 2>/dev/null | grep -q .; then
+              echo "[OK] CLI found in bundle resources:"
+              find src-tauri/target/release/bundle -name "fiberpath" -type f -exec ls -lh {} \;
+            else
+              echo "ERROR: CLI not found in bundle resources!"
+              echo "Bundle structure:"
+              find src-tauri/target/release/bundle -type d | head -20
+              exit 1
+            fi
           fi
 
       - name: Upload artifacts
