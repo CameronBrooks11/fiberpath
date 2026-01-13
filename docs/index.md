@@ -5,7 +5,16 @@ hide:
 ---
 
 <!-- markdownlint-disable -->
-<!-- This page uses custom HTML and MkDocs Material card grids -->
+<!--
+  Landing page layout notes (Material for MkDocs):
+
+  - DO NOT FORMAT THIS FILE WITH PRETTIER OR SIMILAR TOOLS.
+
+  - Card grids expect `---` (a horizontal rule) as the internal separator between a card title and its body.
+    Using `***` can lead to inconsistent spacing because it may not map cleanly to the theme’s expected styling.
+
+  - `md_in_html` is enabled so Markdown inside the HTML containers below will render correctly.
+-->
 
 <div style="text-align: center; padding: 3rem 0 2rem 0;" markdown>
 
@@ -14,7 +23,7 @@ hide:
 ### Modern filament winding planner, simulator, and tooling
 
 [Get Started](getting-started.md){ .md-button .md-button--primary }
-[View on GitHub :fontawesome-brands-github:](https://github.com/CameronBrooks11/fiberpath){ .md-button }
+[View on GitHub :fontawesome-brands-github:](https://github.com/CameronBrooks11/fiberpath){ .md-button target=_blank }
 
 </div>
 
@@ -25,10 +34,8 @@ hide:
 <div class="grid cards" markdown>
 
 - :material-download:{ .lg .middle } **Download & Install**
-
-  ***
-
-  **Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+  ---
+  **Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
   - **Desktop GUI** – Windows, macOS, Linux installers
   - **Python Package** – `pip install fiberpath`
@@ -37,9 +44,7 @@ hide:
   [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
 - :material-new-box:{ .lg .middle } **What's New in v0.5.0**
-
-  ***
-
+  ---
   **Enhanced Streaming Control** with refined state management:
 
   - Graceful job cancellation vs emergency stop
@@ -50,9 +55,7 @@ hide:
   [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 
 - :material-book-open-page-variant:{ .lg .middle } **User Guides**
-
-  ***
-
+  ---
   Learn how to work with FiberPath's core features
 
   - [Wind Format](guides/wind-format.md) – File schema & validation
@@ -61,9 +64,7 @@ hide:
   - [Visualization](guides/visualization.md) – Preview & plotting
 
 - :material-code-json:{ .lg .middle } **API Reference**
-
-  ***
-
+  ---
   Technical documentation and specifications
 
   - [Concepts](reference/concepts.md) – Terminology glossary
@@ -71,9 +72,7 @@ hide:
   - [Planner Math](reference/planner-math.md) – Algorithms & formulas
 
 - :material-layers-triple:{ .lg .middle } **Architecture**
-
-  ***
-
+  ---
   Understand the system design and internals
 
   - [System Overview](architecture/overview.md) – Stack & data flow
@@ -82,9 +81,7 @@ hide:
   [:octicons-arrow-right-24: Architecture Docs](architecture/overview.md)
 
 - :material-hammer-wrench:{ .lg .middle } **Development**
-
-  ***
-
+  ---
   Contribute to FiberPath development
 
   - [Contributing](development/contributing.md) – Guidelines & setup
@@ -101,28 +98,28 @@ hide:
 
 <div class="grid cards" markdown>
 
-- **:material-file-code: Wind File Format**
-
+- :material-file-code: **Wind File Format**
+  ---
   Define winding patterns with a simple, validated YAML schema
 
-- **:material-axis-arrow: Multi-Axis Control**
-
+- :material-axis-arrow: **Multi-Axis Control**
+  ---
   Support for XYZ and XAB coordinate systems with flexible mapping
 
-- **:material-connection: Marlin Streaming**
-
+- :material-connection: **Marlin Streaming**
+  ---
   Direct hardware control with real-time progress and state management
 
-- **:material-chart-line: Visualization**
-
+- :material-chart-line: **Visualization**
+  ---
   Preview and plot toolpaths before manufacturing
 
-- **:material-puzzle: Modular Architecture**
-
+- :material-puzzle: **Modular Architecture**
+  ---
   CLI, API, and GUI components work standalone or together
 
-- **:material-cog-refresh: Layer Strategies**
-
+- :material-cog-refresh: **Layer Strategies**
+  ---
   Configurable winding algorithms with mathematical precision
 
 </div>
