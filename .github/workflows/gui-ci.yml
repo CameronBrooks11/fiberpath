@@ -5,12 +5,14 @@ on:
     branches: [main, stream-rehaul]
     paths:
       - "fiberpath_gui/**"
+      - "!fiberpath_gui/docs/**"
       - ".github/workflows/gui-ci.yml"
       - ".github/actions/setup-node/**"
       - ".github/actions/setup-rust/**"
   pull_request:
     paths:
       - "fiberpath_gui/**"
+      - "!fiberpath_gui/docs/**"
       - ".github/workflows/gui-ci.yml"
       - ".github/actions/setup-node/**"
       - ".github/actions/setup-rust/**"

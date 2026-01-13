@@ -5,6 +5,7 @@ on:
     branches: [main, stream-rehaul]
     paths:
       - "fiberpath_gui/**"
+      - "!fiberpath_gui/docs/**"
       - ".github/workflows/gui-packaging.yml"
       - ".github/actions/setup-node/**"
       - ".github/actions/setup-rust/**"
