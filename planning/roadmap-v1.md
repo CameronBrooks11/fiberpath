@@ -2,8 +2,7 @@
 
 Last updated: 2025-11-19
 
-The roadmap focuses on delivering a production-ready filament winding tool. Each phase lists the
-primary objectives, concrete tasks, and completion signals so we can track progress and keep scope
+The roadmap focuses on delivering a production-ready filament winding tool. Each phase lists the primary objectives, concrete tasks, and completion signals so we can track progress and keep scope
 under control. Phases should be executed sequentially unless otherwise noted.
 
 ## Phase 0 – Baseline Hygiene (Complete)

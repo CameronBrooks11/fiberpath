@@ -53,7 +53,74 @@
 
 ---
 
-## Category 3: Advanced Data Features
+## Category 3: Advanced UX Features
+
+### Dark Mode Theme Toggle
+
+**Why Deferred:**
+
+- Cosmetic feature without functional value
+- Design token system exists (CSS variables) but full theme switching requires significant work
+- Would need: theme context, storage persistence, theme-specific asset variants, testing across all components
+- No user demand for this feature
+
+**Reconsider If:** Multiple users request it, commitment to maintaining both themes long-term.
+
+### Panel Resize Handles
+
+**Why Rejected:**
+
+- Attempted in previous development cycle, didn't work well
+- Layout is already well-balanced for the workflow
+- Complex implementation (drag handlers, state persistence, layout constraints)
+- Low value for high complexity
+
+### Keyboard Shortcut Customization
+
+**Why Deferred:**
+
+- Current shortcuts are well-designed and sufficient (Ctrl+S, Ctrl+O, Alt+1/2, etc.)
+- Niche feature requested by power users only
+- Would require: shortcut registry, conflict detection, UI for rebinding, storage persistence
+- Most users never customize shortcuts
+
+**Reconsider If:** Users report shortcut conflicts with other software, accessibility needs emerge.
+
+### Workspace Layout Presets
+
+**Why Deferred:**
+
+- Premature optimization - current single layout works well
+- Would require: layout serialization, preset storage, restore logic, UI for preset management
+- Unclear use case - who needs multiple layouts?
+
+**Reconsider If:** Clear use cases emerge (different layouts for different workflows).
+
+### Undo/Redo System
+
+**Why Deferred:**
+
+- Complex implementation (command pattern, state snapshots, undo stack management)
+- Current workflow is forward-only (add layers, export), undo rarely needed
+- File save/load provides "undo" via reverting to saved state
+- High maintenance burden for unclear benefit
+
+**Reconsider If:** Users frequently request ability to undo layer changes or configuration updates.
+
+### Layer Presets System
+
+**Why Deferred:**
+
+- Advanced feature with unclear use case
+- Would require: preset schema, storage, UI for save/load/manage presets
+- Current workflow (duplicate existing layers) is sufficient
+- No evidence users need to save layer configurations
+
+**Reconsider If:** Users request ability to reuse layer configurations across projects.
+
+---
+
+## Category 4: Advanced Data Features
 
 ### Coverage Analysis and Visualization
 
@@ -73,7 +140,7 @@
 
 ---
 
-## Category 4: Integration Features
+## Category 5: Integration Features
 
 ### REST API Enhancements
 
@@ -96,7 +163,7 @@
 
 ---
 
-## Category 5: Workflow Automation
+## Category 6: Workflow Automation
 
 ### AI/ML Pattern Optimization
 
@@ -115,7 +182,7 @@
 
 ---
 
-## Category 6: Cloud & Infrastructure Features
+## Category 7: Cloud & Infrastructure Features
 
 ### Cloud Sync & Sharing
 
@@ -148,7 +215,7 @@ done
 
 ---
 
-## Category 7: Technical Debt & Refactoring
+## Category 8: Technical Debt & Refactoring
 
 ### Rust Async Timeout for Subprocess Operations
 
