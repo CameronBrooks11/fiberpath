@@ -2,133 +2,294 @@
 
 <h1>FiberPath</h1>
 
-<!-- Version & License -->
+**Plan, simulate, and manufacture composite parts with precision fiber winding.**
 
-[![Version](https://img.shields.io/badge/version-0.5.0-blue)](https://github.com/CameronBrooks11/fiberpath/releases)
-[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](LICENSE)
-
-<!-- CI/CD Status -->
-
+[![Version](https://img.shields.io/badge/version-0.5.0-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-00695C.svg)](LICENSE)
 [![Backend CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/backend-ci.yml)
 [![GUI CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-ci.yml)
-[![Docs CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/docs-ci.yml?branch=main&label=Docs%20CI&logo=markdown&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/docs-ci.yml)
-[![GUI Packaging](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-packaging.yml?branch=main&label=GUI%20Packaging&logo=tauri&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-packaging.yml)
-[![Docs Deployment](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/docs-deploy.yml?branch=main&label=Docs%20Deploy&logo=githubpages&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/docs-deploy.yml)
-
-<!-- Technology Stack -->
+[![Docs](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/docs-deploy.yml?branch=main&label=Docs&logo=githubpages&logoColor=white)](https://cameronbrooks11.github.io/fiberpath)
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)
-![Rust](https://img.shields.io/badge/Rust-1.70+-000000?logo=rust&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-5.0+-646CFF?logo=vite&logoColor=white)
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-FFC131?logo=tauri&logoColor=white)
-![MkDocs](https://img.shields.io/badge/MkDocs-Material-526CFE?logo=materialformkdocs&logoColor=white)
+
+[Download](https://github.com/CameronBrooks11/fiberpath/releases/latest) · [Documentation](https://cameronbrooks11.github.io/fiberpath) · [Examples](examples/)
 
 </div>
 
-FiberPath is a next-generation system for planning, simulating, and executing filament-winding jobs on cylindrical mandrels to produce high-quality, repeatable composite parts. The repository contains four coordinated components:
+---
 
-- **Core Engine (`fiberpath/`)** – deterministic planning pipelines, geometry utilities, and G-code emission.
-- **CLI (`fiberpath_cli/`)** – Typer-based command-line interface offering `plan`, `plot`, `simulate`, and `stream`.
-- **API (`fiberpath_api/`)** – FastAPI service exposing planning and simulation routes.
-- **Desktop GUI (`fiberpath_gui/`)** – Tauri + React application that wraps the CLI for a unified user experience.
+## Overview
 
-## Download
+FiberPath automates the complex process of **filament winding**—wrapping fiber-reinforced composites around mandrels to create lightweight, high-strength cylindrical parts like pressure vessels, pipes, and aerospace structures.
 
-📦 **Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+Design multi-layer winding patterns in a visual interface, simulate the full manufacturing process, and stream G-code directly to Marlin-based hardware. FiberPath handles the mathematics of geodesic paths, fiber tension calculations, and machine kinematics so you can focus on part design.
 
-- **Desktop GUI** – Windows (.msi/.exe), macOS (.dmg), Linux (.deb/.AppImage)
-- **Python CLI/API** – `pip install fiberpath` or `uv pip install fiberpath`
+### Features
 
-📚 **Documentation:** [cameronbrooks11.github.io/fiberpath](https://cameronbrooks11.github.io/fiberpath)
+- **Visual Layer Editor** – Design winding patterns with real-time 3D preview
+- **Geodesic Path Planning** – Automatic computation of stable fiber trajectories
+- **Hardware Simulation** – Validate motion before manufacturing
+- **Direct Machine Control** – Stream G-code to Marlin controllers with pause/resume
+- **Flexible Axis Mapping** – Support for XAB rotational or XYZ linear axis configurations
+- **Cross-Platform Desktop GUI** – Native Windows, macOS, and Linux applications
+- **Command-Line Tools** – Scriptable workflows for automation and CI/CD
+- **Comprehensive Documentation** – Architecture guides, examples, and API reference
 
-## Local Development
+## Quick Start
+
+### Option 1: Desktop GUI (Recommended)
+
+Download the installer for your platform from the [latest release](https://github.com/CameronBrooks11/fiberpath/releases/latest):
+
+- **Windows**: `.msi` or `.exe` installer
+- **macOS**: `.dmg` disk image
+- **Linux**: `.deb` package or `.AppImage`
+
+Launch the application, load an example from the `File` menu, and explore the visual editor.
+
+### Option 2: Command-Line Interface
+
+Install via pip or uv:
 
 ```sh
-uv pip install -e .[dev,cli,api]
-fiberpath --help
-pytest
+pip install fiberpath
+# or
+uv pip install fiberpath
 ```
 
-After installation, the `fiberpath` command is available on your PATH. For development, use `-e` for editable install.
-
-> See [uv docs](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions or replace `uv` with `pip` if you prefer the standard installer.
-
-### Plotting Quick Preview
+Generate G-code from an example:
 
 ```sh
 fiberpath plan examples/simple_cylinder/input.wind -o simple.gcode
-fiberpath plot simple.gcode --output simple.png --scale 0.8
+fiberpath plot simple.gcode --output simple.png
 ```
 
-The `plot` command unwraps mandrel coordinates into a PNG so you can visually inspect a toolpath before streaming it to hardware. Plotting extracts mandrel/tow settings from the `; Parameters ...` header emitted by `plan`.
+The `plot` command creates a 2D unwrapped visualization of the toolpath for quick inspection.
 
-## Axis Format Selection
+## Installation
 
-FiberPath supports configurable axis mapping to work with different machine configurations:
+### Desktop Application
 
-- **XAB (Standard Rotational)** - Default format using true rotational axes:
+📦 **Download:** [github.com/CameronBrooks11/fiberpath/releases/latest](https://github.com/CameronBrooks11/fiberpath/releases/latest)
 
-  - `X` = Carriage (linear, mm)
-  - `A` = Mandrel rotation (rotational, degrees)
-  - `B` = Delivery head rotation (rotational, degrees)
+No Python installation required—the GUI is a self-contained native application.
 
-- **XYZ (Legacy)** - Compatibility format for systems where rotational axes are configured as linear:
-  - `X` = Carriage (linear, mm)
-  - `Y` = Mandrel rotation (treated as linear, degrees)
-  - `Z` = Delivery head rotation (treated as linear, degrees)
+### Python Package
 
-Use `--axis-format xab` (default) for new projects. The legacy format is retained for backward compatibility with existing systems like Cyclone.
+**Requirements:** Python 3.11+
 
 ```sh
-# Generate G-code with standard XAB axes (default)
-fiberpath plan input.wind -o output.gcode
+# Install from PyPI
+pip install fiberpath
 
-# Generate G-code with legacy XYZ axes
-fiberpath plan input.wind -o output.gcode --axis-format xyz
+# Install with optional dependencies
+pip install fiberpath[cli]  # CLI tools
+pip install fiberpath[api]  # FastAPI server
+pip install fiberpath[dev]  # Development tools
 ```
 
-## Desktop GUI
-
-A cross-platform Tauri + React application for planning, plotting, simulating, and streaming G-code to Marlin hardware.
-
-Prerequisites: Node.js 18+, Rust toolchain, and `fiberpath` CLI installed (`uv pip install -e .` from repository root).
+**Development Install:**
 
 ```sh
+git clone https://github.com/CameronBrooks11/fiberpath.git
+cd fiberpath
+uv pip install -e .[dev,cli,api]
+pytest
+```
+
+> 💡 Using [uv](https://docs.astral.sh/uv/) is recommended for faster installs, but standard `pip` works fine.
+
+## Usage Examples
+
+### Planning a Winding Pattern
+
+```sh
+# Generate G-code from a .wind configuration
+fiberpath plan examples/simple_cylinder/input.wind -o output.gcode
+
+# Specify axis format for your machine
+fiberpath plan input.wind -o output.gcode --axis-format xab
+```
+
+### Visualizing Toolpaths
+
+```sh
+# Create 2D unwrapped plot
+fiberpath plot output.gcode --output preview.png --scale 0.8
+
+# Interactive 3D simulation (GUI)
+fiberpath simulate output.gcode
+```
+
+### Streaming to Hardware
+
+```sh
+# Test streaming without hardware connection
+fiberpath stream output.gcode --dry-run
+
+# Connect and stream to Marlin controller
+fiberpath stream output.gcode --port COM5 --baud-rate 250000
+```
+
+FiberPath automatically waits for Marlin's startup sequence (`M92`, `M203`, etc.) before streaming. Use `Ctrl+C` to pause—FiberPath issues `M0` and resumes with `M108`.
+
+### Using the Desktop GUI
+
+The GUI provides two main workflows:
+
+**Main Tab:**
+
+- Visual layer editor with add/remove/reorder
+- Real-time 3D canvas preview
+- Parameter forms for mandrel, tow, and machine settings
+- Export to G-code or save as `.wind` project file
+
+**Stream Tab:**
+
+- Serial port selection and connection management
+- Manual G-code command input for testing
+- File streaming with pause/resume/cancel controls
+- Real-time position tracking and status updates
+
+### Development Workflow
+
+```sh
+# Run GUI in development mode
 cd fiberpath_gui
 npm install
 npm run tauri dev
+
+# Run tests
+pytest                           # Python tests
+cd fiberpath_gui && npm test     # TypeScript tests
+
+# Run API server
+fiberpath-api --port 8000        # Requires fiberpath[api] install
 ```
 
-The GUI provides two tabs:
+## Architecture
 
-- **Main Tab** – Layer editor, parameter forms, and 3D visualization canvas
-- **Stream Tab** – Serial port connection, manual G-code commands, and file streaming with pause/resume
+FiberPath consists of four coordinated components:
 
-The GUI calls the same CLI commands for planning and simulation. Streaming uses a persistent Python subprocess for direct serial communication with Marlin controllers.
+```text
+┌─────────────────────────────────────────────────┐
+│              Desktop GUI (Tauri + React)        │
+│  • Visual layer editor                          │
+│  • 3D canvas preview                            │
+│  • Serial communication controls                │
+└───────────────┬─────────────────────────────────┘
+                │ IPC calls
+                ▼
+┌─────────────────────────────────────────────────┐
+│           CLI (Typer + Python)                  │
+│  • plan   • plot   • simulate   • stream        │
+└───────────────┬─────────────────────────────────┘
+                │ imports
+                ▼
+┌─────────────────────────────────────────────────┐
+│           Core Engine (Python)                  │
+│  • Geodesic path planning                       │
+│  • Layer strategies                             │
+│  • G-code generation                            │
+│  • Geometry utilities                           │
+└─────────────────────────────────────────────────┘
+                ▲
+                │ imports
+┌───────────────┴─────────────────────────────────┐
+│           API Server (FastAPI)                  │
+│  • RESTful planning endpoints                   │
+│  • JSON input/output                            │
+│  • Optional deployment for web integration      │
+└─────────────────────────────────────────────────┘
+```
 
-## Hardware Testing
+**Design Principles:**
 
-Before deploying to production hardware:
+- **CLI and API are parallel interfaces** to the same Core Engine
+- **GUI calls CLI via IPC** for offline operation (no server required)
+- **Core is deterministic** and thoroughly tested (113 passing tests)
+- **Modular architecture** allows using components independently
 
-1. Generate G-code: `fiberpath plan input.wind -o output.gcode`
-2. Verify motion: `fiberpath simulate output.gcode` or GUI simulation
-3. Test streaming with `--dry-run`:
-   - CLI: `fiberpath stream output.gcode --dry-run`
-   - GUI: Stream Tab with dry-run mode enabled
-4. Connect to hardware:
-   - CLI: `fiberpath stream output.gcode --port COM5 --baud-rate 250000`
-   - GUI: Stream Tab → select port → Connect → Start Stream
-5. Archive results (CLI `--json` output or GUI summaries) for validation
+See [Architecture Documentation](https://cameronbrooks11.github.io/fiberpath/architecture/overview/) for detailed design rationale.
 
-### Streaming to Marlin
+## Axis Configuration
+
+FiberPath supports two axis mapping formats:
+
+**XAB (Rotational) - Default**:
+
+- `X` = Carriage position (linear, mm)
+- `A` = Mandrel rotation (rotational, degrees)
+- `B` = Delivery head rotation (rotational, degrees)
+
+**XYZ (Legacy)**:
+
+- `X` = Carriage position (linear, mm)
+- `Y` = Mandrel rotation (treated as linear, degrees)
+- `Z` = Delivery head rotation (treated as linear, degrees)
+
+Use `--axis-format xab` (default) for new projects. The XYZ format maintains compatibility with legacy systems like Cyclone.
+
+## Documentation
+
+Comprehensive documentation is available at [cameronbrooks11.github.io/fiberpath](https://cameronbrooks11.github.io/fiberpath):
+
+- **[Getting Started Guide](https://cameronbrooks11.github.io/fiberpath/getting-started/)** – Installation and first steps
+- **[Architecture Overview](https://cameronbrooks11.github.io/fiberpath/architecture/overview/)** – System design and components
+- **[Usage Guides](https://cameronbrooks11.github.io/fiberpath/guides/visualization/)** – Visualization, streaming, WIND format
+- **[API Reference](https://cameronbrooks11.github.io/fiberpath/reference/api/)** – Core functions and CLI commands
+- **[GUI Documentation](https://cameronbrooks11.github.io/fiberpath/gui/overview/)** – Desktop application architecture
+- **[Development Guide](https://cameronbrooks11.github.io/fiberpath/development/contributing/)** – Contributing, tooling, release process
+
+## Contributing
+
+Contributions are welcome! FiberPath is actively developed and maintained.
+
+**Before contributing:**
+
+1. Read the [Contributing Guide](https://cameronbrooks11.github.io/fiberpath/development/contributing/)
+2. Check existing [issues](https://github.com/CameronBrooks11/fiberpath/issues) and [pull requests](https://github.com/CameronBrooks11/fiberpath/pulls)
+3. Open an issue to discuss major changes before implementing
+
+**Development setup:**
 
 ```sh
-fiberpath stream simple.gcode --port COM5 --baud-rate 250000
+git clone https://github.com/CameronBrooks11/fiberpath.git
+cd fiberpath
+uv pip install -e .[dev,cli,api]
+pytest
+
+cd fiberpath_gui
+npm install
+npm test
 ```
 
-FiberPath automatically waits for Marlin's startup sequence to complete before streaming commands. This handles the ~10-20 line configuration banner that Marlin outputs on connection (typically ending with settings like `M92`, `M203`, `M206`, etc.).
+**Code standards:**
 
-Use `--dry-run` to preview streaming without opening a serial port. `--verbose` prints each dequeued G-code command and Marlin's startup messages. The `run` operation streams one command at a time, waits for `ok`, and lets you pause with `Ctrl+C` (FiberPath issues `M0` and resumes via `M108`).
+- Python code follows PEP 8 (enforced by CI)
+- TypeScript/React follows project ESLint configuration
+- All new features require tests and documentation
+- Commit messages use conventional commits format
+
+See [Development Documentation](https://cameronbrooks11.github.io/fiberpath/development/) for tooling, CI/CD, and release process details.
+
+## License
+
+FiberPath is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+This means:
+
+- ✅ Free to use, modify, and distribute
+- ✅ Source code must be made available to users
+- ⚠️ Network use (e.g., hosting as a service) triggers copyleft
+
+See [LICENSE](LICENSE) for full terms.
+
+---
+
+**Questions?** Open an [issue](https://github.com/CameronBrooks11/fiberpath/issues) or check the [documentation](https://cameronbrooks11.github.io/fiberpath).
+
+**Found a bug?** Report it on [GitHub Issues](https://github.com/CameronBrooks11/fiberpath/issues/new) with steps to reproduce.
