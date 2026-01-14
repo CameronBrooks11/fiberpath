@@ -208,11 +208,11 @@ fn temp_path(extension: &str) -> String {
 async fn exec_fiberpath(app: AppHandle, args: Vec<String>) -> Result<Output, FiberpathError> {
     // Get the fiberpath CLI executable path (bundled or system)
     let cli_path = cli_path::get_fiberpath_executable(&app)
-        .map_err(|err| FiberpathError::Process(err))?;
-    
+        .map_err(FiberpathError::Process)?;
+
     let cli_str = cli_path::path_to_string(&cli_path)
-        .map_err(|err| FiberpathError::Process(err))?;
-    
+        .map_err(FiberpathError::Process)?;
+
     let joined = args.join(" ");
     let output = tauri::async_runtime::spawn_blocking(move || {
         std::process::Command::new(cli_str).args(args).output()
