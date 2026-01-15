@@ -20,14 +20,11 @@ interface CliDiagnostics {
   bundledPath: string;
   bundledExists: boolean;
   bundledIsFile: boolean;
-  parentContents: string[];
   systemPath: string;
   actualCliUsed: string;
   platform: string;
   executionResult: string;
   executionExitCode: number | null;
-  executionStdout: string;
-  executionStderr: string;
 }
 
 /**
@@ -208,29 +205,6 @@ export function CliUnavailableDialog({
                     </tr>
                   </tbody>
                 </table>
-                
-                {diagnostics.executionStdout && (
-                  <div>
-                    <strong>stdout:</strong>
-                    <pre className="diagnostic-output">{diagnostics.executionStdout}</pre>
-                  </div>
-                )}
-                
-                {diagnostics.executionStderr && (
-                  <div>
-                    <strong>stderr:</strong>
-                    <pre className="diagnostic-output">{diagnostics.executionStderr}</pre>
-                  </div>
-                )}
-              </div>
-
-              <div className="diagnostic-section">
-                <h4>Bundled CLI Directory</h4>
-                <pre className="diagnostic-output">
-                  {diagnostics.parentContents.length > 0 
-                    ? diagnostics.parentContents.join('\n') 
-                    : '(empty)'}
-                </pre>
               </div>
 
               <button
