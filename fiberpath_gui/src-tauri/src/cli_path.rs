@@ -15,23 +15,65 @@ use tauri::{AppHandle, Manager};
 /// - `Ok(PathBuf)` - Path to the fiberpath executable (bundled or system)
 /// - `Err(String)` - Error message if CLI not found
 pub fn get_fiberpath_executable(app: &AppHandle) -> Result<PathBuf, String> {
+    log::info!("=== FiberPath CLI Resolution Debug ===");
+    
+    // Get resource directory first for diagnostics
+    let resource_dir_result = app.path().resource_dir();
+    log::info!("Resource dir result: {:?}", resource_dir_result);
+    
     // Try to get the bundled CLI from resources directory
-    if let Ok(bundled_path) = get_bundled_cli_path(app) {
-        if bundled_path.exists() {
-            log::info!("Using bundled fiberpath CLI: {:?}", bundled_path);
-            return Ok(bundled_path);
-        } else {
-            log::warn!("Bundled CLI path does not exist: {:?}", bundled_path);
+    match get_bundled_cli_path(app) {
+        Ok(bundled_path) => {
+            log::info!("Bundled CLI path constructed: {:?}", bundled_path);
+            log::info!("Checking if path exists...");
+            
+            if bundled_path.exists() {
+                log::info!("✓ Bundled CLI found and exists!");
+                
+                // Check if it's a file
+                if bundled_path.is_file() {
+                    log::info!("✓ Path is a file");
+                    return Ok(bundled_path);
+                } else {
+                    log::error!("✗ Path exists but is not a file (directory?)");
+                }
+            } else {
+                log::warn!("✗ Bundled CLI path does not exist");
+                
+                // Try to list parent directory contents for debugging
+                if let Some(parent) = bundled_path.parent() {
+                    log::info!("Parent directory: {:?}", parent);
+                    if parent.exists() {
+                        log::info!("Parent exists, listing contents:");
+                        if let Ok(entries) = std::fs::read_dir(parent) {
+                            for entry in entries.flatten() {
+                                log::info!("  - {:?}", entry.path());
+                            }
+                        } else {
+                            log::error!("Failed to read parent directory");
+                        }
+                    } else {
+                        log::error!("Parent directory does not exist");
+                    }
+                }
+            }
+        }
+        Err(e) => {
+            log::error!("Failed to construct bundled CLI path: {}", e);
         }
     }
 
     // Fallback to system PATH (for development)
+    log::info!("Trying system PATH fallback...");
     if let Ok(system_path) = which::which("fiberpath") {
-        log::info!("Using system fiberpath CLI from PATH: {:?}", system_path);
+        log::info!("✓ Found fiberpath in system PATH: {:?}", system_path);
         return Ok(system_path);
+    } else {
+        log::warn!("✗ fiberpath not found in system PATH");
     }
 
     // No CLI found
+    log::error!("=== CLI NOT FOUND ===");
     Err(
         "FiberPath CLI not found. Please ensure the application was installed correctly, \
          or install the Python package with: pip install fiberpath"
@@ -43,7 +85,7 @@ pub fn get_fiberpath_executable(app: &AppHandle) -> Result<PathBuf, String> {
 ///
 /// This function uses Tauri v2's Manager trait to resolve the resource directory
 /// and then constructs the platform-specific path to the bundled CLI.
-fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
+pub fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
     // Get the resource directory using Tauri v2 API
     let resource_dir = app
         .path()

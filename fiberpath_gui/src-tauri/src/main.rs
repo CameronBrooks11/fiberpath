@@ -10,7 +10,7 @@ use std::fs;
 use std::process::Output;
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -266,6 +266,68 @@ async fn load_wind_file(path: String) -> Result<String, String> {
 }
 
 #[tauri::command]
+async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
+    use serde_json::json;
+    
+    // Get resource directory
+    let resource_dir = app.path().resource_dir()
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|e| format!("Error: {}", e));
+    
+    // Try to get bundled path
+    let bundled_path_result = cli_path::get_bundled_cli_path(&app);
+    let bundled_path = bundled_path_result
+        .as_ref()
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|e| format!("Error: {}", e));
+    
+    let bundled_exists = bundled_path_result
+        .as_ref()
+        .map(|p| p.exists())
+        .unwrap_or(false);
+    
+    let bundled_is_file = bundled_path_result
+        .as_ref()
+        .map(|p| p.is_file())
+        .unwrap_or(false);
+    
+    // Check parent directory contents
+    let mut parent_contents = Vec::new();
+    if let Ok(bundled_p) = bundled_path_result {
+        if let Some(parent) = bundled_p.parent() {
+            if parent.exists() {
+                if let Ok(entries) = std::fs::read_dir(parent) {
+                    for entry in entries.flatten() {
+                        parent_contents.push(entry.path().to_string_lossy().to_string());
+                    }
+                }
+            }
+        }
+    }
+    
+    // Check system PATH
+    let system_path = which::which("fiberpath")
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|_| "Not found".to_string());
+    
+    // Get actual CLI path used
+    let actual_cli = cli_path::get_fiberpath_executable(&app)
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|e| format!("Error: {}", e));
+    
+    Ok(json!({
+        "resourceDir": resource_dir,
+        "bundledPath": bundled_path,
+        "bundledExists": bundled_exists,
+        "bundledIsFile": bundled_is_file,
+        "parentContents": parent_contents,
+        "systemPath": system_path,
+        "actualCliUsed": actual_cli,
+        "platform": std::env::consts::OS,
+    }))
+}
+
+#[tauri::command]
 async fn validate_wind_definition(app: AppHandle, definition_json: String) -> Result<Value, String> {
     // Create temporary .wind file
     let wind_file = temp_path("wind");
@@ -382,6 +444,7 @@ fn main() {
             load_wind_file,
             validate_wind_definition,
             check_cli_health,
+            get_cli_diagnostics,
             marlin::marlin_list_ports,
             marlin::marlin_start_interactive,
             marlin::marlin_connect,
