@@ -122,16 +122,27 @@ def build_executable() -> None:
         "--noconfirm",  # Overwrite without asking
         # Add hidden imports
         *[f"--hidden-import={imp}" for imp in hidden_imports],
-        # Entry point: Typer app object (NOT __main__.py)
-        "--add-data",
-        f"{ROOT_DIR / 'fiberpath'}:fiberpath",
-        "--add-data",
-        f"{ROOT_DIR / 'fiberpath_cli'}:fiberpath_cli",
-        # Collect all fiberpath packages
+        # Collect all packages - both fiberpath and dependencies
         "--collect-all",
         "fiberpath",
         "--collect-all",
         "fiberpath_cli",
+        "--collect-all",
+        "typer",
+        "--collect-all",
+        "rich",
+        "--collect-all",
+        "pydantic",
+        "--collect-all",
+        "pydantic_core",
+        "--collect-all",
+        "numpy",
+        "--collect-all",
+        "PIL",
+        "--collect-all",
+        "serial",
+        "--collect-submodules",
+        "click",  # Typer dependency
         # Entry point script (will be created temporarily)
         "--path",
         str(ROOT_DIR),
