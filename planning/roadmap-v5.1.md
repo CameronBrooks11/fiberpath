@@ -100,18 +100,18 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 
 ## Phase 4: Testing & Validation
 
-- [ ] Windows: Fresh Win 10/11 VM, no Python, install `.msi`/`.exe`, test plan→simulate→plot→stream
-- [ ] Windows: Verify no console windows flash during operation (test `--noconsole` flag effectiveness)
+- [x] Windows: Fresh Win 10/11 PC, no Python, install `.msi`, verify bundled CLI found and executable
+- [x] Windows: Verify no console windows flash during operation (CREATE_NO_WINDOW flag working)
 - [ ] macOS: Fresh macOS 13+, no Python, install `.dmg`, run same test suite
 - [ ] macOS: Test Intel and ARM compatibility (separate builds if needed per Phase 1 note)
 - [ ] Linux: Fresh Ubuntu 22.04 VM, no Python packages, test `.deb` and `.AppImage`
 - [ ] Linux: Verify desktop integration and permissions (executable bit, AppImage FUSE requirements)
 - [ ] Upgrade: Install v0.5.0 → upgrade to v0.5.1, verify bundled CLI takes precedence, no conflicts
 - [ ] Fallback: Development build without bundled CLI, verify system PATH fallback works (critical for devs)
-- [ ] Integration: Test all IPC commands (validate, plan, simulate, visualize), error handling, startup health check
+- [ ] Integration: Full workflow testing - validate→plan→simulate→plot/stream on clean install
 - [ ] Platform: Test uninstall cleanly removes files on all platforms, no leftover bundled CLI artifacts
 
-**Progress:** 0/10 tasks complete (0%)
+**Progress:** 2/10 tasks complete (20%)
 
 **Critical Notes:**
 
@@ -174,3 +174,49 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 **Future Enhancements:** Auto-update (v0.6.0), code signing (v0.6.0), bundle optimization, bundled examples
 
 **References:** [python-bundling-strategy.md](python-bundling-strategy.md), [PyInstaller Docs](https://pyinstaller.org/), [Tauri Bundling](https://tauri.app/v1/guides/building/)
+
+---
+
+## Implementation Issues & Solutions
+
+### Issue 1: Tauri v2 Windows `_up_` Subdirectory (Root Cause)
+
+**Problem:** Tauri v2 places Windows installed app resources in `resource_dir/_up_/bundled-cli/` but code checked `resource_dir/bundled-cli/`. CLI existed but wasn't found.
+
+**Solution (30a8f9f):** Check `_up_/bundled-cli/fiberpath.exe` first (installed), fallback to `bundled-cli/fiberpath.exe` (dev).
+
+### Issue 2: PyInstaller Missing Dependencies
+
+**Problem:** 8.2 MB executable with `ModuleNotFoundError: typer`. PyInstaller `--hidden-import` adds import references but not package data/binaries.
+
+**Solution (9171673):** Changed to `--collect-all` for typer, rich, pydantic, numpy, PIL, serial → 42 MB executable with full dependencies.
+
+### Issue 3: CI Cache Poisoning
+
+**Problem:** Fixed PyInstaller config but CI still produced 8.2 MB broken builds. Composite action `setup-python` cached venv on `pyproject.toml` hash only, not `scripts/`.
+
+**Solution (15070ba):** Bypassed cache, install directly with pip. Added size verification (`< 20 MB = fail fast`).
+
+### Issue 4: Console Window Flash
+
+**Problem:** PyInstaller `--console` required for stdio (--noconsole hangs in subprocess), but causes console flash on Windows.
+
+**Solution (eeeaa4a):** Created `cli_process.rs` wrapper using Windows `CREATE_NO_WINDOW` flag (0x08000000):
+
+```rust
+command.creation_flags(CREATE_NO_WINDOW);  // Suppresses window, preserves stdio pipes
+```
+
+CLI remains console subsystem for working stdio, flag prevents visible window at spawn.
+
+### Debugging & Lessons
+
+**Removed (feb893a):** Verbose logging, directory listings, stdout/stderr capture in diagnostics. Simplified version remains.
+
+**Key Takeaways:**
+
+- Tauri v2 Windows: always check `_up_` subdirectory for installed apps
+- PyInstaller: use `--collect-all` for third-party packages, not `--hidden-import`
+- CI: venv caching can mask build script changes
+- Windows CLI spawning: use `CREATE_NO_WINDOW` flag, not `--noconsole` subsystem
+- In-app diagnostics crucial for identifying resource path mismatches
