@@ -32,7 +32,7 @@ def get_platform_config() -> dict[str, str | list[str]]:
     if system == "Windows":
         return {
             "name": "fiberpath",
-            "console_mode": "--noconsole",  # Prevent console window flash
+            "console_mode": "--console",  # Must be console for proper stdio when called from Tauri
             "extension": ".exe",
         }
     elif system == "Darwin":  # macOS
