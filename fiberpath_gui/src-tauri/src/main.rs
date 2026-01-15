@@ -293,7 +293,7 @@ async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
     
     // Check parent directory contents
     let mut parent_contents = Vec::new();
-    if let Ok(bundled_p) = bundled_path_result {
+    if let Ok(bundled_p) = &bundled_path_result {
         if let Some(parent) = bundled_p.parent() {
             if parent.exists() {
                 if let Ok(entries) = std::fs::read_dir(parent) {
@@ -311,9 +311,38 @@ async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
         .unwrap_or_else(|_| "Not found".to_string());
     
     // Get actual CLI path used
-    let actual_cli = cli_path::get_fiberpath_executable(&app)
+    let actual_cli_result = cli_path::get_fiberpath_executable(&app);
+    let actual_cli = actual_cli_result
+        .as_ref()
         .map(|p| p.to_string_lossy().to_string())
         .unwrap_or_else(|e| format!("Error: {}", e));
+    
+    // Try to execute the CLI for real
+    let mut execution_result = "Not tested".to_string();
+    let mut execution_stdout = String::new();
+    let mut execution_stderr = String::new();
+    let mut execution_exit_code: Option<i32> = None;
+    
+    if let Ok(cli_path) = actual_cli_result {
+        match std::process::Command::new(&cli_path)
+            .arg("--help")
+            .output()
+        {
+            Ok(output) => {
+                execution_exit_code = output.status.code();
+                execution_stdout = String::from_utf8_lossy(&output.stdout).to_string();
+                execution_stderr = String::from_utf8_lossy(&output.stderr).to_string();
+                if output.status.success() {
+                    execution_result = "Success".to_string();
+                } else {
+                    execution_result = format!("Failed with exit code {:?}", output.status.code());
+                }
+            }
+            Err(e) => {
+                execution_result = format!("Error executing: {}", e);
+            }
+        }
+    }
     
     Ok(json!({
         "resourceDir": resource_dir,
@@ -324,6 +353,10 @@ async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
         "systemPath": system_path,
         "actualCliUsed": actual_cli,
         "platform": std::env::consts::OS,
+        "executionResult": execution_result,
+        "executionExitCode": execution_exit_code,
+        "executionStdout": execution_stdout.chars().take(500).collect::<String>(),
+        "executionStderr": execution_stderr.chars().take(500).collect::<String>(),
     }))
 }
 
