@@ -33,6 +33,8 @@ jobs:
 
       - name: Setup Rust environment
         uses: ./.github/actions/setup-rust
+        with:
+          install-linux-deps: "true"
 
       - name: Run ESLint
         run: npm run lint
