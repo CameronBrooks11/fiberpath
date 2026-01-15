@@ -55,10 +55,10 @@ jobs:
           pip list | grep -E "(typer|rich|pydantic|numpy|Pillow|pyserial|fiberpath)"
           echo ""
           echo "=== Python can import fiberpath_cli ==="
-          python -c "from fiberpath_cli.main import app; print('✓ fiberpath_cli imports successfully')"
+          python -c "from fiberpath_cli.main import app; print('[OK] fiberpath_cli imports successfully')"
           echo ""
           echo "=== Python can import dependencies ==="
-          python -c "import typer, rich, pydantic, numpy, PIL, serial; print('✓ All dependencies import successfully')"
+          python -c "import typer, rich, pydantic, numpy, PIL, serial; print('[OK] All dependencies import successfully')"
 
       - name: Freeze CLI with PyInstaller
         run: python scripts/freeze_cli.py
