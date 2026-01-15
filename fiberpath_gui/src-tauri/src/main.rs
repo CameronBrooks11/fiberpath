@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod cli_path;
+mod cli_process;
 mod marlin;
 
 use base64::{engine::general_purpose::STANDARD as Base64, Engine};
@@ -215,7 +216,7 @@ async fn exec_fiberpath(app: AppHandle, args: Vec<String>) -> Result<Output, Fib
 
     let joined = args.join(" ");
     let output = tauri::async_runtime::spawn_blocking(move || {
-        std::process::Command::new(cli_str).args(args).output()
+        cli_process::command_for_cli(cli_str).args(args).output()
     })
     .await
     .map_err(|err| FiberpathError::Process(format!("Failed to run fiberpath: {err}")))?
@@ -308,7 +309,7 @@ async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
     let mut execution_exit_code: Option<i32> = None;
     
     if let Ok(cli_path) = actual_cli_result {
-        match std::process::Command::new(&cli_path)
+        match cli_process::command_for_cli(&cli_path)
             .arg("--help")
             .output()
         {
@@ -392,7 +393,7 @@ async fn check_cli_health(app: AppHandle) -> Result<CliHealthResponse, String> {
 
     // Try to run `fiberpath --help` to check if CLI is available
     let output = tauri::async_runtime::spawn_blocking(move || {
-        std::process::Command::new(cli_str)
+        cli_process::command_for_cli(cli_str)
             .arg("--help")
             .output()
     })

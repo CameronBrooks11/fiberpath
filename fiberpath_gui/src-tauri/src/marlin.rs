@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Write};
-use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
+use std::process::{Child, ChildStdin, ChildStdout, Stdio};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Emitter};
@@ -263,7 +263,7 @@ impl MarlinSubprocess {
         let cli_str = crate::cli_path::path_to_string(&cli_path)
             .map_err(|err| MarlinError::SpawnFailed(format!("Failed to convert path: {}", err)))?;
         
-        let mut child = Command::new(cli_str)
+        let mut child = crate::cli_process::command_for_cli(cli_str)
             .arg("interactive")
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
