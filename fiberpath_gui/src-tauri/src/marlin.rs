@@ -259,10 +259,10 @@ impl MarlinSubprocess {
         // Get the fiberpath CLI executable path (bundled or system)
         let cli_path = crate::cli_path::get_fiberpath_executable(&app)
             .map_err(|err| MarlinError::SpawnFailed(format!("Failed to find CLI: {}", err)))?;
-        
+
         let cli_str = crate::cli_path::path_to_string(&cli_path)
             .map_err(|err| MarlinError::SpawnFailed(format!("Failed to convert path: {}", err)))?;
-        
+
         let mut child = crate::cli_process::command_for_cli(cli_str)
             .arg("interactive")
             .stdin(Stdio::piped())

@@ -46,7 +46,9 @@ async fn plan_wind(
         args.push(format);
     }
 
-    let output = exec_fiberpath(app, args).await.map_err(|err| err.to_string())?;
+    let output = exec_fiberpath(app, args)
+        .await
+        .map_err(|err| err.to_string())?;
     parse_json_payload(output).map(|mut payload| {
         if let Value::Object(ref mut obj) = payload {
             obj.entry("output".to_string())
@@ -59,7 +61,9 @@ async fn plan_wind(
 #[tauri::command]
 async fn simulate_program(app: AppHandle, gcode_path: String) -> Result<Value, String> {
     let args = vec!["simulate".into(), gcode_path, "--json".into()];
-    let output = exec_fiberpath(app, args).await.map_err(|err| err.to_string())?;
+    let output = exec_fiberpath(app, args)
+        .await
+        .map_err(|err| err.to_string())?;
     parse_json_payload(output)
 }
 
@@ -87,7 +91,9 @@ async fn plot_preview(
         "--scale".into(),
         scale.to_string(),
     ];
-    exec_fiberpath(app, args).await.map_err(|err| err.to_string())?;
+    exec_fiberpath(app, args)
+        .await
+        .map_err(|err| err.to_string())?;
     let bytes =
         fs::read(&output_file).map_err(|err| FiberpathError::File(err.to_string()).to_string())?;
     Ok(PlotPreview {
@@ -118,7 +124,9 @@ async fn stream_program(
         args.push("--port".into());
         args.push(port_value);
     }
-    let output = exec_fiberpath(app, args).await.map_err(|err| err.to_string())?;
+    let output = exec_fiberpath(app, args)
+        .await
+        .map_err(|err| err.to_string())?;
     parse_json_payload(output)
 }
 
@@ -208,11 +216,9 @@ fn temp_path(extension: &str) -> String {
 
 async fn exec_fiberpath(app: AppHandle, args: Vec<String>) -> Result<Output, FiberpathError> {
     // Get the fiberpath CLI executable path (bundled or system)
-    let cli_path = cli_path::get_fiberpath_executable(&app)
-        .map_err(FiberpathError::Process)?;
+    let cli_path = cli_path::get_fiberpath_executable(&app).map_err(FiberpathError::Process)?;
 
-    let cli_str = cli_path::path_to_string(&cli_path)
-        .map_err(FiberpathError::Process)?;
+    let cli_str = cli_path::path_to_string(&cli_path).map_err(FiberpathError::Process)?;
 
     let joined = args.join(" ");
     let output = tauri::async_runtime::spawn_blocking(move || {
@@ -269,45 +275,47 @@ async fn load_wind_file(path: String) -> Result<String, String> {
 #[tauri::command]
 async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
     use serde_json::json;
-    
+
     // Get resource directory
-    let resource_dir = app.path().resource_dir()
+    let resource_dir = app
+        .path()
+        .resource_dir()
         .map(|p| p.to_string_lossy().to_string())
         .unwrap_or_else(|e| format!("Error: {}", e));
-    
+
     // Try to get bundled path
     let bundled_path_result = cli_path::get_bundled_cli_path(&app);
     let bundled_path = bundled_path_result
         .as_ref()
         .map(|p| p.to_string_lossy().to_string())
         .unwrap_or_else(|e| format!("Error: {}", e));
-    
+
     let bundled_exists = bundled_path_result
         .as_ref()
         .map(|p| p.exists())
         .unwrap_or(false);
-    
+
     let bundled_is_file = bundled_path_result
         .as_ref()
         .map(|p| p.is_file())
         .unwrap_or(false);
-    
+
     // Check system PATH
     let system_path = which::which("fiberpath")
         .map(|p| p.to_string_lossy().to_string())
         .unwrap_or_else(|_| "Not found".to_string());
-    
+
     // Get actual CLI path used
     let actual_cli_result = cli_path::get_fiberpath_executable(&app);
     let actual_cli = actual_cli_result
         .as_ref()
         .map(|p| p.to_string_lossy().to_string())
         .unwrap_or_else(|e| format!("Error: {}", e));
-    
+
     // Try to execute the CLI
     let mut execution_result = "Not tested".to_string();
     let mut execution_exit_code: Option<i32> = None;
-    
+
     if let Ok(cli_path) = actual_cli_result {
         match cli_process::command_for_cli(&cli_path)
             .arg("--help")
@@ -326,7 +334,7 @@ async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
             }
         }
     }
-    
+
     Ok(json!({
         "resourceDir": resource_dir,
         "bundledPath": bundled_path,
@@ -341,7 +349,10 @@ async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
 }
 
 #[tauri::command]
-async fn validate_wind_definition(app: AppHandle, definition_json: String) -> Result<Value, String> {
+async fn validate_wind_definition(
+    app: AppHandle,
+    definition_json: String,
+) -> Result<Value, String> {
     // Create temporary .wind file
     let wind_file = temp_path("wind");
     fs::write(&wind_file, &definition_json).map_err(|err| {
@@ -350,7 +361,9 @@ async fn validate_wind_definition(app: AppHandle, definition_json: String) -> Re
 
     // Run validate command
     let args = vec!["validate".into(), wind_file.clone(), "--json".into()];
-    let output = exec_fiberpath(app, args).await.map_err(|err| err.to_string())?;
+    let output = exec_fiberpath(app, args)
+        .await
+        .map_err(|err| err.to_string())?;
 
     // Clean up temp file
     let _ = fs::remove_file(&wind_file);
@@ -393,9 +406,7 @@ async fn check_cli_health(app: AppHandle) -> Result<CliHealthResponse, String> {
 
     // Try to run `fiberpath --help` to check if CLI is available
     let output = tauri::async_runtime::spawn_blocking(move || {
-        cli_process::command_for_cli(cli_str)
-            .arg("--help")
-            .output()
+        cli_process::command_for_cli(cli_str).arg("--help").output()
     })
     .await
     .map_err(|err| format!("Failed to spawn health check: {err}"))?;

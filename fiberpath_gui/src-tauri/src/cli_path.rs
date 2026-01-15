@@ -56,7 +56,7 @@ pub fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
     // We check both locations.
     let cli_path = if cfg!(target_os = "windows") {
         let exe_name = "fiberpath.exe";
-        
+
         // Try _up_/bundled-cli/fiberpath.exe first (installed app)
         let installed_path = resource_dir.join("_up_").join("bundled-cli").join(exe_name);
         if installed_path.exists() {
@@ -95,6 +95,8 @@ mod tests {
     fn test_bundled_path_construction() {
         // This test just verifies the path construction logic compiles
         // Actual testing requires a real Tauri AppHandle which is only available at runtime
-        assert!(cfg!(target_os = "windows") || cfg!(target_os = "macos") || cfg!(target_os = "linux"));
+        assert!(
+            cfg!(target_os = "windows") || cfg!(target_os = "macos") || cfg!(target_os = "linux")
+        );
     }
 }
