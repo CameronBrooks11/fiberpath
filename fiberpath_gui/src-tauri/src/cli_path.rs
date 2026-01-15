@@ -92,11 +92,20 @@ pub fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
         .resource_dir()
         .map_err(|e| format!("Failed to resolve resource directory: {}", e))?;
 
-    // The resources config "../bundled-cli/*" creates a bundled-cli subdirectory
-    // in the resource directory. We need to join bundled-cli/ then the executable name.
+    // On Windows, Tauri v2 places bundled resources in a "_up_" subdirectory for installed apps,
+    // but directly in the resource dir for dev builds.
+    // We check both locations.
     let cli_path = if cfg!(target_os = "windows") {
-        // Windows: _up_\bundled-cli\fiberpath.exe
-        resource_dir.join("bundled-cli").join("fiberpath.exe")
+        let exe_name = "fiberpath.exe";
+        
+        // Try _up_/bundled-cli/fiberpath.exe first (installed app)
+        let installed_path = resource_dir.join("_up_").join("bundled-cli").join(exe_name);
+        if installed_path.exists() {
+            installed_path
+        } else {
+            // Fall back to bundled-cli/fiberpath.exe (dev build)
+            resource_dir.join("bundled-cli").join(exe_name)
+        }
     } else if cfg!(target_os = "macos") {
         // macOS: bundled-cli/fiberpath
         resource_dir.join("bundled-cli").join("fiberpath")
