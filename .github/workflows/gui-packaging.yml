@@ -36,13 +36,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python environment
-        uses: ./.github/actions/setup-python
+      - name: Set up Python (no cache for freeze)
+        uses: actions/setup-python@v5
         with:
-          dependencies: "."
+          python-version: "3.11"
 
-      - name: Install PyInstaller
-        run: pip install pyinstaller
+      - name: Install dependencies directly
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+          pip install pyinstaller
+
+      - name: Verify dependencies before freeze
+        shell: bash
+        run: |
+          echo "=== Installed packages ==="
+          pip list | grep -E "(typer|rich|pydantic|numpy|Pillow|pyserial|fiberpath)"
+          echo ""
+          echo "=== Python can import fiberpath_cli ==="
+          python -c "from fiberpath_cli.main import app; print('✓ fiberpath_cli imports successfully')"
+          echo ""
+          echo "=== Python can import dependencies ==="
+          python -c "import typer, rich, pydantic, numpy, PIL, serial; print('✓ All dependencies import successfully')"
 
       - name: Freeze CLI with PyInstaller
         run: python scripts/freeze_cli.py
@@ -53,10 +69,24 @@ jobs:
           if [ "$RUNNER_OS" == "Windows" ]; then
             ls -lh dist/fiberpath.exe
             file dist/fiberpath.exe || true
+            SIZE=$(stat -c%s dist/fiberpath.exe 2>/dev/null || stat -f%z dist/fiberpath.exe 2>/dev/null)
+            echo "Executable size: $SIZE bytes ($((SIZE / 1024 / 1024)) MB)"
+            if [ "$SIZE" -lt 20000000 ]; then
+              echo "ERROR: Executable too small ($SIZE bytes)! Expected >20MB"
+              echo "This indicates PyInstaller did not bundle dependencies correctly"
+              exit 1
+            fi
           else
             ls -lh dist/fiberpath
             file dist/fiberpath
             chmod +x dist/fiberpath
+            SIZE=$(stat -c%s dist/fiberpath 2>/dev/null || stat -f%z dist/fiberpath 2>/dev/null)
+            echo "Executable size: $SIZE bytes ($((SIZE / 1024 / 1024)) MB)"
+            if [ "$SIZE" -lt 20000000 ]; then
+              echo "ERROR: Executable too small ($SIZE bytes)! Expected >20MB"
+              echo "This indicates PyInstaller did not bundle dependencies correctly"
+              exit 1
+            fi
           fi
 
       - name: Upload frozen CLI artifact
