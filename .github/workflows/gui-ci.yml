@@ -31,11 +31,23 @@ jobs:
       - name: Setup Node.js environment
         uses: ./.github/actions/setup-node
 
+      - name: Setup Rust environment
+        uses: ./.github/actions/setup-rust
+
       - name: Run ESLint
         run: npm run lint
 
       - name: Run TypeScript compiler
         run: npx tsc --noEmit
+
+      - name: Run Stylelint (CSS)
+        run: npm run lint:css
+
+      - name: Run Rust formatter check
+        run: npm run format:check
+
+      - name: Run Clippy (Rust linter)
+        run: npm run clippy
 
   test:
     name: Test & Build

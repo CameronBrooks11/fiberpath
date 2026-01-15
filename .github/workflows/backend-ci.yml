@@ -39,6 +39,9 @@ jobs:
       - name: Run Ruff linter
         run: uv run ruff check
 
+      - name: Run Ruff formatter
+        run: uv run ruff format --check
+
       - name: Run MyPy type checker
         run: uv run mypy
 
