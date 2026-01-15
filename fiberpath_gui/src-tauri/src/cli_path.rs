@@ -7,9 +7,9 @@ use tauri::{AppHandle, Manager};
 /// then falls back to the system PATH if not found (for development scenarios).
 ///
 /// # Platform-specific resource paths:
-/// - Windows: `resources/fiberpath.exe` (same directory as the executable)
-/// - macOS: `../Resources/fiberpath` (inside the .app bundle)
-/// - Linux: `resources/fiberpath` (relative to the executable)
+/// - Windows: `_up_/bundled-cli/fiberpath.exe`
+/// - macOS: `bundled-cli/fiberpath`
+/// - Linux: `bundled-cli/fiberpath`
 ///
 /// # Returns
 /// - `Ok(PathBuf)` - Path to the fiberpath executable (bundled or system)
@@ -20,6 +20,8 @@ pub fn get_fiberpath_executable(app: &AppHandle) -> Result<PathBuf, String> {
         if bundled_path.exists() {
             log::info!("Using bundled fiberpath CLI: {:?}", bundled_path);
             return Ok(bundled_path);
+        } else {
+            log::warn!("Bundled CLI path does not exist: {:?}", bundled_path);
         }
     }
 
@@ -48,16 +50,17 @@ fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
         .resource_dir()
         .map_err(|e| format!("Failed to resolve resource directory: {}", e))?;
 
-    // Platform-specific executable name and path
+    // The resources config "../bundled-cli/*" creates a bundled-cli subdirectory
+    // in the resource directory. We need to join bundled-cli/ then the executable name.
     let cli_path = if cfg!(target_os = "windows") {
-        // Windows: resources\fiberpath.exe (same directory as the executable)
-        resource_dir.join("fiberpath.exe")
+        // Windows: _up_\bundled-cli\fiberpath.exe
+        resource_dir.join("bundled-cli").join("fiberpath.exe")
     } else if cfg!(target_os = "macos") {
-        // macOS: Resources/fiberpath (inside .app bundle, one level up)
-        resource_dir.join("fiberpath")
+        // macOS: bundled-cli/fiberpath
+        resource_dir.join("bundled-cli").join("fiberpath")
     } else if cfg!(target_os = "linux") {
-        // Linux: resources/fiberpath (relative to executable)
-        resource_dir.join("fiberpath")
+        // Linux: bundled-cli/fiberpath
+        resource_dir.join("bundled-cli").join("fiberpath")
     } else {
         return Err(format!("Unsupported platform: {}", std::env::consts::OS));
     };
