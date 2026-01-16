@@ -86,8 +86,9 @@ What GitHub Actions runs (match locally before pushing):
 **Backend CI:**
 
 ```sh
-uv run ruff check
-uv run mypy
+uv run ruff check           # Linting
+uv run ruff format --check  # Format verification
+uv run mypy                 # Type checking
 uv run pytest -v --cov --cov-report=xml
 ```
 
@@ -95,14 +96,15 @@ uv run pytest -v --cov --cov-report=xml
 
 ```sh
 cd fiberpath_gui
-npm run lint                     # TypeScript
-npm run lint:css                 # Stylelint (not in CI yet)
+npm run lint                     # ESLint (disabled - using tsc)
+npx tsc --noEmit                 # TypeScript type checking
+npm run lint:css                 # Stylelint (CSS)
+npm run format:check             # Rust formatting
+npm run clippy                   # Rust linting
 npm test                         # Vitest
 npm run test:coverage            # Coverage report
 npm run build                    # Vite build
 ```
-
-**Note:** Rust formatting/linting (`cargo fmt`, `cargo clippy`) not yet in CI workflows.
 
 ## Quick Command Summary
 

@@ -92,24 +92,91 @@ jobs:
           script: |
             const prevTag = '${{ steps.previous-tag.outputs.previous }}';
             const newTag = '${{ needs.validate.outputs.tag }}';
+            const version = '${{ inputs.version }}';
+            const repo = context.repo;
 
-            if (!prevTag) {
-              return `## Release ${newTag}\n\nInitial release.`;
+            let notes = '';
+
+            // Desktop installers section
+            notes += `## Desktop Installers\n\n`;
+            notes += `**Windows:**\n`;
+            notes += `- \`FiberPath_${version}_x64_en-US.msi\` (recommended)\n`;
+            notes += `- \`FiberPath_${version}_x64-setup.exe\`\n\n`;
+            notes += `**macOS:**\n`;
+            notes += `- \`FiberPath_${version}_universal.dmg\`\n\n`;
+            notes += `**Linux:**\n`;
+            notes += `- \`fiberpath_${version}_amd64.deb\`\n`;
+            notes += `- \`fiberpath_${version}_amd64.AppImage\`\n\n`;
+            notes += `📚 [Installation Guide](https://cameronbrooks11.github.io/fiberpath/getting-started/) | `;
+            notes += `🆘 [Troubleshooting](https://cameronbrooks11.github.io/fiberpath/troubleshooting/)\n\n`;
+
+            // Python package section
+            notes += `## Python Package\n\n`;
+            notes += `\`\`\`bash\n`;
+            notes += `pip install fiberpath==${version}\n`;
+            notes += `\`\`\`\n\n`;
+            notes += `[PyPI Package](https://pypi.org/project/fiberpath/${version}/) | `;
+            notes += `[Source Code](https://github.com/${repo.owner}/${repo.repo}/tree/${newTag})\n\n`;
+
+            // Changelog section
+            notes += `## Changelog\n\n`;
+
+            if (prevTag) {
+              const { data: comparison } = await github.rest.repos.compareCommits({
+                owner: repo.owner,
+                repo: repo.repo,
+                base: prevTag,
+                head: newTag
+              });
+              
+              // Categorize commits
+              const added = [];
+              const fixed = [];
+              const changed = [];
+              
+              comparison.commits.forEach(commit => {
+                const msg = commit.commit.message.split('\n')[0];
+                const sha = commit.sha.substring(0, 7);
+                const entry = `- ${msg} (\`${sha}\`)`;
+                
+                const lower = msg.toLowerCase();
+                if (lower.startsWith('add') || lower.startsWith('feat')) {
+                  added.push(entry);
+                } else if (lower.startsWith('fix')) {
+                  fixed.push(entry);
+                } else {
+                  changed.push(entry);
+                }
+              });
+              
+              if (added.length > 0) {
+                notes += `### Added\n${added.join('\n')}\n\n`;
+              }
+              if (fixed.length > 0) {
+                notes += `### Fixed\n${fixed.join('\n')}\n\n`;
+              }
+              if (changed.length > 0) {
+                notes += `### Changed\n${changed.join('\n')}\n\n`;
+              }
+              
+              notes += `**Full Changelog:** https://github.com/${repo.owner}/${repo.repo}/compare/${prevTag}...${newTag}\n`;
+            } else {
+              notes += `Initial release.\n`;
             }
 
-            const { data: commits } = await github.rest.repos.compareCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base: prevTag,
-              head: newTag
-            });
-
-            const changes = commits.commits
-              .map(c => `- ${c.commit.message.split('\n')[0]} (${c.sha.substring(0, 7)})`)
-              .join('\n');
-
-            return `## What's Changed\n\n${changes}\n\n**Full Changelog**: https://github.com/${{ github.repository }}/compare/${prevTag}...${newTag}`;
+            return notes;
           result-encoding: string
+
+      - name: Verify expected assets
+        run: |
+          VERSION="${{ inputs.version }}"
+          echo "Expected release assets for v$VERSION:"
+          echo "  - FiberPath_${VERSION}_x64_en-US.msi"
+          echo "  - FiberPath_${VERSION}_x64-setup.exe"
+          echo "  - FiberPath_${VERSION}_universal.dmg"
+          echo "  - fiberpath_${VERSION}_amd64.deb"
+          echo "  - fiberpath_${VERSION}_amd64.AppImage"
+          echo "Assets will be uploaded by build-gui-installers workflow"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

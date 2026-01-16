@@ -6,17 +6,19 @@ This guide walks you through installing FiberPath and creating your first filame
 
 ### Desktop GUI (Recommended for New Users)
 
-Download installers from the [latest release](https://github.com/CameronBrooks11/fiberpath/releases/latest):
+**Download installers from the [latest release](https://github.com/CameronBrooks11/fiberpath/releases/latest):**
 
 - **Windows:** `.msi` or `.exe` installer
 - **macOS:** `.dmg` installer
 - **Linux:** `.deb` or `.AppImage`
 
-The GUI provides an intuitive interface for planning, visualization, and streaming to hardware.
+**No Python installation required.** The desktop GUI is fully self-contained with the FiberPath backend bundled inside. Simply download, install, and start designing winding patterns.
 
-### Python CLI & API
+The GUI provides an intuitive interface for planning, visualization, and streaming to hardware—no command-line experience needed.
 
-Install via pip or uv:
+### Python CLI & API (For Developers and Automation)
+
+If you need command-line access or want to integrate FiberPath into your own tools, install via pip or uv:
 
 ```sh
 pip install fiberpath
@@ -33,6 +35,8 @@ Verify installation:
 ```sh
 fiberpath --version
 ```
+
+**Note:** The desktop GUI already includes everything\u2014you only need this if you want standalone CLI access or are developing with the API.
 
 ### Development Setup
 
@@ -209,4 +213,5 @@ fiberpath stream output.gcode --port COM3 --baud-rate 115200
 - Verify hardware is connected and powered
 - Check drivers are installed (Windows may need CH340/FTDI drivers)
 - Try different USB ports
-- Use `fiberpath stream-ports` to list available ports
+- On Linux, ensure user is in `dialout` group: `sudo usermod -a -G dialout $USER`
+- See [Troubleshooting Guide](troubleshooting.md) for platform-specific serial port issues

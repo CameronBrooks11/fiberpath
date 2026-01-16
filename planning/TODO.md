@@ -11,3 +11,7 @@ Tasks for Cam todo:
 - [ ] Figure out if it's possible and feasible to recognize `.wind` files on various systems to open fiberpath by default
 
 - [ ] Implement machine connection info panel in the GUI, connect to Marlin to get example of the connection message upon connection, parse it (already have code that does this in the python lib) and display it in a side pane next to the log output in the stream tab. Consider how to handle refreshing the info, locking during jobs, and initial state before connection.
+
+- [ ] Design a logo and replace the placeholder icon with an actual logo
+
+- [ ] Fix zooming behavior in the plot viewer so it expands the entire image not within the image bounds since this becomes an issue for larger (exceeds bounds) or smaller (impossible to look at properly) images

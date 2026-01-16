@@ -8,10 +8,12 @@ Complete setup and workflow documentation for developing FiberPath GUI.
 
 - **Node.js** 18+ ([nodejs.org](https://nodejs.org))
 - **Rust** 1.70+ ([rustup.rs](https://rustup.rs))
-- **Python CLI** installed and available in PATH
+- **Python CLI** installed and available in PATH (for development mode)
   - Via pip: `pip install fiberpath`
   - Via uv: `uv pip install fiberpath`
   - From source: `pip install -e .` in repo root
+
+**Important:** Production installers bundle the CLI—end users don't need Python. Developers need it for local testing.
 
 ### Platform-Specific
 
@@ -27,6 +29,41 @@ Complete setup and workflow documentation for developing FiberPath GUI.
 **Linux:**
 
 - Build essentials: `sudo apt install build-essential libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf`
+
+## CLI Discovery & Fallback
+
+The GUI uses a two-stage CLI discovery process implemented in `src-tauri/src/cli_path.rs`:
+
+**1. Check for Bundled CLI (Production Mode):**
+
+- **Windows installed:** `resources\_up_\bundled-cli\fiberpath.exe`
+- **Windows dev:** `resources\bundled-cli\fiberpath.exe`
+- **macOS:** `Resources/bundled-cli/fiberpath` (relative to `.app` bundle)
+- **Linux:** `resources/bundled-cli/fiberpath`
+
+**2. Fallback to System PATH (Development Mode):**
+
+If bundled CLI not found, uses `which fiberpath` (Unix) or `where fiberpath` (Windows).
+
+**3. Error if Neither Found:**
+
+Returns user-friendly message suggesting `pip install fiberpath`.
+
+**Why This Design:**
+
+- **Production users:** Zero setup—CLI bundled in installer
+- **Contributors:** No PyInstaller required for local dev
+- **CI testing:** Works in both modes automatically
+
+**Verification:**
+
+```sh
+# Ensure CLI is on PATH for development
+fiberpath --version
+
+# Test GUI with bundled CLI
+npm run tauri build  # Check src-tauri/target/release/bundle/
+```
 
 ## Initial Setup
 
@@ -258,28 +295,28 @@ fiberpath_gui/
 
 1. **Define in Rust** (`src-tauri/src/main.rs`):
 
-    ```rust
-    #[tauri::command]
-    fn my_command(arg: String) -> Result<String, String> {
-        Ok(format!("Hello {}", arg))
-    }
-    ```
+   ```rust
+   #[tauri::command]
+   fn my_command(arg: String) -> Result<String, String> {
+       Ok(format!("Hello {}", arg))
+   }
+   ```
 
 2. **Register** in `main()`:
 
-    ```rust
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![my_command])
-        .run(tauri::generate_context!())
-    ```
+   ```rust
+   tauri::Builder::default()
+       .invoke_handler(tauri::generate_handler![my_command])
+       .run(tauri::generate_context!())
+   ```
 
 3. **Call from Frontend** (`src/lib/commands.ts`):
 
-    ```typescript
-    export async function myCommand(arg: string): Promise<string> {
-    return invoke("my_command", { arg });
-    }
-    ```
+   ```typescript
+   export async function myCommand(arg: string): Promise<string> {
+     return invoke("my_command", { arg });
+   }
+   ```
 
 ### Add New Layer Type
 

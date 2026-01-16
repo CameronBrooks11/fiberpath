@@ -4,7 +4,7 @@
 
 **Plan, simulate, and manufacture composite parts with precision fiber winding.**
 
-[![Version](https://img.shields.io/badge/version-0.5.0-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.5.1-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-00695C.svg)](LICENSE)
 [![Backend CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/backend-ci.yml)
 [![GUI CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-ci.yml)
@@ -71,11 +71,17 @@ The `plot` command creates a 2D unwrapped visualization of the toolpath for quic
 
 ## Installation
 
-### Desktop Application
+### Desktop Application (Recommended)
 
 📦 **Download:** [github.com/CameronBrooks11/fiberpath/releases/latest](https://github.com/CameronBrooks11/fiberpath/releases/latest)
 
-No Python installation required—the GUI is a self-contained native application.
+**No Python installation required**—the GUI is a fully self-contained native application with the FiberPath backend bundled inside. Just download, install, and run.
+
+- **Windows:** `.msi` or `.exe` installer
+- **macOS:** `.dmg` disk image
+- **Linux:** `.deb` package or `.AppImage`
+
+All desktop installers include the complete FiberPath toolchain for planning, simulation, and streaming.
 
 ### Python Package
 

@@ -2,7 +2,7 @@ name: GUI CI
 
 on:
   push:
-    branches: [main, stream-rehaul]
+    branches: [main, v0.5.1-dev]
     paths:
       - "fiberpath_gui/**"
       - "!fiberpath_gui/docs/**"
@@ -31,11 +31,19 @@ jobs:
       - name: Setup Node.js environment
         uses: ./.github/actions/setup-node
 
+      - name: Setup Rust environment
+        uses: ./.github/actions/setup-rust
+        with:
+          install-linux-deps: "true"
+
       - name: Run ESLint
         run: npm run lint
 
       - name: Run TypeScript compiler
         run: npx tsc --noEmit
+
+      - name: Run Stylelint (CSS)
+        run: npm run lint:css
 
   test:
     name: Test & Build
@@ -75,3 +83,14 @@ jobs:
             exit 1
           fi
           echo "Build successful - dist/ directory created"
+
+      - name: Setup Rust environment
+        uses: ./.github/actions/setup-rust
+        with:
+          install-linux-deps: "true"
+
+      - name: Run Rust formatter check
+        run: npm run format:check
+
+      - name: Run Clippy (Rust linter)
+        run: npm run clippy

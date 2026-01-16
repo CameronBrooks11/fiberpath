@@ -2,7 +2,7 @@ name: Backend CI
 
 on:
   push:
-    branches: [main, stream-rehaul]
+    branches: [main, v0.5.1-dev]
     paths:
       - "fiberpath/**"
       - "fiberpath_api/**"
@@ -38,6 +38,9 @@ jobs:
 
       - name: Run Ruff linter
         run: uv run ruff check
+
+      - name: Run Ruff formatter
+        run: uv run ruff format --check
 
       - name: Run MyPy type checker
         run: uv run mypy

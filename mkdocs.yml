@@ -9,6 +9,7 @@ site_dir: site
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Troubleshooting: troubleshooting.md
   - User Guides:
       - Wind Format: guides/wind-format.md
       - Axis Mapping: guides/axis-mapping.md
