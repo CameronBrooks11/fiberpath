@@ -94,4 +94,3 @@ jobs:
 
       - name: Run Clippy (Rust linter)
         run: npm run clippy
-          echo "Build successful - dist/ directory created"
