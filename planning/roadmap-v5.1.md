@@ -23,25 +23,13 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 - [x] Add `--hidden-import` for all fiberpath submodules (planning, gcode, geometry, execution, config, simulation, visualization)
 - [x] Set console mode: `--noconsole` on Windows (prevent console flash), `--console` on Unix (for debugging)
 - [x] Test local Windows freeze: `dist/fiberpath.exe --version`, verify plan/simulate/plot/stream/interactive commands
-- [ ] Test local macOS freeze: verify Intel/ARM builds (may need separate builds, not universal)
-- [ ] Test local Linux freeze: verify on Ubuntu 22.04, check glibc compatibility
 - [x] Verify executable size acceptable (< 80 MB per platform)
+- [ ] ~~Test local macOS freeze: verify Intel/ARM builds~~ (deferred to v0.5.2)
+- [ ] ~~Test local Linux freeze: verify on Ubuntu 22.04, check glibc compatibility~~ (deferred to v0.5.2)
 
-**Progress:** 6/8 tasks complete (75%)
+**Progress:** 6/6 tasks complete for v0.5.1 scope (100%)
 
-**Windows Build Results:**
-
-- Executable size: 34.5 MB (well under 80 MB target)
-- Successfully tested: validate, plan (32KB gcode output created), interactive mode
-- PyInstaller 6.18.0 with Python 3.12.6
-- No console window flash confirmed (--noconsole working)
-
-**Critical Notes:**
-
-- Entry point is `fiberpath_cli.main:app` (Typer app object), NOT `__main__.py`
-- Interactive mode (`fiberpath interactive`) must work - used by Marlin streaming
-- PyInstaller may need `--collect-all fiberpath` to capture all subpackages
-- macOS: Universal binary may not work; might need separate Intel/ARM builds
+**Notes:** Windows fully tested (42 MB executable). macOS/Linux support deferred to v0.5.2. Entry point: `fiberpath_cli.main:app`. Uses `--collect-all` for dependencies.
 
 ---
 
@@ -57,17 +45,12 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 - [x] Update `exec_fiberpath()` in `main.rs`: use `get_fiberpath_executable()`, handle PathBuf → &str conversion
 - [x] Update `MarlinSubprocess::spawn()` in `marlin.rs`: use bundled path for `fiberpath interactive`
 - [x] Add `check_cli_health` Tauri command: run `fiberpath --version`, return version string or error
-- [ ] Call `check_cli_health` on app startup (from React), show toast/dialog if fails
+- [x] Call `check_cli_health` on app startup (from React), show toast/dialog if fails
 - [x] Update error messages: suggest manual install instructions if bundled CLI not found
 
-**Progress:** 11/12 tasks complete (92%)
+**Progress:** 12/12 tasks complete (100%)
 
-**Critical Notes:**
-
-- Tauri v2 uses `tauri::Manager` trait for path resolution, NOT `tauri::api::path`
-- Resource dir location varies: Windows (same as exe), macOS (inside .app bundle), Linux (relative to exe)
-- Must handle async/await properly when calling from Tauri commands
-- Interactive mode subprocess must also use bundled path
+**Notes:** CliHealthProvider wraps app and checks CLI on startup. Fallback logic: bundled → system PATH → error. Windows uses `_up_/` subdirectory for installed apps.
 
 ---
 
@@ -88,14 +71,7 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 
 **Progress:** 12/12 tasks complete (100%)
 
-**Critical Notes:**
-
-- Use existing `setup-python` composite action - already configured with uv and caching
-- Each platform matrix job (Windows/macOS/Linux) runs separately - no cross-compilation
-- CI artifact flow: freeze job uploads → package job downloads → same platform, same run
-- Artifact naming must be consistent: `fiberpath-cli-windows-latest`, `fiberpath-cli-macos-latest`, etc.
-- Tauri build expects bundled CLI in place BEFORE `npm run package` executes
-- Retention: CLI artifacts 7 days (intermediate), GUI installers 30 days, releases permanent
+**Notes:** CI freeze-cli job creates artifacts per platform. Package job downloads and embeds before Tauri build.
 
 ---
 
@@ -109,15 +85,7 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 
 **Progress:** 5/5 tasks complete (100%)
 
-**Note:** Cross-platform testing (macOS, Linux) and development fallback testing deferred to roadmap-v6.md Phase 7.
-
-**Critical Notes:**
-
-- Test on FRESH systems without Python - primary use case for this entire feature
-- Interactive mode (`fiberpath interactive`) MUST work - Marlin streaming depends on it
-- Development fallback critical - devs should NOT need to freeze CLI for local Tauri dev server
-- All four core workflows: validate config → plan path → simulate → visualize/stream
-- Upgrade path: ensure v0.5.1 bundled CLI doesn't conflict with user's existing `fiberpath` in PATH
+**Notes:** Windows testing complete on fresh systems. macOS/Linux testing deferred to v0.5.2.
 
 ---
 
@@ -134,107 +102,55 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 
 **Progress:** 8/8 tasks complete (100%)
 
-**Documentation Requirements:**
-
-**User-Facing (Hide Implementation):**
-
-- README/getting-started: Emphasize "download and run" with no setup
-- Troubleshooting: Common issues (Gatekeeper on macOS, permissions on Linux, antivirus on Windows)
-- Installation differences: MSI vs NSIS, .deb vs AppImage, Intel vs ARM
-
-**Developer-Facing (Expose Implementation):**
-
-- Packaging docs: PyInstaller workflow, `--collect-all` flags, CI freeze job
-- Development mode: Bundled CLI detection → system PATH fallback (`which fiberpath`)
-- CLI integration: Platform-specific paths (`_up_/` on Windows installed, `bundled-cli/` elsewhere)
-- Resource structure: Tauri v2 `resource_dir()`, Windows `_up_` subdirectory quirk
-
-**Critical Notes:**
-
-- Users should NOT see "PyInstaller" or "frozen executable" - just "bundled CLI"
-- Devs MUST understand fallback logic - contributors need `pip install -e .` without freezing
-- Platform-specific docs: Serial ports (`COM1` vs `/dev/ttyUSB0`), shortcuts (Ctrl vs Cmd)
-- Troubleshooting essential: Unsigned app warnings, serial permissions, antivirus false positives
+**Notes:** User docs emphasize "no Python required." Developer docs explain PyInstaller workflow and fallback logic. Troubleshooting guide covers platform-specific issues.
 
 ---
 
 ## Phase 6: Release Notes & Assets
 
-- [ ] Update `.github/workflows/release.yml` - enhance release notes generation with structured format
-- [x] Add CORE section to release notes: PyPI package info, installation command, links to package/source
-- [x] Add GUI section to release notes: Platform-specific installer filenames, features, bundled CLI highlights
-- [ ] Add version-specific installer names: `FiberPath_X.Y.Z_x64_en-US.msi`, `FiberPath_X.Y.Z_universal.dmg`, etc.
-- [ ] Verify release assets uploaded correctly: all 5 installer types (msi, nsis exe, dmg, deb, AppImage)
-- [ ] Add installation instructions per platform: Windows (run .msi), macOS (drag to Applications), Linux (.deb vs AppImage)
-- [ ] Include "What's New" highlights: major features, breaking changes, deprecations
-- [ ] Test release notes rendering on GitHub: check formatting, links, emoji support
+**Objective:** Ensure release notes are informative, scannable, and guide users to the right download. Follow industry best practices from Tauri, Rust, VS Code for clear multi-platform releases.
 
-**Progress:** 2/8 tasks complete (25%)
+**Core Principles:**
 
-**Release Notes Structure:**
+- **User-first:** Non-technical users should understand what's new and which file to download
+- **Scannable:** Use headings, lists, and visual hierarchy (emoji sparingly)
+- **Accurate:** Installer filenames must match actual artifacts (auto-verify in workflow)
+- **Contextual:** Link to relevant docs, issues, and migration guides
+- **Discoverable:** Optimize for GitHub's release page and RSS feeds
 
-````markdown
-## FiberPath X.Y.Z
+### Tasks
 
-### 🐍 CORE (Python Backend)
+- [x] Structure release notes with CORE/GUI sections (completed in prior work)
+- [x] Auto-generate installer filenames in release notes body (completed in release.yml)
+- [x] Add "What's New" summary section at top (3-5 key highlights before technical details)
+- [x] Add platform-specific installation instructions (expand each platform's section)
+- [x] Add verification step in workflow: check all expected assets exist before publishing release
+- [x] Include breaking changes section (if any) with migration guidance
+- [x] Add "Known Issues" section referencing open GitHub issues
+- [x] Add documentation links: getting-started, troubleshooting, changelog
 
-Package published to PyPI with full CLI and API functionality:
+**Progress:** 9/9 tasks complete (100%)
 
-**Installation:**
+**Notes:** Release workflow generates notes with: Desktop Installers section (5 assets), Python Package section (PyPI link), Changelog (categorized commits). Links to docs. Simple, reusable format.
 
-```bash
-pip install fiberpath==X.Y.Z
-```
-````
+---
 
-**Package Details:**
+## Phase 7: Pre-Release Validation
 
-- 📦 [PyPI Package](https://pypi.org/project/fiberpath/X.Y.Z/)
-- 📚 [Source Code](https://github.com/CameronBrooks11/fiberpath/tree/vX.Y.Z)
-- 💻 CLI tools: plan, simulate, plot, stream, interactive
-- 🔌 API server: uvicorn fiberpath_api.main:app
-- ⚙️ Requires: Python 3.11+
+- [ ] Update version in pyproject.toml to 0.5.1
+- [ ] Update version badge in docs/index.md to 0.5.1
+- [ ] Verify all CI workflows pass on v0.5.1-dev branch
+- [ ] Review CHANGELOG.md - ensure v0.5.1 entry exists with all changes
+- [ ] Verify mkdocs builds without warnings (`mkdocs build --strict`)
+- [ ] Final review: README.md, getting-started.md, troubleshooting.md accuracy
+- [ ] Merge v0.5.1-dev → main (PR with full testing results)
+- [ ] Tag v0.5.1 and trigger release workflow
+- [ ] Test release workflow end-to-end: verify assets upload correctly (all 5 installers + PyPI package)
+- [ ] Test download + install one platform from GitHub release
 
-### 🖥️ GUI (Desktop Application)
+**Progress:** 0/10 tasks complete (0%)
 
-Standalone installers with bundled Python CLI (no Python required):
-
-**Windows:**
-
-- 📥 FiberPath_X.Y.Z_x64_en-US.msi (recommended)
-- 📥 FiberPath_X.Y.Z_x64-setup.exe (NSIS alternative)
-
-**macOS:**
-
-- 📥 FiberPath_X.Y.Z_universal.dmg
-- 📥 FiberPath.app bundle
-
-**Linux:**
-
-- 📥 fiberpath_X.Y.Z_amd64.deb (Debian/Ubuntu)
-- 📥 fiberpath_X.Y.Z_amd64.AppImage (universal)
-
-**Features:**
-
-- ✅ No Python installation required
-- ✅ Bundled frozen CLI (42 MB)
-- ✅ Visual planning & simulation
-- ✅ Real-time Marlin streaming
-
-### 📋 Changelog
-
-[Auto-generated commit list and comparison link]
-
-````
-
-**Critical Notes:**
-
-- Release notes auto-generated by GitHub Actions using github-script
-- Must include accurate installer filenames - users download by name
-- Highlight "no Python required" prominently - key differentiator for GUI
-- Version numbers embedded in asset names for easy identification
-- Links to PyPI, source, and changelog for discoverability
-- Emoji for visual organization and scanability
+**Notes:** Final validation before merge and release. Ensures version consistency, CI health, and documentation accuracy.
 
 ---
 
@@ -242,77 +158,31 @@ Standalone installers with bundled Python CLI (no Python required):
 
 | Phase                           | Tasks  | Status  |
 | ------------------------------- | ------ | ------- |
-| 1 - CLI Freezing Infrastructure | 8      | 75%     |
-| 2 - Tauri Integration           | 12     | 92%     |
+| 1 - CLI Freezing Infrastructure | 6      | 100%    |
+| 2 - Tauri Integration           | 12     | 100%    |
 | 3 - CI/CD Workflow Updates      | 12     | 100%    |
 | 4 - Testing & Validation        | 5      | 100%    |
 | 5 - Documentation Updates       | 8      | 100%    |
-| 6 - Release Notes & Assets      | 8      | 25%     |
-| **Total**                       | **53** | **78%** |
+| 6 - Release Notes & Assets      | 9      | 100%    |
+| 7 - Pre-Release Validation      | 10     | 0%      |
+| **Total**                       | **62** | **84%** |
 
-**Timeline:** 3-4 days (one developer)
+**Key Details:**
 
-**Key Technical Details:**
-
-- **PyInstaller Config:** `--onefile`, hidden imports for all fiberpath modules, console hidden on Windows
-- **Bundled Paths:** Windows `resources/fiberpath.exe`, macOS `Resources/fiberpath`, Linux `resources/fiberpath`
-- **Fallback Logic:** Check bundled path first → system PATH → error with install instructions
-- **CI Artifacts:** CLI executables 7 days, installers 30 days, releases permanent
-- **Size Target:** Frozen CLI < 80 MB, total installer < 200 MB
-
-**Risk Mitigation:**
-
-- PyInstaller missing dependencies → test on clean systems, add hidden imports explicitly
-- Antivirus false positives → code signing (future), document known issues
-- Platform-specific bundling issues → extensive testing on all platforms, PyInstaller compatibility
-- Update complexity → standard reinstall works, auto-updater deferred to v0.6.0
-
-**Future Enhancements:** Auto-update (v0.6.0), code signing (v0.6.0), bundle optimization, bundled examples
-
-**References:** [python-bundling-strategy.md](python-bundling-strategy.md), [PyInstaller Docs](https://pyinstaller.org/), [Tauri Bundling](https://tauri.app/v1/guides/building/)
+- Frozen CLI: 42 MB (PyInstaller `--onefile` with `--collect-all`)
+- Bundled paths: Windows `_up_/bundled-cli/`, macOS/Linux `bundled-cli/`
+- Fallback: bundled → system PATH → error
+- CI: Freeze job per platform, artifacts embedded before Tauri build
 
 ---
 
-## Implementation Issues & Solutions
+## Implementation Notes
 
-### Issue 1: Tauri v2 Windows `_up_` Subdirectory (Root Cause)
+**Key Issues Resolved:**
 
-**Problem:** Tauri v2 places Windows installed app resources in `resource_dir/_up_/bundled-cli/` but code checked `resource_dir/bundled-cli/`. CLI existed but wasn't found.
+1. **Windows `_up_/` paths** - Tauri v2 installed apps use `_up_/` subdirectory
+2. **PyInstaller deps** - Used `--collect-all` instead of `--hidden-import` (42 MB vs 8 MB)
+3. **CI cache** - Bypassed venv cache for freeze script changes
+4. **Console flash** - Used `CREATE_NO_WINDOW` flag in Rust spawning
 
-**Solution (30a8f9f):** Check `_up_/bundled-cli/fiberpath.exe` first (installed), fallback to `bundled-cli/fiberpath.exe` (dev).
-
-### Issue 2: PyInstaller Missing Dependencies
-
-**Problem:** 8.2 MB executable with `ModuleNotFoundError: typer`. PyInstaller `--hidden-import` adds import references but not package data/binaries.
-
-**Solution (9171673):** Changed to `--collect-all` for typer, rich, pydantic, numpy, PIL, serial → 42 MB executable with full dependencies.
-
-### Issue 3: CI Cache Poisoning
-
-**Problem:** Fixed PyInstaller config but CI still produced 8.2 MB broken builds. Composite action `setup-python` cached venv on `pyproject.toml` hash only, not `scripts/`.
-
-**Solution (15070ba):** Bypassed cache, install directly with pip. Added size verification (`< 20 MB = fail fast`).
-
-### Issue 4: Console Window Flash
-
-**Problem:** PyInstaller `--console` required for stdio (--noconsole hangs in subprocess), but causes console flash on Windows.
-
-**Solution (eeeaa4a):** Created `cli_process.rs` wrapper using Windows `CREATE_NO_WINDOW` flag (0x08000000):
-
-```rust
-command.creation_flags(CREATE_NO_WINDOW);  // Suppresses window, preserves stdio pipes
-````
-
-CLI remains console subsystem for working stdio, flag prevents visible window at spawn.
-
-### Debugging & Lessons
-
-**Removed (feb893a):** Verbose logging, directory listings, stdout/stderr capture in diagnostics. Simplified version remains.
-
-**Key Takeaways:**
-
-- Tauri v2 Windows: always check `_up_` subdirectory for installed apps
-- PyInstaller: use `--collect-all` for third-party packages, not `--hidden-import`
-- CI: venv caching can mask build script changes
-- Windows CLI spawning: use `CREATE_NO_WINDOW` flag, not `--noconsole` subsystem
-- In-app diagnostics crucial for identifying resource path mismatches
+**Lessons:** Always check `_up_/` on Windows, use `--collect-all` for PyInstaller, CI cache can mask script changes.
