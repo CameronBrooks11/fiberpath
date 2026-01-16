@@ -89,7 +89,7 @@ FiberPath.app/Contents/Resources/bundled-cli/fiberpath
 /opt/fiberpath-gui/resources/bundled-cli/fiberpath
 ```
 
-See [`fiberpath_gui/src-tauri/src/cli_path.rs`](../../fiberpath_gui/src-tauri/src/cli_path.rs) for implementation details.
+**Implementation:** See `fiberpath_gui/src-tauri/src/cli_path.rs` in the source repository for the full discovery logic.
 
 ## Local Build Requirements
 
@@ -179,5 +179,3 @@ GitHub Actions workflow (`.github/workflows/gui-packaging.yml`) handles full pro
 
 - Fixed in v0.5.1 with `CREATE_NO_WINDOW` flag
 - Do NOT use `--noconsole` (breaks subprocess stdio)
-
-See [roadmap-v5.1.md Implementation Issues](../../planning/roadmap-v5.1.md#implementation-issues--solutions) for detailed problem-solving history.

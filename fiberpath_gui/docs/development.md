@@ -32,7 +32,7 @@ Complete setup and workflow documentation for developing FiberPath GUI.
 
 ## CLI Discovery & Fallback
 
-The GUI uses a two-stage CLI discovery process implemented in [`src-tauri/src/cli_path.rs`](../src-tauri/src/cli_path.rs):
+The GUI uses a two-stage CLI discovery process implemented in `src-tauri/src/cli_path.rs`:
 
 **1. Check for Bundled CLI (Production Mode):**
 
