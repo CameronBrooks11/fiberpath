@@ -142,12 +142,12 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 - [x] Verify all CI workflows pass on v0.5.1-dev branch
 - [x] Verify mkdocs builds without warnings (`mkdocs build --strict`)
 - [x] Final review: README.md, getting-started.md, troubleshooting.md accuracy
-- [ ] Merge v0.5.1-dev → main (PR with full testing results)
-- [ ] Tag v0.5.1 and trigger release workflow
-- [ ] Test release workflow end-to-end: verify assets upload correctly (all 5 installers + PyPI package)
-- [ ] Test download + install one platform from GitHub release
+- [x] Merge v0.5.1-dev → main (PR with full testing results)
+- [x] Tag v0.5.1 and trigger release workflow
+- [x] Test release workflow end-to-end: verify assets upload correctly (all 5 installers + PyPI package)
+- [x] Test download + install one platform from GitHub release
 
-**Progress:** 5/9 tasks complete (56%)
+**Progress:** 9/9 tasks complete (100%)
 
 **Notes:** Final validation before merge and release. Ensures version consistency, CI health, and documentation accuracy.
 
@@ -163,8 +163,8 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 | 4 - Testing & Validation        | 5      | 100%    |
 | 5 - Documentation Updates       | 8      | 100%    |
 | 6 - Release Notes & Assets      | 9      | 100%    |
-| 7 - Pre-Release Validation      | 9      | 56%     |
-| **Total**                       | **61** | **90%** |
+| 7 - Pre-Release Validation      | 9      | 100%    |
+| **Total**                       | **61** | **100%** |
 
 **Key Details:**
 

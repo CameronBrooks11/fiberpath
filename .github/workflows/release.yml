@@ -71,19 +71,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Get previous tag
+        id: previous-tag
+        run: |
+          # Get previous tag BEFORE creating new one
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "previous=$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "Previous tag: ${PREV_TAG:-none}"
+
       - name: Create release tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a ${{ needs.validate.outputs.tag }} -m "Release ${{ inputs.version }}"
           git push origin ${{ needs.validate.outputs.tag }}
-
-      - name: Get previous tag
-        id: previous-tag
-        run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          echo "previous=$PREV_TAG" >> $GITHUB_OUTPUT
-          echo "Previous tag: ${PREV_TAG:-none}"
 
       - name: Generate release notes
         id: notes

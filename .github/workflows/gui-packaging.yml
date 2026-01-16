@@ -193,6 +193,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.release_tag || github.ref }}
+          fail_on_unmatched_files: false
           files: |
             fiberpath_gui/src-tauri/target/release/bundle/dmg/*.dmg
             fiberpath_gui/src-tauri/target/release/bundle/nsis/*.exe
