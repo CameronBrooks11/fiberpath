@@ -92,23 +92,65 @@ jobs:
           script: |
             const prevTag = '${{ steps.previous-tag.outputs.previous }}';
             const newTag = '${{ needs.validate.outputs.tag }}';
+            const version = '${{ inputs.version }}';
 
-            if (!prevTag) {
-              return `## Release ${newTag}\n\nInitial release.`;
+            // Build structured release notes
+            let notes = `## FiberPath ${version}\n\n`;
+
+            // CORE section - Python backend
+            notes += `### 🐍 CORE (Python Backend)\n\n`;
+            notes += `The Python package is published to PyPI and includes all backend functionality:\n\n`;
+            notes += `**Installation:**\n`;
+            notes += `\`\`\`bash\n`;
+            notes += `pip install fiberpath==${version}\n`;
+            notes += `\`\`\`\n\n`;
+            notes += `**Package Details:**\n`;
+            notes += `- 📦 [PyPI Package](https://pypi.org/project/fiberpath/${version}/)\n`;
+            notes += `- 📚 [Source Code](https://github.com/${{ github.repository }}/tree/${newTag})\n`;
+            notes += `- 💻 CLI tools: \`fiberpath\` command with plan/simulate/plot/stream/interactive\n`;
+            notes += `- 🔌 API server: \`uvicorn fiberpath_api.main:app\`\n`;
+            notes += `- ⚙️ Requires: Python 3.11+\n\n`;
+
+            // GUI section - Desktop installers
+            notes += `### 🖥️ GUI (Desktop Application)\n\n`;
+            notes += `Standalone desktop installers with **bundled Python CLI** (no Python installation required):\n\n`;
+            notes += `**Windows:**\n`;
+            notes += `- 📥 \`FiberPath_${version}_x64_en-US.msi\` - Windows Installer (recommended)\n`;
+            notes += `- 📥 \`FiberPath_${version}_x64-setup.exe\` - NSIS Installer (alternative)\n\n`;
+            notes += `**macOS:**\n`;
+            notes += `- 📥 \`FiberPath_${version}_universal.dmg\` - Disk Image (drag to Applications)\n`;
+            notes += `- 📥 \`FiberPath.app\` - Application Bundle\n\n`;
+            notes += `**Linux:**\n`;
+            notes += `- 📥 \`fiberpath_${version}_amd64.deb\` - Debian/Ubuntu Package\n`;
+            notes += `- 📥 \`fiberpath_${version}_amd64.AppImage\` - Universal Linux Binary\n\n`;
+            notes += `**Features:**\n`;
+            notes += `- ✅ No Python installation required - fully self-contained\n`;
+            notes += `- ✅ Bundled frozen CLI for all operations\n`;
+            notes += `- ✅ Visual planning, simulation, and G-code streaming\n`;
+            notes += `- ✅ Real-time Marlin integration for filament winding\n\n`;
+
+            // Changelog section
+            if (prevTag) {
+              const { data: commits } = await github.rest.repos.compareCommits({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                base: prevTag,
+                head: newTag
+              });
+              
+              const changes = commits.commits
+                .map(c => `- ${c.commit.message.split('\n')[0]} (\`${c.sha.substring(0, 7)}\`)`)
+                .join('\n');
+              
+              notes += `### 📋 Changelog\n\n`;
+              notes += `${changes}\n\n`;
+              notes += `**Full Changelog**: https://github.com/${{ github.repository }}/compare/${prevTag}...${newTag}\n`;
+            } else {
+              notes += `### 📋 Changelog\n\n`;
+              notes += `Initial release of FiberPath.\n`;
             }
 
-            const { data: commits } = await github.rest.repos.compareCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base: prevTag,
-              head: newTag
-            });
-
-            const changes = commits.commits
-              .map(c => `- ${c.commit.message.split('\n')[0]} (${c.sha.substring(0, 7)})`)
-              .join('\n');
-
-            return `## What's Changed\n\n${changes}\n\n**Full Changelog**: https://github.com/${{ github.repository }}/compare/${prevTag}...${newTag}`;
+            return notes;
           result-encoding: string
 
       - name: Create GitHub Release
