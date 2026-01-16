@@ -5,7 +5,10 @@ use std::process::Command;
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
 pub fn command_for_cli<S: AsRef<OsStr>>(program: S) -> Command {
+    #[cfg(target_os = "windows")]
     let mut command = Command::new(program);
+    #[cfg(not(target_os = "windows"))]
+    let command = Command::new(program);
 
     #[cfg(target_os = "windows")]
     {

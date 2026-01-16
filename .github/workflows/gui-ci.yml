@@ -45,12 +45,6 @@ jobs:
       - name: Run Stylelint (CSS)
         run: npm run lint:css
 
-      - name: Run Rust formatter check
-        run: npm run format:check
-
-      - name: Run Clippy (Rust linter)
-        run: npm run clippy
-
   test:
     name: Test & Build
     needs: lint-and-type-check
@@ -88,4 +82,16 @@ jobs:
             echo "Build failed - no dist directory"
             exit 1
           fi
+          echo "Build successful - dist/ directory created"
+
+      - name: Setup Rust environment
+        uses: ./.github/actions/setup-rust
+        with:
+          install-linux-deps: "true"
+
+      - name: Run Rust formatter check
+        run: npm run format:check
+
+      - name: Run Clippy (Rust linter)
+        run: npm run clippy
           echo "Build successful - dist/ directory created"
