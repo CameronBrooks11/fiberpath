@@ -137,18 +137,17 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 
 ## Phase 7: Pre-Release Validation
 
-- [ ] Update version in pyproject.toml to 0.5.1
-- [ ] Update version badge in docs/index.md to 0.5.1
-- [ ] Verify all CI workflows pass on v0.5.1-dev branch
-- [ ] Review CHANGELOG.md - ensure v0.5.1 entry exists with all changes
-- [ ] Verify mkdocs builds without warnings (`mkdocs build --strict`)
-- [ ] Final review: README.md, getting-started.md, troubleshooting.md accuracy
+- [x] Update version in pyproject.toml to 0.5.1
+- [x] Update version badge in docs/index.md to 0.5.1
+- [x] Verify all CI workflows pass on v0.5.1-dev branch
+- [x] Verify mkdocs builds without warnings (`mkdocs build --strict`)
+- [x] Final review: README.md, getting-started.md, troubleshooting.md accuracy
 - [ ] Merge v0.5.1-dev → main (PR with full testing results)
 - [ ] Tag v0.5.1 and trigger release workflow
 - [ ] Test release workflow end-to-end: verify assets upload correctly (all 5 installers + PyPI package)
 - [ ] Test download + install one platform from GitHub release
 
-**Progress:** 0/10 tasks complete (0%)
+**Progress:** 5/9 tasks complete (56%)
 
 **Notes:** Final validation before merge and release. Ensures version consistency, CI health, and documentation accuracy.
 
@@ -164,8 +163,8 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 | 4 - Testing & Validation        | 5      | 100%    |
 | 5 - Documentation Updates       | 8      | 100%    |
 | 6 - Release Notes & Assets      | 9      | 100%    |
-| 7 - Pre-Release Validation      | 10     | 0%      |
-| **Total**                       | **62** | **84%** |
+| 7 - Pre-Release Validation      | 9      | 56%     |
+| **Total**                       | **61** | **90%** |
 
 **Key Details:**
 
