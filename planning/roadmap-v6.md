@@ -169,31 +169,11 @@
 
 ---
 
-## Phase 7: Cross-Platform Smoke Testing
+## Deferred to v5.2
 
-**Goal:** Verify production-ready across all platforms
+**Cross-Platform Testing:** Phase 7 (Cross-Platform Testing) has been moved to a dedicated v5.2 roadmap focusing exclusively on Linux and macOS testing. This allows v6 to focus on developer tooling and production polish independent of platform testing timelines.
 
-- [ ] Create cross-platform testing checklist
-  - Document testing procedure for Windows/macOS/Linux
-  - Include: installation, file operations, planning, plotting, streaming, keyboard shortcuts
-- [ ] Execute smoke tests on Windows
-  - Test COM port discovery
-  - Test .wind file associations
-  - Test keyboard shortcuts (Ctrl+S, Ctrl+O, etc.)
-- [ ] Execute smoke tests on macOS
-  - Test tty.usbserial port discovery
-  - Test .dmg installation
-  - Test Cmd+S, Cmd+O shortcuts
-- [ ] Execute smoke tests on Linux
-  - Test /dev/ttyUSB port discovery
-  - Test .deb and .AppImage installation
-  - Test Ctrl+S, Ctrl+O shortcuts
-- [ ] Document platform-specific issues (if any)
-- [ ] Fix critical platform-specific bugs
-
-**Progress:** 0/6 tasks complete
-
-**Rationale:** Currently only tested on Windows (development platform). Need to verify macOS/Linux before claiming production-ready.
+See [roadmap-v5.2.md](roadmap-v5.2.md) for comprehensive cross-platform testing plan.
 
 ---
 
@@ -218,6 +198,8 @@ The following items from v6-old have been moved to roadmap-backlog.md:
 
 **Status:** 0/31 tasks complete (0%)
 
+**Note:** Cross-platform testing moved to dedicated v5.2 roadmap, restoring v6 to original scope.
+
 **Estimated Effort:**
 
 - Phase 1 (Changelog): 4-6 hours
@@ -226,7 +208,6 @@ The following items from v6-old have been moved to roadmap-backlog.md:
 - Phase 4 (Performance): 8-10 hours
 - Phase 5 (Docs): 4-6 hours
 - Phase 6 (Validation): 6-8 hours
-- Phase 7 (Testing): 4-6 hours
 
 **Total:** 36-50 hours (2-3 weeks at 15-20 hours/week)
 
