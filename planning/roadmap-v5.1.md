@@ -84,8 +84,9 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 - [x] Copy downloaded CLI to `fiberpath_gui/bundled-cli/` before Tauri build (create dir if needed)
 - [x] Make executable on Unix: `chmod +x fiberpath_gui/bundled-cli/fiberpath` (Linux/macOS only)
 - [x] Verify bundled CLI in installer: add post-build check that CLI exists in Tauri bundle resources
+- [x] Add comprehensive tooling checks to CI workflows: ruff format, stylelint, cargo fmt, cargo clippy
 
-**Progress:** 11/11 tasks complete (100%)
+**Progress:** 12/12 tasks complete (100%)
 
 **Critical Notes:**
 
@@ -149,10 +150,10 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 | ------------------------------- | ------ | ------- |
 | 1 - CLI Freezing Infrastructure | 8      | 75%     |
 | 2 - Tauri Integration           | 12     | 92%     |
-| 3 - CI/CD Workflow Updates      | 11     | 100%    |
-| 4 - Testing & Validation        | 10     | 0%      |
+| 3 - CI/CD Workflow Updates      | 12     | 100%    |
+| 4 - Testing & Validation        | 10     | 20%     |
 | 5 - Documentation Updates       | 6      | 0%      |
-| **Total**                       | **47** | **60%** |
+| **Total**                       | **48** | **63%** |
 
 **Timeline:** 3-4 days (one developer)
 
