@@ -123,21 +123,38 @@ Implement standalone desktop application by bundling frozen Python CLI with GUI 
 
 ## Phase 5: Documentation Updates
 
-- [ ] Update `README.md`: Confirm "No Python installation required" is accurate, add note about bundled backend
-- [ ] Update `docs/getting-started.md`: Remove Python prerequisite for GUI-only installation path
-- [ ] Update `fiberpath_gui/README.md`: Remove CLI PATH requirement, add development vs production distinction
-- [ ] Update `docs/development/packaging.md`: Document PyInstaller process, bundled resource structure, CI workflow
-- [ ] Update `fiberpath_gui/docs/development.md`: Add bundled CLI section, explain dev fallback logic to system PATH
-- [ ] Create `docs/troubleshooting.md`: CLI not found errors, verification commands, reinstall steps, antivirus false positives
+- [x] Update root README.md: Clarify "No Python required" now accurate for GUI installers (bundled CLI included)
+- [x] Update docs/getting-started.md: Add GUI-first path (no Python), separate CLI installation instructions
+- [x] Update docs/index.md: Update version badges, "What's New" highlights for v0.5.1 bundled CLI
+- [x] Update docs/development/packaging.md: Replace shell-out assumptions with PyInstaller bundling workflow
+- [x] Create docs/troubleshooting.md: Platform-specific issues (permissions, antivirus, installation)
+- [x] Update fiberpath_gui/README.md: Remove Python CLI prerequisite, clarify bundled vs development modes
+- [x] Update fiberpath_gui/docs/development.md: Add bundled CLI section, document fallback to system PATH for devs
+- [x] Update fiberpath_gui/docs/architecture/cli-integration.md: Document bundled executable discovery logic
 
-**Progress:** 0/6 tasks complete (0%)
+**Progress:** 8/8 tasks complete (100%)
+
+**Documentation Requirements:**
+
+**User-Facing (Hide Implementation):**
+
+- README/getting-started: Emphasize "download and run" with no setup
+- Troubleshooting: Common issues (Gatekeeper on macOS, permissions on Linux, antivirus on Windows)
+- Installation differences: MSI vs NSIS, .deb vs AppImage, Intel vs ARM
+
+**Developer-Facing (Expose Implementation):**
+
+- Packaging docs: PyInstaller workflow, `--collect-all` flags, CI freeze job
+- Development mode: Bundled CLI detection → system PATH fallback (`which fiberpath`)
+- CLI integration: Platform-specific paths (`_up_/` on Windows installed, `bundled-cli/` elsewhere)
+- Resource structure: Tauri v2 `resource_dir()`, Windows `_up_` subdirectory quirk
 
 **Critical Notes:**
 
-- README already says "No Python required" - verify this is NOW actually true after bundling
-- Development docs critical - contributors need to understand bundled vs system CLI behavior
-- Troubleshooting guide must address: "command not found" (shouldn't happen now), antivirus quarantine, startup failures
-- User-facing docs should NOT expose technical details like PyInstaller or freezing process
+- Users should NOT see "PyInstaller" or "frozen executable" - just "bundled CLI"
+- Devs MUST understand fallback logic - contributors need `pip install -e .` without freezing
+- Platform-specific docs: Serial ports (`COM1` vs `/dev/ttyUSB0`), shortcuts (Ctrl vs Cmd)
+- Troubleshooting essential: Unsigned app warnings, serial permissions, antivirus false positives
 
 ---
 
@@ -229,9 +246,9 @@ Standalone installers with bundled Python CLI (no Python required):
 | 2 - Tauri Integration           | 12     | 92%     |
 | 3 - CI/CD Workflow Updates      | 12     | 100%    |
 | 4 - Testing & Validation        | 5      | 100%    |
-| 5 - Documentation Updates       | 6      | 0%      |
+| 5 - Documentation Updates       | 8      | 100%    |
 | 6 - Release Notes & Assets      | 8      | 25%     |
-| **Total**                       | **51** | **65%** |
+| **Total**                       | **53** | **78%** |
 
 **Timeline:** 3-4 days (one developer)
 

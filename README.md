@@ -71,11 +71,17 @@ The `plot` command creates a 2D unwrapped visualization of the toolpath for quic
 
 ## Installation
 
-### Desktop Application
+### Desktop Application (Recommended)
 
 📦 **Download:** [github.com/CameronBrooks11/fiberpath/releases/latest](https://github.com/CameronBrooks11/fiberpath/releases/latest)
 
-No Python installation required—the GUI is a self-contained native application.
+**No Python installation required**—the GUI is a fully self-contained native application with the FiberPath backend bundled inside. Just download, install, and run.
+
+- **Windows:** `.msi` or `.exe` installer
+- **macOS:** `.dmg` disk image
+- **Linux:** `.deb` package or `.AppImage`
+
+All desktop installers include the complete FiberPath toolchain for planning, simulation, and streaming.
 
 ### Python Package
 

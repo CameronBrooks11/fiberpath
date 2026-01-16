@@ -1,30 +1,71 @@
 # FiberPath Desktop GUI
 
-This Tauri + React workspace provides a cross-platform desktop companion for FiberPath. It shells out to the existing Python CLI for planning, simulation, and visualization, while also providing direct Marlin G-code streaming capabilities.
+Cross-platform desktop application for FiberPath filament winding. Built with Tauri + React, providing visual planning, simulation, and hardware streaming.
 
 ## Features
 
 ### Main Tab - Wind Pattern Planning & Visualization
 
-- **Plan** – Select a `.wind` input file. The CLI generates G-code and returns a JSON summary.
-- **Plot Preview** – View PNG previews of G-code files with adjustable scale.
-- **Simulate** – Run the simulator to inspect motion time estimates.
-- **Layer Management** – Create and edit hoop, helical, and skip winding layers.
+- **Plan** – Generate G-code from `.wind` definitions with real-time validation
+- **Plot Preview** – View PNG visualizations with adjustable scale
+- **Simulate** – Inspect motion time estimates and machine kinematics
+- **Layer Management** – Create and edit hoop, helical, and skip winding layers
 
-### Stream Tab - Marlin G-code Streaming (v4.0)
+### Stream Tab - Marlin G-code Streaming
 
-- **Serial Connection** – Discover and connect to Marlin-compatible devices.
-- **Manual Control** – Send custom G-code commands or use quick-access buttons (Home, Get Position, E-Stop, Disable Motors).
-- **File Streaming** – Stream G-code files directly to connected hardware with real-time progress monitoring.
-- **Pause/Resume** – Pause and resume streaming operations mid-execution.
-- **Live Log** – View command/response history with auto-scroll and clear functionality.
-- **Keyboard Shortcuts** – Efficient control with `Alt+1/2` for tab switching, `?` for help, and more.
+- **Serial Connection** – Auto-discover and connect to Marlin-compatible devices
+- **Manual Control** – Quick-access buttons (Home, Get Position, E-Stop, Disable Motors)
+- **File Streaming** – Real-time progress monitoring with pause/resume
+- **Live Log** – Command/response history with auto-scroll
+- **Keyboard Shortcuts** – `Alt+1/2` tab switching, `?` for help
 
-## Prerequisites
+## Installation
 
-- Node.js 18+
-- Rust toolchain (for the Tauri shell)
-- The FiberPath Python project installed in editable mode so the `fiberpath` CLI is on your PATH
+**End Users:** Download installers from [GitHub Releases](https://github.com/CameronBrooks11/fiberpath/releases). No setup required—the application includes everything needed.
+
+**Developers:** See [Development Setup](#development-setup) below.
+
+## Development Setup
+
+### Prerequisites
+
+- **Node.js 18+** ([nodejs.org](https://nodejs.org))
+- **Rust 1.70+** ([rustup.rs](https://rustup.rs))
+- **Platform-specific tools:**
+  - Windows: Visual C++ Build Tools, WebView2
+  - macOS: Xcode Command Line Tools
+  - Linux: `build-essential libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf`
+
+### Bundled vs Development CLI Modes
+
+**Production Mode (Installers):**
+
+- CLI is bundled inside the application (`bundled-cli/fiberpath.exe` or `bundled-cli/fiberpath`)
+- No Python installation required
+- Frozen executable includes all dependencies
+
+**Development Mode (Local):**
+
+- Application checks for bundled CLI first
+- If not found, falls back to system PATH: `which fiberpath` (Unix) or `where fiberpath` (Windows)
+- **For development, install CLI from source:**
+  ```sh
+  # In repo root
+  pip install -e .[cli]
+  # Or with uv
+  uv pip install -e .[cli]
+  ```
+
+**Verification:**
+
+```sh
+# Ensure CLI is accessible
+fiberpath --version
+
+# Should output: fiberpath, version X.Y.Z
+```
+
+This fallback design allows contributors to develop without running PyInstaller locally.
 
 ## Getting Started
 

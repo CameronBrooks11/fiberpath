@@ -32,6 +32,14 @@ How FiberPath GUI bridges to the Python CLI backend via Tauri commands.
 │  - simulate_program                 │  - Error mapping
 │  - plot_preview                     │
 └─────────────┬───────────────────────┘
+              │ CLI Discovery
+              ▼
+┌─────────────────────────────────────┐
+│  CLI Path Resolution (cli_path.rs)  │  Bundled vs System
+│  - Check bundled CLI first          │  - Platform paths
+│  - Fallback to system PATH          │  - Error handling
+│  - Resource directory lookup        │
+└─────────────┬───────────────────────┘
               │ std::process::Command
               ▼
 ┌─────────────────────────────────────┐
@@ -41,6 +49,136 @@ How FiberPath GUI bridges to the Python CLI backend via Tauri commands.
 │  $ fiberpath plot out.gcode         │
 └─────────────────────────────────────┘
 ```
+
+## CLI Discovery & Bundling
+
+**As of v0.5.1,** the GUI embeds a frozen CLI executable inside production installers. This eliminates the Python dependency for end users.
+
+### Discovery Logic (`src-tauri/src/cli_path.rs`)
+
+```rust
+pub fn get_fiberpath_executable(app: &AppHandle) -> Result<PathBuf, String> {
+    // 1. Try bundled CLI first (production mode)
+    match get_bundled_cli_path(app) {
+        Ok(bundled_path) => {
+            if bundled_path.exists() && bundled_path.is_file() {
+                log::info!("Using bundled CLI: {:?}", bundled_path);
+                return Ok(bundled_path);
+            }
+        }
+        Err(e) => log::warn!("Failed to resolve bundled CLI path: {}", e),
+    }
+
+    // 2. Fallback to system PATH (development mode)
+    if let Ok(system_path) = which::which("fiberpath") {
+        log::info!("Using system CLI: {:?}", system_path);
+        return Ok(system_path);
+    }
+
+    // 3. Error if neither found
+    Err(
+        "FiberPath CLI not found. Please install: pip install fiberpath"
+            .to_string(),
+    )
+}
+
+fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
+    let resource_dir = app
+        .path()
+        .resource_dir()
+        .map_err(|e| format!("Failed to get resource directory: {}", e))?;
+
+    let cli_name = if cfg!(windows) {
+        "fiberpath.exe"
+    } else {
+        "fiberpath"
+    };
+
+    // Platform-specific paths
+    let bundled_path = if cfg!(windows) {
+        // Windows uses _up_/ subdirectory for installed apps
+        resource_dir.join("_up_").join("bundled-cli").join(cli_name)
+    } else {
+        resource_dir.join("bundled-cli").join(cli_name)
+    };
+
+    Ok(bundled_path)
+}
+```
+
+**Why Two-Stage Discovery:**
+
+1. **Production users:** Zero Python setup—bundled CLI "just works"
+2. **Contributors:** No PyInstaller needed—develop with `pip install -e .`
+3. **CI/CD:** Works in both modes automatically
+
+### Platform-Specific Paths
+
+| Mode              | Platform | CLI Path                                        |
+| ----------------- | -------- | ----------------------------------------------- |
+| **Installed**     | Windows  | `resources\_up_\bundled-cli\fiberpath.exe`      |
+| **Dev (unbuilt)** | Windows  | `resources\bundled-cli\fiberpath.exe`           |
+| **Installed**     | macOS    | `.app/Contents/Resources/bundled-cli/fiberpath` |
+| **Installed**     | Linux    | `resources/bundled-cli/fiberpath`               |
+| **Fallback**      | All      | Resolved via `which fiberpath` (system PATH)    |
+
+**Key Tauri APIs:**
+
+- `app.path().resource_dir()`: Returns resource directory (`AppHandle`)
+- `_up_/` subdirectory: Windows-specific workaround for NSIS installer path resolution
+- `which::which()`: Cross-platform PATH search (crate)
+
+### CLI Freezing Process
+
+The bundled CLI is created via PyInstaller during CI/CD:
+
+**1. Freeze Script (`scripts/freeze_cli.py`):**
+
+```python
+PyInstaller.__main__.run([
+    '--onefile',
+    '--name', 'fiberpath',
+    '--console',  # Windows: CREATE_NO_WINDOW flag set
+    '--collect-all', 'fiberpath',
+    '--collect-all', 'fiberpath_cli',
+    # ... more --collect-all flags
+    'fiberpath_cli/main.py',
+])
+```
+
+**2. CI Workflow (`.github/workflows/release.yml`):**
+
+```yaml
+freeze-cli:
+  runs-on: windows-latest
+  steps:
+    - uses: actions/checkout@v4
+    - name: Freeze CLI
+      run: uv run python scripts/freeze_cli.py
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: frozen-cli-windows
+        path: dist/fiberpath.exe
+
+package-gui-windows:
+  needs: freeze-cli
+  steps:
+    - name: Download frozen CLI
+      uses: actions/download-artifact@v4
+      with:
+        name: frozen-cli-windows
+        path: fiberpath_gui/bundled-cli/
+    - name: Build Tauri
+      run: npm run tauri build
+```
+
+**3. Result:**
+
+- **42 MB** self-contained executable
+- Full Python interpreter + dependencies embedded
+- No DLL hell, no registry dependencies
+- Entry point: `fiberpath_cli.main:app` (Typer CLI)
 
 ## Frontend Layer
 

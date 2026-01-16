@@ -36,24 +36,26 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.5.0](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.5.1](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
-    - **Desktop GUI** – Windows, macOS, Linux installers
+    - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
     - **Source** – Clone and build from GitHub
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.5.0**
+-   :material-new-box:{ .lg .middle } **What's New in v0.5.1**
 
     ---
 
-    Enhanced streaming control with refined state management:
+    Self-contained desktop experience with bundled backend:
 
-    - Graceful job cancellation vs emergency stop
-    - Zero-lag progress updates (no queue lag)
-    - Clean state handling after operations
-    - Manual file control with clear UI
+    - No Python installation required for GUI
+    - Bundled CLI—42 MB frozen executable
+    - Windows testing complete (macOS/Linux in v0.5.2)
+    - Improved release packaging workflow
+
+    Also includes v0.5.0 streaming enhancements.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 
