@@ -58,7 +58,7 @@ Execution status for cross-platform testing (v0.5.2 scope). Detailed pass/fail t
 
 All items below must be Verified or Waived before tagging v0.5.2.
 
-- [ ] Finding 1 (Helical Layer Silent Skip) — code fixed, tests merged
+- [x] Finding 1 (Helical Layer Silent Skip) — code fixed, regression tests added
 - [ ] UI contrast verification complete across dialogs/stream/notifications/status surfaces (active, hover, disabled, error)
 - [ ] Linux: no-Python install confirmed on Ubuntu 22.04 (`.deb` and `.AppImage`)
 - [ ] macOS: no-Python install confirmed on Intel + Apple Silicon
@@ -71,6 +71,8 @@ All items below must be Verified or Waived before tagging v0.5.2.
 - [x] Restored missing legacy token aliases in `fiberpath_gui/src/styles/tokens.css` for old/new style interoperability.
 - [x] Added missing `.button--primary` dialog styles in `fiberpath_gui/src/styles/dialogs.css` to fix Export G-code dark-on-dark button text.
 - [x] Added CSS variable guard script + GUI CI step (`npm run lint:css:vars`) to fail on unresolved `var(--token)` usage.
+- [x] Added missing `.btn`/`.btn--*` button style variants in `fiberpath_gui/src/styles/buttons.css` to prevent browser-default contrast regressions in CLI dialogs/warnings.
+- [x] Enforced helical divisibility validation in planner validators and added regression coverage in planning tests.
 
 ## Release Gate — v0.6.0
 

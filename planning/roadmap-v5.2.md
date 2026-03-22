@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.2 - Cross-Platform Testing & Validation
 
 **Target Release:** v0.5.2  
-**Status:** Active (2/42 tasks complete)  
+**Status:** Active (4/42 tasks complete)  
 **Prerequisites:** v0.5.1 (Windows bundling complete)  
 **Timeline:** 1-2 weeks (32-44 hours)
 
@@ -22,10 +22,10 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 
 ## Phase 0: Technical Findings — Code Fixes
 
-- [ ] **[Finding 1 — High]** Enforce helical layer divisibility as a validation error; add regression test (planner silently skips layers otherwise)
+- [x] **[Finding 1 — High]** Enforce helical layer divisibility as a validation error; add regression test (planner silently skips layers otherwise)
 - [ ] **[Finding 2 — Medium]** Restrict API output path to allowed roots and enforce explicit path policy (if not deferred to v0.6.0)
 
-**Progress:** 0/2 tasks
+**Progress:** 1/2 tasks
 
 ---
 
@@ -79,7 +79,7 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 ## Phase 3: Development Fallback & Docs
 
 - [x] Fix dialog/export contrast regressions by restoring missing design-token aliases and primary dialog button styles
-- [ ] UI contrast verification pass across dialogs, stream sections, notifications, and status surfaces (active/hover/disabled/error states)
+- [x] UI contrast code pass: verified dialogs/stream/notifications/status styles, restored missing `.btn` class variants, and normalized contrast token usage
 - [x] Add token-usage guard (lint/check) so undefined CSS custom properties fail CI
 - [ ] Linux/macOS: build without bundled CLI, verify system PATH fallback works
 - [ ] Test `pip install -e .` in venv, verify CLI discovery on both platforms
@@ -90,7 +90,7 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 - [ ] Document serial naming: Windows (`COM1`), Linux (`/dev/ttyUSB0`), macOS (`/dev/tty.usbserial-*`)
 - [ ] Fix critical bugs, document non-critical quirks, create GitHub issues, update CI if needed
 
-**Progress:** 2/11 tasks
+**Progress:** 3/11 tasks
 
 **Notes:** Dev fallback critical for contributors. Serial port docs essential—naming varies widely.
 

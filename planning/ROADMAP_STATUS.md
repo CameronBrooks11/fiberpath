@@ -4,10 +4,16 @@ Last Updated: 2026-03-22
 
 ## Active Planning
 
-| Phase                  | File                               | Target Release | Status | Completion | Notes                                                 |
-| ---------------------- | ---------------------------------- | -------------- | ------ | ---------- | ----------------------------------------------------- |
-| Cross-Platform Testing | [roadmap-v5.2.md](roadmap-v5.2.md) | v0.5.2         | Active | 5%         | Linux/macOS validation; contrast and token guard done |
-| Production Polish      | [roadmap-v6.md](roadmap-v6.md)     | v0.6.0         | Active | 0%         | Tooling, architecture cleanup, performance, UX        |
+- Cross-Platform Testing ([roadmap-v5.2.md](roadmap-v5.2.md))
+  - Target Release: v0.5.2
+  - Status: Active
+  - Completion: 10%
+  - Notes: Linux/macOS validation; contrast/token guard and Finding 1 done
+- Production Polish ([roadmap-v6.md](roadmap-v6.md))
+  - Target Release: v0.6.0
+  - Status: Active
+  - Completion: 0%
+  - Notes: Tooling, architecture cleanup, performance, UX
 
 ## Completed Roadmaps (Summary)
 

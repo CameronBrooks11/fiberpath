@@ -32,13 +32,21 @@ def test_plan_wind_returns_commands() -> None:
     "case",
     [
         "simple-hoop",
-        "helical-balanced",
-        "skip-bias",
     ],
 )
 def test_plan_wind_matches_cyclone_reference(case: str) -> None:
     result = plan_wind(_reference_definition(case), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
     assert result.commands == _reference_output(case)
+
+
+def test_plan_wind_rejects_legacy_non_divisible_helical_reference() -> None:
+    with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
+        plan_wind(_reference_definition("helical-balanced"), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
+
+
+def test_plan_wind_rejects_legacy_skip_bias_non_divisible_reference() -> None:
+    with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
+        plan_wind(_reference_definition("skip-bias"), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
 
 
 def test_plan_wind_rejects_layers_after_terminal() -> None:

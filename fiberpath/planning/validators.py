@@ -53,4 +53,14 @@ def validate_helical_layer(
             "skipIndex and patternNumber must be coprime for full coverage",
         )
 
-    return compute_helical_kinematics(layer, mandrel, tow)
+    kinematics = compute_helical_kinematics(layer, mandrel, tow)
+    if kinematics.num_circuits % layer.pattern_number != 0:
+        raise LayerValidationError(
+            layer_index,
+            (
+                "computed circuit count is not divisible by patternNumber "
+                f"({kinematics.num_circuits} % {layer.pattern_number} != 0)"
+            ),
+        )
+
+    return kinematics

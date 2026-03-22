@@ -11,7 +11,7 @@ from fiberpath.gcode.dialects import (
     AxisMapping,
     MarlinDialect,
 )
-from fiberpath.planning import PlanOptions, plan_wind
+from fiberpath.planning import LayerValidationError, PlanOptions, plan_wind
 
 REFERENCE_ROOT = Path(__file__).parents[1] / "cyclone_reference_runs"
 REFERENCE_INPUTS = REFERENCE_ROOT / "inputs"
@@ -31,8 +31,6 @@ def _reference_output(name: str = "simple-hoop") -> list[str]:
     "case",
     [
         "simple-hoop",
-        "helical-balanced",
-        "skip-bias",
     ],
 )
 def test_xyz_format_maintains_cyclone_reference_parity(case: str) -> None:
@@ -158,7 +156,7 @@ def test_both_formats_produce_same_command_count() -> None:
 # Test 7: Test both formats produce same time and tow metrics
 def test_both_formats_produce_same_metrics() -> None:
     """Verify planning metrics are identical regardless of axis format."""
-    definition = _reference_definition("helical-balanced")
+    definition = _reference_definition("simple-hoop")
 
     result_xyz = plan_wind(definition, PlanOptions(dialect=MARLIN_XYZ_LEGACY))
     result_xab = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
@@ -186,6 +184,20 @@ def test_both_formats_produce_same_metrics() -> None:
         assert abs(layer_xyz.tow_m - layer_xab.tow_m) < 1e-6, (
             f"Layer {layer_xyz.index} tow usage mismatch"
         )
+
+
+def test_helical_balanced_reference_rejected_by_divisibility_validation() -> None:
+    """Legacy helical-balanced fixture is invalid under strict divisibility checks."""
+    options = PlanOptions(dialect=MARLIN_XYZ_LEGACY)
+    with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
+        plan_wind(_reference_definition("helical-balanced"), options)
+
+
+def test_skip_bias_reference_rejected_by_divisibility_validation() -> None:
+    """Legacy skip-bias fixture is invalid under strict divisibility checks."""
+    options = PlanOptions(dialect=MARLIN_XYZ_LEGACY)
+    with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
+        plan_wind(_reference_definition("skip-bias"), options)
 
 
 # Test 8: Test custom axis mapping
