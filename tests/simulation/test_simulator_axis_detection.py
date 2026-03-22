@@ -2,12 +2,12 @@
 
 from pathlib import Path
 
+import pytest
 from fiberpath.config import load_wind_definition
 from fiberpath.config.schemas import WindDefinition
 from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, MARLIN_XYZ_LEGACY
 from fiberpath.planning import LayerValidationError, PlanOptions, plan_wind
 from fiberpath.simulation import simulate_program
-import pytest
 
 REFERENCE_ROOT = Path(__file__).parents[1] / "cyclone_reference_runs"
 REFERENCE_INPUTS = REFERENCE_ROOT / "inputs"
