@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import asdict
-from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
 from fiberpath.config import WindFileError, load_wind_definition
