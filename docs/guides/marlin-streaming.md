@@ -309,8 +309,6 @@ Before production winding, verify all functionality:
 - [ ] Progress monitoring displays accurate counts
 - [ ] Disconnect releases serial port properly
 
-See `planning/hardware-testing-checklist.md` for comprehensive pre-deployment testing.
-
 ---
 
 ## Related Documentation
