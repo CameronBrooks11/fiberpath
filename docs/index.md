@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.5.1](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.5.2](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,18 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.5.1**
+-   :material-new-box:{ .lg .middle } **What's New in v0.5.2**
 
     ---
 
-    Self-contained desktop experience with bundled backend:
+    Release hardening and validation safety improvements:
 
-    - No Python installation required for GUI
-    - Bundled CLI—42 MB frozen executable
-    - Windows testing complete (macOS/Linux in v0.5.2)
-    - Improved release packaging workflow
+    - Strict helical divisibility validation to prevent silent layer skips
+    - API path policy hardening for plan/validate/simulate routes
+    - GUI contrast/token fixes and CSS variable CI guard
+    - Continued cross-platform validation baseline for v0.6.0 execution
 
-    Also includes v0.5.0 streaming enhancements.
+    Builds on the v0.5.1 bundled desktop foundation.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 

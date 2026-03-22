@@ -25,7 +25,7 @@ Last Updated: 2026-03-22
 | Streaming & Tabs      | RELEASE_HISTORY                    | v0.4.0  | Complete | 100%       | Tab infrastructure and Marlin streaming maturation    |
 | Streaming Refinements | RELEASE_HISTORY                    | v0.5.0  | Complete | 100%       | Pause/cancel behavior and docs overhaul               |
 | Python CLI Bundling   | [roadmap-v5.1.md](roadmap-v5.1.md) | v0.5.1  | Complete | 100%       | Windows-ready bundled CLI with CI/release integration |
-| v5.2 Release Hardening| [roadmap-v5.2.md](roadmap-v5.2.md) | v0.5.2  | Closed   | N/A        | Findings 1-2 and UI contrast guard complete; remaining scope migrated to v6 |
+| v5.2 Release Hardening| [roadmap-v5.2.md](roadmap-v5.2.md) | v0.5.2  | Complete | 100%       | Shipped release-hardening changes; remaining cross-platform expansion tracked in v6 |
 
 ## Reference Documents
 
