@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.3 - Dependency Audit and Low-Risk Refresh
 
 **Target Release:** v0.5.3  
-**Status:** Active (bucket A execution complete; release gate in progress)  
+**Status:** Complete (v0.5.3 released 2026-03-22)  
 **Prerequisites:** v0.5.2 released and stable  
 **Timeline:** 3-5 days once audit starts
 
@@ -153,11 +153,11 @@ Execution order:
 
 Deliverable: v0.5.3 released with known risk profile.
 
-- [ ] All CI workflows green on release commit
-- [ ] No unresolved critical/high security issues in included upgrade set
+- [x] All CI workflows green on release commit
+- [x] No unresolved critical/high security issues in included upgrade set
 - [x] CLI/API/GUI smoke checks pass on release commit
-- [ ] Release workflow executed and artifacts verified
-- [ ] Post-release notes capture deferred items for v0.5.4
+- [x] Release workflow executed and artifacts verified
+- [x] Post-release notes capture deferred items for v0.5.4 (Bucket B imported into roadmap-v5.4.md)
 
 ---
 

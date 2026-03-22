@@ -4,16 +4,11 @@ Last Updated: 2026-03-22
 
 ## Active Planning
 
-- Dependency Audit & Low-Risk Refresh ([roadmap-v5.3.md](roadmap-v5.3.md))
-  - Target Release: v0.5.3
-  - Status: Active
-  - Completion: 92%
-  - Notes: Bucket A complete with local validation and packaging smoke green; pending commit push, CI green, and release workflow execution
 - Dependency Hardening & Scanning Automation ([roadmap-v5.4.md](roadmap-v5.4.md))
   - Target Release: v0.5.4
-  - Status: Planned
-  - Completion: 0%
-  - Notes: High-risk deferred upgrades and required dependency-scanning close-out (Dependabot + CI policy)
+  - Status: Active
+  - Completion: 5%
+  - Notes: Fully fleshed-out roadmap with Bucket B intake matrix (11 packages across Python/Node/Rust), per-package migration plans, execution ordering rationale, and Phase 4 scanning/SBOM close-out tasks
 - Release Validation & E2E ([roadmap-v6.md](roadmap-v6.md))
   - Target Release: v0.6.0
   - Status: Planned
@@ -34,8 +29,9 @@ Last Updated: 2026-03-22
 | Code Quality           | RELEASE_HISTORY                    | v0.3.0  | Complete | 100%       | Test/quality and maintainability improvements                                       |
 | Streaming & Tabs       | RELEASE_HISTORY                    | v0.4.0  | Complete | 100%       | Tab infrastructure and Marlin streaming maturation                                  |
 | Streaming Refinements  | RELEASE_HISTORY                    | v0.5.0  | Complete | 100%       | Pause/cancel behavior and docs overhaul                                             |
-| Python CLI Bundling    | [roadmap-v5.1.md](roadmap-v5.1.md) | v0.5.1  | Complete | 100%       | Windows-ready bundled CLI with CI/release integration                               |
-| v5.2 Release Hardening | [roadmap-v5.2.md](roadmap-v5.2.md) | v0.5.2  | Complete | 100%       | Shipped release-hardening changes; remaining cross-platform expansion tracked in v6 |
+| Python CLI Bundling              | [roadmap-v5.1.md](roadmap-v5.1.md) | v0.5.1  | Complete | 100%       | Windows-ready bundled CLI with CI/release integration                               |
+| v5.2 Release Hardening           | [roadmap-v5.2.md](roadmap-v5.2.md) | v0.5.2  | Complete | 100%       | Shipped release-hardening changes; remaining cross-platform expansion tracked in v6 |
+| v5.3 Dependency Audit & Refresh  | [roadmap-v5.3.md](roadmap-v5.3.md) | v0.5.3  | Complete | 100%       | Low-risk dep refresh across Python/Node/Rust; 3 CVE fixes; Bucket B deferred to v5.4 |
 
 ## Reference Documents
 
