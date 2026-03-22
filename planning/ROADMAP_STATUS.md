@@ -7,8 +7,8 @@ Last Updated: 2026-03-22
 - Cross-Platform Testing ([roadmap-v5.2.md](roadmap-v5.2.md))
   - Target Release: v0.5.2
   - Status: Active
-  - Completion: 10%
-  - Notes: Linux/macOS validation; contrast/token guard and Finding 1 done
+  - Completion: 12%
+  - Notes: Linux/macOS validation; contrast/token guard and Findings 1-2 done
 - Production Polish ([roadmap-v6.md](roadmap-v6.md))
   - Target Release: v0.6.0
   - Status: Active

@@ -16,11 +16,11 @@ Open findings from code review (2026-03-22). Each finding must be closed by a me
 - **Action:** Enforce divisibility as a validation error; add regression test.
 - **Target:** v0.5.2
 
-### Finding 2 — API Path Handling Too Broad (Medium)
+### Finding 2 — API Path Handling Too Broad (Medium) ✅ Closed
 
 - **Risk:** Broad output path acceptance increases overwrite/traversal risk if the API is exposed outside trusted local use.
-- **Action:** Restrict allowed roots and enforce an explicit output path policy.
-- **Target:** v0.5.2 or v0.6.0
+- **Action:** Restricted API path access to configured allowed roots and enforced output path policy for planning writes.
+- **Target:** v0.5.2
 
 ### Finding 3 — CLI Broad Exception Catching (Low)
 
@@ -59,6 +59,7 @@ Execution status for cross-platform testing (v0.5.2 scope). Detailed pass/fail t
 All items below must be Verified or Waived before tagging v0.5.2.
 
 - [x] Finding 1 (Helical Layer Silent Skip) — code fixed, regression tests added
+- [x] Finding 2 (API path handling) — code fixed, tests merged
 - [ ] UI contrast verification complete across dialogs/stream/notifications/status surfaces (active, hover, disabled, error)
 - [ ] Linux: no-Python install confirmed on Ubuntu 22.04 (`.deb` and `.AppImage`)
 - [ ] macOS: no-Python install confirmed on Intel + Apple Silicon
@@ -73,9 +74,9 @@ All items below must be Verified or Waived before tagging v0.5.2.
 - [x] Added CSS variable guard script + GUI CI step (`npm run lint:css:vars`) to fail on unresolved `var(--token)` usage.
 - [x] Added missing `.btn`/`.btn--*` button style variants in `fiberpath_gui/src/styles/buttons.css` to prevent browser-default contrast regressions in CLI dialogs/warnings.
 - [x] Enforced helical divisibility validation in planner validators and added regression coverage in planning tests.
+- [x] Added API allowed-root path policy for plan/validate/simulate routes and API tests for allowed + forbidden paths.
 
 ## Release Gate — v0.6.0
 
-- [ ] Finding 2 (API path handling) — code fixed, tests merged
 - [ ] Finding 3 (CLI exceptions) — code fixed, tests merged
 - [ ] macOS code signing / Gatekeeper flow resolved or formally deferred

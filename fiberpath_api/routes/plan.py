@@ -11,6 +11,7 @@ from fiberpath.gcode import write_gcode
 from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, MARLIN_XYZ_LEGACY
 from fiberpath.planning import PlanOptions, plan_wind
 
+from ..path_policy import enforce_input_path_policy, enforce_output_path_policy
 from ..schemas import FilePathRequest, PlanLayer, PlanResponse
 
 router = APIRouter()
@@ -18,7 +19,7 @@ router = APIRouter()
 
 @router.post("/from-file", response_model=PlanResponse)
 def plan_from_file(payload: FilePathRequest) -> PlanResponse:
-    file_path = Path(payload.path)
+    file_path = enforce_input_path_policy(payload.path)
     try:
         definition = load_wind_definition(file_path)
     except WindFileError as exc:  # pragma: no cover - HTTP glue
@@ -29,7 +30,8 @@ def plan_from_file(payload: FilePathRequest) -> PlanResponse:
     options = PlanOptions(verbose=payload.verbose, dialect=dialect)
 
     result = plan_wind(definition, options)
-    temp_file = write_gcode(result.commands, file_path.with_suffix(".gcode"))
+    output_path = enforce_output_path_policy(file_path.with_suffix(".gcode"))
+    temp_file = write_gcode(result.commands, output_path)
     layers = [PlanLayer(**asdict(metric)) for metric in result.layers]
     return PlanResponse(
         commands=len(result.commands),

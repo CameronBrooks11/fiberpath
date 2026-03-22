@@ -12,6 +12,9 @@ def test_simulate_from_file_nonexistent(tmp_path: Path) -> None:
     """Verify that simulating a nonexistent file returns 404."""
     app = create_app()
     client = TestClient(app)
+    import os
+
+    os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
 
     nonexistent = tmp_path / "missing.gcode"
 
@@ -28,6 +31,9 @@ def test_simulate_from_file_success(tmp_path: Path) -> None:
     """Verify that simulating a valid G-code file returns metrics."""
     app = create_app()
     client = TestClient(app)
+    import os
+
+    os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
 
     gcode_file = tmp_path / "test.gcode"
     gcode_file.write_text(
@@ -54,3 +60,17 @@ G1 X20 Y40 Z60
     assert data["moves"] == 2
     assert data["estimated_time_s"] > 0
     assert data["total_distance_mm"] > 0
+
+
+def test_simulate_from_file_rejects_path_outside_allowed_roots(tmp_path: Path) -> None:
+    import os
+
+    app = create_app()
+    client = TestClient(app)
+    os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
+
+    outside_file = Path(__file__).resolve()
+    response = client.post("/simulate/from-file", json={"path": str(outside_file)})
+
+    assert response.status_code == 403
+    assert "outside allowed API roots" in response.json()["detail"]

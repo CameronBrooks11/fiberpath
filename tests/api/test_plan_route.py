@@ -15,6 +15,9 @@ def test_plan_route_returns_summary(tmp_path: Path) -> None:
     wind_copy.write_text(wind_src.read_text(encoding="utf-8"), encoding="utf-8")
 
     client = TestClient(create_app())
+    import os
+
+    os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
     response = client.post("/plan/from-file", json={"path": str(wind_copy)})
 
     assert response.status_code == 200, response.text
@@ -44,6 +47,9 @@ def test_simulate_and_validate_routes(tmp_path: Path) -> None:
     )
 
     client = TestClient(create_app())
+    import os
+
+    os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
 
     simulate_response = client.post("/simulate/from-file", json={"path": str(gcode_file)})
     assert simulate_response.status_code == 200, simulate_response.text
@@ -58,3 +64,16 @@ def test_simulate_and_validate_routes(tmp_path: Path) -> None:
     validate_response = client.post("/validate/from-file", json={"path": str(wind_copy)})
     assert validate_response.status_code == 200, validate_response.text
     assert validate_response.json()["status"] == "ok"
+
+
+def test_plan_route_rejects_path_outside_allowed_roots(tmp_path: Path) -> None:
+    import os
+
+    client = TestClient(create_app())
+    os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
+
+    outside = EXAMPLES / "simple_cylinder" / "input.wind"
+    response = client.post("/plan/from-file", json={"path": str(outside)})
+
+    assert response.status_code == 403
+    assert "outside allowed API roots" in response.json()["detail"]

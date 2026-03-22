@@ -7,6 +7,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from fiberpath.simulation import simulate_program
 
+from ..path_policy import enforce_input_path_policy
 from ..schemas import FilePathRequest, SimulationResponse
 
 router = APIRouter()
@@ -14,7 +15,7 @@ router = APIRouter()
 
 @router.post("/from-file", response_model=SimulationResponse)
 def simulate_from_file(payload: FilePathRequest) -> SimulationResponse:
-    target = Path(payload.path)
+    target = enforce_input_path_policy(payload.path)
     if not target.exists():
         raise HTTPException(status_code=404, detail=f"No file found at {payload.path}")
     commands = target.read_text(encoding="utf-8").splitlines()

@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.2 - Cross-Platform Testing & Validation
 
 **Target Release:** v0.5.2  
-**Status:** Active (4/42 tasks complete)  
+**Status:** Active (5/42 tasks complete)  
 **Prerequisites:** v0.5.1 (Windows bundling complete)  
 **Timeline:** 1-2 weeks (32-44 hours)
 
@@ -23,9 +23,9 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 ## Phase 0: Technical Findings — Code Fixes
 
 - [x] **[Finding 1 — High]** Enforce helical layer divisibility as a validation error; add regression test (planner silently skips layers otherwise)
-- [ ] **[Finding 2 — Medium]** Restrict API output path to allowed roots and enforce explicit path policy (if not deferred to v0.6.0)
+- [x] **[Finding 2 — Medium]** Restrict API output path to allowed roots and enforce explicit path policy
 
-**Progress:** 1/2 tasks
+**Progress:** 2/2 tasks
 
 ---
 
