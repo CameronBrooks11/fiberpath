@@ -1,8 +1,8 @@
 # FiberPath Roadmap v6 - Release Validation & E2E Automation
 
 **Target Release:** v0.6.0  
-**Status:** Active (0/44 tasks complete)  
-**Prerequisites:** v0.5.2 released and stable baseline confirmed  
+**Status:** Planned (0/44 tasks complete)  
+**Prerequisites:** v0.5.4 released with dependency stabilization and scanning close-out complete  
 **Timeline:** 2-3 weeks (36-52 hours)
 
 **Scope Boundary:** v6 consolidates remaining cross-platform validation, release-readiness docs, and CI E2E automation.

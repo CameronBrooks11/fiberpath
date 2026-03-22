@@ -7,8 +7,8 @@ Last Updated: 2026-03-22
 - Dependency Audit & Low-Risk Refresh ([roadmap-v5.3.md](roadmap-v5.3.md))
   - Target Release: v0.5.3
   - Status: Active
-  - Completion: 10%
-  - Notes: Planning baseline established; audit matrix and risk bucketing in progress
+  - Completion: 65%
+  - Notes: Initial audit complete; Python and Node low-risk updates executed and validated, Tauri packaging green, remaining work is final curation/changelog/release
 - Dependency Hardening & Scanning Automation ([roadmap-v5.4.md](roadmap-v5.4.md))
   - Target Release: v0.5.4
   - Status: Planned
