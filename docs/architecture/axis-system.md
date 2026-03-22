@@ -188,35 +188,35 @@ To support a new controller (e.g., FANUC):
 
 1. **Create AxisMapping:**
 
-    ```python
-    FANUC_STANDARD = AxisMapping(
-        carriage="X",
-        mandrel="C",  # FANUC uses C for rotation
-        delivery="B",
-        is_rotational_mandrel=True,
-        is_rotational_delivery=True
-    )
-    ```
+   ```python
+   FANUC_STANDARD = AxisMapping(
+       carriage="X",
+       mandrel="C",  # FANUC uses C for rotation
+       delivery="B",
+       is_rotational_mandrel=True,
+       is_rotational_delivery=True
+   )
+   ```
 
 2. **Create Dialect Class:**
 
-    ```python
-    class FanucDialect(Dialect):
-        def prologue(self) -> List[str]:
-            return [
-                "G90",  # Absolute positioning
-                "G21",  # Metric units
-            ]
-    ```
+   ```python
+   class FanucDialect(Dialect):
+       def prologue(self) -> List[str]:
+           return [
+               "G90",  # Absolute positioning
+               "G21",  # Metric units
+           ]
+   ```
 
 3. **Register in CLI/API:**
 
-    Add to `fiberpath_cli/plan.py` and `fiberpath_api/routes/plan.py`:
+   Add to `fiberpath_cli/plan.py` and `fiberpath_api/routes/plan.py`:
 
-    ```python
-    if axis_format == "fanuc":
-        dialect = FANUC_STANDARD
-    ```
+   ```python
+   if axis_format == "fanuc":
+       dialect = FANUC_STANDARD
+   ```
 
 ### Custom Axis Configurations
 

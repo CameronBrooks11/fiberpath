@@ -28,22 +28,18 @@ FiberPath v0.5.0 introduces enhanced Marlin G-code streaming with refined state 
 ### Connection Setup
 
 1. **Open Stream Tab**
-
    - Click the **Stream** tab or press `Alt+2`
 
 2. **Refresh Serial Ports**
-
    - Click the **Refresh Ports** button to scan for connected devices
    - Available ports will appear in the dropdown (e.g., `COM3`, `/dev/ttyUSB0`, `/dev/cu.usbserial-*`)
 
 3. **Select Port and Baud Rate**
-
    - Choose your device from the port dropdown
    - Select the appropriate baud rate (common values: 115200, 250000, 500000)
    - **Note:** Check your Marlin firmware configuration for the correct baud rate
 
 4. **Connect**
-
    - Click the **Connect** button
    - Status indicator will turn green when connected
    - Connection logs will appear in the right panel
@@ -92,20 +88,17 @@ Stream complete G-code files to hardware with zero-lag progress monitoring and r
 ### Streaming Workflow
 
 1. **Select G-code File**
-
    - Click **Select G-code File** button
    - Choose a `.gcode`, `.nc`, or `.ngc` file from your filesystem
    - Selected filename displays with a clear button (X) to deselect
 
 2. **Start Streaming**
-
    - Click **Start Stream** (enabled when connected and file selected)
    - Progress bar shows commands sent vs. total
    - Current command displays in real-time with zero lag
    - Log panel shows each command/response
 
 3. **Monitor Progress**
-
    - Progress updates display as `N / Total commands`
    - Command display updates instantly (no queue lag)
    - Log entries show timestamps and status indicators
@@ -115,12 +108,10 @@ Stream complete G-code files to hardware with zero-lag progress monitoring and r
    The streaming interface provides sophisticated control options:
 
    **While Streaming:**
-
    - **Pause Button (Yellow)** – Sends M0 to Marlin, blocks Python streaming loop
    - **Stop Button (Red)** – Emergency M112, disconnects hardware (use with caution)
 
    **While Paused:**
-
    - **Resume Button (Green)** – Sends M108 to Marlin, continues streaming
    - **Cancel Job Button (Orange)** – Graceful exit, stays connected, ready for new file
 

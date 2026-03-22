@@ -17,7 +17,6 @@ The FiberPath CI/CD system has been completely reorganized for v3 to:
 Reusable setup steps used across multiple workflows:
 
 1. **setup-python/**
-
    - Sets up Python 3.11 with uv package manager
    - Creates virtual environment
    - Installs dependencies with caching
@@ -25,7 +24,6 @@ Reusable setup steps used across multiple workflows:
    - Used by: backend-ci, backend-publish, docs-ci, docs-deploy
 
 2. **setup-node/**
-
    - Sets up Node.js 20
    - Configures npm cache
    - Installs GUI dependencies
@@ -150,21 +148,18 @@ Workflows only run when relevant files change:
 ### Manual Release Steps
 
 1. **Prepare Release**
-
    - Update version in `pyproject.toml`
    - Update version in `fiberpath_gui/src-tauri/Cargo.toml`
    - Update `CHANGELOG.md` with release notes
    - Commit changes: `git commit -m "Prepare release 0.3.14"`
 
 2. **Trigger Release Workflow**
-
    - Go to Actions → Release → Run workflow
    - Enter version: `0.3.14`
    - Set prerelease: `false`
    - Click "Run workflow"
 
 3. **Automated Steps**
-
    - Validates version format
    - Checks if tag exists
    - Verifies version in pyproject.toml

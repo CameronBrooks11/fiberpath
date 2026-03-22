@@ -121,7 +121,6 @@ Both represent the same logical operation:
 If you're currently using XYZ format and want to migrate:
 
 1. **Update Marlin Configuration:**
-
    - Configure A and B axes as rotational in Marlin firmware
    - Set appropriate steps/mm for rotational axes
    - Configure acceleration and jerk for rotation
@@ -133,7 +132,6 @@ If you're currently using XYZ format and want to migrate:
    ```
 
 3. **Test thoroughly:**
-
    - Use dry-run mode first: `fiberpath stream output_xab.gcode --dry-run`
    - Test with small movements before full patterns
    - Verify homing and axis limits
