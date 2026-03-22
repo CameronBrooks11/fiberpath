@@ -7,8 +7,8 @@ Last Updated: 2026-03-22
 - Dependency Hardening & Scanning Automation ([roadmap-v5.4.md](roadmap-v5.4.md))
   - Target Release: v0.5.4
   - Status: Active
-  - Completion: 5%
-  - Notes: Fully fleshed-out roadmap with Bucket B intake matrix (11 packages across Python/Node/Rust), per-package migration plans, execution ordering rationale, and Phase 4 scanning/SBOM close-out tasks
+  - Completion: 20%
+  - Notes: Phase 1 intake refreshed on current baseline (Python/Node/Rust audits + baseline tests); Phase 2 Rust slice complete (`thiserror` 2.0.18, `which` 8.0.2) with `cargo check`, `cargo test`, `cargo audit`, and GUI build smoke passing
 - Release Validation & E2E ([roadmap-v6.md](roadmap-v6.md))
   - Target Release: v0.6.0
   - Status: Planned

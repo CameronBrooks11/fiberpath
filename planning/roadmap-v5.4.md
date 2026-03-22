@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.4 - High-Risk Dependency Migrations and Scanning Automation
 
 **Target Release:** v0.5.4  
-**Status:** Planned (intake ready; execution begins after v0.5.3 is confirmed released)  
+**Status:** Active (Phase 1 intake complete; Phase 2 Rust slice complete)  
 **Prerequisites:** v0.5.3 released with low-risk dependency upgrades complete  
 **Timeline:** ~1–2 weeks after v0.5.3 ships; scope-dependent on migration complexity
 
@@ -29,30 +29,30 @@ Complete dependency modernization by safely executing the major-version and migr
 
 Deliverable: confirmed candidate list with baseline test metrics and migration scope per item.
 
-### Bucket B Intake (Carried from v0.5.3 Audit Matrix)
+### Bucket B Intake (Refreshed on 2026-03-22)
 
 | Ecosystem | Package | v0.5.3 Baseline | Candidate | Risk | Primary Migration Concern |
 | --------- | ------- | --------------- | --------- | ---- | ------------------------- |
 | Python | starlette | 0.50.0 | 1.0.0 | High | Major release; breaking changes in routing/middleware/testclient API |
-| Python | fastapi | 0.128.0 | 0.135.1 | Medium | Dependent on starlette compat; needs re-evaluation after starlette upgrade |
+| Python | fastapi | 0.121.3 | 0.135.1 | Medium | Dependent on starlette compat; needs re-evaluation after starlette upgrade |
 | Python | typer | 0.20.0 | 0.24.1 | Medium | CLI behavior changes across 4 minor jumps; needs full CLI regression pass |
-| Python | websockets | current | 16.x | Medium | Major version; async API surface used in streaming path |
-| Node | vite | 5.4.21 | 8.x | High | Major release; config API changes, esbuild upgrade, plugin compat |
-| Node | vitest | 2.1.9 | 4.x | High | Major release; closely tied to vite core, test API changes expected |
+| Python | websockets | 15.0.1 | 16.0 | Medium | Major version; async API surface used in streaming path |
+| Node | vite | 5.4.21 | 8.0.1 | High | Major release; config API changes, esbuild upgrade, plugin compat |
+| Node | vitest | 2.1.9 | 4.1.0 | High | Major release; closely tied to vite core, test API changes expected |
 | Node | react / react-dom | 18.3.1 | 19.x | High | Major framework upgrade; concurrent features, ref API changes, StrictMode behavior |
-| Node | zod | 3.25.76 | 4.x | High | Major release; schema API changes requiring audit of all schema definitions |
-| Node | stylelint | current | 17.x | Medium | CSS/styling lint rule changes; likely config adjustments needed |
+| Node | zod | 3.25.76 | 4.3.6 | High | Major release; schema API changes requiring audit of all schema definitions |
+| Node | stylelint | 16.26.1 | 17.5.0 | Medium | CSS/styling lint rule changes; likely config adjustments needed |
 | Rust | thiserror | 1.0.69 | 2.0.18 | High | Major release; derive macro API changes, code edits required in error types |
 | Rust | which | 7.0.3 | 8.0.2 | High | Major release; `which` API/behavior risk in command resolution paths |
 
 ### Pre-Migration Checklist
 
-- [ ] Re-run fresh audits on the v0.5.3 baseline to capture any new releases in the interim
+- [x] Re-run fresh audits on the v0.5.3 baseline to capture any new releases in the interim
   - `uv lock --upgrade` then `uv run pip list --outdated`
   - `npm outdated` from `fiberpath_gui/`
   - `cargo outdated -R` from `fiberpath_gui/src-tauri/`
-- [ ] Update the intake table above with actual post-v0.5.3 candidate versions
-- [ ] Record baseline test counts: Python tests passing, GUI tests passing
+- [x] Update the intake table above with actual post-v0.5.3 candidate versions
+- [x] Record baseline test counts: Python 96 passed; GUI 113 passed
 - [ ] Read migration guides for each High-risk item before touching code:
   - [ ] Starlette 1.0 migration guide
   - [ ] Vite 6 → 8 migration path (review 6.x and 7.x notes)
@@ -82,15 +82,16 @@ Execute in this sequence to minimize compounding risk:
 
 ### Rust
 
-- [ ] Upgrade `thiserror` to 2.x in `fiberpath_gui/src-tauri/Cargo.toml`
+- [x] Upgrade `thiserror` to 2.x in `fiberpath_gui/src-tauri/Cargo.toml`
   - Audit all `#[derive(thiserror::Error)]` uses in the crate for derive macro changes
   - Confirm display/source attribute syntax is unchanged or migrate accordingly
-  - `cargo build` and `cargo test` pass in `fiberpath_gui/src-tauri/`
-- [ ] Upgrade `which` to 8.x in `fiberpath_gui/src-tauri/Cargo.toml`
+  - `cargo check` and `cargo test` pass in `fiberpath_gui/src-tauri/`
+- [x] Upgrade `which` to 8.x in `fiberpath_gui/src-tauri/Cargo.toml`
   - Audit call sites for API/behavior changes (return type, error type)
-  - `cargo build` pass
-- [ ] Run `cargo audit` post-Rust upgrades and confirm no new advisories introduced
-- [ ] Run Tauri build (`npm run build` from `fiberpath_gui/`) to confirm packaging still produces artifacts
+  - `cargo check` pass
+- [x] Run `cargo audit` post-Rust upgrades and confirm no new advisories introduced
+  - Outcome: no new direct advisories introduced by `thiserror`/`which`; existing GTK/WebKit inherited warnings remain
+- [x] Run Tauri build (`npm run build` from `fiberpath_gui/`) to confirm packaging still produces artifacts
 
 ### Python — starlette
 
