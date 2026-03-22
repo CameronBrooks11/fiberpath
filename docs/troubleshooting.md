@@ -52,7 +52,7 @@ sudo apt install -f  # Fix broken dependencies
 sudo apt install libwebkit2gtk-4.1-0 libappindicator3-1
 
 # Then retry
-sudo dpkg -i fiberpath_0.5.2_amd64.deb
+sudo dpkg -i fiberpath_0.5.3_amd64.deb
 ```
 
 ### AppImage Won't Run (Linux)
@@ -64,8 +64,8 @@ sudo dpkg -i fiberpath_0.5.2_amd64.deb
 **Solution:**
 
 ```sh
-chmod +x fiberpath_0.5.2_amd64.AppImage
-./fiberpath_0.5.2_amd64.AppImage
+chmod +x fiberpath_0.5.3_amd64.AppImage
+./fiberpath_0.5.3_amd64.AppImage
 ```
 
 **FUSE Requirement:** Some older Linux systems require FUSE for AppImage:
@@ -107,7 +107,7 @@ pip install -e .[dev,cli,api]
 
 **Symptom:** "FiberPath CLI not found" error when trying to plan/simulate
 
-**Cause:** This should NOT happen in v0.5.2+ (CLI is bundled). If it does:
+**Cause:** This should NOT happen in v0.5.3+ (CLI is bundled). If it does:
 
 **Solution:**
 

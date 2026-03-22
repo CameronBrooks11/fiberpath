@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.3 - Dependency Audit and Low-Risk Refresh
 
 **Target Release:** v0.5.3  
-**Status:** Active (planning baseline established; audit pending)  
+**Status:** Active (bucket A execution complete; release gate in progress)  
 **Prerequisites:** v0.5.2 released and stable  
 **Timeline:** 3-5 days once audit starts
 
@@ -145,7 +145,7 @@ Execution order:
 - [x] Node: lint + tests + GUI build pass
 - [x] Rust/Tauri: `tauri build --ci` parity and packaging pass
 - [x] Cross-check Tauri npm/rust major-minor parity after lock updates
-- [ ] Changelog and planning docs updated for final 0.5.3 contents
+- [x] Changelog and planning docs updated for final 0.5.3 contents
 
 ---
 
@@ -155,7 +155,7 @@ Deliverable: v0.5.3 released with known risk profile.
 
 - [ ] All CI workflows green on release commit
 - [ ] No unresolved critical/high security issues in included upgrade set
-- [ ] CLI/API/GUI smoke checks pass on release commit
+- [x] CLI/API/GUI smoke checks pass on release commit
 - [ ] Release workflow executed and artifacts verified
 - [ ] Post-release notes capture deferred items for v0.5.4
 

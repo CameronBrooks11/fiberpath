@@ -1,6 +1,6 @@
 {
   "name": "fiberpath-gui",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": true,
   "type": "module",
   "engines": {
@@ -34,7 +34,7 @@
     "@tauri-apps/plugin-dialog": "^2.6.0",
     "@tauri-apps/plugin-shell": "^2.3.5",
     "clsx": "^2.1.0",
-    "lucide-react": "^0.562.0",
+    "lucide-react": "^0.577.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-zoom-pan-pinch": "^3.7.0",

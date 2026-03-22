@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.5.2](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.5.3](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,18 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.5.2**
+-   :material-new-box:{ .lg .middle } **What's New in v0.5.3**
 
     ---
 
-    Release hardening and validation safety improvements:
+    Dependency refresh and stabilization before v0.6.0:
 
-    - Strict helical divisibility validation to prevent silent layer skips
-    - API path policy hardening for plan/validate/simulate routes
-    - GUI contrast/token fixes and CSS variable CI guard
-    - Continued cross-platform validation baseline for v0.6.0 execution
+    - Coordinated low-risk dependency audit and upgrade pass across Python and GUI stacks
+    - Security-driven package updates applied without introducing major-framework migrations
+    - Verified parity and packaging stability for Tauri release artifacts
+    - High-risk dependency migrations formally deferred into v0.5.4
 
-    Builds on the v0.5.1 bundled desktop foundation.
+    Builds on the v0.5.2 hardening baseline.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 
