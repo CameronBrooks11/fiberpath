@@ -2,10 +2,11 @@
 
 from pathlib import Path
 
+import pytest
 from fiberpath.config import load_wind_definition
 from fiberpath.config.schemas import WindDefinition
 from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, MARLIN_XYZ_LEGACY
-from fiberpath.planning import PlanOptions, plan_wind
+from fiberpath.planning import LayerValidationError, PlanOptions, plan_wind
 from fiberpath.visualization import render_plot
 
 REFERENCE_ROOT = Path(__file__).parents[1] / "cyclone_reference_runs"
@@ -75,35 +76,23 @@ def test_xyz_and_xab_both_render_successfully() -> None:
     assert result_xab.image is not None
 
 
-def test_helical_balanced_renders_with_both_formats() -> None:
-    """Verify more complex wind patterns render with both formats."""
+def test_helical_balanced_rejected_by_divisibility_validation() -> None:
+    """Legacy helical-balanced fixture is invalid under strict divisibility checks."""
     definition = _reference_definition("helical-balanced")
 
-    # XYZ format
-    xyz_plan = plan_wind(definition, PlanOptions(dialect=MARLIN_XYZ_LEGACY))
-    result_xyz = render_plot(xyz_plan.commands)
-    assert result_xyz is not None
-    assert result_xyz.image is not None
+    with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
+        plan_wind(definition, PlanOptions(dialect=MARLIN_XYZ_LEGACY))
 
-    # XAB format
-    xab_plan = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
-    result_xab = render_plot(xab_plan.commands)
-    assert result_xab is not None
-    assert result_xab.image is not None
+    with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
+        plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
 
 
-def test_skip_bias_renders_with_both_formats() -> None:
-    """Verify skip-bias pattern renders with both formats."""
+def test_skip_bias_rejected_by_divisibility_validation() -> None:
+    """Legacy skip-bias fixture is invalid under strict divisibility checks."""
     definition = _reference_definition("skip-bias")
 
-    # XYZ format
-    xyz_plan = plan_wind(definition, PlanOptions(dialect=MARLIN_XYZ_LEGACY))
-    result_xyz = render_plot(xyz_plan.commands)
-    assert result_xyz is not None
-    assert result_xyz.image is not None
+    with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
+        plan_wind(definition, PlanOptions(dialect=MARLIN_XYZ_LEGACY))
 
-    # XAB format
-    xab_plan = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
-    result_xab = render_plot(xab_plan.commands)
-    assert result_xab is not None
-    assert result_xab.image is not None
+    with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
+        plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
