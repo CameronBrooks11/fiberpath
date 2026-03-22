@@ -68,7 +68,7 @@ export function SkipLayerEditor({ layerId }: SkipLayerEditorProps) {
           Mandrel Rotation
           <span
             className="layer-editor__tooltip"
-            title="Degrees to rotate mandrel without winding"
+            title="Mandrel-only rotation performed with no fiber deposition. Use this to reposition the start phase between winding layers."
           >
             ⓘ
           </span>
@@ -89,7 +89,7 @@ export function SkipLayerEditor({ layerId }: SkipLayerEditorProps) {
           <span className="layer-editor__error">{errors.mandrel_rotation}</span>
         )}
         <p className="layer-editor__hint">
-          Rotate the mandrel by this amount without laying down material
+          Applies a dry rotation step between layers to shift where the next winding path starts.
         </p>
       </div>
     </div>

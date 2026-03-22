@@ -154,7 +154,7 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
           Wind Angle
           <span
             className="layer-editor__tooltip"
-            title="The angle of the helical wind path (0° to 90°)"
+            title="Angle between fiber path and mandrel axis: 0 degrees is axial, 90 degrees is hoop. Helical layers must be > 0 and <= 90."
           >
             ⓘ
           </span>
@@ -183,7 +183,7 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
           Pattern Number
           <span
             className="layer-editor__tooltip"
-            title="Number of circuits in the winding pattern"
+            title="How many helical bands the layer is split into around the circumference. Must be a positive integer and must divide the computed circuit count."
           >
             ⓘ
           </span>
@@ -209,7 +209,7 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
           Skip Index
           <span
             className="layer-editor__tooltip"
-            title="Number of patterns to skip (must be coprime with pattern number)"
+            title="Stride used to move between helical bands each circuit. Must be a positive integer and coprime with pattern number to visit every band."
           >
             ⓘ
           </span>
@@ -233,7 +233,7 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
           Lock Degrees
           <span
             className="layer-editor__tooltip"
-            title="Degrees of mandrel rotation for locking position"
+            title="Extra mandrel rotation at the lock point for stable termination/restart alignment between circuits."
           >
             ⓘ
           </span>
@@ -264,7 +264,7 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
           Lead-in
           <span
             className="layer-editor__tooltip"
-            title="Linear distance for lead-in movement"
+            title="Linear approach distance before the main winding path starts; used to smooth fiber entry onto the part."
           >
             ⓘ
           </span>
@@ -293,7 +293,7 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
           Lead-out Degrees
           <span
             className="layer-editor__tooltip"
-            title="Degrees of rotation for lead-out movement"
+            title="Extra mandrel rotation after the main path ends; used to smooth exit and maintain placement continuity."
           >
             ⓘ
           </span>
@@ -334,7 +334,7 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
           </span>
         </label>
         <p className="layer-editor__hint">
-          Skip the initial near-lock position check
+          Skip the first near-lock handling step. Enable only when you intentionally want custom lock behavior.
         </p>
       </div>
     </div>

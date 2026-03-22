@@ -45,6 +45,20 @@ Configurable mapping of logical planning axes to physical controller axes. Allow
 
 ## Pattern Parameters
 
+Quick reference for the most frequently confused helical-layer terms:
+
+| Term | Plain meaning | Practical check |
+| ---- | ------------- | --------------- |
+| Wind Angle | Fiber direction relative to mandrel axis (`0°` axial, `90°` hoop) | For helical layers: `0° < angle <= 90°` |
+| Pattern Number | Number of helical bands/circuits in one full repeating pattern | Positive integer; must divide the computed circuit count |
+| Skip Index | Stride between bands on each pass | Positive integer; must be coprime with pattern number |
+| Lock Degrees | Extra mandrel rotation at lock/turn boundaries | Non-negative; tune for stable start/stop placement |
+| Lead In / Lead Out | Entry/exit transition motions before/after main winding path | Keep non-negative; tune for smooth fiber transitions |
+
+If `patternNumber = 3` and `skipIndex = 1`, the path visits bands in order `0 -> 1 -> 2`.
+If `patternNumber = 3` and `skipIndex = 2`, it visits `0 -> 2 -> 1`.
+If values are not coprime (for example `patternNumber = 4`, `skipIndex = 2`), some bands are never visited.
+
 ### Wind Angle
 
 Angle between fiber and mandrel axis (0° = longitudinal, 90° = hoop). Helical layers use wind angles between 0° and 90°.

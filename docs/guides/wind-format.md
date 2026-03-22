@@ -134,6 +134,14 @@ A helical layer winds at a specified angle, creating a spiral pattern around the
 2. **Circuit Divisibility**: The calculated number of circuits must be evenly divisible by `patternNumber` for valid pattern generation
 3. **Wind Angle**: Must be between 0° (exclusive) and 90° (inclusive)
 
+**Parameter Meaning (Quick Guide)**:
+
+- **`windAngle`**: Fiber direction relative to mandrel axis (`0°` axial, `90°` hoop)
+- **`patternNumber`**: Number of helical bands in the repeating pattern
+- **`skipIndex`**: Band-to-band stride each circuit; must be coprime with `patternNumber`
+- **`lockDegrees`**: Additional rotation at lock/turn boundaries
+- **`leadInMM` / `leadOutDegrees`**: Entry and exit transition motions for smoother placement
+
 **Example**:
 
 ```json
@@ -151,7 +159,7 @@ A helical layer winds at a specified angle, creating a spiral pattern around the
 
 **Common Issues**:
 
-- If the planner outputs "Skipping helical layer: X circuits not divisible by pattern Y", adjust either:
+- If validation fails because circuits are not divisible by `patternNumber`, adjust either:
   - The wind angle (changes circuit count)
   - The pattern number (must divide evenly into circuit count)
   - The mandrel diameter or wind length
