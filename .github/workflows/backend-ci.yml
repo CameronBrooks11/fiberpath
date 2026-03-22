@@ -9,6 +9,7 @@ on:
       - "fiberpath_cli/**"
       - "tests/**"
       - "pyproject.toml"
+      - "uv.lock"
       - "setup.cfg"
       - ".github/workflows/backend-ci.yml"
       - ".github/actions/setup-python/**"
