@@ -194,11 +194,11 @@ export function ExportConfirmationDialog({
         </div>
 
         <div className="dialog-footer">
-          <button className="button button--secondary" onClick={onCancel}>
+          <button className="btn btn--secondary" onClick={onCancel}>
             Cancel
           </button>
           <button
-            className="button button--primary"
+            className="btn btn--primary"
             onClick={onConfirm}
             disabled={validationStatus !== "valid"}
           >

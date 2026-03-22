@@ -247,44 +247,6 @@
   color: var(--error);
 }
 
-/* Button Styles */
-.button {
-  padding: 0.625rem 1.25rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
-}
-
-.button--secondary {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-.button--secondary:hover {
-  background: var(--bg-hover);
-  border-color: var(--primary);
-}
-
-.button--primary {
-  background: var(--primary);
-  color: var(--color-text-inverse);
-  border: 1px solid var(--primary);
-}
-
-.button--primary:hover:not(:disabled) {
-  background: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
-}
-
-.button--primary:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
 /* Export Confirmation Dialog */
 .dialog-content--medium {
   max-width: 550px;

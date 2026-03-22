@@ -48,7 +48,11 @@ export function FileField(props: FileFieldProps) {
           placeholder={placeholder ?? "Select a file"}
           onChange={(event) => onChange(event.target.value)}
         />
-        <button type="button" className="secondary" onClick={handleBrowse}>
+        <button
+          type="button"
+          className="btn btn--secondary btn--small"
+          onClick={handleBrowse}
+        >
           Browse
         </button>
       </div>

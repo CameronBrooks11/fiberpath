@@ -219,7 +219,7 @@ export function DiagnosticsDialog({ isOpen, onClose }: DiagnosticsDialogProps) {
         </div>
 
         <div className="dialog-footer">
-          <button className="button button--secondary" onClick={onClose}>
+          <button className="btn btn--secondary" onClick={onClose}>
             Close
           </button>
         </div>
