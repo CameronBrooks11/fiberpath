@@ -1,19 +1,25 @@
 # FiberPath Roadmap v6 - Production Polish & Developer Infrastructure
 
+**Target Release:** v0.6.0  
+**Status:** Active (0/31 tasks complete)  
 **Focus:** Essential production-readiness improvements and developer workflow  
-**Prerequisites:** v5 (Streaming State & Documentation Overhaul) must be complete  
+**Prerequisites:** v0.5.2 cross-platform validation complete and/or blockers documented  
 **Timeline:** 2-3 weeks  
 **Priority:** High - foundational improvements for long-term maintainability
+
+**Scope Boundary:** v6 owns developer tooling, architecture cleanup, performance, and validation UX.  
+**Related Roadmaps:** [roadmap-v5.2.md](roadmap-v5.2.md) owns cross-platform testing and platform-specific documentation.  
+**Technical Input:** [audits/path-planning-review-2026-03-22.md](audits/path-planning-review-2026-03-22.md)
 
 **Philosophy:** Focus on practical improvements that directly benefit development velocity and production quality. Defer speculative features to backlog.
 
 ---
 
-## Phase 1: Release Management CHANGEOLOG.md
+## Phase 1: Release Management CHANGELOG.md
 
 **Goal:** Establish proper release tracking and versioning practices
 
-- [ ] Create CHANGELOG.md retroactively from roadmaps v1-v5
+- [ ] Create CHANGELOG.md retroactively from archived roadmaps v1-v5.0 and completed v5.1
   - v1: Core planning & G-code generation
   - v2: CLI commands, simulation, API
   - v3: GUI with Tauri/React, code quality improvements
@@ -169,9 +175,9 @@
 
 ---
 
-## Deferred to v5.2
+## Dependency on v5.2
 
-**Cross-Platform Testing:** Phase 7 (Cross-Platform Testing) has been moved to a dedicated v5.2 roadmap focusing exclusively on Linux and macOS testing. This allows v6 to focus on developer tooling and production polish independent of platform testing timelines.
+**Cross-Platform Testing:** v5.2 is the dedicated roadmap for Linux and macOS testing. v6 does not duplicate that scope.
 
 See [roadmap-v5.2.md](roadmap-v5.2.md) for comprehensive cross-platform testing plan.
 
@@ -195,8 +201,6 @@ The following items from v6-old have been moved to roadmap-backlog.md:
 ---
 
 ## Overall Progress
-
-**Status:** 0/31 tasks complete (0%)
 
 **Note:** Cross-platform testing moved to dedicated v5.2 roadmap, restoring v6 to original scope.
 
@@ -222,46 +226,8 @@ The following items from v6-old have been moved to roadmap-backlog.md:
 - ✅ Bundle size <2MB, tracked in CI
 - ✅ JSDoc coverage >80% for exported functions
 - ✅ Validation errors visible in UI, not just console
-- ✅ All platforms tested, critical bugs fixed
+- ✅ Cross-platform blockers from v5.2 are addressed or explicitly tracked
 
 ---
 
 **Next:** After v6, proceed to v7 (Advanced Features) only if there's user demand for specific features. Otherwise, focus on bug fixes and minor improvements.
-
----
-
-## Phase 4: Accessibility (a11y) Compliance
-
-- [ ] Add ARIA labels to all buttons, inputs, and interactive elements
-- [ ] Add ARIA live regions for status updates and notifications
-- [ ] Test full keyboard navigation for all workflows (tab order, enter/escape)
-- [ ] Implement focus management for dialogs (trap focus, restore on close)
-- [ ] Add visible focus indicators for keyboard navigation
-- [ ] Test with screen reader (NVDA or JAWS)
-- [ ] Ensure color contrast meets WCAG AA standards
-- [ ] Add alt text for visualization preview images
-- [ ] Support high contrast mode (Windows/macOS)
-
----
-
-## Phase 5: Advanced Layer Strategies
-
-- [ ] Design UI for variable angle profiles
-- [ ] Implement custom winding pattern editor
-- [ ] Add visual pattern preview
-- [ ] Add pattern validation
-- [ ] Add pattern library/templates
-- [ ] Document advanced winding strategies
-- [ ] Add examples for common patterns
-
----
-
-## Phase 6: Custom G-code Configuration
-
-- [ ] Add UI for custom G-code headers (machine-specific setup)
-- [ ] Add UI for custom G-code footers (cooldown, home, etc.)
-- [ ] Add G-code template system with variables
-- [ ] Add preview of generated header/footer
-- [ ] Add validation for custom G-code
-- [ ] Save header/footer templates
-- [ ] Add machine profiles (different machines, different headers)

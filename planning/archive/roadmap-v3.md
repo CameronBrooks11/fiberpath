@@ -39,7 +39,7 @@
 
 **Progress:** 4/4 tasks complete (100%) ✅
 
-**Note:** Created [PERFORMANCE_PROFILING.md](fiberpath_gui/docs/PERFORMANCE_PROFILING.md) guide and [STORE_SPLITTING_ANALYSIS.md](fiberpath_gui/docs/STORE_SPLITTING_ANALYSIS.md) analysis. Store splitting determined unnecessary with current optimizations.
+**Note:** Created PERFORMANCE_PROFILING.md guide and STORE_SPLITTING_ANALYSIS.md analysis. Store splitting determined unnecessary with current optimizations.
 
 ---
 
@@ -53,7 +53,7 @@
 
 **Progress:** 5/5 tasks complete (100%) ✅
 
-**Note:** Created comprehensive [schemas.ts](fiberpath_gui/src/lib/schemas.ts) (284 lines) with Zod schemas, custom error classes (FiberPathError, FileError, ValidationError, CommandError, ConnectionError), and type guards. All Tauri commands now validate responses at runtime. Added type guards to [project.ts](fiberpath_gui/src/types/project.ts) (isHoopLayer, isHelicalLayer, isSkipLayer).
+**Note:** Created comprehensive [schemas.ts](../../fiberpath_gui/src/lib/schemas.ts) (284 lines) with Zod schemas, custom error classes (FiberPathError, FileError, ValidationError, CommandError, ConnectionError), and type guards. All Tauri commands now validate responses at runtime. Added type guards to [project.ts](../../fiberpath_gui/src/types/project.ts) (isHoopLayer, isHelicalLayer, isSkipLayer).
 
 ---
 
@@ -80,13 +80,13 @@
 
 **Files Created:**
 
-- [projectStore.test.ts](fiberpath_gui/src/state/projectStore.test.ts)
-- [converters.test.ts](fiberpath_gui/src/types/converters.test.ts)
-- [schemas.test.ts](fiberpath_gui/src/lib/schemas.test.ts)
-- [workflows.test.ts](fiberpath_gui/src/tests/integration/workflows.test.ts)
-- [setup.ts](fiberpath_gui/src/tests/setup.ts)
-- [gui-tests.yml](.github/workflows/archive/gui-tests.yml)
-- Coverage configured in [vite.config.ts](fiberpath_gui/vite.config.ts)
+- [projectStore.test.ts](../../fiberpath_gui/src/state/projectStore.test.ts)
+- [converters.test.ts](../../fiberpath_gui/src/types/converters.test.ts)
+- [schemas.test.ts](../../fiberpath_gui/src/lib/schemas.test.ts)
+- [workflows.test.ts](../../fiberpath_gui/src/tests/integration/workflows.test.ts)
+- [setup.ts](../../fiberpath_gui/src/tests/setup.ts)
+- gui-tests.yml
+- Coverage configured in [vite.config.ts](../../fiberpath_gui/vite.config.ts)
 
 ---
 
@@ -102,7 +102,7 @@
 
 **Files Created:**
 
-- [types/components.ts](fiberpath_gui/src/types/components.ts) - Shared prop types, numeric ranges, validation helpers
+- [types/components.ts](../../fiberpath_gui/src/types/components.ts) - Shared prop types, numeric ranges, validation helpers
 
 **Components Documented:**
 
@@ -134,20 +134,20 @@
 
 **Files Created:**
 
-- [tokens.css](fiberpath_gui/src/styles/tokens.css) - Design system tokens (170 lines)
-- [reset.css](fiberpath_gui/src/styles/reset.css) - Base resets (47 lines)
-- [typography.css](fiberpath_gui/src/styles/typography.css) - Text styles (127 lines)
-- [buttons.css](fiberpath_gui/src/styles/buttons.css) - Button components (136 lines)
-- [forms.css](fiberpath_gui/src/styles/forms.css) - Form inputs (188 lines)
-- [panels.css](fiberpath_gui/src/styles/panels.css) - Panels & cards (443 lines)
-- [CSS_ARCHITECTURE.md](fiberpath_gui/docs/CSS_ARCHITECTURE.md) - Complete documentation
+- [tokens.css](../../fiberpath_gui/src/styles/tokens.css) - Design system tokens (170 lines)
+- [reset.css](../../fiberpath_gui/src/styles/reset.css) - Base resets (47 lines)
+- [typography.css](../../fiberpath_gui/src/styles/typography.css) - Text styles (127 lines)
+- [buttons.css](../../fiberpath_gui/src/styles/buttons.css) - Button components (136 lines)
+- [forms.css](../../fiberpath_gui/src/styles/forms.css) - Form inputs (188 lines)
+- [panels.css](../../fiberpath_gui/src/styles/panels.css) - Panels & cards (443 lines)
+- CSS_ARCHITECTURE.md - Complete documentation
 
 **Files Modified:**
 
-- [index.css](fiberpath_gui/src/styles/index.css) - Updated imports for modular structure
-- [layout.css](fiberpath_gui/src/styles/layout.css) - Removed 4 !important declarations
-- [base.css](fiberpath_gui/src/styles/base.css) - Deprecated, migrated to modules
-- [.stylelintrc.json](fiberpath_gui/.stylelintrc.json) - Added linting rules
+- [index.css](../../fiberpath_gui/src/styles/index.css) - Updated imports for modular structure
+- [layout.css](../../fiberpath_gui/src/styles/layout.css) - Removed 4 !important declarations
+- base.css - Deprecated, migrated to modules
+- [.stylelintrc.json](../../fiberpath_gui/.stylelintrc.json) - Added linting rules
 
 **Improvements:**
 
@@ -187,22 +187,22 @@
 
 **Backend (Rust/Tauri):**
 
-- Added `check_cli_health` command in [main.rs](fiberpath_gui/src-tauri/src/main.rs)
+- Added `check_cli_health` command in [main.rs](../../fiberpath_gui/src-tauri/src/main.rs)
 - Runs `fiberpath --version` to verify CLI is available and get version
 - Returns health status, version string, and error messages
 
 **Frontend (TypeScript/React):**
 
-- [useCliHealth.ts](fiberpath_gui/src/hooks/useCliHealth.ts) - Hook for CLI health checking with polling
-- [CliHealthContext.tsx](fiberpath_gui/src/contexts/CliHealthContext.tsx) - Context provider for app-wide health state
-- [CliHealthWarning.tsx](fiberpath_gui/src/components/CliHealthWarning.tsx) - Warning banner component
-- [CliUnavailableDialog.tsx](fiberpath_gui/src/components/dialogs/CliUnavailableDialog.tsx) - Detailed troubleshooting dialog
-- [StatusBar.tsx](fiberpath_gui/src/components/StatusBar.tsx) - Updated to show real CLI status
-- [DiagnosticsDialog.tsx](fiberpath_gui/src/components/dialogs/DiagnosticsDialog.tsx) - Updated with real health data
+- [useCliHealth.ts](../../fiberpath_gui/src/hooks/useCliHealth.ts) - Hook for CLI health checking with polling
+- [CliHealthContext.tsx](../../fiberpath_gui/src/contexts/CliHealthContext.tsx) - Context provider for app-wide health state
+- [CliHealthWarning.tsx](../../fiberpath_gui/src/components/CliHealthWarning.tsx) - Warning banner component
+- [CliUnavailableDialog.tsx](../../fiberpath_gui/src/components/dialogs/CliUnavailableDialog.tsx) - Detailed troubleshooting dialog
+- [StatusBar.tsx](../../fiberpath_gui/src/components/StatusBar.tsx) - Updated to show real CLI status
+- [DiagnosticsDialog.tsx](../../fiberpath_gui/src/components/dialogs/DiagnosticsDialog.tsx) - Updated with real health data
 
 **Schemas & Validation:**
 
-- Added `CliHealthResponseSchema` to [schemas.ts](fiberpath_gui/src/lib/schemas.ts)
+- Added `CliHealthResponseSchema` to [schemas.ts](../../fiberpath_gui/src/lib/schemas.ts)
 - Full Zod validation for health check responses
 
 **Features:**
@@ -223,8 +223,8 @@
 
 **Implementation:**
 
-- **3 Composite Actions** (.github/actions/): setup-python, setup-node, setup-rust
-- **7 Workflows** (.github/workflows/): backend-ci, gui-ci, docs-ci, docs-deploy, gui-packaging, backend-publish, release
+- **3 Composite Actions** (../../.github/actions/): setup-python, setup-node, setup-rust
+- **7 Workflows** (../../.github/workflows/): backend-ci, gui-ci, docs-ci, docs-deploy, gui-packaging, backend-publish, release
 - **Naming Convention**: `{component}-{purpose}.yml` (e.g., backend-ci, gui-packaging)
 - **Key Features**: PyPI trusted publishing, coordinated releases, dynamic release notes, multi-OS testing (ubuntu/macos/windows), path-based triggers, proper branch separation (docs-deploy only on main)
 

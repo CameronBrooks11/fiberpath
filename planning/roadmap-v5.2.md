@@ -1,8 +1,13 @@
 # FiberPath Roadmap v5.2 - Cross-Platform Testing & Validation
 
-**Version:** 0.5.2  
+**Target Release:** v0.5.2  
+**Status:** Active (0/37 tasks complete)  
 **Prerequisites:** v0.5.1 (Windows bundling complete)  
 **Timeline:** 1-2 weeks (32-44 hours)
+
+**Scope Boundary:** v5.2 owns cross-platform validation and platform-specific documentation only.  
+**Related Roadmaps:** [roadmap-v6.md](roadmap-v6.md) owns developer tooling, architecture cleanup, performance, and validation UX.  
+**Technical Input:** [audits/path-planning-review-2026-03-22.md](audits/path-planning-review-2026-03-22.md)
 
 ---
 
