@@ -7,7 +7,7 @@
 
 **Scope Boundary:** v5.2 owns cross-platform validation and platform-specific documentation only.  
 **Related Roadmaps:** [roadmap-v6.md](roadmap-v6.md) owns developer tooling, architecture cleanup, performance, and validation UX.  
-**Technical Input:** [audits/path-planning-review-2026-03-22.md](audits/path-planning-review-2026-03-22.md)
+**Technical Input:** [TECHNICAL_FINDINGS.md](TECHNICAL_FINDINGS.md)
 
 ---
 

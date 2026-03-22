@@ -9,7 +9,7 @@
 
 **Scope Boundary:** v6 owns developer tooling, architecture cleanup, performance, and validation UX.  
 **Related Roadmaps:** [roadmap-v5.2.md](roadmap-v5.2.md) owns cross-platform testing and platform-specific documentation.  
-**Technical Input:** [audits/path-planning-review-2026-03-22.md](audits/path-planning-review-2026-03-22.md)
+**Technical Input:** [TECHNICAL_FINDINGS.md](TECHNICAL_FINDINGS.md)
 
 **Philosophy:** Focus on practical improvements that directly benefit development velocity and production quality. Defer speculative features to backlog.
 
@@ -19,7 +19,7 @@
 
 **Goal:** Establish proper release tracking and versioning practices
 
-- [ ] Create CHANGELOG.md retroactively from archived roadmaps v1-v5.0 and completed v5.1
+- [ ] Create CHANGELOG.md retroactively from [RELEASE_HISTORY.md](RELEASE_HISTORY.md) and completed v5.1 notes
   - v1: Core planning & G-code generation
   - v2: CLI commands, simulation, API
   - v3: GUI with Tauri/React, code quality improvements
