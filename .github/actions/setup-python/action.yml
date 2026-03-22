@@ -39,7 +39,12 @@ runs:
 
     - name: Create virtual environment
       shell: bash
-      run: uv venv
+      run: |
+        if [ -d ".venv" ]; then
+          echo "Using restored .venv from cache"
+        else
+          uv venv
+        fi
 
     - name: Install dependencies
       shell: bash
