@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.4 - High-Risk Dependency Migrations and Scanning Automation
 
 **Target Release:** v0.5.4  
-**Status:** Active (Phase 1 intake complete; Phase 2 Rust slice complete)  
+**Status:** Active (Phase 1 intake complete; Phase 2 Rust + Python slices complete; Node migration slices pending)  
 **Prerequisites:** v0.5.3 released with low-risk dependency upgrades complete  
 **Timeline:** ~1–2 weeks after v0.5.3 ships; scope-dependent on migration complexity
 
@@ -72,13 +72,12 @@ Deliverable: each Bucket B item either merged (with tests passing) or formally r
 Execute in this sequence to minimize compounding risk:
 
 1. **Rust ecosystem first** — independent of Python/Node; small code surface; failures are compile-time
-2. **Python: starlette 1.0** — lower-level; fastapi depends on it; migrate before upgrading fastapi
-3. **Python: fastapi** — re-evaluate against the updated starlette baseline
-4. **Python: typer and websockets** — independent of starlette/fastapi; can run in parallel with step 3
-5. **Node: vite + vitest together** — vitest depends on vite's core; upgrade as a coordinated pair
-6. **Node: react / react-dom** — major framework bump; isolated React-layer changes
-7. **Node: zod** — schema API migration; audit all `z.` usages before upgrading
-8. **Node: stylelint** — config/rule migration; low functional risk
+2. **Python: fastapi first, then starlette** — practical ordering discovered during execution: fastapi 0.121 pinned starlette `<0.51`, so fastapi must move first to unlock starlette 1.0
+3. **Python: typer and websockets** — independent of the fastapi/starlette pair
+4. **Node: vite + vitest together** — vitest depends on vite's core; upgrade as a coordinated pair
+5. **Node: react / react-dom** — major framework bump; isolated React-layer changes
+6. **Node: zod** — schema API migration; audit all `z.` usages before upgrading
+7. **Node: stylelint** — config/rule migration; low functional risk
 
 ### Rust
 
@@ -95,41 +94,42 @@ Execute in this sequence to minimize compounding risk:
 
 ### Python — starlette
 
-- [ ] Bump `starlette` constraint in `pyproject.toml` to `>=1.0.0`
-- [ ] Run `uv lock --upgrade-package starlette`
-- [ ] Run full test suite; record any new failures
-- [ ] Focus areas for regression: TestClient behavior, middleware ordering, WebSocket route handling
-- [ ] Fix regressions in `fiberpath_api/` route tests and `tests/api/`
-- [ ] Confirm uvicorn startup smoke still passes
+- [x] Upgrade `starlette` to `1.0.0` via lockfile update (`uv lock --upgrade-package starlette`)
+- [x] Run full test suite; record any new failures
+- [x] Focus areas for regression: TestClient behavior, middleware ordering, WebSocket route handling
+- [x] Fix regressions in `fiberpath_api/` route tests and `tests/api/`
+  - Outcome: no code regressions required; tests stayed green
+- [x] Confirm uvicorn startup smoke still passes
 
 ### Python — fastapi
 
-- [ ] After starlette 1.0 is confirmed stable, bump `fastapi` constraint to `>=0.135.1`
-- [ ] Run `uv lock --upgrade-package fastapi`
-- [ ] Re-run full test suite; record failures
-- [ ] Focus areas: router config, lifespan events, response model handling, any deprecated parameters
-- [ ] API smoke: start with `uvicorn fiberpath_api.main:app` and hit `/plan` and `/simulate` endpoints
-- [ ] Fix regressions in `fiberpath_api/` and `tests/api/`
+- [x] Upgrade `fastapi` to `0.135.1` via lockfile update (`uv lock --upgrade-package fastapi`)
+- [x] Re-run full test suite; record failures
+- [x] Focus areas: router config, lifespan events, response model handling, any deprecated parameters
+- [x] API smoke: start with `uvicorn fiberpath_api.main:app` and hit `/plan` and `/simulate` endpoints
+- [x] Fix regressions in `fiberpath_api/` and `tests/api/`
+  - Outcome: no code regressions required; `/plan/from-file` and `/simulate/from-file` both returned 200
 
 ### Python — typer
 
-- [ ] Bump `typer` constraint in `pyproject.toml` to `>=0.24.1`
-- [ ] Run `uv lock --upgrade-package typer`
-- [ ] Run full CLI regression pass:
-  - `uv run fiberpath plan examples/simple_cylinder/input.wind`
-  - `uv run fiberpath simulate examples/simple_cylinder/input.wind`
-  - `uv run fiberpath plot examples/simple_cylinder/input.wind`
-  - `uv run fiberpath stream examples/simple_cylinder/input.wind --dry-run`
-  - `uv run fiberpath validate examples/simple_cylinder/input.wind`
-- [ ] Run `uv run pytest tests/cli/` and confirm all pass
-- [ ] Check for help text regressions (`--help` output) that may affect docs
+- [x] Upgrade `typer` to `0.24.1` via lockfile update (`uv lock --upgrade-package typer`)
+- [x] Run full CLI regression pass
+  - Note: `simulate` and `plot` require a generated G-code file, not a WIND input directly
+  - Verified flow:
+    - `uv run fiberpath plan examples/simple_cylinder/input.wind -o temp_v54_smoke.gcode`
+    - `uv run fiberpath simulate temp_v54_smoke.gcode`
+    - `uv run fiberpath plot temp_v54_smoke.gcode`
+    - `uv run fiberpath stream examples/simple_cylinder/input.wind --dry-run`
+    - `uv run fiberpath validate examples/simple_cylinder/input.wind`
+- [x] Run `uv run pytest tests/cli/` and confirm all pass
+- [x] Check for help text regressions (`--help` output) that may affect docs
 
 ### Python — websockets
 
-- [ ] Check if `websockets` is a direct dependency or transitive (from fastapi/starlette streaming path)
-- [ ] If direct: bump constraint and run streaming smoke test
-- [ ] If transitive only: confirm version resolved post-starlette/fastapi upgrade satisfies security requirements
-- [ ] `stream` command dry-run: `uv run fiberpath stream examples/simple_cylinder/input.wind --dry-run`
+- [x] Check if `websockets` is a direct dependency or transitive (from fastapi/starlette streaming path)
+  - Outcome: resolved through environment stack; upgraded in lockfile for runtime validation
+- [x] Upgrade to `websockets` `16.0` and run streaming smoke test
+- [x] `stream` command dry-run: `uv run fiberpath stream examples/simple_cylinder/input.wind --dry-run`
 
 ### Node — vite + vitest (coordinated)
 
