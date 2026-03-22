@@ -28,6 +28,8 @@ Purpose: Preserve key historical context needed for planning and changelog work 
 
 ## Current Active Targets
 
+- v0.5.3: Dependency audit, low-risk upgrade rollout, and pre-v0.6.0 stabilization.
+- v0.5.4: Deferred high-risk dependency upgrades plus dependency-scanning automation close-out (Dependabot and CI policy).
 - v0.6.0: Release validation, cross-platform verification, and E2E automation.
 - v0.7.0: Production polish and developer infrastructure.
 

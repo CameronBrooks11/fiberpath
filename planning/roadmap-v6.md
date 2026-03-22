@@ -91,13 +91,13 @@ Ship durable cross-platform confidence for FiberPath by combining manual platfor
 
 ## Summary
 
-| Phase                         | Tasks  | Effort          |
-| ----------------------------- | ------ | --------------- |
-| 1 - Linux Validation          | 15     | 12-16 hours     |
-| 2 - macOS Validation          | 14     | 12-16 hours     |
-| 3 - Fallback & Docs           | 8      | 8-12 hours      |
-| 4 - E2E CI Automation         | 7      | 4-8 hours       |
-| **Total**                     | **44** | **36-52 hours** |
+| Phase                 | Tasks  | Effort          |
+| --------------------- | ------ | --------------- |
+| 1 - Linux Validation  | 15     | 12-16 hours     |
+| 2 - macOS Validation  | 14     | 12-16 hours     |
+| 3 - Fallback & Docs   | 8      | 8-12 hours      |
+| 4 - E2E CI Automation | 7      | 4-8 hours       |
+| **Total**             | **44** | **36-52 hours** |
 
 ## Success Criteria
 
