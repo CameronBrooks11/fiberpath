@@ -83,6 +83,7 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 - [x] Add token-usage guard (lint/check) so undefined CSS custom properties fail CI
 - [ ] Linux/macOS: build without bundled CLI, verify system PATH fallback works
 - [ ] Test `pip install -e .` in venv, verify CLI discovery on both platforms
+- [ ] Implement cross-platform package E2E smoke workflow (see `e2e-cross-platform-plan.md`)
 - [ ] Document dev mode in `fiberpath_gui/docs/development.md`, add troubleshooting
 - [ ] Create `docs/testing/cross-platform-checklist.md` with platform-specific considerations
 - [ ] Update `README.md`, `docs/getting-started.md`, `fiberpath_gui/README.md` with platform notes
@@ -90,7 +91,7 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 - [ ] Document serial naming: Windows (`COM1`), Linux (`/dev/ttyUSB0`), macOS (`/dev/tty.usbserial-*`)
 - [ ] Fix critical bugs, document non-critical quirks, create GitHub issues, update CI if needed
 
-**Progress:** 3/11 tasks
+**Progress:** 3/12 tasks
 
 **Notes:** Dev fallback critical for contributors. Serial port docs essential—naming varies widely.
 
@@ -103,8 +104,8 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 | 0 - Technical Findings | 2      | 2-4 hours       |
 | 1 - Linux Testing      | 15     | 12-16 hours     |
 | 2 - macOS Testing      | 14     | 12-16 hours     |
-| 3 - Fallback & Docs    | 11     | 8-12 hours      |
-| **Total**              | **42** | **34-48 hours** |
+| 3 - Fallback & Docs    | 12     | 8-12 hours      |
+| **Total**              | **43** | **34-48 hours** |
 
 **Prerequisites:** Linux VM (Ubuntu 22.04+), macOS 13+ (Intel + ARM if possible), USB serial hardware or virtual ports
 

@@ -31,6 +31,7 @@ Last Updated: 2026-03-22
 - Backlog decision log: [roadmap-backlog.md](roadmap-backlog.md)
 - Release history summary: [RELEASE_HISTORY.md](RELEASE_HISTORY.md)
 - Outstanding validation items: [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md)
+- E2E automation plan: [e2e-cross-platform-plan.md](e2e-cross-platform-plan.md)
 
 ## Definitions
 
