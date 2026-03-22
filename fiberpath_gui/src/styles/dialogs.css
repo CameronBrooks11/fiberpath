@@ -269,6 +269,22 @@
   border-color: var(--primary);
 }
 
+.button--primary {
+  background: var(--primary);
+  color: var(--color-text-inverse);
+  border: 1px solid var(--primary);
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.button--primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 /* Export Confirmation Dialog */
 .dialog-content--medium {
   max-width: 550px;

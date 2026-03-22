@@ -9,7 +9,7 @@
 
 **Scope Boundary:** v6 owns developer tooling, architecture cleanup, performance, and validation UX.  
 **Related Roadmaps:** [roadmap-v5.2.md](roadmap-v5.2.md) owns cross-platform testing and platform-specific documentation.  
-**Technical Input:** [TECHNICAL_FINDINGS.md](TECHNICAL_FINDINGS.md)
+**Validation Reference:** [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md)
 
 **Philosophy:** Focus on practical improvements that directly benefit development velocity and production quality. Defer speculative features to backlog.
 

@@ -1,13 +1,13 @@
 # FiberPath Roadmap v5.2 - Cross-Platform Testing & Validation
 
 **Target Release:** v0.5.2  
-**Status:** Active (0/37 tasks complete)  
+**Status:** Active (2/42 tasks complete)  
 **Prerequisites:** v0.5.1 (Windows bundling complete)  
 **Timeline:** 1-2 weeks (32-44 hours)
 
 **Scope Boundary:** v5.2 owns cross-platform validation and platform-specific documentation only.  
 **Related Roadmaps:** [roadmap-v6.md](roadmap-v6.md) owns developer tooling, architecture cleanup, performance, and validation UX.  
-**Technical Input:** [TECHNICAL_FINDINGS.md](TECHNICAL_FINDINGS.md)
+**Validation Reference:** [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md)
 
 ---
 
@@ -17,6 +17,15 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 
 **v5.1 Status:** Windows complete (installation, bundling, workflows, upgrades)  
 **v5.2 Focus:** Linux/macOS validation, development fallback, cross-platform docs
+
+---
+
+## Phase 0: Technical Findings — Code Fixes
+
+- [ ] **[Finding 1 — High]** Enforce helical layer divisibility as a validation error; add regression test (planner silently skips layers otherwise)
+- [ ] **[Finding 2 — Medium]** Restrict API output path to allowed roots and enforce explicit path policy (if not deferred to v0.6.0)
+
+**Progress:** 0/2 tasks
 
 ---
 
@@ -69,6 +78,9 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 
 ## Phase 3: Development Fallback & Docs
 
+- [x] Fix dialog/export contrast regressions by restoring missing design-token aliases and primary dialog button styles
+- [ ] UI contrast verification pass across dialogs, stream sections, notifications, and status surfaces (active/hover/disabled/error states)
+- [x] Add token-usage guard (lint/check) so undefined CSS custom properties fail CI
 - [ ] Linux/macOS: build without bundled CLI, verify system PATH fallback works
 - [ ] Test `pip install -e .` in venv, verify CLI discovery on both platforms
 - [ ] Document dev mode in `fiberpath_gui/docs/development.md`, add troubleshooting
@@ -78,7 +90,7 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 - [ ] Document serial naming: Windows (`COM1`), Linux (`/dev/ttyUSB0`), macOS (`/dev/tty.usbserial-*`)
 - [ ] Fix critical bugs, document non-critical quirks, create GitHub issues, update CI if needed
 
-**Progress:** 0/8 tasks
+**Progress:** 2/11 tasks
 
 **Notes:** Dev fallback critical for contributors. Serial port docs essential—naming varies widely.
 
@@ -86,12 +98,13 @@ Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise hol
 
 ## Summary
 
-| Phase               | Tasks  | Effort          |
-| ------------------- | ------ | --------------- |
-| 1 - Linux Testing   | 15     | 12-16 hours     |
-| 2 - macOS Testing   | 14     | 12-16 hours     |
-| 3 - Fallback & Docs | 8      | 8-12 hours      |
-| **Total**           | **37** | **32-44 hours** |
+| Phase                  | Tasks  | Effort          |
+| ---------------------- | ------ | --------------- |
+| 0 - Technical Findings | 2      | 2-4 hours       |
+| 1 - Linux Testing      | 15     | 12-16 hours     |
+| 2 - macOS Testing      | 14     | 12-16 hours     |
+| 3 - Fallback & Docs    | 11     | 8-12 hours      |
+| **Total**              | **42** | **34-48 hours** |
 
 **Prerequisites:** Linux VM (Ubuntu 22.04+), macOS 13+ (Intel + ARM if possible), USB serial hardware or virtual ports
 

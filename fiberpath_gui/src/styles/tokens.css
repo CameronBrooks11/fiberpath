@@ -76,6 +76,7 @@
   --color-zinc-700: #3f3f46;
   --color-zinc-800: #27272a;
   --color-zinc-200: #e4e4e7;
+  --color-red-500: #ef4444;
 
   /* ========================================
      SPACING SCALE
@@ -129,6 +130,7 @@
   --border-radius-md: 0.375rem; /* 6px */
   --border-radius-lg: 0.5rem; /* 8px */
   --border-radius-xl: 0.75rem; /* 12px */
+   --border-radius-round: 9999px;
 
   /* ========================================
      SHADOWS
@@ -162,6 +164,7 @@
   --z-index-overlay: 300;
   --z-index-modal: 400;
   --z-index-toast: 500;
+  --z-controls: 50;
 
   /* ========================================
      COMPONENT-SPECIFIC DIMENSIONS
@@ -196,12 +199,19 @@
   --primary-soft: var(--color-primary-soft);
   --accent: var(--color-accent);
   --bg: var(--color-bg);
+  --bg-primary: var(--color-bg);
   --bg-panel: var(--color-bg-panel);
   --bg-panel-alt: var(--color-bg-panel-alt);
+  --bg-card: var(--color-bg-panel-alt);
+  --bg-hover: var(--color-bg-hover);
   --border: var(--color-border);
+  --border-color: var(--color-border);
   --border-soft: var(--color-border-soft);
   --text: var(--color-text);
+  --text-primary: var(--color-text);
+  --text-secondary: var(--color-text-muted);
   --text-muted: var(--color-text-muted);
   --success: var(--color-success);
+  --warning: var(--color-warning);
   --error: var(--color-error);
 }

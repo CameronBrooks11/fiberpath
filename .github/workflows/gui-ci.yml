@@ -45,6 +45,9 @@ jobs:
       - name: Run Stylelint (CSS)
         run: npm run lint:css
 
+      - name: Verify CSS variable definitions
+        run: npm run lint:css:vars
+
   test:
     name: Test & Build
     needs: lint-and-type-check
