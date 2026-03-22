@@ -1,133 +1,32 @@
-# FiberPath Roadmap v5.2 - Cross-Platform Testing & Validation
+# FiberPath Roadmap v5.2 - Release Record
 
 **Target Release:** v0.5.2  
-**Status:** Active (5/42 tasks complete)  
-**Prerequisites:** v0.5.1 (Windows bundling complete)  
-**Timeline:** 1-2 weeks (32-44 hours)
+**Status:** Closed (scope migrated)  
+**Prerequisites:** v0.5.1 (Windows bundling complete)
 
-**Scope Boundary:** v5.2 owns cross-platform validation and platform-specific documentation only.  
-**Related Roadmaps:** [roadmap-v6.md](roadmap-v6.md) owns developer tooling, architecture cleanup, performance, and validation UX.  
+**Scope Boundary:** v5.2 now records completed release-hardening work only.  
+**Related Roadmaps:** [roadmap-v6.md](roadmap-v6.md) owns all remaining cross-platform validation, documentation, and E2E automation work.  
 **Validation Reference:** [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md)
 
 ---
 
-## Objective
+## Completed in v5.2
 
-Validate bundled CLI on Linux and macOS. Ensure "no Python required" promise holds across all platforms.
-
-**v5.1 Status:** Windows complete (installation, bundling, workflows, upgrades)  
-**v5.2 Focus:** Linux/macOS validation, development fallback, cross-platform docs
-
----
-
-## Phase 0: Technical Findings — Code Fixes
-
-- [x] **[Finding 1 — High]** Enforce helical layer divisibility as a validation error; add regression test (planner silently skips layers otherwise)
-- [x] **[Finding 2 — Medium]** Restrict API output path to allowed roots and enforce explicit path policy
-
-**Progress:** 2/2 tasks
+- [x] **[Finding 1 — High]** Enforced helical layer divisibility as a validation error with regression coverage
+- [x] **[Finding 2 — Medium]** Restricted API input/output paths to allowed roots with explicit policy enforcement
+- [x] Fixed GUI/export contrast regressions by restoring missing design-token aliases and dialog primary button styles
+- [x] Completed UI contrast normalization pass for dialogs, stream views, notifications, and status surfaces
+- [x] Added CSS variable guard checks so undefined custom properties fail CI
 
 ---
 
-## Phase 1: Linux Testing (Ubuntu 22.04 primary, Debian 12, Fedora 39)
+## Migration Note
 
-- [ ] Install `.deb` and `.AppImage` on fresh Ubuntu 22.04, verify no Python needed
-- [ ] Verify `.deb` integration: system menu, desktop file, icons, `.wind` associations
-- [ ] Verify `.AppImage`: FUSE/Type 2, permissions, runs from any directory
-- [ ] Test `.deb` on Debian 12, manual test on Fedora (document RPM need)
-- [ ] Bundled CLI: verify `resources/fiberpath` location, test `--version` discovery
-- [ ] Test all CLI commands via GUI: validate, plan, simulate, plot, stream, interactive
-- [ ] Serial ports: test `/dev/ttyUSB0`, `/dev/ttyACM0`, document `dialout` group requirement
-- [ ] Hardware: test real Marlin (if available) or virtual serial (socat)
-- [ ] Full workflow: example → validate → plan → simulate → visualize
-- [ ] File ops: open `.wind`, save, export G-code, import/export configs
-- [ ] Shortcuts: Ctrl+S, Ctrl+O, Ctrl+N, Ctrl+Q
-- [ ] Streaming: connect, stream, monitor, cancel, disconnect
-- [ ] Upgrade: v0.5.0 → v0.5.2, verify CLI updated, settings preserved
-- [ ] Uninstall: `.deb` via apt, `.AppImage` manual, check `/opt`, `~/.local`, `~/.config` clean
-- [ ] Platform-specific: Wayland/X11, desktop environments (GNOME/KDE/XFCE), OpenGL, themes
+All unfinished v5.2 items were intentionally consolidated into [roadmap-v6.md](roadmap-v6.md), including:
 
-**Progress:** 0/15 tasks
+- Linux validation and packaging verification
+- macOS validation and Gatekeeper/driver coverage
+- Development fallback and contributor setup docs
+- Cross-platform package E2E smoke automation
 
-**Notes:** Serial requires `dialout` group. AppImage needs FUSE or Type 2. Document prominently.
-
----
-
-## Phase 2: macOS Testing (macOS 13+, Intel + Apple Silicon)
-
-- [ ] Install `.dmg` on fresh macOS (Intel and Apple Silicon), verify no Python needed
-- [ ] Verify installation: drag to Applications, launch (Gatekeeper), icons, `.wind` associations
-- [ ] Document Gatekeeper: "Open anyway" workaround, plan code signing for v0.6.0
-- [ ] Bundled CLI: verify `../Resources/fiberpath` location, test `--version` discovery
-- [ ] Test all CLI commands via GUI: validate, plan, simulate, plot, stream, interactive
-- [ ] Serial ports: test `/dev/tty.usbserial*`, `/dev/cu.usbserial*`, document driver needs (FTDI/CH340/CP210x)
-- [ ] Hardware: test real Marlin (if available) or virtual serial (if feasible)
-- [ ] Full workflow: example → validate → plan → simulate → visualize
-- [ ] File ops: open `.wind`, save, export G-code, import/export configs
-- [ ] Shortcuts: **Cmd+S, Cmd+O, Cmd+N, Cmd+Q** (not Ctrl)
-- [ ] Streaming: connect, stream, monitor, cancel, disconnect
-- [ ] Upgrade: v0.5.0 → v0.5.2, verify CLI updated, settings preserved
-- [ ] Uninstall: remove from Applications, check `~/Library/Application Support`, `~/Library/Caches` clean
-- [ ] Platform-specific: Retina displays, Touch Bar, accessibility, Full Disk Access
-
-**Progress:** 0/14 tasks
-
-**Notes:** Cmd shortcuts (not Ctrl). Unsigned requires "Open anyway" workaround. Serial drivers often manual install. Test Intel + ARM separately.
-
----
-
-## Phase 3: Development Fallback & Docs
-
-- [x] Fix dialog/export contrast regressions by restoring missing design-token aliases and primary dialog button styles
-- [x] UI contrast code pass: verified dialogs/stream/notifications/status styles, restored missing `.btn` class variants, and normalized contrast token usage
-- [x] Add token-usage guard (lint/check) so undefined CSS custom properties fail CI
-- [ ] Linux/macOS: build without bundled CLI, verify system PATH fallback works
-- [ ] Test `pip install -e .` in venv, verify CLI discovery on both platforms
-- [ ] Implement cross-platform package E2E smoke workflow (see `e2e-cross-platform-plan.md`)
-- [ ] Document dev mode in `fiberpath_gui/docs/development.md`, add troubleshooting
-- [ ] Create `docs/testing/cross-platform-checklist.md` with platform-specific considerations
-- [ ] Update `README.md`, `docs/getting-started.md`, `fiberpath_gui/README.md` with platform notes
-- [ ] Create `docs/troubleshooting.md`: Linux (`dialout` group), macOS (Gatekeeper, drivers), Windows (v0.5.1)
-- [ ] Document serial naming: Windows (`COM1`), Linux (`/dev/ttyUSB0`), macOS (`/dev/tty.usbserial-*`)
-- [ ] Fix critical bugs, document non-critical quirks, create GitHub issues, update CI if needed
-
-**Progress:** 3/12 tasks
-
-**Notes:** Dev fallback critical for contributors. Serial port docs essential—naming varies widely.
-
----
-
-## Summary
-
-| Phase                  | Tasks  | Effort          |
-| ---------------------- | ------ | --------------- |
-| 0 - Technical Findings | 2      | 2-4 hours       |
-| 1 - Linux Testing      | 15     | 12-16 hours     |
-| 2 - macOS Testing      | 14     | 12-16 hours     |
-| 3 - Fallback & Docs    | 12     | 8-12 hours      |
-| **Total**              | **43** | **34-48 hours** |
-
-**Prerequisites:** Linux VM (Ubuntu 22.04+), macOS 13+ (Intel + ARM if possible), USB serial hardware or virtual ports
-
-**Platform Differences:**
-
-| Aspect       | Linux                 | macOS                    | Windows (v0.5.1)        |
-| ------------ | --------------------- | ------------------------ | ----------------------- |
-| Installer    | `.deb`, `.AppImage`   | `.dmg`, `.app`           | `.msi`, `.exe`          |
-| Shortcuts    | Ctrl+S/O              | Cmd+S/O                  | Ctrl+S/O                |
-| Serial       | `/dev/ttyUSB0`        | `/dev/tty.usbserial-*`   | `COM1`                  |
-| Permissions  | `dialout` group       | Driver install           | Works OOTB              |
-| Code Signing | Not needed            | Gatekeeper workaround    | Not needed              |
-| CLI Path     | `resources/fiberpath` | `../Resources/fiberpath` | `resources/` or `_up_/` |
-
-**Risks:** PyInstaller may need separate Intel/ARM macOS builds. Test oldest Linux distro for glibc compatibility. Document serial driver install for macOS.
-
-**Success Criteria:**
-
-- ✅ `.deb`/`.AppImage` run without Python on Ubuntu 22.04
-- ✅ `.dmg` runs without Python on Intel + Apple Silicon
-- ✅ Platform-specific shortcuts/serial discovery work (with docs)
-- ✅ Dev mode works without bundled CLI
-- ✅ Cross-platform checklist and docs complete
-
-**Next:** After v5.2, proceed to v6 (Production Polish) or release v0.5.2 as cross-platform production release.
+This file remains as a release-history checkpoint for what was completed before consolidation.

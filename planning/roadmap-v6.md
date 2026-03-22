@@ -1,233 +1,109 @@
-# FiberPath Roadmap v6 - Production Polish & Developer Infrastructure
+# FiberPath Roadmap v6 - Release Validation & E2E Automation
 
 **Target Release:** v0.6.0  
-**Status:** Active (0/31 tasks complete)  
-**Focus:** Essential production-readiness improvements and developer workflow  
-**Prerequisites:** v0.5.2 cross-platform validation complete and/or blockers documented  
-**Timeline:** 2-3 weeks  
-**Priority:** High - foundational improvements for long-term maintainability
+**Status:** Active (0/44 tasks complete)  
+**Prerequisites:** v0.5.2 released and stable baseline confirmed  
+**Timeline:** 2-3 weeks (36-52 hours)
 
-**Scope Boundary:** v6 owns developer tooling, architecture cleanup, performance, and validation UX.  
-**Related Roadmaps:** [roadmap-v5.2.md](roadmap-v5.2.md) owns cross-platform testing and platform-specific documentation.  
+**Scope Boundary:** v6 consolidates remaining cross-platform validation, release-readiness docs, and CI E2E automation.
+**Related Roadmaps:** [roadmap-v5.2.md](roadmap-v5.2.md) is closed; [roadmap-v7.md](roadmap-v7.md) owns production polish and developer infrastructure.
 **Validation Reference:** [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md)
 
-**Philosophy:** Focus on practical improvements that directly benefit development velocity and production quality. Defer speculative features to backlog.
+---
+
+## Objective
+
+Ship durable cross-platform confidence for FiberPath by combining manual platform validation with automated package-level E2E checks in CI.
 
 ---
 
-## Phase 1: Release Management CHANGELOG.md
+## Phase 1: Linux Validation (Ubuntu 22.04 primary, Debian 12, Fedora 39)
 
-**Goal:** Establish proper release tracking and versioning practices
+- [ ] Install `.deb` and `.AppImage` on fresh Ubuntu 22.04, verify no Python needed
+- [ ] Verify `.deb` integration: system menu, desktop file, icons, `.wind` associations
+- [ ] Verify `.AppImage`: FUSE/Type 2, permissions, runs from any directory
+- [ ] Test `.deb` on Debian 12, manual test on Fedora (document RPM need)
+- [ ] Bundled CLI: verify `resources/fiberpath` location, test `--version` discovery
+- [ ] Test all CLI commands via GUI: validate, plan, simulate, plot, stream, interactive
+- [ ] Serial ports: test `/dev/ttyUSB0`, `/dev/ttyACM0`, document `dialout` group requirement
+- [ ] Hardware: test real Marlin (if available) or virtual serial (socat)
+- [ ] Full workflow: example -> validate -> plan -> simulate -> visualize
+- [ ] File ops: open `.wind`, save, export G-code, import/export configs
+- [ ] Shortcuts: Ctrl+S, Ctrl+O, Ctrl+N, Ctrl+Q
+- [ ] Streaming: connect, stream, monitor, cancel, disconnect
+- [ ] Upgrade: v0.5.0 -> v0.6.0, verify CLI updated, settings preserved
+- [ ] Uninstall: `.deb` via apt, `.AppImage` manual, check `/opt`, `~/.local`, `~/.config` clean
+- [ ] Platform-specific: Wayland/X11, desktop environments (GNOME/KDE/XFCE), OpenGL, themes
 
-- [ ] Create CHANGELOG.md retroactively from [RELEASE_HISTORY.md](RELEASE_HISTORY.md) and completed v5.1 notes
-  - v1: Core planning & G-code generation
-  - v2: CLI commands, simulation, API
-  - v3: GUI with Tauri/React, code quality improvements
-  - v4: Tabbed interface, basic Marlin streaming
-  - v5: Streaming refinements (zero-lag, cancel job), documentation overhaul
-- [ ] Document changelog maintenance process (Keep a Changelog format)
-- [ ] Use semantic versioning convention: `## [X.X.X] - YYYY-MM-DD`
-- [ ] Add "Unreleased" section at top for ongoing work
-
-**Progress:** 0/4 tasks complete
-
-**Rationale:** CHANGELOG.md is essential for users and maintainers to understand version history. Currently missing despite 5 major versions.
-
----
-
-## Phase 2: Developer Tooling Setup
-
-**Goal:** Establish code quality automation and consistent formatting
-
-- [ ] Add ESLint configuration with React and TypeScript rules
-  - Recommended rules: react-hooks, @typescript-eslint
-  - Configure in `.eslintrc.json`
-  - Add `npm run lint` script
-- [ ] Add Prettier for automatic code formatting
-  - Configure in `.prettierrc.json`
-  - Add `npm run format` script
-  - Set up VSCode settings for format-on-save
-- [ ] Set up pre-commit hooks with husky and lint-staged
-  - Run ESLint and Prettier on staged files
-  - Prevent commits with linting errors
-- [ ] Create `.vscode/settings.json` with recommended extensions
-  - ESLint, Prettier, TypeScript, Rust Analyzer
-  - Configure editor settings (format on save, etc.)
-- [ ] Add debugging configurations in `.vscode/launch.json`
-  - Debug GUI (Tauri dev)
-  - Debug Rust backend
-  - Debug tests
-
-**Progress:** 0/5 tasks complete
-
-**Rationale:** Currently no linting or formatting enforcement. This is foundational for team development and code quality. All modern projects need this.
+**Progress:** 0/15 tasks
 
 ---
 
-## Phase 3: Code Organization Cleanup
+## Phase 2: macOS Validation (macOS 13+, Intel + Apple Silicon)
 
-**Goal:** Resolve architectural inconsistencies and improve code navigation
+- [ ] Install `.dmg` on fresh macOS (Intel and Apple Silicon), verify no Python needed
+- [ ] Verify installation: drag to Applications, launch (Gatekeeper), icons, `.wind` associations
+- [ ] Document Gatekeeper: "Open anyway" workaround, plan code signing decisions
+- [ ] Bundled CLI: verify `../Resources/fiberpath` location, test `--version` discovery
+- [ ] Test all CLI commands via GUI: validate, plan, simulate, plot, stream, interactive
+- [ ] Serial ports: test `/dev/tty.usbserial*`, `/dev/cu.usbserial*`, document driver needs (FTDI/CH340/CP210x)
+- [ ] Hardware: test real Marlin (if available) or virtual serial (if feasible)
+- [ ] Full workflow: example -> validate -> plan -> simulate -> visualize
+- [ ] File ops: open `.wind`, save, export G-code, import/export configs
+- [ ] Shortcuts: Cmd+S, Cmd+O, Cmd+N, Cmd+Q
+- [ ] Streaming: connect, stream, monitor, cancel, disconnect
+- [ ] Upgrade: v0.5.0 -> v0.6.0, verify CLI updated, settings preserved
+- [ ] Uninstall: remove from Applications, check `~/Library/Application Support`, `~/Library/Caches` clean
+- [ ] Platform-specific: Retina displays, Touch Bar, accessibility, Full Disk Access
 
-- [ ] Extract MenuBar menu definitions to configuration file
-  - Current: 310-line component with inline menu structure
-  - Create `lib/menuConfig.ts` with typed menu definitions
-  - Reduces MenuBar.tsx complexity significantly
-- [ ] Consolidate store location inconsistency
-  - Move `state/projectStore.ts` to `stores/projectStore.ts`
-  - Keeps all Zustand stores in one location (streamStore, toastStore already there)
-- [ ] Fix StreamTab component duplication
-  - Remove `components/StreamTab/StreamTab.tsx` (duplicate)
-  - Keep only `components/tabs/StreamTab.tsx`
-  - Move StreamTab components to `components/stream/` subdirectory
-- [ ] Add barrel exports to component subdirectories
-  - Create `index.ts` in canvas/, dialogs/, editors/, forms/, layers/, panels/
-  - Enables cleaner imports: `import { MandrelForm } from '@/components/forms'`
-
-**Progress:** 0/4 tasks complete
-
-**Rationale:** These are known architectural issues identified in v5 review. Small changes with high impact on code maintainability.
+**Progress:** 0/14 tasks
 
 ---
 
-## Phase 4: Performance Implementation
+## Phase 3: Fallback, Docs, and Release Guidance
 
-**Goal:** Implement documented performance optimizations
+- [ ] Linux/macOS: build without bundled CLI, verify system PATH fallback works
+- [ ] Test `pip install -e .` in venv, verify CLI discovery on both platforms
+- [ ] Document dev mode in `fiberpath_gui/docs/development.md`, add troubleshooting
+- [ ] Create `docs/testing/cross-platform-checklist.md` with platform-specific considerations
+- [ ] Update `README.md`, `docs/getting-started.md`, `fiberpath_gui/README.md` with platform notes
+- [ ] Create `docs/troubleshooting.md`: Linux (`dialout` group), macOS (Gatekeeper, drivers), Windows (v0.5.1)
+- [ ] Document serial naming: Windows (`COM1`), Linux (`/dev/ttyUSB0`), macOS (`/dev/tty.usbserial-*`)
+- [ ] Fix critical bugs, document non-critical quirks, create GitHub issues, update CI if needed
 
-- [ ] Add React.memo to pure components
-  - LayerRow (re-renders for every layer update)
-  - Form input components (MandrelForm, TowForm, etc.)
-  - StatusBar, StatusText (only update on actual state changes)
-- [ ] Implement lazy loading for dialogs
-  - Use React.lazy() for AboutDialog, DiagnosticsDialog, ExportConfirmationDialog
-  - Reduces initial bundle size
-  - Dialogs only loaded when opened
-- [ ] Optimize preview image handling
-  - Implement image caching (cache last 3 previews)
-  - Cancel pending preview requests on new request
-  - Prevents memory buildup during rapid plan iterations
-- [ ] Profile and optimize bundle size
-  - Run `vite-bundle-visualizer` to identify large dependencies
-  - Implement tree-shaking for unused imports
-  - Target: <2MB initial bundle (currently unknown, needs measurement)
-- [ ] Add performance budget to CI
-  - Fail build if bundle exceeds size threshold
-  - Tracks performance regressions automatically
-
-**Progress:** 0/5 tasks complete
-
-**Rationale:** Performance documentation exists (performance.md with detailed strategies). Time to implement. All tasks have clear ROI.
-
-**Note:** Virtualization of LayerStack deferred - not needed unless users report issues with 50+ layers.
+**Progress:** 0/8 tasks
 
 ---
 
-## Phase 5: Documentation Completeness
+## Phase 4: Cross-Platform E2E CI Automation
 
-**Goal:** Fill remaining documentation gaps
+- [ ] Create `.github/workflows/gui-e2e-smoke.yml` matrix workflow (Windows/Linux/macOS)
+- [ ] Trigger via `workflow_run` from GUI Packaging and `workflow_dispatch`
+- [ ] Add reusable smoke scripts under `scripts/ci/` (shell + PowerShell)
+- [ ] Validate packaged artifact presence per OS (`.msi/.exe`, `.deb/.AppImage`, `.dmg/.app`)
+- [ ] Verify bundled CLI `--version` from packaged outputs on each OS
+- [ ] Run bundled CLI `validate` and `plan` on sample input; assert output generated
+- [ ] Add clear pass/fail diagnostics in workflow logs for fast triage
 
-- [ ] Add JSDoc comments to all exported functions
-  - Focus on: commands.ts, validation.ts, converters.ts, marlin-api.ts
-  - Document parameters, return types, thrown errors
-  - Examples for complex functions
-- [ ] Document keyboard shortcut system
-  - Create `docs/gui/guides/keyboard-shortcuts.md`
-  - List all shortcuts (Ctrl+S, Ctrl+O, Alt+1/2, etc.)
-  - Document shortcut registration pattern for future additions
-- [ ] Document development tasks guide
-  - Create `docs/development/common-tasks.md`
-  - How to add a new layer type
-  - How to add a menu item
-  - How to add a Tauri command
-  - Common troubleshooting steps
-
-**Progress:** 0/3 tasks complete
-
-**Rationale:** Documentation is 90% complete. These are the final gaps before considering it comprehensive.
+**Progress:** 0/7 tasks
 
 ---
 
-## Phase 6: Enhanced Validation UX
+## Summary
 
-**Goal:** Improve user-facing validation feedback (leverage existing backend)
-
-- [ ] Audit current "Tools > Validate" implementation
-  - Test with various .wind files (valid, invalid, edge cases)
-  - Document current behavior and limitations
-  - Determine if useful or needs redesign
-- [ ] Show validation errors inline in forms
-  - Display errors below input fields (not just console)
-  - Use error state styling (red border, error text)
-  - Clear errors on input change
-- [ ] Implement field-level validation with debouncing
-  - Validate mandrel dimensions as user types (300ms debounce)
-  - Validate pattern numbers immediately
-  - Prevent invalid inputs before submission
-- [ ] Add cross-field validation
-  - Pattern number compatibility with mandrel circumference
-  - Feed rate range validation based on axis format
-  - Display validation warnings (not blocking, informational)
-
-**Progress:** 0/4 tasks complete
-
-**Rationale:** JSON Schema validation backend is solid (37 tests, schemas.md docs). UX needs improvement - errors currently only in console.
-
-**Note:** Comprehensive edge case validation deferred to backlog - current schema validation is sufficient.
-
----
-
-## Dependency on v5.2
-
-**Cross-Platform Testing:** v5.2 is the dedicated roadmap for Linux and macOS testing. v6 does not duplicate that scope.
-
-See [roadmap-v5.2.md](roadmap-v5.2.md) for comprehensive cross-platform testing plan.
-
----
-
-## Deferred to Backlog
-
-The following items from v6-old have been moved to roadmap-backlog.md:
-
-- **Storybook:** High maintenance overhead, not critical for current team size
-- **Dark mode:** Cosmetic feature, no user demand, significant implementation effort
-- **Panel resize handles:** Attempted before, didn't work well, low priority
-- **Keyboard shortcut customization:** Niche feature, current shortcuts sufficient
-- **Workspace layout presets:** Premature optimization, no user demand
-- **Undo/redo system:** Complex implementation, unclear benefit, no user demand
-- **Layer presets:** Advanced feature, unclear use case, no user demand
-- **Advanced layer strategies:** v7 content, requires user demand first
-- **Custom G-code configuration:** v7 content, users can edit .gcode manually
-- **Accessibility compliance:** Important but can wait until v7, 9 tasks, no blocking issues
-
----
-
-## Overall Progress
-
-**Note:** Cross-platform testing moved to dedicated v5.2 roadmap, restoring v6 to original scope.
-
-**Estimated Effort:**
-
-- Phase 1 (Changelog): 4-6 hours
-- Phase 2 (Tooling): 6-8 hours
-- Phase 3 (Code Org): 4-6 hours
-- Phase 4 (Performance): 8-10 hours
-- Phase 5 (Docs): 4-6 hours
-- Phase 6 (Validation): 6-8 hours
-
-**Total:** 36-50 hours (2-3 weeks at 15-20 hours/week)
-
----
+| Phase                         | Tasks  | Effort          |
+| ----------------------------- | ------ | --------------- |
+| 1 - Linux Validation          | 15     | 12-16 hours     |
+| 2 - macOS Validation          | 14     | 12-16 hours     |
+| 3 - Fallback & Docs           | 8      | 8-12 hours      |
+| 4 - E2E CI Automation         | 7      | 4-8 hours       |
+| **Total**                     | **44** | **36-52 hours** |
 
 ## Success Criteria
 
-- ✅ CHANGELOG.md exists and documents all versions
-- ✅ ESLint and Prettier running in CI, no warnings
-- ✅ Code organization consistent (stores in stores/, no duplicates)
-- ✅ React DevTools shows <10ms render times for common actions
-- ✅ Bundle size <2MB, tracked in CI
-- ✅ JSDoc coverage >80% for exported functions
-- ✅ Validation errors visible in UI, not just console
-- ✅ Cross-platform blockers from v5.2 are addressed or explicitly tracked
+- Linux and macOS packaged app flows are manually validated and documented.
+- Dev fallback mode (system PATH) is verified on Linux/macOS.
+- New E2E smoke workflow validates package artifacts and bundled CLI across all 3 OSes.
+- Outstanding v0.6.0 validation gate items are either verified or explicitly waived.
 
----
-
-**Next:** After v6, proceed to v7 (Advanced Features) only if there's user demand for specific features. Otherwise, focus on bug fixes and minor improvements.
+**Next:** After v6 completion, proceed to [roadmap-v7.md](roadmap-v7.md) for production polish and developer infrastructure.

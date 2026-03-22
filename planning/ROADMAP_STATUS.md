@@ -4,16 +4,16 @@ Last Updated: 2026-03-22
 
 ## Active Planning
 
-- Cross-Platform Testing ([roadmap-v5.2.md](roadmap-v5.2.md))
-  - Target Release: v0.5.2
-  - Status: Active
-  - Completion: 12%
-  - Notes: Linux/macOS validation; contrast/token guard and Findings 1-2 done
-- Production Polish ([roadmap-v6.md](roadmap-v6.md))
+- Release Validation & E2E ([roadmap-v6.md](roadmap-v6.md))
   - Target Release: v0.6.0
   - Status: Active
   - Completion: 0%
-  - Notes: Tooling, architecture cleanup, performance, UX
+  - Notes: Consolidated remaining v5.2 cross-platform validation, fallback docs, and CI automation
+- Production Polish ([roadmap-v7.md](roadmap-v7.md))
+  - Target Release: v0.7.0
+  - Status: Planned
+  - Completion: 0%
+  - Notes: Tooling, architecture cleanup, performance, and validation UX refinements after v6
 
 ## Completed Roadmaps (Summary)
 
@@ -25,16 +25,17 @@ Last Updated: 2026-03-22
 | Streaming & Tabs      | RELEASE_HISTORY                    | v0.4.0  | Complete | 100%       | Tab infrastructure and Marlin streaming maturation    |
 | Streaming Refinements | RELEASE_HISTORY                    | v0.5.0  | Complete | 100%       | Pause/cancel behavior and docs overhaul               |
 | Python CLI Bundling   | [roadmap-v5.1.md](roadmap-v5.1.md) | v0.5.1  | Complete | 100%       | Windows-ready bundled CLI with CI/release integration |
+| v5.2 Release Hardening| [roadmap-v5.2.md](roadmap-v5.2.md) | v0.5.2  | Closed   | N/A        | Findings 1-2 and UI contrast guard complete; remaining scope migrated to v6 |
 
 ## Reference Documents
 
 - Backlog decision log: [roadmap-backlog.md](roadmap-backlog.md)
 - Release history summary: [RELEASE_HISTORY.md](RELEASE_HISTORY.md)
 - Outstanding validation items: [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md)
-- E2E automation plan: [e2e-cross-platform-plan.md](e2e-cross-platform-plan.md)
 
 ## Definitions
 
 - Complete: Shipped and closed scope
 - Active: Current execution roadmap
+- Planned: Sequenced roadmap not yet started
 - Reference: Input/decision documents, not execution roadmaps

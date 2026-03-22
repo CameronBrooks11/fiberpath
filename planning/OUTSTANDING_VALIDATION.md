@@ -40,7 +40,7 @@ A finding is closed when:
 
 ## Platform Validation
 
-Execution status for cross-platform testing (v0.5.2 scope). Detailed pass/fail task lists live in [roadmap-v5.2.md](roadmap-v5.2.md).
+Execution status for cross-platform testing (v6 scope). Detailed pass/fail task lists live in [roadmap-v6.md](roadmap-v6.md).
 
 | Platform         | Installer       | Status      | Notes                                    |
 | ---------------- | --------------- | ----------- | ---------------------------------------- |
@@ -54,18 +54,13 @@ Execution status for cross-platform testing (v0.5.2 scope). Detailed pass/fail t
 
 ---
 
-## Release Gate — v0.5.2
+## Release Gate — v0.5.2 (Closed)
 
-All items below must be Verified or Waived before tagging v0.5.2.
+All items below were completed before v0.5.2 closure.
 
 - [x] Finding 1 (Helical Layer Silent Skip) — code fixed, regression tests added
 - [x] Finding 2 (API path handling) — code fixed, tests merged
-- [ ] UI contrast verification complete across dialogs/stream/notifications/status surfaces (active, hover, disabled, error)
-- [ ] Linux: no-Python install confirmed on Ubuntu 22.04 (`.deb` and `.AppImage`)
-- [ ] macOS: no-Python install confirmed on Intel + Apple Silicon
-- [ ] Platform-specific shortcuts/serial discovery work (with docs complete)
-- [ ] Dev fallback (system PATH) works without bundled CLI on Linux and macOS
-- [ ] Cross-platform docs complete: `getting-started.md`, `troubleshooting.md`, serial naming guide
+- [x] UI contrast verification complete across dialogs/stream/notifications/status surfaces (active, hover, disabled, error)
 
 ### Completed Baseline Fixes (2026-03-22)
 
@@ -79,4 +74,10 @@ All items below must be Verified or Waived before tagging v0.5.2.
 ## Release Gate — v0.6.0
 
 - [ ] Finding 3 (CLI exceptions) — code fixed, tests merged
+- [ ] Linux: no-Python install confirmed on Ubuntu 22.04 (`.deb` and `.AppImage`)
+- [ ] macOS: no-Python install confirmed on Intel + Apple Silicon
+- [ ] Platform-specific shortcuts and serial discovery verified (with docs complete)
+- [ ] Dev fallback (system PATH) works without bundled CLI on Linux and macOS
+- [ ] Cross-platform docs complete: `getting-started.md`, `troubleshooting.md`, serial naming guide
+- [ ] Cross-platform package-level E2E smoke workflow green on Windows/Linux/macOS
 - [ ] macOS code signing / Gatekeeper flow resolved or formally deferred
