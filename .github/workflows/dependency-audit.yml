@@ -32,7 +32,7 @@ jobs:
         run: uvx --with pip-audit pip-audit -r requirements-audit.txt --format json --output pip-audit.json
 
       - name: Upload pip-audit report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pip-audit-report
           path: pip-audit.json
@@ -55,7 +55,7 @@ jobs:
         run: npm audit --audit-level=high --json > npm-audit.json
 
       - name: Upload npm audit report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: npm-audit-report
           path: fiberpath_gui/npm-audit.json
@@ -114,7 +114,7 @@ jobs:
           PY
 
       - name: Upload cargo audit report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cargo-audit-report
           path: fiberpath_gui/src-tauri/cargo-audit.json
