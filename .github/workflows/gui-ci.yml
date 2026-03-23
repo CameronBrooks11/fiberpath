@@ -26,7 +26,7 @@ jobs:
         working-directory: fiberpath_gui
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js environment
         uses: ./.github/actions/setup-node
@@ -57,7 +57,7 @@ jobs:
         working-directory: fiberpath_gui
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js environment
         uses: ./.github/actions/setup-node
