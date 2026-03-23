@@ -4,11 +4,32 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog, and this project follows semantic versioning.
 
+<!-- markdownlint-disable MD024 -->
+
 ## [Unreleased]
 
 ### Planned
 
 - v0.6.0 release validation, cross-platform verification, and E2E automation.
+
+## [0.5.4] - 2026-03-23
+
+### Added
+
+- Dependabot automation for pip, npm, cargo, and GitHub Actions with managed PR limits and ignore controls for deferred version lanes.
+- New dependency security workflow (`dependency-audit`) that gates Python, Node, and Rust audits and uploads machine-readable reports.
+- Release SBOM generation/upload for Python, Node, and Rust artifacts as part of the GitHub release pipeline.
+- Published dependency policy covering cadence, ownership, CVE SLAs, and exception handling.
+
+### Changed
+
+- Completed deferred high-risk dependency migrations from v0.5.3, including React 19, Vite 8, Vitest 4, Zod 4, stylelint 17, thiserror 2, and which 8.
+- Aligned GUI runtime/tooling constraints to Node 24 and npm 11 with CI parity in shared setup actions.
+
+### Fixed
+
+- Resolved Python audit vulnerabilities by upgrading `fonttools` and `urllib3` to patched versions.
+- Removed optional GUI test UI dependency path that introduced unresolved upstream audit exposure.
 
 ## [0.5.3] - 2026-03-22
 

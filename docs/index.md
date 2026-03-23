@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.5.3](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.5.4](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,18 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.5.3**
+-   :material-new-box:{ .lg .middle } **What's New in v0.5.4**
 
     ---
 
-    Dependency refresh and stabilization before v0.6.0:
+    High-risk dependency migrations and automation close-out:
 
-    - Coordinated low-risk dependency audit and upgrade pass across Python and GUI stacks
-    - Security-driven package updates applied without introducing major-framework migrations
-    - Verified parity and packaging stability for Tauri release artifacts
-    - High-risk dependency migrations formally deferred into v0.5.4
+    - Completed Bucket B upgrades across Python, Node, and Rust (React 19, Vite 8, Zod 4, thiserror 2)
+    - Added dependency automation guardrails: Dependabot, gated dependency-audit workflow, and SBOM release artifacts
+    - Remediated all known pip-audit findings and aligned GUI runtime/tooling to Node 24
+    - Established ongoing dependency policy and triage SLAs to keep future releases green
 
-    Builds on the v0.5.2 hardening baseline.
+    Builds on the v0.5.3 low-risk refresh baseline.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 

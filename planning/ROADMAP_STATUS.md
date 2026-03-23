@@ -1,14 +1,14 @@
 # FiberPath Roadmap Status Matrix
 
-Last Updated: 2026-03-22
+Last Updated: 2026-03-23
 
 ## Active Planning
 
 - Dependency Hardening & Scanning Automation ([roadmap-v5.4.md](roadmap-v5.4.md))
   - Target Release: v0.5.4
   - Status: Active
-  - Completion: 88%
-  - Notes: Phase 1 intake complete; all planned Phase 2 migration slices are complete across Rust, Python, and Node (vite 8.0.1, vitest 4.1.0, React 19, zod 4, stylelint 17). Phase 4 implementation landed: `.github/dependabot.yml`, `.github/workflows/dependency-audit.yml`, release SBOM generation/upload, and dependency policy doc with contributor link. Remaining work is Phase 3 release prep plus end-to-end Phase 4 verification (Dependabot PR flow, dependency-audit workflow run, SBOM presence on release artifacts)
+  - Completion: 96%
+  - Notes: Phase 1 intake complete and all planned Phase 2 migration slices are complete across Rust, Python, and Node (vite 8.0.1, vitest 4.1.0, React 19, zod 4, stylelint 17). Phase 4 verification is now green (Dependabot flow validated, dependency-audit passing, ignore rules in place). Release prep for v0.5.4 is staged (version anchors, changelog, README/docs card updates). Remaining closeout is release execution/verification: package artifacts, post-bump dependency-audit confirmation, and SBOM presence on the tagged GitHub release.
 - Release Validation & E2E ([roadmap-v6.md](roadmap-v6.md))
   - Target Release: v0.6.0
   - Status: Planned

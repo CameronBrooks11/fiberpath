@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.4 - High-Risk Dependency Migrations and Scanning Automation
 
 **Target Release:** v0.5.4  
-**Status:** Active (Phase 1 intake complete; Phase 2 migration complete; Phase 4 automation implementation in progress)  
+**Status:** Active (Phase 1/2 complete; Phase 4 verification complete; release execution pending)  
 **Prerequisites:** v0.5.3 released with low-risk dependency upgrades complete  
 **Timeline:** ~1–2 weeks after v0.5.3 ships; scope-dependent on migration complexity
 
@@ -182,22 +182,22 @@ Execute in this sequence to minimize compounding risk:
 
 Deliverable: v0.5.4-ready branch with all migrations completed or formally re-deferred.
 
-- [ ] Full Python test suite passes: `uv run --extra dev --extra api pytest` (≥96 tests)
+- [x] Full Python test suite passes: `uv run --extra dev --extra api pytest` (≥96 tests)
 - [x] Full GUI test suite passes: `npx vitest run` (≥113 tests) from `fiberpath_gui/`
 - [x] `npm run build` from `fiberpath_gui/` produces clean artifact
 - [ ] Tauri packaging: `npm run package` produces NSIS and MSI with correct `0.5.4` version labels
-- [ ] CLI smoke: all five subcommands complete without error
+- [x] CLI smoke: all five subcommands complete without error
 - [ ] API smoke: uvicorn startup and endpoint hit
 - [x] `cargo audit` and `npm audit --audit-level=moderate` show no new unaddressed findings
 - [ ] All items either shipped or re-deferred with rationale logged in this document
-- [ ] Bump version to `0.5.4` across all four version anchors:
+- [x] Bump version to `0.5.4` across all four version anchors:
   - `pyproject.toml`
   - `fiberpath_gui/package.json`
   - `fiberpath_gui/src-tauri/Cargo.toml`
   - `fiberpath_gui/src-tauri/tauri.conf.json`
-- [ ] CHANGELOG.md updated with `[0.5.4]` entry
-- [ ] README.md version badge updated
-- [ ] `docs/index.md` release card updated
+- [x] CHANGELOG.md updated with `[0.5.4]` entry
+- [x] README.md version badge updated
+- [x] `docs/index.md` release card updated
 
 ### Re-Deferral Log
 
@@ -221,8 +221,8 @@ This is a non-negotiable gate for v0.5.4 closure. Do not skip or stub.
   - `cargo` — weekly, targeting `fiberpath_gui/src-tauri/`
   - `github-actions` — monthly
 - [x] Set `open-pull-requests-limit` per ecosystem to a manageable number (suggested: 5)
-- [ ] Add `ignore` rules for any explicitly deferred packages to suppress noisy PRs
-- [ ] Confirm Dependabot is enabled in the GitHub repository settings
+- [x] Add `ignore` rules for any explicitly deferred packages to suppress noisy PRs
+- [x] Confirm Dependabot is enabled in the GitHub repository settings
 
 ### CI Security Scanning Workflow
 
@@ -232,7 +232,7 @@ This is a non-negotiable gate for v0.5.4 closure. Do not skip or stub.
   - Node step: `npm audit --audit-level=high` from `fiberpath_gui/`
   - Rust step: `cargo audit` from `fiberpath_gui/src-tauri/` with `--deny warnings` for CVSS ≥ 7
 - [x] Set workflow to **fail on critical/high findings** so broken dependencies gate PRs
-- [ ] Confirm workflow runs clean on the v0.5.4 baseline before marking it as gating
+- [x] Confirm workflow runs clean on the v0.5.4 baseline before marking it as gating
 
 ### SBOM Generation
 
@@ -255,7 +255,7 @@ This is a non-negotiable gate for v0.5.4 closure. Do not skip or stub.
 
 ### End-to-End Verification
 
-- [ ] Trigger a test Dependabot PR (or simulate by bumping a patch dep) and confirm the PR flow works
+- [x] Trigger a test Dependabot PR (or simulate by bumping a patch dep) and confirm the PR flow works
 - [ ] Confirm security scan workflow fires and passes on main after v0.5.4 commit
 - [ ] Confirm SBOM is attached to the v0.5.4 GitHub release
 
