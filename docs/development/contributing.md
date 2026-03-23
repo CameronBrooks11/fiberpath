@@ -28,6 +28,7 @@ Thanks for investing time in the project! This guide explains how to set up a de
 - **Type checking:** MyPy runs in strict mode across `fiberpath`, `fiberpath_cli`, and `fiberpath_api`. Use `uv run mypy` and prefer adding annotations rather than suppressions.
 - **Tests:** `uv run pytest` exercises all unit/integration suites. Add targeted tests for new planner logic, CLI behavior, or API endpoints.
 - **Docs:** Keep `docs/*.md` in sync with feature work. Significant planner or simulator changes usually deserve updates to `docs/architecture.md` or `docs/planner-math.md`.
+- **Dependency hygiene:** Follow `docs/development/dependency-policy.md` for cadence, SLA, and defer/exception handling.
 
 ## Pull Request Checklist
 
@@ -41,11 +42,12 @@ CI will enforce the same Ruff/MyPy/Pytest pipeline on every PR. If a job fails, 
 
 ## CI/CD Workflows
 
-FiberPath uses GitHub Actions with 7 specialized workflows:
+FiberPath uses GitHub Actions with specialized workflows:
 
 - **backend-ci.yml** - Python linting (Ruff), type checking (MyPy), testing (pytest on 3 OS)
 - **gui-ci.yml** - GUI linting (ESLint), type checking (tsc), testing (Vitest), building (Vite)
 - **docs-ci.yml** - Documentation validation (MkDocs --strict)
+- **dependency-audit.yml** - Scheduled and PR-gated dependency security audit (pip-audit, npm audit, cargo audit)
 - **docs-deploy.yml** - Documentation deployment to GitHub Pages (main branch only)
 - **gui-packaging.yml** - Tauri installer creation for Windows/macOS/Linux
 - **backend-publish.yml** - PyPI publishing with trusted publishing (releases only)

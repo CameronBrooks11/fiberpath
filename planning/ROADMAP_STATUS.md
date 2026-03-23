@@ -7,8 +7,8 @@ Last Updated: 2026-03-22
 - Dependency Hardening & Scanning Automation ([roadmap-v5.4.md](roadmap-v5.4.md))
   - Target Release: v0.5.4
   - Status: Active
-  - Completion: 75%
-  - Notes: Phase 1 intake complete; all planned Phase 2 migration slices are complete across Rust, Python, and Node (vite 8.0.1, vitest 4.1.0, React 19, zod 4, stylelint 17). Validation green: Python tests 96, CLI tests 12, GUI tests 113, API smoke `/plan` + `/simulate`, cargo check/test/audit, npm audit clean, GUI build clean. Remaining work is Phase 3 release prep and Phase 4 automation (Dependabot, dependency audit workflow, SBOM, policy doc)
+  - Completion: 88%
+  - Notes: Phase 1 intake complete; all planned Phase 2 migration slices are complete across Rust, Python, and Node (vite 8.0.1, vitest 4.1.0, React 19, zod 4, stylelint 17). Phase 4 implementation landed: `.github/dependabot.yml`, `.github/workflows/dependency-audit.yml`, release SBOM generation/upload, and dependency policy doc with contributor link. Remaining work is Phase 3 release prep plus end-to-end Phase 4 verification (Dependabot PR flow, dependency-audit workflow run, SBOM presence on release artifacts)
 - Release Validation & E2E ([roadmap-v6.md](roadmap-v6.md))
   - Target Release: v0.6.0
   - Status: Planned
@@ -22,16 +22,22 @@ Last Updated: 2026-03-22
 
 ## Completed Roadmaps (Summary)
 
-| Phase                  | Source                             | Release | Status   | Completion | Notes                                                                               |
-| ---------------------- | ---------------------------------- | ------- | -------- | ---------- | ----------------------------------------------------------------------------------- |
-| Core Planning Engine   | RELEASE_HISTORY                    | v0.1.0  | Complete | 100%       | Initial planning, simulation, and GUI foundation                                    |
-| GUI Rehaul             | RELEASE_HISTORY                    | v0.2.0  | Complete | 100%       | Tauri/React architecture and UI rebuild                                             |
-| Code Quality           | RELEASE_HISTORY                    | v0.3.0  | Complete | 100%       | Test/quality and maintainability improvements                                       |
-| Streaming & Tabs       | RELEASE_HISTORY                    | v0.4.0  | Complete | 100%       | Tab infrastructure and Marlin streaming maturation                                  |
-| Streaming Refinements  | RELEASE_HISTORY                    | v0.5.0  | Complete | 100%       | Pause/cancel behavior and docs overhaul                                             |
-| Python CLI Bundling              | [roadmap-v5.1.md](roadmap-v5.1.md) | v0.5.1  | Complete | 100%       | Windows-ready bundled CLI with CI/release integration                               |
-| v5.2 Release Hardening           | [roadmap-v5.2.md](roadmap-v5.2.md) | v0.5.2  | Complete | 100%       | Shipped release-hardening changes; remaining cross-platform expansion tracked in v6 |
-| v5.3 Dependency Audit & Refresh  | [roadmap-v5.3.md](roadmap-v5.3.md) | v0.5.3  | Complete | 100%       | Low-risk dep refresh across Python/Node/Rust; 3 CVE fixes; Bucket B deferred to v5.4 |
+- Core Planning Engine (source: RELEASE_HISTORY, release: v0.1.0, completion: 100%)
+  - Notes: Initial planning, simulation, and GUI foundation
+- GUI Rehaul (source: RELEASE_HISTORY, release: v0.2.0, completion: 100%)
+  - Notes: Tauri/React architecture and UI rebuild
+- Code Quality (source: RELEASE_HISTORY, release: v0.3.0, completion: 100%)
+  - Notes: Test/quality and maintainability improvements
+- Streaming & Tabs (source: RELEASE_HISTORY, release: v0.4.0, completion: 100%)
+  - Notes: Tab infrastructure and Marlin streaming maturation
+- Streaming Refinements (source: RELEASE_HISTORY, release: v0.5.0, completion: 100%)
+  - Notes: Pause/cancel behavior and docs overhaul
+- Python CLI Bundling (source: [roadmap-v5.1.md](roadmap-v5.1.md), release: v0.5.1, completion: 100%)
+  - Notes: Windows-ready bundled CLI with CI/release integration
+- v5.2 Release Hardening (source: [roadmap-v5.2.md](roadmap-v5.2.md), release: v0.5.2, completion: 100%)
+  - Notes: Shipped release-hardening changes; remaining cross-platform expansion tracked in v6
+- v5.3 Dependency Audit & Refresh (source: [roadmap-v5.3.md](roadmap-v5.3.md), release: v0.5.3, completion: 100%)
+  - Notes: Low-risk dependency refresh across Python/Node/Rust; 3 CVE fixes; Bucket B deferred to v5.4
 
 ## Reference Documents
 

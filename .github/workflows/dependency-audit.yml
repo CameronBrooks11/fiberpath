@@ -1,0 +1,121 @@
+name: Dependency Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-audit:
+    name: Python Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python
+        with:
+          dependencies: ".[dev,api,cli,plot]"
+
+      - name: Export requirements for audit
+        run: uv export --all-extras --no-hashes --format requirements-txt -o requirements-audit.txt
+
+      - name: Run pip-audit (JSON report)
+        run: uvx --with pip-audit pip-audit -r requirements-audit.txt --format json --output pip-audit.json
+
+      - name: Upload pip-audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-report
+          path: pip-audit.json
+          retention-days: 30
+
+  npm-audit:
+    name: npm Audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fiberpath_gui
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: ./.github/actions/setup-node
+
+      - name: Run npm audit (high/critical gate)
+        run: npm audit --audit-level=high --json > npm-audit.json
+
+      - name: Upload npm audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-report
+          path: fiberpath_gui/npm-audit.json
+          retention-days: 30
+
+  cargo-audit:
+    name: Cargo Audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fiberpath_gui/src-tauri
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust environment
+        uses: ./.github/actions/setup-rust
+        with:
+          install-linux-deps: "false"
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+
+      - name: Run cargo audit (JSON report)
+        run: cargo audit --json > cargo-audit.json
+
+      - name: Enforce CVSS >= 7.0 gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("cargo-audit.json").read_text(encoding="utf-8"))
+          vulns = report.get("vulnerabilities", {}).get("list", [])
+
+          blocking = []
+          for item in vulns:
+              advisory = item.get("advisory", {})
+              cvss = advisory.get("cvss")
+              if cvss is None:
+                  continue
+              try:
+                  score = float(cvss)
+              except (TypeError, ValueError):
+                  continue
+              if score >= 7.0:
+                  blocking.append((advisory.get("id", "unknown"), score, advisory.get("title", "")))
+
+          if blocking:
+              print("High/Critical Cargo advisories detected:")
+              for advisory_id, score, title in blocking:
+                  print(f"- {advisory_id} (CVSS {score}): {title}")
+              raise SystemExit(1)
+
+          print("No Cargo advisories with CVSS >= 7.0 detected.")
+          PY
+
+      - name: Upload cargo audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-audit-report
+          path: fiberpath_gui/src-tauri/cargo-audit.json
+          retention-days: 30

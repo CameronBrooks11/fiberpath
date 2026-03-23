@@ -63,13 +63,59 @@ jobs:
             exit 1
           fi
 
-  create-release:
-    name: Create GitHub Release
+  generate-sbom:
+    name: Generate SBOM Artifacts
     needs: validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Create SBOM output directory
+        run: mkdir -p sbom
+
+      - name: Generate Python SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          output-file: sbom/python-cyclonedx.json
+          format: cyclonedx-json
+
+      - name: Generate Node SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: ./fiberpath_gui
+          output-file: sbom/node-cyclonedx.json
+          format: cyclonedx-json
+
+      - name: Generate Rust SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: ./fiberpath_gui/src-tauri
+          output-file: sbom/rust-cyclonedx.json
+          format: cyclonedx-json
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-artifacts
+          path: sbom/*.json
+          if-no-files-found: error
+          retention-days: 30
+
+  create-release:
+    name: Create GitHub Release
+    needs: [validate, generate-sbom]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download SBOM artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: sbom-artifacts
+          path: sbom
 
       - name: Get previous tag
         id: previous-tag
@@ -187,6 +233,10 @@ jobs:
           body: ${{ steps.notes.outputs.result }}
           draft: false
           prerelease: ${{ inputs.prerelease }}
+          files: |
+            sbom/python-cyclonedx.json
+            sbom/node-cyclonedx.json
+            sbom/rust-cyclonedx.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

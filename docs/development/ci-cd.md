@@ -62,6 +62,16 @@ Reusable setup steps used across multiple workflows:
   1. Validate MkDocs build (--strict)
 - Status: [![Docs CI](https://github.com/USER/fiberpath/actions/workflows/docs-ci.yml/badge.svg)](https://github.com/USER/fiberpath/actions/workflows/docs-ci.yml)
 
+**dependency-audit.yml** - Dependency Security Audit
+
+- Triggers: Push to main, PRs to main, weekly schedule, manual dispatch
+- Jobs:
+  1. Python dependency audit (pip-audit)
+  2. Node dependency audit (npm audit --audit-level=high)
+  3. Rust dependency audit (cargo audit with CVSS >= 7 gate)
+- Artifacts: JSON reports retained for 30 days
+- Status: [![Dependency Audit](https://github.com/USER/fiberpath/actions/workflows/dependency-audit.yml/badge.svg)](https://github.com/USER/fiberpath/actions/workflows/dependency-audit.yml)
+
 #### Deployment Workflows
 
 **docs-deploy.yml** - Documentation Deployment
@@ -105,9 +115,10 @@ Reusable setup steps used across multiple workflows:
 - Triggers: Manual dispatch with version input
 - Jobs:
   1. Validate version format and tag availability
-  2. Create GitHub release with auto-generated notes
-  3. Trigger backend-publish (PyPI)
-  4. Trigger gui-packaging (installers)
+  2. Generate SBOM artifacts (Python, Node, Rust)
+  3. Create GitHub release with auto-generated notes
+  4. Trigger backend-publish (PyPI)
+  5. Trigger gui-packaging (installers)
 - Inputs:
   - version: Semantic version (e.g., 0.3.14)
   - prerelease: Boolean flag
@@ -128,6 +139,7 @@ Format: `{component}-{purpose}.yml`
 | backend-ci      | ✅          | ✅           | ❌     | ❌      |
 | gui-ci          | ✅          | ✅           | ❌     | ❌      |
 | docs-ci         | ✅          | ✅           | ❌     | ❌      |
+| dependency-audit| ✅          | ✅           | ✅     | ❌      |
 | docs-deploy     | ✅          | ❌           | ✅     | ❌      |
 | gui-packaging   | ✅          | ❌           | ✅     | ✅      |
 | backend-publish | ❌          | ❌           | ✅     | ✅      |
@@ -142,6 +154,7 @@ Workflows only run when relevant files change:
 - **docs-ci**: `docs/**`, `mkdocs.yml`, `CONTRIBUTING.md`, `README.md`
 - **docs-deploy**: Same as docs-ci
 - **gui-packaging**: `fiberpath_gui/**`, workflow files, composite actions
+- **dependency-audit**: `.github/workflows/dependency-audit.yml`, dependency manifests and lockfiles
 
 ## Release Process
 
@@ -153,22 +166,16 @@ Workflows only run when relevant files change:
    - Update `CHANGELOG.md` with release notes
    - Commit changes: `git commit -m "Prepare release 0.3.14"`
 
-2. **Trigger Release Workflow**
+1. **Trigger Release Workflow**
    - Go to Actions → Release → Run workflow
    - Enter version: `0.3.14`
    - Set prerelease: `false`
    - Click "Run workflow"
 
-3. **Automated Steps**
-   - Validates version format
-   - Checks if tag exists
-   - Verifies version in pyproject.toml
-   - Creates Git tag (e.g., `v0.3.14`)
-   - Creates GitHub release with auto-generated notes
-   - Triggers backend-publish (PyPI)
-   - Triggers gui-packaging (installers)
+1. **Automated Steps**
+  Validates version format and tag availability, verifies version consistency, generates SBOM artifacts, creates the release tag, creates the GitHub release, and triggers package publishing and installer workflows.
 
-4. **Post-Release**
+1. **Post-Release**
    - Verify PyPI upload: [pypi.org/project/fiberpath](https://pypi.org/project/fiberpath/)
    - Download GUI installers from GitHub release
    - Test installers on Windows/macOS/Linux
@@ -215,7 +222,9 @@ Previous workflows moved to `.github/workflows/archive/`:
 - [ ] Add workflow status badges to README.md
 - [ ] Document in CONTRIBUTING.md
 - [ ] Add Codecov integration for coverage tracking
-- [ ] Add dependabot for workflow action updates
+- [x] Add Dependabot for Python, npm, Cargo, and GitHub Actions updates
+- [x] Add scheduled dependency security audit workflow
+- [x] Add SBOM artifacts to release pipeline
 - [ ] Add workflow matrix testing for multiple Python versions
 - [ ] Add performance benchmarking workflow
 - [ ] Add security scanning (Snyk, SAST)

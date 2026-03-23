@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.4 - High-Risk Dependency Migrations and Scanning Automation
 
 **Target Release:** v0.5.4  
-**Status:** Active (Phase 1 intake complete; Phase 2 Rust + Python + Node migration slices complete; Phase 4 automation pending)  
+**Status:** Active (Phase 1 intake complete; Phase 2 migration complete; Phase 4 automation implementation in progress)  
 **Prerequisites:** v0.5.3 released with low-risk dependency upgrades complete  
 **Timeline:** ~1–2 weeks after v0.5.3 ships; scope-dependent on migration complexity
 
@@ -215,43 +215,43 @@ This is a non-negotiable gate for v0.5.4 closure. Do not skip or stub.
 
 ### Dependabot Configuration
 
-- [ ] Create `.github/dependabot.yml` with update schedules for:
+- [x] Create `.github/dependabot.yml` with update schedules for:
   - `pip` (Python / uv-managed) — weekly, targeting `pyproject.toml`
   - `npm` — weekly, targeting `fiberpath_gui/`
   - `cargo` — weekly, targeting `fiberpath_gui/src-tauri/`
   - `github-actions` — monthly
-- [ ] Set `open-pull-requests-limit` per ecosystem to a manageable number (suggested: 5)
+- [x] Set `open-pull-requests-limit` per ecosystem to a manageable number (suggested: 5)
 - [ ] Add `ignore` rules for any explicitly deferred packages to suppress noisy PRs
 - [ ] Confirm Dependabot is enabled in the GitHub repository settings
 
 ### CI Security Scanning Workflow
 
-- [ ] Add `.github/workflows/dependency-audit.yml` (or integrate into existing CI):
+- [x] Add `.github/workflows/dependency-audit.yml` (or integrate into existing CI):
   - Trigger: push to main, PR to main, weekly schedule
   - Python step: `uvx pip-audit --requirement <(uv export --no-hashes)` (or equivalent)
   - Node step: `npm audit --audit-level=high` from `fiberpath_gui/`
   - Rust step: `cargo audit` from `fiberpath_gui/src-tauri/` with `--deny warnings` for CVSS ≥ 7
-- [ ] Set workflow to **fail on critical/high findings** so broken dependencies gate PRs
+- [x] Set workflow to **fail on critical/high findings** so broken dependencies gate PRs
 - [ ] Confirm workflow runs clean on the v0.5.4 baseline before marking it as gating
 
 ### SBOM Generation
 
-- [ ] Add SBOM generation step to the release CI workflow:
+- [x] Add SBOM generation step to the release CI workflow:
   - Python: `cyclonedx-py` or `pip-licenses` export
   - Node: `cyclonedx-npm` or `npm sbom --sbom-format cyclonedx`
   - Rust: `cargo-cyclonedx` or `cargo sbom`
-- [ ] Attach SBOM artifacts to the GitHub release (upload alongside NSIS/MSI installers)
-- [ ] Document SBOM artifact names and location in `docs/development/ci-cd.md`
+- [x] Attach SBOM artifacts to the GitHub release (upload alongside NSIS/MSI installers)
+- [x] Document SBOM artifact names and location in `docs/development/ci-cd.md`
 
 ### Dependency Update Policy Documentation
 
-- [ ] Create or update `docs/development/dependency-policy.md` with:
+- [x] Create or update `docs/development/dependency-policy.md` with:
   - Update cadence (patch: monthly; minor: quarterly review; major: planned release slot)
   - Ownership (who triages Dependabot PRs)
   - Triage SLAs (critical CVE: 48 hours; high: 1 week; moderate: next planned slot)
   - Exception handling (document defer decisions with rationale)
   - Tooling references (uv, npm, cargo, pip-audit, cargo-audit)
-- [ ] Link the policy doc from `CONTRIBUTING.md` or `docs/development/contributing.md`
+- [x] Link the policy doc from `CONTRIBUTING.md` or `docs/development/contributing.md`
 
 ### End-to-End Verification
 
