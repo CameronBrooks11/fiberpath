@@ -11,7 +11,7 @@ export const PlanSummarySchema = z.object({
   output: z.string(),
   commands: z.number().int().nonnegative(),
   layers: z.number().int().nonnegative().optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
   axisFormat: z.string().optional(),
 });
 
@@ -164,14 +164,14 @@ export type WindDefinition = z.infer<typeof WindDefinitionSchema>;
  * @throws {ValidationError} if validation fails
  */
 export function validateData<T>(
-  schema: z.ZodSchema<T>,
+  schema: z.ZodType<T>,
   data: unknown,
   context: string,
 ): T {
   const result = schema.safeParse(data);
   if (!result.success) {
-    const errors = result.error.errors
-      .map((e) => `${e.path.join(".")}: ${e.message}`)
+    const errors = result.error.issues
+      .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
       .join(", ");
     throw new ValidationError(`${context} validation failed: ${errors}`);
   }
@@ -182,7 +182,7 @@ export function validateData<T>(
  * Type guard to check if data matches schema
  */
 export function isValidData<T>(
-  schema: z.ZodSchema<T>,
+  schema: z.ZodType<T>,
   data: unknown,
 ): data is T {
   return schema.safeParse(data).success;

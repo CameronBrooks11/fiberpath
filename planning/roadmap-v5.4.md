@@ -1,7 +1,7 @@
 # FiberPath Roadmap v5.4 - High-Risk Dependency Migrations and Scanning Automation
 
 **Target Release:** v0.5.4  
-**Status:** Active (Phase 1 intake complete; Phase 2 Rust + Python slices complete; Node migration slices pending)  
+**Status:** Active (Phase 1 intake complete; Phase 2 Rust + Python + Node migration slices complete; Phase 4 automation pending)  
 **Prerequisites:** v0.5.3 released with low-risk dependency upgrades complete  
 **Timeline:** ~1–2 weeks after v0.5.3 ships; scope-dependent on migration complexity
 
@@ -133,39 +133,47 @@ Execute in this sequence to minimize compounding risk:
 
 ### Node — vite + vitest (coordinated)
 
-- [ ] Read Vite 6.x, 7.x, and 8.x migration docs; note required config changes
-- [ ] Read Vitest 3.x and 4.x changelogs for test API changes
-- [ ] Update `vite` in `fiberpath_gui/package.json` to `^8.0.0`
-- [ ] Update `vitest` in `fiberpath_gui/package.json` to `^4.0.0`
-- [ ] Update `vite.config.ts` and `vitest.config.ts` as required by migration docs
-- [ ] `npm install` and attempt `npx vitest run`
-- [ ] Fix test runner configuration errors before addressing test failures
-- [ ] Run `npm run build` to confirm Tauri artifact build is unaffected
-- [ ] Run `npm run lint` and fix any new lint warnings from the tooling change
+- [x] Read Vite 6.x, 7.x, and 8.x migration docs; note required config changes
+- [x] Read Vitest 3.x and 4.x changelogs for test API changes
+- [x] Update `vite` in `fiberpath_gui/package.json` to `^8.0.0`
+- [x] Update `vitest` in `fiberpath_gui/package.json` to `^4.0.0`
+- [x] Update supporting tooling for compatibility (`@vitejs/plugin-react` 6.x, `@vitest/coverage-v8` 4.x, `jsdom` 29.x)
+- [x] `npm install` and attempt `npx vitest run`
+- [x] Fix test runner configuration errors before addressing test failures
+  - Outcome: no config code changes required after fresh lock reinstall; tests passed on Vitest 4
+- [x] Run `npm run build` to confirm Tauri artifact build is unaffected
+- [x] Run `npm run lint` and fix any new lint warnings from the tooling change
+- [x] Resolve npm audit findings introduced by the upgrade
+  - Outcome: removed optional `@vitest/ui` dev dependency because it pulled vulnerable `flatted@3.4.0` and no patched upstream version exists yet
 
 ### Node — react / react-dom
 
-- [ ] Read React 19 upgrade guide; note which APIs used in the codebase are affected
-- [ ] Search for deprecated patterns: `React.FC` type erasure, `forwardRef`, legacy `createRoot` usage, `act()` in tests
-- [ ] Update `react` and `react-dom` (and `@types/react`, `@types/react-dom`) in `package.json`
-- [ ] `npm install`; run `npx vitest run` and record failures
-- [ ] Fix component-level changes in `fiberpath_gui/src/`
-- [ ] Re-run full GUI test suite (target: all tests passing at parity with v0.5.3 baseline)
+- [x] Read React 19 upgrade guide; note which APIs used in the codebase are affected
+- [x] Search for deprecated patterns: `React.FC` type erasure, `forwardRef`, legacy `createRoot` usage, `act()` in tests
+  - Outcome: no deprecated React patterns found in `fiberpath_gui/src/`
+- [x] Update `react` and `react-dom` (and `@types/react`, `@types/react-dom`) in `package.json`
+- [x] `npm install`; run `npx vitest run` and record failures
+- [x] Fix component-level changes in `fiberpath_gui/src/`
+  - Outcome: React 19 required callback ref fixes in `MenuBar.tsx`
+- [x] Re-run full GUI test suite (target: all tests passing at parity with v0.5.3 baseline)
 - [ ] Visual smoke: launch dev server (`npm run dev`) and exercise main UI flows
 
 ### Node — zod
 
-- [ ] Audit all zod schema definitions in `fiberpath_gui/src/` and `fiberpath_api/schemas.py`-adjacent TS schemas
-- [ ] Review Zod v4 migration guide for API changes (`.default()`, `.optional()`, coercion, error maps)
-- [ ] Update `zod` in `package.json` to `^4.0.0`
-- [ ] `npm install`; compile TypeScript (`npx tsc --noEmit`)
-- [ ] Fix schema definition errors
-- [ ] Re-run GUI test suite; fix any schema validation test failures
+- [x] Audit all zod schema definitions in `fiberpath_gui/src/` and `fiberpath_api/schemas.py`-adjacent TS schemas
+  - Outcome: zod usage isolated to `fiberpath_gui/src/lib/schemas.ts`
+- [x] Review Zod v4 migration guide for API changes (`.default()`, `.optional()`, coercion, error maps)
+- [x] Update `zod` in `package.json` to `^4.0.0`
+- [x] `npm install`; compile TypeScript (`npx tsc --noEmit`)
+- [x] Fix schema definition errors
+  - Outcome: updated `z.record(...)` call signature and `ZodError.errors` -> `ZodError.issues`; changed `z.ZodSchema<T>` to `z.ZodType<T>`
+- [x] Re-run GUI test suite; fix any schema validation test failures
 
 ### Node — stylelint
 
-- [ ] Check if stylelint is configured in `fiberpath_gui/` (look for `.stylelintrc.*`)
-- [ ] If in use: update to 17.x, run lint, fix rule changes
+- [x] Check if stylelint is configured in `fiberpath_gui/` (look for `.stylelintrc.*`)
+- [x] If in use: update to 17.x, run lint, fix rule changes
+- [x] Upgrade `stylelint-config-standard` to 40.x for parity
 - [ ] If not currently wired: defer or skip; note finding in close-out
 
 ---
@@ -175,12 +183,12 @@ Execute in this sequence to minimize compounding risk:
 Deliverable: v0.5.4-ready branch with all migrations completed or formally re-deferred.
 
 - [ ] Full Python test suite passes: `uv run --extra dev --extra api pytest` (≥96 tests)
-- [ ] Full GUI test suite passes: `npx vitest run` (≥113 tests) from `fiberpath_gui/`
-- [ ] `npm run build` from `fiberpath_gui/` produces clean artifact
+- [x] Full GUI test suite passes: `npx vitest run` (≥113 tests) from `fiberpath_gui/`
+- [x] `npm run build` from `fiberpath_gui/` produces clean artifact
 - [ ] Tauri packaging: `npm run package` produces NSIS and MSI with correct `0.5.4` version labels
 - [ ] CLI smoke: all five subcommands complete without error
 - [ ] API smoke: uvicorn startup and endpoint hit
-- [ ] `cargo audit` and `npm audit --audit-level=moderate` show no new unaddressed findings
+- [x] `cargo audit` and `npm audit --audit-level=moderate` show no new unaddressed findings
 - [ ] All items either shipped or re-deferred with rationale logged in this document
 - [ ] Bump version to `0.5.4` across all four version anchors:
   - `pyproject.toml`

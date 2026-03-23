@@ -7,8 +7,8 @@ Last Updated: 2026-03-22
 - Dependency Hardening & Scanning Automation ([roadmap-v5.4.md](roadmap-v5.4.md))
   - Target Release: v0.5.4
   - Status: Active
-  - Completion: 45%
-  - Notes: Phase 1 intake refreshed on current baseline; Phase 2 Rust + Python slices complete (fastapi 0.135.1, starlette 1.0.0, typer 0.24.1, websockets 16.0, thiserror 2.0.18, which 8.0.2) with Python tests (96), CLI tests (12), API endpoint smoke (/plan + /simulate), cargo checks/tests/audit, and GUI build smoke all passing
+  - Completion: 75%
+  - Notes: Phase 1 intake complete; all planned Phase 2 migration slices are complete across Rust, Python, and Node (vite 8.0.1, vitest 4.1.0, React 19, zod 4, stylelint 17). Validation green: Python tests 96, CLI tests 12, GUI tests 113, API smoke `/plan` + `/simulate`, cargo check/test/audit, npm audit clean, GUI build clean. Remaining work is Phase 3 release prep and Phase 4 automation (Dependabot, dependency audit workflow, SBOM, policy doc)
 - Release Validation & E2E ([roadmap-v6.md](roadmap-v6.md))
   - Target Release: v0.6.0
   - Status: Planned

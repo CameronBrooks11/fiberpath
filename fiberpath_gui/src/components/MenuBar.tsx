@@ -147,7 +147,9 @@ export function MenuBar({
       <div className="menubar__menus">
         <details
           className="menubar__menu"
-          ref={(el) => (menuRefs.current[0] = el)}
+          ref={(el) => {
+            menuRefs.current[0] = el;
+          }}
         >
           <summary>File</summary>
           <div className="menubar__dropdown">
@@ -194,7 +196,9 @@ export function MenuBar({
 
         <details
           className="menubar__menu"
-          ref={(el) => (menuRefs.current[1] = el)}
+          ref={(el) => {
+            menuRefs.current[1] = el;
+          }}
         >
           <summary>Edit</summary>
           <div className="menubar__dropdown">
@@ -222,7 +226,9 @@ export function MenuBar({
 
         <details
           className="menubar__menu"
-          ref={(el) => (menuRefs.current[2] = el)}
+          ref={(el) => {
+            menuRefs.current[2] = el;
+          }}
         >
           <summary>View</summary>
           <div className="menubar__dropdown">
@@ -248,7 +254,9 @@ export function MenuBar({
 
         <details
           className="menubar__menu"
-          ref={(el) => (menuRefs.current[3] = el)}
+          ref={(el) => {
+            menuRefs.current[3] = el;
+          }}
         >
           <summary>Tools</summary>
           <div className="menubar__dropdown">
@@ -265,7 +273,9 @@ export function MenuBar({
 
         <details
           className="menubar__menu"
-          ref={(el) => (menuRefs.current[4] = el)}
+          ref={(el) => {
+            menuRefs.current[4] = el;
+          }}
         >
           <summary>Help</summary>
           <div className="menubar__dropdown">
