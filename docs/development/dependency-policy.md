@@ -62,6 +62,6 @@ When an update is deferred:
 
 ## Documentation and Traceability
 
-- Roadmap source of truth: `planning/roadmap-v5.4.md` and future release roadmaps.
+- Roadmap and release source of truth: `planning/RELEASE_HISTORY.md` and current active roadmaps in `planning/`.
 - Release-level summary: `planning/RELEASE_HISTORY.md`.
 - CI architecture reference: `docs/development/ci-cd.md`.
