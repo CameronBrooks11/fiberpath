@@ -1,9 +1,9 @@
 # FiberPath Roadmap v5.4 - High-Risk Dependency Migrations and Scanning Automation
 
 **Target Release:** v0.5.4  
-**Status:** Active (Phase 1/2 complete; Phase 4 verification complete; release execution pending)  
+**Status:** ✅ COMPLETE (Released 2026-03-23, Tag: v0.5.4, Commit: 99d493a)  
 **Prerequisites:** v0.5.3 released with low-risk dependency upgrades complete  
-**Timeline:** ~1–2 weeks after v0.5.3 ships; scope-dependent on migration complexity
+**Timeline:** Completed in ~1 week post-v0.5.3; all migration complexity resolved within scope
 
 **Scope Boundary:** v5.4 handles all deferred major/migration-heavy upgrades from v0.5.3 Bucket B, plus dependency scanning automation and update policy close-out. Feature work is out of scope.
 **Related Roadmaps:** [roadmap-v5.3.md](roadmap-v5.3.md) for the completed low-risk refresh and the source Bucket B list; [roadmap-v6.md](roadmap-v6.md) starts after v5.4 stabilization handoff.
@@ -263,15 +263,19 @@ This is a non-negotiable gate for v0.5.4 closure. Do not skip or stub.
 
 ## Exit Criteria
 
-v0.5.4 is complete when all of the following are true:
+✅ v0.5.4 is **COMPLETE**. All exit criteria are satisfied:
 
-1. All Bucket B items are either merged (with tests passing) or re-deferred with written rationale.
-2. Python test suite ≥ baseline (96 tests), GUI test suite ≥ baseline (113 tests), both green on CI.
-3. Tauri packaging produces correct `0.5.4`-labeled installers.
-4. `cargo audit` and `npm audit --audit-level=moderate` show no unaddressed critical/high findings.
-5. Dependabot is live and configured for all four ecosystems.
-6. CI dependency scanning workflow is active and gating PRs on critical/high.
-7. SBOM attached to the v0.5.4 GitHub release.
-8. Dependency update policy document is published in `docs/development/`.
-9. All CI workflows green on the release commit.
-10. Release workflow executed and artifacts confirmed.
+1. ✅ All Bucket B items merged with tests passing; no re-deferrals.
+2. ✅ Python test suite 96 tests, GUI test suite 113 tests, both passing on CI.
+3. ✅ Tauri packaging produces `0.5.4`-labeled installers (NSIS/MSI/DMG/DEB/AppImage).
+4. ✅ `cargo audit` and `npm audit --audit-level=moderate` show 0 unaddressed critical/high findings.
+5. ✅ Dependabot live and configured for pip, npm, cargo, and github-actions ecosystems.
+6. ✅ CI dependency scanning workflow active and gating PRs on critical/high.
+7. ✅ SBOM JSON files (Python, Node, Rust) attached to v0.5.4 GitHub release.
+8. ✅ Dependency update policy document published in `docs/development/dependency-policy.md`.
+9. ✅ All CI workflows green on the release commit (99d493a).
+10. ✅ Release workflow executed, tagged v0.5.4, and artifacts published to GitHub.
+
+**Release Date:** 2026-03-23  
+**Tag:** v0.5.4  
+**Commit:** 99d493a

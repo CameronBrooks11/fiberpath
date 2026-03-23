@@ -1,6 +1,6 @@
 # FiberPath Release History Summary
 
-Last Updated: 2026-03-22
+Last Updated: 2026-03-23
 
 Purpose: Preserve key historical context needed for planning and changelog work without relying on archived roadmap files.
 
@@ -22,6 +22,8 @@ Purpose: Preserve key historical context needed for planning and changelog work 
   - Release hardening pass: strict helical divisibility enforcement, API path policy enforcement, and GUI contrast/token stabilization with CI guardrails.
 - v0.5.3
   - Dependency audit and low-risk refresh across Python, Node/Tauri, and Rust ecosystems. Applied 16 Python patch/minor updates, 8 npm updates, and Tauri minor parity alignment. Addressed 3 CVEs (filelock CVE-2026-22701, pillow CVE-2026-25990, virtualenv CVE-2026-22702). High-risk/major-version upgrades (starlette 1.0, fastapi, typer, vite 8, vitest 4, react 19, zod 4, thiserror 2, which 8) deferred to v0.5.4.
+- v0.5.4
+  - Completed deferred Bucket B upgrades: Starlette 1.0, FastAPI, typer, Vite 8, Vitest 4, React 19, Zod 4, stylelint 17, thiserror 2, which 8. Remediated Python audit CVEs (fonttools, urllib3). Implemented dependency scanning automation: Dependabot (4 ecosystems), gated dependency-audit CI workflow, SBOM generation/upload on release, and published dependency policy with CVE SLAs.
 
 ## Deferred Into v0.6.0
 
