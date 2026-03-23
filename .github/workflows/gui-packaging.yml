@@ -90,7 +90,7 @@ jobs:
           fi
 
       - name: Upload frozen CLI artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fiberpath-cli-${{ matrix.os }}
           path: dist/fiberpath*
@@ -181,7 +181,7 @@ jobs:
           fi
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fiberpath-gui-${{ matrix.os }}
           path: fiberpath_gui/src-tauri/target/release/bundle
