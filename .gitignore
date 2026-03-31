@@ -36,6 +36,8 @@ _freeze_entry.py
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+requirements-audit.txt
+pip-audit.json
 
 # Unit test / coverage reports
 htmlcov/
