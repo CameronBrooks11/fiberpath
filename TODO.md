@@ -2,6 +2,10 @@
 
 Tasks for Cam todo:
 
+- [ ] Remove untracked links and references to old files through out the docs.
+
+- [ ] Add reprapdiscount smart graphics display to our machine and then document the process of connecting it to Marlin. More importantly, create documentation (need to think thru the best format for this) for the Marlin configuration itself for the machine as well as the physical wiring of everything.
+
 - [ ] Review logic of how the various patterns are constructing and give tool tips or tables or aids or something or other to help users understand what the patterns are doing and how to use them effectively. The only relevant one right now is helical where it often gives circuit mismatch errors but its unclear where the raised number values come from / derive from their inputs in the properties panel.
 
 - [ ] Add more detailed documentation for the various winding patterns and their parameters, including visual aids to help users understand concepts like wind angle, pattern number, skip index, and lock degrees.
