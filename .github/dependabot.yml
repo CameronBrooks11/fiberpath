@@ -2,39 +2,121 @@ version: 2
 updates:
   - package-ecosystem: "pip"
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:00"
       timezone: "UTC"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 8
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      python-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      python-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
 
   - package-ecosystem: "npm"
     directory: "/fiberpath_gui"
+    target-branch: "main"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:15"
       timezone: "UTC"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 8
+    labels:
+      - "dependencies"
+      - "gui"
+      - "node"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      npm-dev-minor-patch:
+        dependency-type: "development"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      npm-prod-minor-patch:
+        dependency-type: "production"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      npm-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
     ignore:
       - dependency-name: "@types/node"
         versions: ["25.x"]
 
   - package-ecosystem: "cargo"
     directory: "/fiberpath_gui/src-tauri"
+    target-branch: "main"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:30"
       timezone: "UTC"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 8
+    labels:
+      - "dependencies"
+      - "rust"
+      - "tauri"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      cargo-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      cargo-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
 
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "main"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
       day: "monday"
-      time: "07:00"
+      time: "06:45"
       timezone: "UTC"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 8
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      github-actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      github-actions-major:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
