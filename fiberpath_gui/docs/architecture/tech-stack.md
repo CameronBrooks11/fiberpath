@@ -27,7 +27,6 @@ Complete technical specifications for FiberPath GUI technology stack.
 export function PlanForm() {
   const project = useProjectStore(state => state.project);
   const updateMandrel = useProjectStore(state => state.updateMandrel);
-
   return (
     <form>
       <input
@@ -123,7 +122,6 @@ interface ProjectState {
   isDirty: boolean;
   updateMandrel: (params: Partial<MandrelParameters>) => void;
 }
-
 export const useProjectStore = create<ProjectState>()(
   devtools(
     (set) => ({
@@ -151,12 +149,10 @@ export const useProjectStore = create<ProjectState>()(
 ```typescript
 // ❌ Bad: Re-renders on any state change
 const state = useProjectStore();
-
 // ✅ Good: Re-renders only when diameter changes
 const diameter = useProjectStore(
   (state) => state.project?.mandrelParameters.diameter
 );
-
 // ✅ Better: Shallow comparison for objects
 const mandrel = useProjectStore(
   (state) => state.project?.mandrelParameters,
@@ -180,7 +176,6 @@ export const MandrelParametersSchema = z.object({
   diameter: z.number().positive(),
   windLength: z.number().positive(),
 });
-
 // TypeScript type inferred automatically
 export type MandrelParameters = z.infer<typeof MandrelParametersSchema>;
 ```
@@ -189,7 +184,6 @@ export type MandrelParameters = z.infer<typeof MandrelParametersSchema>;
 
 ```typescript
 const result = MandrelParametersSchema.safeParse(data);
-
 if (!result.success) {
   console.error(result.error.issues);
   // [{ code: 'too_small', minimum: 0, path: ['diameter'], message: '...' }]
@@ -283,7 +277,6 @@ if (!result.success) {
 
 ```rust
 use std::process::Command;
-
 #[tauri::command]
 fn plan_project(wind_def: String) -> Result<String, String> {
     let output = Command::new("fiberpath")
@@ -291,7 +284,6 @@ fn plan_project(wind_def: String) -> Result<String, String> {
         .arg(&wind_def)
         .output()
         .map_err(|e| e.to_string())?;
-
     if output.status.success() {
         Ok(String::from_utf8_lossy(&output.stdout).to_string())
     } else {
@@ -308,7 +300,6 @@ pub struct MarlinState {
     is_connected: bool,
     queue: VecDeque<String>,
 }
-
 impl MarlinState {
     pub fn connect(&mut self, port_name: &str) -> Result<(), String> {
         self.port = Some(SerialPort::open(port_name)?);
@@ -348,13 +339,10 @@ impl MarlinState {
 
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
-
 it('should update mandrel diameter', () => {
   render(<MandrelForm />);
-
   const input = screen.getByLabelText('Diameter');
   fireEvent.change(input, { target: { value: '200' } });
-
   expect(input).toHaveValue(200);
 });
 ```

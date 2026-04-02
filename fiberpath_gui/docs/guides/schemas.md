@@ -33,7 +33,6 @@ export const SimulationSummarySchema = z.object({
 export const PlotPreviewPayloadSchema = z.object({
   /* ... */
 });
-
 // Wind File Structure Schemas (camelCase for backend)
 export const MandrelParametersSchema = z.object({
   /* ... */
@@ -47,7 +46,6 @@ export const WindHoopLayerSchema = z.object({
 export const WindHelicalLayerSchema = z.object({
   /* ... */
 });
-
 // TypeScript Types (inferred from schemas)
 export type PlanSummary = z.infer<typeof PlanSummarySchema>;
 export type MandrelParameters = z.infer<typeof MandrelParametersSchema>;
@@ -64,7 +62,6 @@ export const MandrelParametersSchema = z.object({
   diameter: z.number().positive(),
   windLength: z.number().positive(),
 });
-
 export type MandrelParameters = z.infer<typeof MandrelParametersSchema>;
 ```
 
@@ -94,19 +91,16 @@ export const WindHoopLayerSchema = z.object({
   terminal: z.boolean(),
   skipEvery: z.number().int().positive().optional(),
 });
-
 export const WindHelicalLayerSchema = z.object({
   windType: z.literal("helical"),
   windAngle: z.number().min(1).max(89),
   terminal: z.boolean(),
   skipEvery: z.number().int().positive().optional(),
 });
-
 export const WindLayerSchema = z.discriminatedUnion("windType", [
   WindHoopLayerSchema,
   WindHelicalLayerSchema,
 ]);
-
 export type WindLayer = z.infer<typeof WindLayerSchema>;
 ```
 
@@ -116,7 +110,6 @@ export type WindLayer = z.infer<typeof WindLayerSchema>;
 
 ```typescript
 const layer: WindLayer = { windType: "hoop", terminal: false };
-
 if (layer.windType === "hoop") {
   // TypeScript knows layer is HoopLayer (no windAngle)
 } else if (layer.windType === "helical") {
@@ -155,7 +148,6 @@ export const ComplexSchema = z.object({
 ```typescript
 export const AxisFormatSchema = z.enum(["xab", "xyz"]);
 export type AxisFormat = z.infer<typeof AxisFormatSchema>;
-
 // Usage
 const format: AxisFormat = "xab"; // Valid
 const format: AxisFormat = "abc"; // Type error
@@ -165,7 +157,6 @@ const format: AxisFormat = "abc"; // Type error
 
 ```typescript
 export const MetadataSchema = z.record(z.unknown());
-
 // Accepts any object with string keys
 const metadata = { foo: 123, bar: "abc", baz: true };
 ```
@@ -187,9 +178,7 @@ export const PositiveEvenNumberSchema = z
 
 ```typescript
 import { MandrelParametersSchema } from "./schemas";
-
 const result = MandrelParametersSchema.safeParse(data);
-
 if (result.success) {
   console.log("Valid:", result.data);
   // result.data is typed as MandrelParameters
@@ -225,7 +214,6 @@ export function validateData<T>(
   context: string
 ): T {
   const result = schema.safeParse(data);
-
   if (!result.success) {
     const errors = result.error.issues.map(
       (issue) => `${issue.path.join(".")}: ${issue.message}`
@@ -235,10 +223,8 @@ export function validateData<T>(
       result.error.issues
     );
   }
-
   return result.data;
 }
-
 // Usage
 const summary = validateData(PlanSummarySchema, response, "plan_wind response");
 ```
@@ -266,22 +252,17 @@ export const planWind = async (inputPath: string): Promise<PlanSummary> => {
 function MandrelForm({ onSubmit }: { onSubmit: (m: MandrelParameters) => void }) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
     const formData = {
       diameter: Number(e.target.diameter.value),
       windLength: Number(e.target.windLength.value),
     };
-
     const result = MandrelParametersSchema.safeParse(formData);
-
     if (!result.success) {
       setErrors(result.error.issues);
       return;
     }
-
     onSubmit(result.data);
   };
-
   return <form onSubmit={handleSubmit}>...</form>;
 }
 ```
@@ -290,7 +271,6 @@ function MandrelForm({ onSubmit }: { onSubmit: (m: MandrelParameters) => void })
 
 ```typescript
 export const PartialMandrelSchema = MandrelParametersSchema.partial();
-
 // Now all fields are optional
 const update: z.infer<typeof PartialMandrelSchema> = { diameter: 200 };
 ```
@@ -304,7 +284,6 @@ export const ConfigSchema = z.object({
   axisFormat: z.enum(["xab", "xyz"]).default("xab"),
   dryRun: z.boolean().default(false),
 });
-
 const config = ConfigSchema.parse({});
 // Result: { axisFormat: "xab", dryRun: false }
 ```
@@ -315,7 +294,6 @@ const config = ConfigSchema.parse({});
 
 ```typescript
 const result = MandrelParametersSchema.safeParse({ diameter: -10 });
-
 if (!result.success) {
   console.log(result.error.issues);
   // [
@@ -363,7 +341,6 @@ export const MandrelParametersSchema = z.object({
       invalid_type_error: "Diameter must be a number",
     })
     .positive("Diameter must be positive"),
-
   windLength: z.number().positive("Wind length must be positive"),
 });
 ```
@@ -375,17 +352,14 @@ export const MandrelParametersSchema = z.object({
 ```typescript
 import { describe, it, expect } from "vitest";
 import { MandrelParametersSchema } from "./schemas";
-
 describe("MandrelParametersSchema", () => {
   it("should accept valid mandrel parameters", () => {
     const valid = {
       diameter: 150,
       windLength: 800,
     };
-
     const result = MandrelParametersSchema.safeParse(valid);
     expect(result.success).toBe(true);
-
     if (result.success) {
       expect(result.data.diameter).toBe(150);
       expect(result.data.windLength).toBe(800);
@@ -400,22 +374,17 @@ describe("MandrelParametersSchema", () => {
 describe("MandrelParametersSchema", () => {
   it("should reject negative diameter", () => {
     const invalid = { diameter: -10, windLength: 800 };
-
     const result = MandrelParametersSchema.safeParse(invalid);
     expect(result.success).toBe(false);
-
     if (!result.success) {
       expect(result.error.issues[0].path).toEqual(["diameter"]);
       expect(result.error.issues[0].code).toBe("too_small");
     }
   });
-
   it("should reject missing fields", () => {
     const invalid = { diameter: 150 };
-
     const result = MandrelParametersSchema.safeParse(invalid);
     expect(result.success).toBe(false);
-
     if (!result.success) {
       expect(result.error.issues[0].path).toEqual(["windLength"]);
     }
@@ -431,12 +400,10 @@ describe("WindLayerSchema", () => {
     const hoop = { windType: "hoop", terminal: false };
     expect(WindLayerSchema.safeParse(hoop).success).toBe(true);
   });
-
   it("should accept helical layer", () => {
     const helical = { windType: "helical", windAngle: 45, terminal: false };
     expect(WindLayerSchema.safeParse(helical).success).toBe(true);
   });
-
   it("should reject invalid windType", () => {
     const invalid = { windType: "unknown", terminal: false };
     expect(WindLayerSchema.safeParse(invalid).success).toBe(false);
@@ -471,7 +438,6 @@ describe("WindLayerSchema", () => {
        const valid = { name: "test", value: 42 };
        expect(NewFeatureSchema.safeParse(valid).success).toBe(true);
      });
-
      it("should reject empty name", () => {
        const invalid = { name: "", value: 42 };
        expect(NewFeatureSchema.safeParse(invalid).success).toBe(false);
@@ -483,7 +449,6 @@ describe("WindLayerSchema", () => {
 
    ```typescript
    import { NewFeatureSchema, NewFeature } from "./schemas";
-
    function processFeature(data: unknown): NewFeature {
      return validateData(NewFeatureSchema, data, "new feature");
    }

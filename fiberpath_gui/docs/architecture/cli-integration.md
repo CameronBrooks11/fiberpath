@@ -68,32 +68,27 @@ pub fn get_fiberpath_executable(app: &AppHandle) -> Result<PathBuf, String> {
         }
         Err(e) => log::warn!("Failed to resolve bundled CLI path: {}", e),
     }
-
     // 2. Fallback to system PATH (development mode)
     if let Ok(system_path) = which::which("fiberpath") {
         log::info!("Using system CLI: {:?}", system_path);
         return Ok(system_path);
     }
-
     // 3. Error if neither found
     Err(
         "FiberPath CLI not found. Please install: pip install fiberpath"
             .to_string(),
     )
 }
-
 fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
     let resource_dir = app
         .path()
         .resource_dir()
         .map_err(|e| format!("Failed to get resource directory: {}", e))?;
-
     let cli_name = if cfg!(windows) {
         "fiberpath.exe"
     } else {
         "fiberpath"
     };
-
     // Platform-specific paths
     let bundled_path = if cfg!(windows) {
         // Windows uses _up_/ subdirectory for installed apps
@@ -101,7 +96,6 @@ fn get_bundled_cli_path(app: &AppHandle) -> Result<PathBuf, String> {
     } else {
         resource_dir.join("bundled-cli").join(cli_name)
     };
-
     Ok(bundled_path)
 }
 ```
@@ -160,7 +154,6 @@ freeze-cli:
       with:
         name: frozen-cli-windows
         path: dist/fiberpath.exe
-
 package-gui-windows:
   needs: freeze-cli
   steps:
@@ -225,10 +218,8 @@ export function withRetry<T, Args extends any[]>(
   options: RetryOptions = {}
 ): (...args: Args) => Promise<T> {
   const { maxAttempts = 3, delayMs = 1000 } = options;
-
   return async (...args: Args): Promise<T> => {
     let lastError: Error | null = null;
-
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         return await fn(...args);
@@ -239,7 +230,6 @@ export function withRetry<T, Args extends any[]>(
         }
       }
     }
-
     throw lastError;
   };
 }
@@ -264,7 +254,6 @@ export class CommandError extends Error {
     this.name = "CommandError";
   }
 }
-
 export class ValidationError extends Error {
   constructor(
     message: string,
@@ -274,7 +263,6 @@ export class ValidationError extends Error {
     this.name = "ValidationError";
   }
 }
-
 export class FileError extends Error {
   constructor(
     message: string,
@@ -285,7 +273,6 @@ export class FileError extends Error {
     this.name = "FileError";
   }
 }
-
 export class ConnectionError extends Error {
   constructor(
     message: string,
@@ -333,12 +320,10 @@ async fn plan_wind(
         output_file.clone(),
         "--json".into(),
     ];
-
     if let Some(format) = axis_format {
         args.push("--axis-format".into());
         args.push(format);
     }
-
     let output = exec_fiberpath(args).await.map_err(|err| err.to_string())?;
     parse_json_payload(output).map(|mut payload| {
         if let Value::Object(ref mut obj) = payload {
@@ -390,11 +375,9 @@ async fn plot_preview(
         scale.to_string(),
     ];
     exec_fiberpath(args).await.map_err(|err| err.to_string())?;
-
     // Read PNG and encode as base64
     let bytes = fs::read(&output_file)
         .map_err(|err| FiberpathError::File(err.to_string()).to_string())?;
-
     Ok(PlotPreview {
         path: output_file,
         image_base64: Base64.encode(bytes),
@@ -413,12 +396,10 @@ async fn exec_fiberpath(args: Vec<String>) -> Result<Output, FiberpathError> {
         .args(&args)
         .output()
         .map_err(|e| FiberpathError::Process(e.to_string()))?;
-
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         return Err(FiberpathError::Process(stderr.to_string()));
     }
-
     Ok(output)
 }
 ```
@@ -448,7 +429,6 @@ fn temp_path(extension: &str) -> String {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_millis();
-
     let temp_dir = std::env::temp_dir();
     temp_dir
         .join(format!("fiberpath-{}.{}", timestamp, extension))
@@ -545,7 +525,6 @@ async fn check_cli_version() -> Result<String, String> {
         .arg("--version")
         .output()
         .map_err(|e| format!("CLI not found: {}", e))?;
-
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 ```
@@ -603,7 +582,6 @@ For long-running operations, use event emission:
 
 ```rust
 use tauri::Manager;
-
 #[tauri::command]
 async fn long_operation(window: tauri::Window) -> Result<(), String> {
     for i in 0..100 {
@@ -616,7 +594,6 @@ async fn long_operation(window: tauri::Window) -> Result<(), String> {
 
 ```typescript
 import { listen } from "@tauri-apps/api/event";
-
 const unlisten = await listen<number>("progress", (event) => {
   console.log(`Progress: ${event.payload}%`);
 });
@@ -630,20 +607,16 @@ const unlisten = await listen<number>("progress", (event) => {
 
 ```typescript
 import { vi } from "vitest";
-
 vi.mock("@tauri-apps/api/core", () => ({
   invoke: vi.fn(),
 }));
-
 it("should handle plan success", async () => {
   vi.mocked(invoke).mockResolvedValue({
     commands: 1234,
     duration: 56.7,
     output: "/tmp/out.gcode",
   });
-
   const result = await planWind("input.wind");
-
   expect(result.commands).toBe(1234);
   expect(invoke).toHaveBeenCalledWith("plan_wind", {
     inputPath: "input.wind",
@@ -661,7 +634,6 @@ Run actual CLI commands in test environment:
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[tokio::test]
     async fn test_plan_wind() {
         let result = plan_wind(
@@ -669,7 +641,6 @@ mod tests {
             None,
             Some("xab".into()),
         ).await;
-
         assert!(result.is_ok());
     }
 }

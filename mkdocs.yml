@@ -10,6 +10,7 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Troubleshooting: troubleshooting.md
+  - VM Testing: vm-testing.md
   - User Guides:
       - Wind Format: guides/wind-format.md
       - Axis Mapping: guides/axis-mapping.md
@@ -25,6 +26,7 @@ nav:
   - Development:
       - Contributing: development/contributing.md
       - Tooling: development/tooling.md
+      - Dependency Policy: development/dependency-policy.md
       - Release Process: development/release-process.md
       - Packaging: development/packaging.md
       - CI/CD: development/ci-cd.md

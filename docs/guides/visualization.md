@@ -30,7 +30,6 @@ The plot shows the mandrel surface "unwrapped" flat, with:
 ```sh
 # Generate full-size plot
 fiberpath plot output.gcode --output preview.png
-
 # Specify output file (inferred from extension)
 fiberpath plot output.gcode -o preview.png
 ```
@@ -42,10 +41,8 @@ Adjust image size with the `--scale` parameter (0.0 to 1.0):
 ```sh
 # 50% size for quick preview
 fiberpath plot output.gcode -o preview.png --scale 0.5
-
 # 80% size (good balance of detail and file size)
 fiberpath plot output.gcode -o preview.png --scale 0.8
-
 # Full size (default, may be large)
 fiberpath plot output.gcode -o preview.png --scale 1.0
 ```
@@ -85,7 +82,7 @@ The GUI preview uses the same plotting engine as the CLI but provides interactiv
 
 The plot command extracts mandrel parameters from the G-code header:
 
-```gcode
+```text
 ; Parameters - Mandrel Diameter: 100.0 mm, Tow Width: 12.0 mm
 ```
 

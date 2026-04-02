@@ -32,33 +32,26 @@ See `fiberpath_gui/docs-old/STORE_SPLITTING_ANALYSIS.md` for historical analysis
 interface ProjectState {
   // Project data
   project: FiberPathProject;
-
   // Project management
   loadProject: (project: FiberPathProject) => void;
   newProject: () => void;
-
   // Mandrel & Tow
   updateMandrel: (mandrel: Partial<Mandrel>) => void;
   updateTow: (tow: Partial<Tow>) => void;
-
   // Machine settings
   updateDefaultFeedRate: (feedRate: number) => void;
   setAxisFormat: (format: "xab" | "xyz") => void;
-
   // Layer operations
   addLayer: (type: LayerType) => string;
   removeLayer: (id: string) => void;
   updateLayer: (id: string, props: Partial<Layer>) => void;
   reorderLayers: (startIndex: number, endIndex: number) => void;
   duplicateLayer: (id: string) => string;
-
   // UI state
   setActiveLayerId: (id: string | null) => void;
-
   // Dirty state
   markDirty: () => void;
   clearDirty: () => void;
-
   // File metadata
   setFilePath: (path: string | null) => void;
 }
@@ -87,20 +80,16 @@ interface FiberPathProject {
 ```typescript
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-
 export const useProjectStore = create<ProjectState>()(
   devtools(
     (set, get) => ({
       project: createEmptyProject(),
-
       loadProject: (project) => {
         set({ project });
       },
-
       newProject: () => {
         set({ project: createEmptyProject() });
       },
-
       updateMandrel: (mandrel) => {
         set((state) => ({
           project: {
@@ -110,7 +99,6 @@ export const useProjectStore = create<ProjectState>()(
           },
         }));
       },
-
       // ...more actions
     }),
     { name: "ProjectStore" } // DevTools name
@@ -134,7 +122,6 @@ export const useProjectStore = create<ProjectState>()(
 ```typescript
 function PlanForm() {
   const state = useProjectStore();  // Re-renders on ANY state change
-
   return <input value={state.project.mandrel.diameter} />;
 }
 ```
@@ -145,13 +132,11 @@ function PlanForm() {
 
 ```typescript
 import { shallow } from "zustand/shallow";
-
 function PlanForm() {
   const mandrel = useProjectStore(
     (state) => state.project.mandrel,
     shallow
   );
-
   return <input value={mandrel.diameter} />;
 }
 ```
@@ -165,7 +150,6 @@ function DiameterInput() {
   const diameter = useProjectStore(
     (state) => state.project.mandrel.diameter
   );
-
   return <input value={diameter} />;
 }
 ```
@@ -179,7 +163,6 @@ function PlanForm() {
   const diameter = useProjectStore((s) => s.project.mandrel.diameter);
   const windLength = useProjectStore((s) => s.project.mandrel.windLength);
   const updateMandrel = useProjectStore((s) => s.updateMandrel);
-
   return (
     <>
       <input value={diameter} onChange={(e) => updateMandrel({ diameter: +e.target.value })} />
@@ -240,7 +223,6 @@ removeLayer: (id: string) => {
           ? layers[0].id
           : null
         : state.project.activeLayerId;
-
     return {
       project: {
         ...state.project,
@@ -263,7 +245,6 @@ reorderLayers: (startIndex: number, endIndex: number) => {
     const layers = [...state.project.layers];
     const [removed] = layers.splice(startIndex, 1);
     layers.splice(endIndex, 0, removed);
-
     return {
       project: {
         ...state.project,
@@ -284,7 +265,6 @@ reorderLayers: (startIndex: number, endIndex: number) => {
 ```typescript
 function LayerCount() {
   const layerCount = useProjectStore((s) => s.project.layers.length);
-
   return <div>Total Layers: {layerCount}</div>;
 }
 ```
@@ -296,7 +276,6 @@ function LayerCount() {
 ```typescript
 const useLayerCount = () =>
   useProjectStore((s) => s.project.layers.length);
-
 function LayerCount() {
   const count = useLayerCount();
   return <div>Total Layers: {count}</div>;
@@ -323,7 +302,6 @@ getHelicalLayers: () => {
 ```typescript
 import { beforeEach } from "vitest";
 import { useProjectStore } from "./projectStore";
-
 beforeEach(() => {
   useProjectStore.setState({
     project: createEmptyProject(),
@@ -336,9 +314,7 @@ beforeEach(() => {
 ```typescript
 it("should update mandrel diameter", () => {
   const store = useProjectStore.getState();
-
   store.updateMandrel({ diameter: 200 });
-
   expect(store.project.mandrel.diameter).toBe(200);
   expect(store.project.isDirty).toBe(true);
 });
@@ -349,13 +325,10 @@ it("should update mandrel diameter", () => {
 ```typescript
 it("should update active layer on removal", () => {
   const store = useProjectStore.getState();
-
   const layer1Id = store.addLayer("hoop");
   const layer2Id = store.addLayer("helical");
-
   store.setActiveLayerId(layer1Id);
   store.removeLayer(layer1Id);
-
   expect(store.project.activeLayerId).toBe(layer2Id);
 });
 ```
@@ -366,7 +339,6 @@ it("should update active layer on removal", () => {
 
 ```typescript
 import { devtools } from "zustand/middleware";
-
 export const useProjectStore = create<ProjectState>()(
   devtools(
     (set, get) => ({
@@ -397,7 +369,6 @@ export const useProjectStore = create<ProjectState>()(
 
 ```typescript
 import { shallow } from "zustand/shallow";
-
 const mandrel = useProjectStore((s) => s.project.mandrel, shallow);
 ```
 
@@ -407,15 +378,12 @@ const mandrel = useProjectStore((s) => s.project.mandrel, shallow);
 
 ```typescript
 import { useMemo } from "react";
-
 function LayerList() {
   const layers = useProjectStore((s) => s.project.layers);
-
   const sortedLayers = useMemo(
     () => [...layers].sort((a, b) => a.index - b.index),
     [layers]
   );
-
   return <div>{sortedLayers.map(/* render */)}</div>;
 }
 ```
@@ -433,7 +401,6 @@ const { mandrel, tow } = useProjectStore(
   }),
   shallow
 );
-
 // ✅ Good: Separate selectors
 const mandrel = useProjectStore((s) => s.project.mandrel, shallow);
 const tow = useProjectStore((s) => s.project.tow, shallow);

@@ -52,7 +52,7 @@ Quick reference for the most frequently confused helical-layer terms:
 | Wind Angle         | Fiber direction relative to mandrel axis (`0°` axial, `90°` hoop) | For helical layers: `0° < angle <= 90°`                  |
 | Pattern Number     | Number of helical bands/circuits in one full repeating pattern    | Positive integer; must divide the computed circuit count |
 | Skip Index         | Stride between bands on each pass                                 | Positive integer; must be coprime with pattern number    |
-| Lock Degrees       | Extra mandrel rotation at lock/turn boundaries                    | Non-negative; tune for stable start/stop placement       |
+| Lock Degrees       | Extra mandrel rotation at lock/turn boundaries                    | Must be a multiple of `180 / patternNumber` (when `patternNumber > 1`); see Coverage Compatibility |
 | Lead In / Lead Out | Entry/exit transition motions before/after main winding path      | Keep non-negative; tune for smooth fiber transitions     |
 
 If `patternNumber = 3` and `skipIndex = 1`, the path visits bands in order `0 -> 1 -> 2`.
@@ -65,15 +65,24 @@ Angle between fiber and mandrel axis (0° = longitudinal, 90° = hoop). Helical 
 
 ### Pattern Number
 
-Number of times the helical pattern repeats around the mandrel. Higher numbers create denser coverage with narrower helical bands.
+Number of equally-spaced helical bands that make up one complete winding pattern. All bands together cover the full mandrel circumference once. `patternNumber` determines how many circuits are wound before the start position repeats.
+
+> **Coverage vs. ply count**: `patternNumber` does not control how dense the coverage is. Coverage is determined by the tow width relative to the mandrel circumference — the planner calculates the number of circuits needed so that `N × tow_arc_width ≥ circumference`. `patternNumber` must divide that circuit count evenly.
 
 ### Skip Index
 
-Integer stride for skip patterns. Controls spacing between helical passes. Must be coprime with pattern number to ensure full coverage.
+Controls the **visit order** of the `patternNumber` equally-spaced bands within each winding pattern. With `skipIndex = 1`, bands are visited in sequential order (0 → 1 → 2 → …). With `skipIndex = 2`, every other band is visited first (0 → 2 → 4 → … → 1 → 3 → 5 → …). Must be coprime with `patternNumber` to ensure all bands are visited.
 
 ### Lock Degrees
 
-Mandrel rotation at layer boundaries for fiber termination and restart. Ensures consistent start/end positions between layers.
+Mandrel rotation added at each turn-around (lock) point. The net mandrel advance per complete circuit (out pass + return pass) is `(2 × lockDegrees) mod 360°`. This value controls how successive circuits are distributed around the mandrel circumference.
+
+When `patternNumber > 1`, `lockDegrees` must satisfy two coverage-compatibility conditions:
+
+1. **Divisibility**: `(2 × lockDegrees) mod (360 / patternNumber)` must equal 0. Equivalently, `lockDegrees` must be a multiple of `180 / patternNumber`.
+2. **Non-aliasing**: The intra-pattern slot stride must be coprime with `patternNumber` — otherwise all in-pattern circuits overlap the same grooves.
+
+The validator reports the nearest valid values when either condition is violated.
 
 ### Lead In/Out
 

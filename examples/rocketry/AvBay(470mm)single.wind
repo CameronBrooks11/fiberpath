@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0",
+  "mandrelParameters": {
+    "diameter": 151.5,
+    "windLength": 630
+  },
+  "towParameters": {
+    "width": 5.7,
+    "thickness": 0.5
+  },
+  "defaultFeedRate": 3000,
+  "layers": [
+    {
+      "windType": "helical",
+      "windAngle": 45,
+      "patternNumber": 3,
+      "skipIndex": 1,
+      "lockDegrees": 540,
+      "leadInMM": 80,
+      "leadOutDegrees": 60,
+      "skipInitialNearLock": false
+    }
+  ]
+}

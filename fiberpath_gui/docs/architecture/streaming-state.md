@@ -92,7 +92,6 @@ fn spawn_reader(&self, stdout: ChildStdout, app: AppHandle) {
         let reader = BufReader::new(stdout);
         for line in reader.lines() {
             let response: MarlinResponse = serde_json::from_str(&line)?;
-
             if let Some(req_id) = response.request_id() {
                 // Route to waiting handler
                 pending_responses.remove(&req_id).unwrap().send(response);
@@ -195,7 +194,6 @@ await invoke("marlin_stream_file", {
   filePath: "/path/to/output.gcode",
   dryRun: false,
 });
-
 // Listen for progress
 const unlisten = await listen("stream-progress", (event) => {
   const { commandsSent, commandsTotal } = event.payload;
@@ -283,13 +281,11 @@ class StreamingState:
     commands_sent: int
     commands_total: int
     current_command: str
-
 # Streaming thread
 while commands:
     send_command(commands[i])
     state.commands_sent = i + 1
     state.current_command = commands[i]
-
 # Progress reporter thread (separate)
 while streaming:
     emit_json({
@@ -309,7 +305,6 @@ while streaming:
 
 ```typescript
 import { listen } from "@tauri-apps/api/event";
-
 // Progress updates
 const unlistenProgress = await listen<ProgressPayload>(
   "stream-progress",
@@ -318,7 +313,6 @@ const unlistenProgress = await listen<ProgressPayload>(
     setCurrentCommand(event.payload.command);
   }
 );
-
 // Completion
 const unlistenComplete = await listen<CompletePayload>(
   "stream-complete",
@@ -327,13 +321,11 @@ const unlistenComplete = await listen<CompletePayload>(
     setIsStreaming(false);
   }
 );
-
 // Errors
 const unlistenError = await listen<ErrorPayload>("stream-error", (event) => {
   console.error("Streaming error:", event.payload.message);
   showErrorDialog(event.payload.message);
 });
-
 // Cleanup on unmount
 return () => {
   unlistenProgress();
@@ -353,38 +345,32 @@ function StreamPanel() {
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentCommand, setCurrentCommand] = useState('');
-
   const connect = async () => {
     const response = await invoke('marlin_connect', { port, baudRate });
     if (response.status === 'connected') {
       setIsConnected(true);
     }
   };
-
   const streamFile = async () => {
     const response = await invoke('marlin_stream_file', { filePath, dryRun: false });
     if (response.status === 'streaming') {
       setIsStreaming(true);
     }
   };
-
   const pause = async () => {
     await invoke('marlin_pause');
     setIsPaused(true);
   };
-
   const resume = async () => {
     await invoke('marlin_resume');
     setIsPaused(false);
   };
-
   const cancel = async () => {
     await invoke('marlin_cancel');
     setIsStreaming(false);
     setIsPaused(false);
     setProgress(0);
   };
-
   useEffect(() => {
     const unlisten = listen('stream-progress', (e) => {
       setProgress(e.payload.commandsSent / e.payload.commandsTotal);
@@ -392,7 +378,6 @@ function StreamPanel() {
     });
     return () => unlisten();
   }, []);
-
   return (
     <div>
       {!isConnected && <button onClick={connect}>Connect</button>}

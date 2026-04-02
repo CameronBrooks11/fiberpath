@@ -50,7 +50,6 @@ class AxisMapping:
     carriage: str          # Physical axis name (e.g., "X")
     mandrel: str           # Physical axis name (e.g., "A" or "Y")
     delivery: str          # Physical axis name (e.g., "B" or "Z")
-
     is_rotational_mandrel: bool
     is_rotational_delivery: bool
 ```
@@ -99,10 +98,8 @@ The `MarlinDialect` class wraps an `AxisMapping` with Marlin-specific features:
 class MarlinDialect:
     name: str
     mapping: AxisMapping
-
     def prologue(self) -> List[str]:
         """G-code commands at file start (G21, G94)"""
-
     def format_move(self, carriage, mandrel, delivery, feed) -> str:
         """Convert logical coordinates to G-code command"""
 ```
@@ -111,7 +108,7 @@ class MarlinDialect:
 
 All Marlin dialects emit standard setup commands:
 
-```gcode
+```text
 G21  ; Set units to millimeters
 G94  ; Set feed rate mode to units/min
 ```
@@ -128,13 +125,13 @@ carriage=50.0, mandrel=180.0, delivery=90.0, feed=2000
 
 **Output XAB:**
 
-```gcode
+```text
 G1 X50.0 A180.0 B90.0 F2000
 ```
 
 **Output XYZ:**
 
-```gcode
+```text
 G1 X50.0 Y180.0 Z90.0 F2000
 ```
 
@@ -171,7 +168,7 @@ gcode = dialect.format_move(carriage, mandrel, delivery, feed)
 
 Final G-code file contains physical axis names:
 
-```gcode
+```text
 ; FiberPath v0.5.0 - XAB Format
 G21
 G94
@@ -266,7 +263,6 @@ The `is_rotational_*` flags affect:
 ```python
 # Logical coordinates (used in planning)
 LogicalCoordinates = tuple[float, float, float]  # (carriage, mandrel, delivery)
-
 # Physical coordinates (used in G-code)
 PhysicalCoordinates = dict[str, float]  # {"X": 50.0, "A": 180.0, ...}
 ```
@@ -279,7 +275,6 @@ The planner never deals with physical axis names. All transformations happen at 
 # Planning layer (logical)
 carriage_pos = calculate_carriage_position(...)
 mandrel_angle = calculate_mandrel_rotation(...)
-
 # G-code layer (physical)
 gcode = dialect.format_move(carriage_pos, mandrel_angle, delivery_angle, feed)
 ```

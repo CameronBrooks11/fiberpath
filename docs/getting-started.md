@@ -140,10 +140,8 @@ fiberpath plan my_first_wind.wind -o my_first.gcode
 ```sh
 # Basic plan with default XAB axes
 fiberpath plan input.wind -o output.gcode
-
 # Plan with legacy XYZ axes for compatibility
 fiberpath plan input.wind -o output.gcode --axis-format xyz
-
 # Verbose output with layer details
 fiberpath plan input.wind -o output.gcode --verbose
 ```
@@ -153,7 +151,6 @@ fiberpath plan input.wind -o output.gcode --verbose
 ```sh
 # Generate preview plot
 fiberpath plot output.gcode --output preview.png
-
 # Smaller image for quick preview
 fiberpath plot output.gcode --output preview.png --scale 0.5
 ```
@@ -177,7 +174,6 @@ fiberpath validate input.wind
 ```sh
 # Stream with dry-run (no hardware required)
 fiberpath stream output.gcode --dry-run
-
 # Stream to hardware
 fiberpath stream output.gcode --port COM3 --baud-rate 115200
 ```

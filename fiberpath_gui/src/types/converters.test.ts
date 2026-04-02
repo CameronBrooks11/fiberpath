@@ -101,7 +101,7 @@ describe("converters", () => {
         lockDegrees: 5,
         leadInMM: 10,
         leadOutDegrees: 5,
-        skipInitialNearLock: null,
+        skipInitialNearLock: false,
       });
     });
   });
@@ -167,7 +167,7 @@ describe("converters", () => {
         lockDegrees: 8,
         leadInMM: 12,
         leadOutDegrees: 6,
-        skipInitialNearLock: null,
+        skipInitialNearLock: false,
       };
 
       const result = convertWindSchemaToLayer(windLayer);
