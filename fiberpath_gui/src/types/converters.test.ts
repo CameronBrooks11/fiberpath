@@ -101,7 +101,7 @@ describe("converters", () => {
         lockDegrees: 5,
         leadInMM: 10,
         leadOutDegrees: 5,
-        skipInitialNearLock: null,
+        skipInitialNearLock: false,
       });
     });
   });
