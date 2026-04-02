@@ -51,7 +51,7 @@ describe("Wind Definition Validation", () => {
             lockDegrees: 10,
             leadInMM: 5,
             leadOutDegrees: 10,
-            skipInitialNearLock: null,
+            skipInitialNearLock: false,
           },
         ],
       };

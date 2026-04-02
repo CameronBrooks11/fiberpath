@@ -167,7 +167,7 @@ describe("converters", () => {
         lockDegrees: 8,
         leadInMM: 12,
         leadOutDegrees: 6,
-        skipInitialNearLock: null,
+        skipInitialNearLock: false,
       };
 
       const result = convertWindSchemaToLayer(windLayer);

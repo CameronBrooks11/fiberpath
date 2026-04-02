@@ -34,7 +34,7 @@ export function convertLayerToWindSchema(
       lockDegrees: helicalData?.lock_degrees ?? 5,
       leadInMM: helicalData?.lead_in_mm ?? 10,
       leadOutDegrees: helicalData?.lead_out_degrees ?? 5,
-      skipInitialNearLock: helicalData?.skip_initial_near_lock ?? null,
+      skipInitialNearLock: helicalData?.skip_initial_near_lock ?? false,
     };
   } else if (layer.type === "skip") {
     const skipData = layer.skip as GUISkipLayer | undefined;
