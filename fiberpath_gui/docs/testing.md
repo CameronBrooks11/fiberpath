@@ -89,24 +89,20 @@ src/
 ```typescript
 import { describe, it, expect } from "vitest";
 import { MandrelParametersSchema } from "./schemas";
-
 describe("MandrelParametersSchema", () => {
   it("should validate correct mandrel parameters", () => {
     const valid = {
       diameter: 150,
       windLength: 800,
     };
-
     const result = MandrelParametersSchema.safeParse(valid);
     expect(result.success).toBe(true);
   });
-
   it("should reject negative diameter", () => {
     const invalid = {
       diameter: -10,
       windLength: 800,
     };
-
     const result = MandrelParametersSchema.safeParse(invalid);
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -123,7 +119,6 @@ describe("MandrelParametersSchema", () => {
 ```typescript
 import { describe, it, expect, beforeEach } from "vitest";
 import { useProjectStore } from "./projectStore";
-
 describe("projectStore", () => {
   beforeEach(() => {
     // Reset store to initial state
@@ -134,21 +129,17 @@ describe("projectStore", () => {
       filePath: null,
     });
   });
-
   it("should create new project", () => {
     const store = useProjectStore.getState();
     store.newProject();
-
     expect(store.project).not.toBeNull();
     expect(store.project?.layers).toHaveLength(1);
     expect(store.isDirty).toBe(false);
   });
-
   it("should mark project as dirty after update", () => {
     const store = useProjectStore.getState();
     store.newProject();
     store.updateMandrel({ diameter: 200 });
-
     expect(store.isDirty).toBe(true);
   });
 });
@@ -162,17 +153,14 @@ describe("projectStore", () => {
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MyComponent } from './MyComponent';
-
 describe('MyComponent', () => {
   it('should render with props', () => {
     render(<MyComponent title="Test" />);
     expect(screen.getByText('Test')).toBeInTheDocument();
   });
-
   it('should handle click', () => {
     const onClick = vi.fn();
     render(<MyComponent onClick={onClick} />);
-
     fireEvent.click(screen.getByRole('button'));
     expect(onClick).toHaveBeenCalledOnce();
   });
@@ -186,15 +174,12 @@ describe('MyComponent', () => {
 ```typescript
 import { describe, it, expect } from "vitest";
 import { useProjectStore } from "../state/projectStore";
-
 describe("Plan Workflow", () => {
   it("should create project, add layer, and update mandrel", () => {
     const store = useProjectStore.getState();
-
     // Step 1: New project
     store.newProject();
     expect(store.project).not.toBeNull();
-
     // Step 2: Add helical layer
     store.addLayer({
       windType: "helical",
@@ -202,11 +187,9 @@ describe("Plan Workflow", () => {
       terminal: false,
     });
     expect(store.project?.layers).toHaveLength(2);
-
     // Step 3: Update mandrel
     store.updateMandrel({ diameter: 200, windLength: 1000 });
     expect(store.project?.mandrelParameters.diameter).toBe(200);
-
     // Verify dirty state
     expect(store.isDirty).toBe(true);
   });
@@ -225,20 +208,17 @@ describe("HelicalLayerSchema", () => {
     { windAngle: 45, terminal: false },
     { windAngle: 30, terminal: true, skipEvery: 2 },
   ];
-
   const invalidCases = [
     { windAngle: 100, terminal: false }, // Angle > 90
     { windAngle: -10, terminal: false }, // Negative angle
     { windAngle: 45 }, // Missing terminal
   ];
-
   validCases.forEach((data, i) => {
     it(`should accept valid case ${i + 1}`, () => {
       const result = HelicalLayerSchema.safeParse(data);
       expect(result.success).toBe(true);
     });
   });
-
   invalidCases.forEach((data, i) => {
     it(`should reject invalid case ${i + 1}`, () => {
       const result = HelicalLayerSchema.safeParse(data);
@@ -255,16 +235,12 @@ When testing components that call Tauri commands:
 ```typescript
 import { vi } from "vitest";
 import { invoke } from "@tauri-apps/api/core";
-
 vi.mock("@tauri-apps/api/core", () => ({
   invoke: vi.fn(),
 }));
-
 it("should call plan command", async () => {
   vi.mocked(invoke).mockResolvedValue({ success: true });
-
   const result = await planProject(projectData);
-
   expect(invoke).toHaveBeenCalledWith("plan_project", {
     windDef: expect.any(Object),
   });
@@ -278,9 +254,7 @@ Verify components handle errors gracefully:
 ```typescript
 it('should display error message on validation failure', () => {
   const invalidData = { diameter: -10 };
-
   render(<MandrelForm initialData={invalidData} />);
-
   expect(screen.getByText(/diameter must be positive/i)).toBeInTheDocument();
 });
 ```
@@ -331,9 +305,7 @@ it.only("should validate mandrel", () => {
 ```typescript
 it("should update state", () => {
   store.updateMandrel({ diameter: 200 });
-
   console.log("State:", store.project); // Visible in test output
-
   expect(store.project?.mandrelParameters.diameter).toBe(200);
 });
 ```
@@ -389,7 +361,6 @@ resolve: {
 ```typescript
 // Bad: Testing internal state
 expect(component.state.count).toBe(1);
-
 // Good: Testing visible behavior
 expect(screen.getByText("Count: 1")).toBeInTheDocument();
 ```
@@ -400,7 +371,6 @@ expect(screen.getByText("Count: 1")).toBeInTheDocument();
 
 ```typescript
 vi.mock("@tauri-apps/api/core"); // Must be at top
-
 import { MyComponent } from "./MyComponent";
 ```
 

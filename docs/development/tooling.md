@@ -65,16 +65,12 @@ npm run format:check      # Rust format check
 npm run clippy            # Rust lint
 npm test                  # Run tests
 npm run build             # Production build
-
 # Or run all checks at once:
 ## Combined Pre-Commit Workflow
-
 Run from project root before committing:
-
 ```sh
 # Python stack
 uv run ruff check && uv run ruff format && uv run mypy && uv run pytest -v
-
 # GUI stack
 cd fiberpath_gui && npm run check:all && npm test && cd ..
 ````

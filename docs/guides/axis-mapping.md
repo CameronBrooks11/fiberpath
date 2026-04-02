@@ -66,10 +66,8 @@ Use the `--axis-format` flag:
 ```sh
 # XAB format (default)
 fiberpath plan input.wind -o output.gcode
-
 # Explicit XAB
 fiberpath plan input.wind -o output.gcode --axis-format xab
-
 # XYZ legacy format
 fiberpath plan input.wind -o output.gcode --axis-format xyz
 ```
@@ -97,13 +95,13 @@ For a simple G1 move command, here's how the formats differ:
 
 **XAB Format:**
 
-```gcode
+```text
 G1 X50.0 A180.0 B90.0 F2000
 ```
 
 **XYZ Format:**
 
-```gcode
+```text
 G1 X50.0 Y180.0 Z90.0 F2000
 ```
 
@@ -148,7 +146,6 @@ If you need to support both legacy and new systems:
 # Generate both formats
 fiberpath plan input.wind -o output_xab.gcode --axis-format xab
 fiberpath plan input.wind -o output_xyz.gcode --axis-format xyz
-
 # Use appropriate file for each machine
 fiberpath stream output_xab.gcode --port COM3  # New machine
 fiberpath stream output_xyz.gcode --port COM4  # Legacy machine

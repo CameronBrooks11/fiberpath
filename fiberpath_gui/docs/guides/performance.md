@@ -86,16 +86,13 @@ Opens interactive visualization of bundle contents.
 
 ```typescript
 import { useMemo } from 'react';
-
 function LayerList() {
   const layers = useProjectStore((s) => s.project.layers);
-
   // ✅ Memoize expensive sort
   const sortedLayers = useMemo(
     () => [...layers].sort((a, b) => a.index - b.index),
     [layers]
   );
-
   return <div>{sortedLayers.map(/* render */)}</div>;
 }
 ```
@@ -115,7 +112,6 @@ function LayerList() {
 
 ```typescript
 import { memo } from 'react';
-
 const LayerItem = memo(function LayerItem({ layer }: { layer: Layer }) {
   return <div>{layer.windType}: {layer.terminal ? 'Terminal' : 'Non-terminal'}</div>;
 });
@@ -153,13 +149,10 @@ const LayerItem = memo(
 
 ```typescript
 import { shallow } from "zustand/shallow";
-
 // ❌ Bad: Re-renders on any state change
 const state = useProjectStore();
-
 // ✅ Good: Re-renders only when mandrel changes
 const mandrel = useProjectStore((s) => s.project.mandrel, shallow);
-
 // ✅ Better: Re-renders only when diameter changes
 const diameter = useProjectStore((s) => s.project.mandrel.diameter);
 ```
@@ -177,7 +170,6 @@ const diameter = useProjectStore((s) => s.project.mandrel.diameter);
 
 ```typescript
 import { FixedSizeList } from 'react-window';
-
 function LargeLayerList({ layers }: { layers: Layer[] }) {
   return (
     <FixedSizeList
@@ -202,31 +194,24 @@ function LargeLayerList({ layers }: { layers: Layer[] }) {
 
 ```typescript
 import { useState, useEffect } from 'react';
-
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
-
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
-
     return () => clearTimeout(handler);
   }, [value, delay]);
-
   return debouncedValue;
 }
-
 // Usage
 function DiameterInput() {
   const [diameter, setDiameter] = useState(150);
   const debouncedDiameter = useDebounce(diameter, 300);
   const updateMandrel = useProjectStore((s) => s.updateMandrel);
-
   useEffect(() => {
     updateMandrel({ diameter: debouncedDiameter });
   }, [debouncedDiameter]);
-
   return (
     <input
       type="number"
@@ -247,10 +232,8 @@ function DiameterInput() {
 
 ```typescript
 import { lazy, Suspense } from 'react';
-
 // ✅ Lazy load heavy components
 const PlotPanel = lazy(() => import('./components/PlotPanel'));
-
 function App() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -268,25 +251,20 @@ function App() {
 // ❌ Bad: Creates new function on every render
 function PlanForm() {
   const updateMandrel = useProjectStore((s) => s.updateMandrel);
-
   return (
     <input onChange={(e) => updateMandrel({ diameter: Number(e.target.value) })} />
   );
 }
-
 // ✅ Good: Stable function reference
 import { useCallback } from 'react';
-
 function PlanForm() {
   const updateMandrel = useProjectStore((s) => s.updateMandrel);
-
   const handleDiameterChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       updateMandrel({ diameter: Number(e.target.value) });
     },
     [updateMandrel]
   );
-
   return <input onChange={handleDiameterChange} />;
 }
 ```
@@ -303,12 +281,10 @@ function PlanForm() {
 
 ```typescript
 import { useEffect } from "react";
-
 function MyComponent() {
   useEffect(() => {
     console.log("MyComponent rendered");
   });
-
   // ...
 }
 ```
@@ -366,7 +342,6 @@ function MyComponent() {
 ```typescript
 useEffect(() => {
   const unlisten = listen("stream-progress", handleProgress);
-
   return () => {
     unlisten(); // Cleanup
   };
@@ -394,7 +369,6 @@ performance.mark("render-start");
 // ...component render
 performance.mark("render-end");
 performance.measure("render", "render-start", "render-end");
-
 const [measure] = performance.getEntriesByName("render");
 console.log(`Render took ${measure.duration.toFixed(2)}ms`);
 ```
@@ -407,7 +381,6 @@ console.log(`Render took ${measure.duration.toFixed(2)}ms`);
 // ❌ Bad: Blocking UI
 const result = await planWind(inputPath);
 setResult(result);
-
 // ✅ Good: Show loading state
 setIsLoading(true);
 const result = await planWind(inputPath);
@@ -419,7 +392,6 @@ setIsLoading(false);
 
 ```typescript
 const debouncedScale = useDebounce(scale, 300);
-
 useEffect(() => {
   if (gcodePath) {
     plotPreview(gcodePath, debouncedScale).then(setPreview);
@@ -436,14 +408,11 @@ useEffect(() => {
 ```typescript
 import { render } from '@testing-library/react';
 import { performance } from 'perf_hooks';
-
 it('should render LayerList in <50ms', () => {
   const layers = Array.from({ length: 100 }, (_, i) => createLayer('hoop'));
-
   const start = performance.now();
   render(<LayerList layers={layers} />);
   const end = performance.now();
-
   expect(end - start).toBeLessThan(50);
 });
 ```
@@ -454,13 +423,11 @@ it('should render LayerList in <50ms', () => {
 describe("Store performance", () => {
   it("should handle 1000 layer adds in <100ms", () => {
     const store = useProjectStore.getState();
-
     const start = performance.now();
     for (let i = 0; i < 1000; i++) {
       store.addLayer("hoop");
     }
     const end = performance.now();
-
     expect(end - start).toBeLessThan(100);
   });
 });

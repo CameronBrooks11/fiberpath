@@ -50,7 +50,6 @@ Common issues and solutions for FiberPath installation and usage.
 sudo apt update
 sudo apt install -f  # Fix broken dependencies
 sudo apt install libwebkit2gtk-4.1-0 libappindicator3-1
-
 # Then retry
 sudo dpkg -i fiberpath_0.5.3_amd64.deb
 ```
@@ -73,7 +72,6 @@ chmod +x fiberpath_0.5.3_amd64.AppImage
 ```sh
 # Ubuntu/Debian
 sudo apt install fuse libfuse2
-
 # Fedora
 sudo dnf install fuse fuse-libs
 ```
@@ -90,13 +88,10 @@ sudo dnf install fuse fuse-libs
 # Verify pip is using correct Python
 python --version
 pip --version
-
 # Install/reinstall
 pip install --upgrade fiberpath
-
 # Or with uv (recommended)
 uv pip install fiberpath
-
 # For development
 pip install -e .[dev,cli,api]
 ```

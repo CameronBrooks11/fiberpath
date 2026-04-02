@@ -17,17 +17,14 @@ type BaseLayer = {
   terminal: boolean;
   skipEvery?: number;
 };
-
 // Specific layer types
 type HoopLayer = BaseLayer & {
   windType: "hoop";
 };
-
 type HelicalLayer = BaseLayer & {
   windType: "helical";
   windAngle: number;
 };
-
 // Union type with discriminator
 type Layer = HoopLayer | HelicalLayer;
 ```
@@ -40,11 +37,9 @@ type Layer = HoopLayer | HelicalLayer;
 function isHoopLayer(layer: Layer): layer is HoopLayer {
   return layer.windType === "hoop";
 }
-
 function isHelicalLayer(layer: Layer): layer is HelicalLayer {
   return layer.windType === "helical";
 }
-
 // Usage
 function getLayerInfo(layer: Layer): string {
   if (isHoopLayer(layer)) {
@@ -89,16 +84,13 @@ function processLayer(layer: Layer): void {
 
 ```typescript
 import { z } from "zod";
-
 // Define schema
 export const MandrelParametersSchema = z.object({
   diameter: z.number().positive(),
   windLength: z.number().positive(),
 });
-
 // Infer TypeScript type from schema
 export type MandrelParameters = z.infer<typeof MandrelParametersSchema>;
-
 // Equivalent to:
 // type MandrelParameters = {
 //   diameter: number;
@@ -113,14 +105,12 @@ export type MandrelParameters = z.infer<typeof MandrelParametersSchema>;
 ```typescript
 function validateMandrel(data: unknown): MandrelParameters {
   const result = MandrelParametersSchema.safeParse(data);
-
   if (!result.success) {
     throw new ValidationError(
       "Invalid mandrel parameters",
       result.error.issues
     );
   }
-
   return result.data; // Type: MandrelParameters
 }
 ```
@@ -135,13 +125,10 @@ export const LayerSchema = z.object({
   terminal: z.boolean(),
   skipEvery: z.number().int().positive().optional(),
 });
-
 // Schema for partial updates (all fields optional)
 export const PartialLayerSchema = LayerSchema.partial();
-
 export type Layer = z.infer<typeof LayerSchema>;
 export type PartialLayer = z.infer<typeof PartialLayerSchema>;
-
 // Usage
 function updateLayer(id: string, updates: PartialLayer): void {
   // updates can be { terminal: true } or { skipEvery: 2 } etc.
@@ -163,7 +150,6 @@ export class CommandError extends Error {
     this.name = "CommandError";
   }
 }
-
 export class ValidationError extends Error {
   constructor(
     message: string,
@@ -173,7 +159,6 @@ export class ValidationError extends Error {
     this.name = "ValidationError";
   }
 }
-
 export class FileError extends Error {
   constructor(
     message: string,
@@ -184,7 +169,6 @@ export class FileError extends Error {
     this.name = "FileError";
   }
 }
-
 export class ConnectionError extends Error {
   constructor(
     message: string,
@@ -228,16 +212,13 @@ async function executePlan(inputPath: string): Promise<PlanSummary> {
 type Result<T, E = Error> =
   | { success: true; data: T }
   | { success: false; error: E };
-
 function safePlanWind(inputPath: string): Promise<Result<PlanSummary>> {
   return planWind(inputPath)
     .then((data) => ({ success: true as const, data }))
     .catch((error) => ({ success: false as const, error }));
 }
-
 // Usage
 const result = await safePlanWind(inputPath);
-
 if (result.success) {
   console.log(result.data.commands); // Type: PlanSummary
 } else {
@@ -254,7 +235,6 @@ type MandrelParameters = {
   diameter: number;
   windLength: number;
 };
-
 // All fields optional
 type PartialMandrel = Partial<MandrelParameters>;
 // Equivalent to: { diameter?: number; windLength?: number; }
@@ -267,7 +247,6 @@ type OptionalConfig = {
   axisFormat?: "xab" | "xyz";
   dryRun?: boolean;
 };
-
 // All fields required
 type RequiredConfig = Required<OptionalConfig>;
 // Equivalent to: { axisFormat: "xab" | "xyz"; dryRun: boolean; }
@@ -282,7 +261,6 @@ type Layer = {
   terminal: boolean;
   skipEvery?: number;
 };
-
 // Pick specific fields
 type LayerSummary = Pick<Layer, "id" | "windType">;
 // Equivalent to: { id: string; windType: "hoop" | "helical"; }
@@ -300,7 +278,6 @@ type LayerWithoutId = Omit<Layer, "id">;
 
 ```typescript
 type AxisFormat = "xab" | "xyz" | "xyzab";
-
 // Exclude specific values from union
 type SimpleAxisFormat = Exclude<AxisFormat, "xyzab">;
 // Equivalent to: "xab" | "xyz"
@@ -313,7 +290,6 @@ type Action =
   | { type: "add"; payload: Layer }
   | { type: "remove"; payload: string }
   | { type: "update"; payload: { id: string; changes: Partial<Layer> } };
-
 // Extract specific variants
 type AddAction = Extract<Action, { type: "add" }>;
 // Equivalent to: { type: "add"; payload: Layer }
@@ -325,7 +301,6 @@ type AddAction = Extract<Action, { type: "add" }>;
 function createLayer(type: LayerType): Layer {
   // ...
 }
-
 type CreatedLayer = ReturnType<typeof createLayer>;
 // Equivalent to: Layer
 ```
@@ -336,7 +311,6 @@ type CreatedLayer = ReturnType<typeof createLayer>;
 function updateMandrel(id: string, params: MandrelParameters): void {
   // ...
 }
-
 type UpdateMandrelParams = Parameters<typeof updateMandrel>;
 // Equivalent to: [id: string, params: MandrelParameters]
 ```
@@ -349,19 +323,15 @@ type UpdateMandrelParams = Parameters<typeof updateMandrel>;
 // Ensure IDs are not mixed with regular strings
 type LayerId = string & { __brand: "LayerId" };
 type ProjectId = string & { __brand: "ProjectId" };
-
 function createLayerId(id: string): LayerId {
   return id as LayerId;
 }
-
 function removeLayer(id: LayerId): void {
   // ...
 }
-
 // Usage
 const layerId = createLayerId("layer-123");
 removeLayer(layerId); // ✅ OK
-
 const projectId: ProjectId = "proj-456" as ProjectId;
 removeLayer(projectId); // ❌ Type error
 ```
@@ -373,16 +343,12 @@ const config = {
   axisFormat: "xab",
   dryRun: false,
 } as const;
-
 // Type: { readonly axisFormat: "xab"; readonly dryRun: false; }
-
 // vs
-
 const config = {
   axisFormat: "xab",
   dryRun: false,
 };
-
 // Type: { axisFormat: string; dryRun: boolean; }
 ```
 
@@ -393,7 +359,6 @@ const config = {
 ```typescript
 type CommandName = "plan" | "simulate" | "plot";
 type CommandKey = `${CommandName}_command`;
-
 // Equivalent to: "plan_command" | "simulate_command" | "plot_command"
 ```
 
@@ -405,12 +370,10 @@ type LayerState = {
   isHovered: boolean;
   isSelected: boolean;
 };
-
 // Create optional version of all fields
 type OptionalLayerState = {
   [K in keyof LayerState]?: LayerState[K];
 };
-
 // Equivalent to:
 // type OptionalLayerState = {
 //   isEditing?: boolean;
@@ -423,13 +386,10 @@ type OptionalLayerState = {
 
 ```typescript
 type IsArray<T> = T extends any[] ? true : false;
-
 type A = IsArray<string[]>; // true
 type B = IsArray<number>; // false
-
 // More practical: Unwrap array type
 type Unwrap<T> = T extends Array<infer U> ? U : T;
-
 type C = Unwrap<Layer[]>; // Layer
 type D = Unwrap<number>; // number
 ```
@@ -443,7 +403,6 @@ const layers = [
   { windType: "hoop", terminal: false },
   { windType: "helical", windAngle: 45, terminal: false },
 ] as const;
-
 // Type: readonly [
 //   { readonly windType: "hoop"; readonly terminal: false },
 //   { readonly windType: "helical"; readonly windAngle: 45; readonly terminal: false }
@@ -455,7 +414,6 @@ const layers = [
 ```typescript
 // ❌ Avoid when possible
 const data = response as MandrelParameters;
-
 // ✅ Prefer validation
 const data = MandrelParametersSchema.parse(response);
 ```
@@ -466,7 +424,6 @@ const data = MandrelParametersSchema.parse(response);
 // When you know value is not null
 const project = useProjectStore((s) => s.project);
 const diameter = project!.mandrelParameters.diameter;
-
 // ⚠️ Dangerous: Runtime error if project is null
 // ✅ Prefer optional chaining
 const diameter = project?.mandrelParameters.diameter;
@@ -508,7 +465,6 @@ try {
 type Response =
   | { status: "success"; data: PlanSummary }
   | { status: "error"; message: string };
-
 function handleResponse(response: Response): void {
   if ("data" in response) {
     console.log(response.data.commands); // Type: PlanSummary
@@ -522,7 +478,6 @@ function handleResponse(response: Response): void {
 
 ```typescript
 type State = "idle" | "loading" | "success" | "error";
-
 function handleState(state: State): void {
   if (state === "loading") {
     // Type: "loading"
@@ -560,12 +515,10 @@ function handleState(state: State): void {
 
 ```typescript
 import { expectType } from "tsd";
-
 // Assert return type
 expectType<MandrelParameters>(
   MandrelParametersSchema.parse({ diameter: 150, windLength: 800 })
 );
-
 // Assert discriminated union narrows correctly
 const layer: Layer = { windType: "hoop", terminal: false };
 if (layer.windType === "hoop") {
@@ -578,7 +531,6 @@ if (layer.windType === "hoop") {
 ```typescript
 // Should compile
 const validLayer: Layer = { windType: "hoop", terminal: false };
-
 // Should NOT compile (uncomment to test)
 // const invalidLayer: Layer = { windType: "unknown", terminal: false };
 ```

@@ -25,17 +25,14 @@ All design system variables defined as CSS custom properties:
   --color-primary: #12a89a;
   --color-bg: #09090b;
   --color-text: #f7f8fa;
-
   /* Spacing */
   --spacing-xs: 0.25rem; /* 4px */
   --spacing-sm: 0.5rem; /* 8px */
   --spacing-md: 0.75rem; /* 12px */
   --spacing-lg: 1rem; /* 16px */
-
   /* Typography */
   --font-size-base: 0.875rem; /* 14px */
   --font-size-lg: 1rem; /* 16px */
-
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
@@ -50,20 +47,16 @@ All design system variables defined as CSS custom properties:
 /* Brand */
 --color-primary: #12a89a;
 --color-primary-hover: #0e8a7e;
-
 /* Backgrounds */
 --color-bg: #09090b;
 --color-bg-panel: #141416;
 --color-bg-hover: #222226;
-
 /* Borders */
 --color-border: #242428;
 --color-border-focus: var(--color-primary);
-
 /* Text */
 --color-text: #f7f8fa;
 --color-text-muted: #8f929c;
-
 /* Semantic */
 --color-success: #32d2b6;
 --color-error: #ff8a8a;
@@ -98,7 +91,6 @@ All design system variables defined as CSS custom properties:
 /* Font Families */
 --font-family-base: "Segoe UI", "Inter", system-ui, sans-serif;
 --font-family-mono: "Cascadia Code", "Consolas", monospace;
-
 /* Font Sizes */
 --font-size-xs: 0.7rem; /* 11.2px */
 --font-size-sm: 0.75rem; /* 12px */
@@ -106,7 +98,6 @@ All design system variables defined as CSS custom properties:
 --font-size-md: 0.9375rem; /* 15px */
 --font-size-lg: 1rem; /* 16px */
 --font-size-xl: 1.25rem; /* 20px */
-
 /* Font Weights */
 --font-weight-normal: 400;
 --font-weight-medium: 500;
@@ -119,7 +110,6 @@ All design system variables defined as CSS custom properties:
 ```css
 --border-width-thin: 1px;
 --border-width-medium: 2px;
-
 --border-radius-sm: 0.25rem; /* 4px */
 --border-radius-md: 0.375rem; /* 6px */
 --border-radius-lg: 0.5rem; /* 8px */
@@ -140,7 +130,6 @@ All design system variables defined as CSS custom properties:
 --transition-fast: 150ms ease;
 --transition-base: 200ms ease;
 --transition-slow: 300ms ease;
-
 --transition-colors:
   background-color var(--transition-fast), color var(--transition-fast);
 --transition-transform: transform var(--transition-base);
@@ -166,7 +155,6 @@ src/
 
 ```typescript
 import styles from './PlanForm.module.css';
-
 export function PlanForm() {
   return (
     <div className={styles.container}>
@@ -186,7 +174,6 @@ export function PlanForm() {
   background-color: var(--color-bg-panel);
   border-radius: var(--border-radius-lg);
 }
-
 .submitButton {
   padding: var(--spacing-sm) var(--spacing-lg);
   background-color: var(--color-primary);
@@ -198,7 +185,6 @@ export function PlanForm() {
   cursor: pointer;
   transition: var(--transition-colors);
 }
-
 .submitButton:hover {
   background-color: var(--color-primary-hover);
 }
@@ -216,20 +202,16 @@ export function PlanForm() {
 .button {
   /* Base styles */
 }
-
 .button:hover {
   /* Hover state */
 }
-
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 .button.primary {
   /* Primary variant */
 }
-
 .button.secondary {
   /* Secondary variant */
 }
@@ -247,7 +229,6 @@ export function PlanForm() {
 
 ```typescript
 import clsx from 'clsx'; // Optional utility
-
 function Button({ variant, disabled }: ButtonProps) {
   return (
     <button
@@ -273,13 +254,11 @@ function Button({ variant, disabled }: ButtonProps) {
   display: flex;
   gap: var(--spacing-md);
 }
-
 .row {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
 }
-
 .column {
   display: flex;
   flex-direction: column;
@@ -295,7 +274,6 @@ function Button({ variant, disabled }: ButtonProps) {
   grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-lg);
 }
-
 .layerGrid {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -329,27 +307,22 @@ function Button({ variant, disabled }: ButtonProps) {
   cursor: pointer;
   transition: var(--transition-colors);
 }
-
 .buttonPrimary {
   background-color: var(--color-primary);
   color: var(--color-text-inverse);
 }
-
 .buttonPrimary:hover {
   background-color: var(--color-primary-hover);
 }
-
 .buttonSecondary {
   background-color: var(--color-bg-hover);
   color: var(--color-text);
   border: 1px solid var(--color-border);
 }
-
 .buttonDanger {
   background-color: var(--color-error-red);
   color: white;
 }
-
 .buttonDanger:hover {
   background-color: var(--color-error-red-hover);
 }
@@ -369,12 +342,10 @@ function Button({ variant, disabled }: ButtonProps) {
   font-family: var(--font-family-base);
   transition: var(--transition-colors);
 }
-
 .input:focus {
   outline: none;
   border-color: var(--color-border-focus);
 }
-
 .input:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -391,14 +362,12 @@ function Button({ variant, disabled }: ButtonProps) {
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
 }
-
 .cardHeader {
   margin-bottom: var(--spacing-md);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
 }
-
 .cardContent {
   color: var(--color-text-muted);
 }
@@ -412,13 +381,11 @@ function Button({ variant, disabled }: ButtonProps) {
 .container {
   padding: var(--spacing-lg);
 }
-
 @media (min-width: 768px) {
   .container {
     padding: var(--spacing-2xl);
   }
 }
-
 @media (min-width: 1024px) {
   .container {
     padding: var(--spacing-3xl);
@@ -432,11 +399,9 @@ function Button({ variant, disabled }: ButtonProps) {
 .panel {
   container-type: inline-size;
 }
-
 .item {
   font-size: var(--font-size-sm);
 }
-
 @container (min-width: 500px) {
   .item {
     font-size: var(--font-size-base);
@@ -452,7 +417,6 @@ function Button({ variant, disabled }: ButtonProps) {
 .button {
   transition: var(--transition-colors), var(--transition-transform);
 }
-
 .button:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -471,7 +435,6 @@ function Button({ variant, disabled }: ButtonProps) {
     opacity: 0.5;
   }
 }
-
 .loading {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -490,7 +453,6 @@ function Button({ variant, disabled }: ButtonProps) {
     opacity: 1;
   }
 }
-
 .panel {
   animation: slideIn var(--transition-base);
 }
@@ -592,7 +554,6 @@ In production, class names are hashed:
   background-color: var(--color-primary);
   padding: var(--spacing-sm) var(--spacing-lg);
 }
-
 // Button.tsx
 <button className={styles.button}>Click</button>
 ```

@@ -118,7 +118,8 @@ def validate_helical_layer(
                 (
                     f"lockDegrees {layer.lock_degrees}° produces a per-circuit mandrel advance of "
                     f"{per_circuit_mod:.6g}° (mod 360°), which is not divisible by the in-pattern "
-                    f"slot width of {pattern_step_deg:.6g}° (= 360 / patternNumber {layer.pattern_number}). "
+                    f"slot width of {pattern_step_deg:.6g}°"
+                    f" (= 360 / patternNumber {layer.pattern_number}). "
                     f"Circuits will overlap and leave bare mandrel strips. "
                     f"lockDegrees must be a multiple of {pattern_step_deg / 2:.6g}°. "
                     f"Nearest valid values: {suggestions}"
@@ -135,10 +136,12 @@ def validate_helical_layer(
                 layer_index,
                 (
                     f"lockDegrees {layer.lock_degrees}° with skipIndex {layer.skip_index} and "
-                    f"patternNumber {layer.pattern_number} produces an intra-pattern slot stride of "
+                    f"patternNumber {layer.pattern_number} produces an"
+                    f" intra-pattern slot stride of "
                     f"{j} (in units of {pattern_step_deg:.6g}°), which is not coprime with "
                     f"patternNumber (gcd = {gcd(j, layer.pattern_number)}). "
-                    f"All in-pattern circuits will alias onto fewer positions, leaving bare strips. "
+                    f"All in-pattern circuits will alias onto fewer positions,"
+                    f" leaving bare strips. "
                     f"Nearest valid lockDegrees values: {suggestions}"
                 ),
             )

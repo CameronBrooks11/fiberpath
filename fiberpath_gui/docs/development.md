@@ -60,7 +60,6 @@ Returns user-friendly message suggesting `pip install fiberpath`.
 ```sh
 # Ensure CLI is on PATH for development
 fiberpath --version
-
 # Test GUI with bundled CLI
 npm run tauri build  # Check src-tauri/target/release/bundle/
 ```
@@ -71,10 +70,8 @@ npm run tauri build  # Check src-tauri/target/release/bundle/
 # Clone repository
 git clone https://github.com/your-org/fiberpath.git
 cd fiberpath/fiberpath_gui
-
 # Install dependencies
 npm install
-
 # Verify CLI is available
 fiberpath --version
 ```
@@ -228,14 +225,11 @@ Runs in sequence:
 # Linting
 npm run lint              # ESLint
 npm run lint:fix          # Auto-fix ESLint issues
-
 # Formatting
 npm run format:check      # Check Prettier
 npm run format            # Auto-format with Prettier
-
 # Type Checking
 npm run typecheck         # TypeScript compiler (no emit)
-
 # Rust Linting
 npm run clippy            # Cargo clippy
 ```
@@ -390,7 +384,6 @@ fiberpath --version
 ```sh
 # Windows PowerShell
 Get-Command fiberpath
-
 # macOS/Linux
 which fiberpath
 ```
