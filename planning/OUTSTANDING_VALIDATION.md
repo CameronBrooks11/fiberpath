@@ -16,6 +16,31 @@ Open findings from code review (2026-03-22). Each finding must be closed by a me
 - **Action:** Enforce divisibility as a validation error; add regression test.
 - **Target:** v0.5.2
 
+### Finding 4 — Helical lockDegrees Coverage Defect (High) ✅ Closed
+
+- **Risk:** A `lockDegrees` value incompatible with `patternNumber` (e.g. `270°` with `patternNumber: 3`) caused silent coverage failure — the planner
+  produced valid G-code but circuits overlapped, leaving bare strips of mandrel. Observed: single-layer `AvBay(470mm)` winding covered only ~33% of surface.
+- **Root cause:** The net mandrel advance per circuit is `(2 × lockDegrees) % 360°`. Two conditions must both hold for even distribution:
+  (1) divisibility — `(2 × lockDegrees) % (360 / patternNumber) == 0`; (2) non-aliasing — the resulting slot stride must be coprime with `patternNumber`.
+  Neither condition was validated; `lockDegrees` was only constrained to `> 0`.
+- **Action:** Added two-condition validation to `validate_helical_layer()` with actionable error messages reporting nearest valid values.
+  Fixed `AvBay(470mm)single.wind` and `AvBay(470mm)triple.wind` examples (`270° → 540°`). Added four new unit tests.
+- **Finding 5 coupling:** `skipIndex` was not wired into `start_position_increment` (see Finding 5 below); corrected simultaneously.
+- **Target:** v0.6.0 (merged as part of helical coverage fixes)
+
+### Finding 5 — skipIndex Phantom Feature (High) ✅ Closed
+
+- **Risk:** `skipIndex > 1` in `.wind` files had no effect on G-code output. `start_position_increment` was hardcoded as `360 / patternNumber`
+  regardless of `skipIndex`, so files with `skipIndex = 2` always produced the same output as `skipIndex = 1`.
+- **Root cause:** `layer.skip_index` was validated (coprimality check present) but never used in placement computation.
+- **Action:** Changed `start_position_increment = 360.0 / pattern_number` → `layer.skip_index * (360.0 / pattern_number)` in
+  `plan_helical_layer()`. `skipIndex = 1` produces identical G-code to the previous behaviour. `skipIndex > 1` now changes visit order
+  as documented. The `helical_layer.gcode` fixture was regenerated with valid `lockDegrees = 180` (was `160`, which also failed
+  condition 1). Note: all existing reference `.wind` files have `skipIndex = 1` or `skipIndex = 2`; only `skipIndex = 2` files
+  are affected.
+- **Coupled with:** Finding 4 (lockDegrees check uses `skip_index`); both shipped together.
+- **Target:** v0.6.0
+
 ### Finding 2 — API Path Handling Too Broad (Medium) ✅ Closed
 
 - **Risk:** Broad output path acceptance increases overwrite/traversal risk if the API is exposed outside trusted local use.

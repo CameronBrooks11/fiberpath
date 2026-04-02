@@ -120,26 +120,35 @@ A helical layer winds at a specified angle, creating a spiral pattern around the
 - `windAngle`: Wind angle in degrees (0° < angle ≤ 90°)
 - `patternNumber`: Number of circuits in the pattern (integer ≥ 1)
 - `skipIndex`: Skip index for pattern generation (integer ≥ 1, must be coprime with `patternNumber`)
-- `lockDegrees`: Lock rotation in degrees (must be > 0)
+- `lockDegrees`: Lock rotation in degrees (must be > 0). When `patternNumber > 1`, this value must also satisfy the coverage compatibility conditions described under **Geometric Constraints** below.
 - `leadInMM`: Lead-in distance in mm (must be > 0)
 - `leadOutDegrees`: Lead-out rotation in degrees (must be > 0)
 
 **Optional Fields**:
 
-- `skipInitialNearLock` (default: `null`): Skip initial near-lock behavior
+- `skipInitialNearLock` (default: `false`): Whether to suppress the initial near-lock mandrel pre-rotation at the start of this layer.
+
+  Before the first circuit of a helical layer, the planner normally performs an *initial near-lock* move: it rotates the mandrel by `lockDegrees` and re-zeros the rotational position there. This ensures the first circuit starts from the same rotational reference point that all subsequent circuits establish at their turn-around. Without it, the first circuit would begin from whatever position the mandrel is currently at, causing the first and remaining circuits to be rotationally inconsistent.
+
+  - `false` (default): Perform the initial near-lock move. Use this for standalone layers or the first helical layer in a sequence.
+  - `true`: Skip the initial near-lock move. Use this when the preceding layer (e.g., a `SkipLayer` or prior helical layer) has already left the mandrel at the correct rotational reference, avoiding a redundant over-rotation.
 
 **Geometric Constraints**:
 
 1. **Coprime Check**: `skipIndex` and `patternNumber` must be coprime (GCD = 1) to ensure full coverage
 2. **Circuit Divisibility**: The calculated number of circuits must be evenly divisible by `patternNumber` for valid pattern generation
 3. **Wind Angle**: Must be between 0° (exclusive) and 90° (inclusive)
+4. **lockDegrees Coverage Compatibility** (when `patternNumber > 1`): The net mandrel advance per complete circuit is `(2 × lockDegrees) mod 360°`. Two conditions must hold:
+   - *Condition 1 — divisibility*: `(2 × lockDegrees) mod (360 / patternNumber)` must equal 0. Equivalently, `lockDegrees` must be a multiple of `180 / patternNumber` (e.g. for `patternNumber: 3` → multiples of 60°; for `patternNumber: 4` → multiples of 45°).
+   - *Condition 2 — non-aliasing*: The resulting intra-pattern slot stride must be coprime with `patternNumber`. This prevents all in-pattern circuits from aliasing onto the same groove even when Condition 1 is satisfied.
+   - The validator reports the nearest valid `lockDegrees` values when either condition fails.
 
 **Parameter Meaning (Quick Guide)**:
 
 - **`windAngle`**: Fiber direction relative to mandrel axis (`0°` axial, `90°` hoop)
 - **`patternNumber`**: Number of helical bands in the repeating pattern
 - **`skipIndex`**: Band-to-band stride each circuit; must be coprime with `patternNumber`
-- **`lockDegrees`**: Additional rotation at lock/turn boundaries
+- **`lockDegrees`**: Additional mandrel rotation at each turn-around (lock) point. Controls the angular spacing between successive circuits — must be a multiple of `180 / patternNumber` (Condition 1) and produce a slot stride coprime with `patternNumber` (Condition 2). See Geometric Constraints above.
 - **`leadInMM` / `leadOutDegrees`**: Entry and exit transition motions for smoother placement
 
 **Example**:
@@ -150,10 +159,10 @@ A helical layer winds at a specified angle, creating a spiral pattern around the
   "windAngle": 45,
   "patternNumber": 3,
   "skipIndex": 1,
-  "lockDegrees": 10,
+  "lockDegrees": 540,
   "leadInMM": 5,
   "leadOutDegrees": 10,
-  "skipInitialNearLock": null
+  "skipInitialNearLock": false
 }
 ```
 
@@ -163,6 +172,7 @@ A helical layer winds at a specified angle, creating a spiral pattern around the
   - The wind angle (changes circuit count)
   - The pattern number (must divide evenly into circuit count)
   - The mandrel diameter or wind length
+- If validation fails because `lockDegrees` is incompatible with `patternNumber`, the error message suggests the nearest valid values. As a rule: `lockDegrees` must be a multiple of `180 / patternNumber`. For three-band patterns (`patternNumber: 3`), use multiples of 60° such as 180°, 360°, or 540°.
 
 **Use Cases**:
 
@@ -223,6 +233,7 @@ The CLI performs additional validation beyond the schema:
 
 - Coprime check for helical layers (`gcd(skipIndex, patternNumber) == 1`)
 - Circuit divisibility check for helical patterns
+- `lockDegrees` coverage compatibility check for helical layers with `patternNumber > 1` (two-condition check: divisibility and non-aliasing)
 - Terminal layer placement rules
 - Physical feasibility checks
 
@@ -307,10 +318,10 @@ The `schemaVersion` field allows for future format evolution:
       "windAngle": 45,
       "patternNumber": 3,
       "skipIndex": 1,
-      "lockDegrees": 10,
+      "lockDegrees": 540,
       "leadInMM": 5,
       "leadOutDegrees": 10,
-      "skipInitialNearLock": null
+      "skipInitialNearLock": false
     },
     {
       "windType": "skip",
@@ -321,10 +332,10 @@ The `schemaVersion` field allows for future format evolution:
       "windAngle": 45,
       "patternNumber": 3,
       "skipIndex": 1,
-      "lockDegrees": 10,
+      "lockDegrees": 540,
       "leadInMM": 5,
       "leadOutDegrees": 10,
-      "skipInitialNearLock": null
+      "skipInitialNearLock": true
     },
     {
       "windType": "hoop",

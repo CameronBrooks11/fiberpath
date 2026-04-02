@@ -1,14 +1,14 @@
 {
   "schemaVersion": "1.0",
   "mandrelParameters": {
-    "diameter": 152,
+    "diameter": 151.5,
     "windLength": 630
   },
   "towParameters": {
-    "width": 6.3,
+    "width": 5.7,
     "thickness": 0.5
   },
-  "defaultFeedRate": 10000,
+  "defaultFeedRate": 3000,
   "layers": [
     {
       "windType": "helical",

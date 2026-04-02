@@ -39,16 +39,9 @@
           "type": "number"
         },
         "skipInitialNearLock": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Skipinitialnearlock"
+          "default": false,
+          "title": "Skipinitialnearlock",
+          "type": "boolean"
         }
       },
       "required": [
@@ -175,13 +168,6 @@
       "exclusiveMinimum": 0,
       "title": "Defaultfeedrate",
       "type": "number"
-    },
-    "schemaVersion": {
-      "type": "string",
-      "const": "1.0",
-      "default": "1.0",
-      "title": "Schema Version",
-      "description": "Version of the .wind file format schema"
     }
   },
   "required": [
@@ -190,8 +176,8 @@
     "towParameters",
     "defaultFeedRate"
   ],
-  "title": "FiberPath Wind Definition",
+  "title": "WindDefinition",
   "type": "object",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "description": "Schema for FiberPath filament winding pattern definitions"
+  "$id": "https://github.com/CameronBrooks11/fiberpath/schemas/wind-definition.json"
 }

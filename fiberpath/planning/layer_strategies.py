@@ -107,7 +107,7 @@ def plan_helical_layer(
     lead_in_degrees = kinematics.lead_in_degrees
     main_pass_degrees = kinematics.main_pass_degrees
     number_of_patterns = num_circuits / pattern_number
-    start_position_increment = 360.0 / pattern_number
+    start_position_increment = layer.skip_index * (360.0 / pattern_number)
     pass_parameters = [
         {
             "delivery_head_sign": 1,

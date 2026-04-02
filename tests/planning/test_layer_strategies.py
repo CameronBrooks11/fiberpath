@@ -58,7 +58,7 @@ def test_plan_helical_layer_matches_fixture() -> None:
                 "windAngle": 35.0,
                 "patternNumber": 3,
                 "skipIndex": 2,
-                "lockDegrees": 160.0,
+                "lockDegrees": 180.0,
                 "leadInMM": 4.0,
                 "leadOutDegrees": 12.0,
             }
