@@ -8,9 +8,29 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
-### Planned
+## [0.6.0] - 2026-04-06
 
-- v0.6.0 release validation, cross-platform verification, and E2E automation.
+### Added
+
+- Comprehensive GUI E2E smoke test workflow (`gui-e2e-smoke.yml`) with cross-platform matrix validation (Windows/macOS/Ubuntu).
+- Package artifact presence validation for all OS distributions (`.msi`/`.exe`, `.deb`/`.AppImage`, `.dmg`/`.app`).
+- Bundled CLI resolution and smoke execution on packaged outputs; validates `validate`, `plan`, and `plot` CLI commands from frozen binaries.
+- Hash-based bundled CLI discovery for Windows MSI streams with automatic materialization to executable format.
+- Reference CLI artifact download and management for E2E validation comparisons.
+
+### Changed
+
+- E2E smoke workflow now enforces packaged CLI validation on all platforms with hard-fail on bundled CLI discovery (no silent fallback).
+- Windows bundled CLI discovery supports structural path matching and hash-based fallback for opaque MSI stream extraction scenarios.
+- Improved artifact inspection and debugging output in E2E workflows for faster triage of packaging regressions.
+
+### Fixed
+
+- Resolved Ubuntu E2E broken-pipe error in artifact listing under `set -euo pipefail` (replaced `find | head -20 || true` with `find | awk 'NR <= 20'`).
+- Restored macOS bundled CLI executable bit preservation after artifact download by adding `chmod +x` in CLI source selection.
+- Fixed Windows E2E hang by replacing indefinite `msiexec /a` admin-install with reliable 7-zip extraction (with msiexec fallback).
+- CLI smoke tests now use `--help` capability check instead of unsupported `--version` flag.
+- Windows MSI stream CLI files now properly materialized to `.resolved-bundled-cli/fiberpath.exe` for PowerShell execution.
 
 ## [0.5.4] - 2026-03-23
 
