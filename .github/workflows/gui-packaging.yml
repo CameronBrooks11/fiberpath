@@ -2,7 +2,7 @@ name: GUI Packaging
 
 on:
   push:
-    branches: [main, v0.5.1-dev]
+    branches: [main]
     paths:
       - "fiberpath/**"
       - "fiberpath_cli/**"

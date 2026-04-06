@@ -1,0 +1,152 @@
+name: CI Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "fiberpath/**"
+      - "fiberpath_api/**"
+      - "fiberpath_cli/**"
+      - "fiberpath_gui/**"
+      - "docs/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "setup.cfg"
+      - "mkdocs.yml"
+      - "README.md"
+      - "scripts/sync_gui_docs.py"
+      - ".github/workflows/ci-check.yml"
+      - ".github/workflows/backend-ci.yml"
+      - ".github/workflows/gui-ci.yml"
+      - ".github/workflows/docs-ci.yml"
+      - ".github/actions/setup-python/**"
+      - ".github/actions/setup-node/**"
+      - ".github/actions/setup-rust/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "fiberpath/**"
+      - "fiberpath_api/**"
+      - "fiberpath_cli/**"
+      - "fiberpath_gui/**"
+      - "docs/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "setup.cfg"
+      - "mkdocs.yml"
+      - "README.md"
+      - "scripts/sync_gui_docs.py"
+      - ".github/workflows/ci-check.yml"
+      - ".github/workflows/backend-ci.yml"
+      - ".github/workflows/gui-ci.yml"
+      - ".github/workflows/docs-ci.yml"
+      - ".github/actions/setup-python/**"
+      - ".github/actions/setup-node/**"
+      - ".github/actions/setup-rust/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      gui: ${{ steps.filter.outputs.gui }}
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Detect changed areas
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - "fiberpath/**"
+              - "fiberpath_api/**"
+              - "fiberpath_cli/**"
+              - "tests/**"
+              - "pyproject.toml"
+              - "uv.lock"
+              - "setup.cfg"
+              - ".github/workflows/backend-ci.yml"
+              - ".github/actions/setup-python/**"
+            gui:
+              - "fiberpath_gui/**"
+              - "!fiberpath_gui/docs/**"
+              - ".github/workflows/gui-ci.yml"
+              - ".github/actions/setup-node/**"
+              - ".github/actions/setup-rust/**"
+            docs:
+              - "docs/**"
+              - "fiberpath_gui/docs/**"
+              - "mkdocs.yml"
+              - "scripts/sync_gui_docs.py"
+              - "README.md"
+              - ".github/workflows/docs-ci.yml"
+              - ".github/actions/setup-python/**"
+
+  backend:
+    name: Backend
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    uses: ./.github/workflows/backend-ci.yml
+
+  gui:
+    name: GUI
+    needs: changes
+    if: needs.changes.outputs.gui == 'true'
+    uses: ./.github/workflows/gui-ci.yml
+
+  docs:
+    name: Docs
+    needs: changes
+    if: needs.changes.outputs.docs == 'true'
+    uses: ./.github/workflows/docs-ci.yml
+
+  ci-check:
+    name: CI Check
+    runs-on: ubuntu-latest
+    needs: [changes, backend, gui, docs]
+    if: always()
+    steps:
+      - name: Verify called workflow results
+        run: |
+          echo "changes=${{ needs.changes.result }}"
+          echo "backend=${{ needs.backend.result }}"
+          echo "gui=${{ needs.gui.result }}"
+          echo "docs=${{ needs.docs.result }}"
+
+          FAIL=0
+
+          if [[ "${{ needs.changes.result }}" != "success" ]]; then
+            echo "Change detection did not succeed"
+            FAIL=1
+          fi
+
+          if [[ "${{ needs.backend.result }}" == "failure" || "${{ needs.backend.result }}" == "cancelled" ]]; then
+            echo "Backend workflow failed"
+            FAIL=1
+          fi
+
+          if [[ "${{ needs.gui.result }}" == "failure" || "${{ needs.gui.result }}" == "cancelled" ]]; then
+            echo "GUI workflow failed"
+            FAIL=1
+          fi
+
+          if [[ "${{ needs.docs.result }}" == "failure" || "${{ needs.docs.result }}" == "cancelled" ]]; then
+            echo "Docs workflow failed"
+            FAIL=1
+          fi
+
+          if [[ "$FAIL" -ne 0 ]]; then
+            exit 1
+          fi
+
+          echo "CI Check passed"

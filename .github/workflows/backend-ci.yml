@@ -1,28 +1,8 @@
 name: Backend CI
 
 on:
-  push:
-    branches: [main, v0.5.1-dev]
-    paths:
-      - "fiberpath/**"
-      - "fiberpath_api/**"
-      - "fiberpath_cli/**"
-      - "tests/**"
-      - "pyproject.toml"
-      - "uv.lock"
-      - "setup.cfg"
-      - ".github/workflows/backend-ci.yml"
-      - ".github/actions/setup-python/**"
-  pull_request:
-    paths:
-      - "fiberpath/**"
-      - "fiberpath_api/**"
-      - "fiberpath_cli/**"
-      - "tests/**"
-      - "pyproject.toml"
-      - "setup.cfg"
-      - ".github/workflows/backend-ci.yml"
-      - ".github/actions/setup-python/**"
+  workflow_call:
+  workflow_dispatch:
 
 jobs:
   lint-and-type-check:
