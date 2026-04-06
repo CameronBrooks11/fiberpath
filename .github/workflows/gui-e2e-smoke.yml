@@ -163,6 +163,8 @@ jobs:
             printf 'effective_cli_path=%s\n' "$effective_cli_path"
             printf 'bundled_cli_path=%s\n' "$BUNDLED_CLI_PATH"
           } > e2e-artifacts/diagnostics/cli-selection.txt
+          # Ensure the resolved binary is executable (artifact download may strip exec bit)
+          [[ -f "$effective_cli_path" ]] && chmod +x "$effective_cli_path"
           printf 'EFFECTIVE_CLI_PATH=%s\n' "$effective_cli_path" >> "$GITHUB_ENV"
           printf 'CLI_SOURCE=%s\n' "$cli_source" >> "$GITHUB_ENV"
 

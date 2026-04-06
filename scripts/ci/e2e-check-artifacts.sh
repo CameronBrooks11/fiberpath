@@ -10,7 +10,7 @@ if [[ ! -d "$bundle_root" ]]; then
 fi
 
 echo "Inspecting bundle root: $bundle_root"
-find "$bundle_root" -type f | head -20
+find "$bundle_root" -type f | head -20 || true
 
 case "$runner_os" in
   Linux)
