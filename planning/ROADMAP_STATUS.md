@@ -1,14 +1,14 @@
 # FiberPath Roadmap Status Matrix
 
-Last Updated: 2026-03-23
+Last Updated: 2026-04-06
 
 ## Active Planning
 
 - Release Validation & E2E ([roadmap-v6.md](roadmap-v6.md))
   - Target Release: v0.6.0
   - Status: Active
-  - Completion: 0%
-  - Notes: Cross-platform validation (Linux/macOS), installer/runtime verification, E2E automation infrastructure setup
+  - Completion: 7%
+  - Notes: Runtime-validation slice in progress; workflow now extracts package payloads (MSI, .deb, .app) and prefers bundled CLI execution from installed-style runtime layouts
 - Production Polish ([roadmap-v7.md](roadmap-v7.md))
   - Target Release: v0.7.0
   - Status: Planned

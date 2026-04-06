@@ -1,0 +1,196 @@
+name: GUI E2E Smoke
+
+on:
+  workflow_run:
+    workflows: ["GUI Packaging"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      packaging_run_id:
+        description: "Run ID of GUI Packaging workflow to validate"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  smoke:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
+    name: Smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            artifact_os: windows-latest
+          - os: ubuntu-latest
+            artifact_os: ubuntu-latest
+          - os: macos-latest
+            artifact_os: macos-latest
+
+    env:
+      PACKAGING_RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.event.inputs.packaging_run_id }}
+      WIND_INPUT: examples/simple_cylinder/input.wind
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Download packaged GUI artifact
+        uses: actions/download-artifact@v8
+        with:
+          run-id: ${{ env.PACKAGING_RUN_ID }}
+          name: fiberpath-gui-${{ matrix.artifact_os }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: e2e-artifacts/bundle
+
+      - name: Download frozen CLI artifact
+        uses: actions/download-artifact@v8
+        with:
+          run-id: ${{ env.PACKAGING_RUN_ID }}
+          name: fiberpath-cli-${{ matrix.artifact_os }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: e2e-artifacts/cli
+
+      - name: Set executable bits (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          chmod +x scripts/ci/e2e-check-artifacts.sh
+          chmod +x scripts/ci/e2e-cli-smoke.sh
+          chmod +x scripts/ci/extract-package-runtime.sh
+          chmod +x scripts/ci/find-bundled-cli.sh
+          chmod +x e2e-artifacts/cli/fiberpath
+
+      - name: Check packaged artifacts (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./scripts/ci/e2e-check-artifacts.ps1 -BundleRoot "e2e-artifacts/bundle" -RunnerOs "$env:RUNNER_OS"
+
+      - name: Check packaged artifacts (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          ./scripts/ci/e2e-check-artifacts.sh "e2e-artifacts/bundle" "$RUNNER_OS"
+
+      - name: Extract package runtime payload (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $runtimeRoot = ./scripts/ci/extract-package-runtime.ps1 `
+            -BundleRoot "e2e-artifacts/bundle" `
+            -OutputRoot "e2e-artifacts/runtime/windows"
+          $resolvedRuntimeRoot = ($runtimeRoot | Select-Object -Last 1)
+          New-Item -ItemType Directory -Force -Path "e2e-artifacts/diagnostics" | Out-Null
+          @(
+            "runner_os=$env:RUNNER_OS",
+            "runtime_root=$resolvedRuntimeRoot"
+          ) | Set-Content -Path "e2e-artifacts/diagnostics/runtime-selection.txt"
+          "PACKAGE_RUNTIME_ROOT=$resolvedRuntimeRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Extract package runtime payload (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          runtime_root="$(./scripts/ci/extract-package-runtime.sh "e2e-artifacts/bundle" "$RUNNER_OS" "e2e-artifacts/runtime/$RUNNER_OS")"
+          mkdir -p e2e-artifacts/diagnostics
+          {
+            printf 'runner_os=%s\n' "$RUNNER_OS"
+            printf 'runtime_root=%s\n' "$runtime_root"
+          } > e2e-artifacts/diagnostics/runtime-selection.txt
+          printf 'PACKAGE_RUNTIME_ROOT=%s\n' "$runtime_root" >> "$GITHUB_ENV"
+
+      - name: Resolve bundled CLI from package output (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $resolved = ./scripts/ci/find-bundled-cli.ps1 -BundleRoot "$env:PACKAGE_RUNTIME_ROOT" -RunnerOs "$env:RUNNER_OS"
+          $resolvedPath = ""
+          if ($resolved) {
+            $resolvedPath = ($resolved | Select-Object -Last 1)
+          }
+          "BUNDLED_CLI_PATH=$resolvedPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Resolve bundled CLI from package output (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          resolved="$(./scripts/ci/find-bundled-cli.sh "$PACKAGE_RUNTIME_ROOT" "$RUNNER_OS")"
+          printf 'BUNDLED_CLI_PATH=%s\n' "$resolved" >> "$GITHUB_ENV"
+
+      - name: Select CLI source (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $effectiveCliPath = "e2e-artifacts/cli/fiberpath.exe"
+          $cliSource = "standalone-artifact"
+          if ($env:BUNDLED_CLI_PATH) {
+            $effectiveCliPath = $env:BUNDLED_CLI_PATH
+            $cliSource = "packaged-output"
+          } else {
+            Write-Warning "Falling back to standalone CLI artifact because bundled CLI is not directly discoverable in packaged Windows output."
+          }
+          New-Item -ItemType Directory -Force -Path "e2e-artifacts/diagnostics" | Out-Null
+          @(
+            "runner_os=$env:RUNNER_OS",
+            "cli_source=$cliSource",
+            "effective_cli_path=$effectiveCliPath",
+            "bundled_cli_path=$env:BUNDLED_CLI_PATH"
+          ) | Set-Content -Path "e2e-artifacts/diagnostics/cli-selection.txt"
+          "EFFECTIVE_CLI_PATH=$effectiveCliPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "CLI_SOURCE=$cliSource" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Select CLI source (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          effective_cli_path="e2e-artifacts/cli/fiberpath"
+          cli_source="standalone-artifact"
+          if [[ -n "$BUNDLED_CLI_PATH" ]]; then
+            effective_cli_path="$BUNDLED_CLI_PATH"
+            cli_source="packaged-output"
+          else
+            echo "Warning: falling back to standalone CLI artifact because bundled CLI is not directly discoverable in packaged output." >&2
+          fi
+          mkdir -p e2e-artifacts/diagnostics
+          {
+            printf 'runner_os=%s\n' "$RUNNER_OS"
+            printf 'cli_source=%s\n' "$cli_source"
+            printf 'effective_cli_path=%s\n' "$effective_cli_path"
+            printf 'bundled_cli_path=%s\n' "$BUNDLED_CLI_PATH"
+          } > e2e-artifacts/diagnostics/cli-selection.txt
+          printf 'EFFECTIVE_CLI_PATH=%s\n' "$effective_cli_path" >> "$GITHUB_ENV"
+          printf 'CLI_SOURCE=%s\n' "$cli_source" >> "$GITHUB_ENV"
+
+      - name: CLI smoke test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./scripts/ci/e2e-cli-smoke.ps1 `
+            -CliPath "$env:EFFECTIVE_CLI_PATH" `
+            -WindPath "$env:WIND_INPUT" `
+            -OutputPath "e2e-artifacts/output/smoke-output.gcode"
+
+      - name: CLI smoke test (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          ./scripts/ci/e2e-cli-smoke.sh \
+            "$EFFECTIVE_CLI_PATH" \
+            "$WIND_INPUT" \
+            "e2e-artifacts/output/smoke-output.gcode"
+
+      - name: Upload smoke output and diagnostics
+        uses: actions/upload-artifact@v7
+        with:
+          name: gui-e2e-smoke-${{ matrix.artifact_os }}
+          path: |
+            e2e-artifacts/output/smoke-output.gcode
+            e2e-artifacts/diagnostics/cli-selection.txt
+            e2e-artifacts/diagnostics/runtime-selection.txt
+          if-no-files-found: error
+          retention-days: 14
