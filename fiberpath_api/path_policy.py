@@ -20,7 +20,11 @@ def _parse_allowed_roots() -> list[Path]:
         value = token.strip()
         if not value:
             continue
-        roots.append(Path(value).expanduser().resolve())
+        # Ensure each configured root is absolute and normalized.
+        root_path = Path(value).expanduser()
+        if not root_path.is_absolute():
+            root_path = (Path.cwd() / root_path)
+        roots.append(root_path.resolve())
 
     return roots or [Path.cwd().resolve()]
 
@@ -55,12 +59,18 @@ def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
 
 
 def _is_within_roots(path: Path, roots: list[Path]) -> bool:
+    """Return True if `path` is located within any of the allowed `roots`."""
+    # Work with absolute, normalized paths to avoid traversal / prefix issues.
+    path = path.resolve(strict=False)
     for root in roots:
+        root = root.resolve(strict=False)
         try:
-            if os.path.commonpath([str(path), str(root)]) == str(root):
-                return True
+            # `relative_to` succeeds only if `path` is the same as `root`
+            # or is located within `root`.
+            path.relative_to(root)
+            return True
         except ValueError:
-            # Different drives on Windows can raise ValueError; treat as non-match.
+            # Not a subpath of this root (or different drive on Windows); try next.
             continue
     return False
 
