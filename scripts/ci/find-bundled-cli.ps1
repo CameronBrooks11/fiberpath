@@ -40,8 +40,13 @@ if (-not $candidates) {
 
         if ($hashMatchedCandidates) {
             $resolved = $hashMatchedCandidates | Select-Object -First 1
+            $materializedDir = Join-Path $BundleRoot ".resolved-bundled-cli"
+            $materializedPath = Join-Path $materializedDir "fiberpath.exe"
+            New-Item -ItemType Directory -Force -Path $materializedDir | Out-Null
+            Copy-Item -LiteralPath $resolved.FullName -Destination $materializedPath -Force
             Write-Host "Resolved bundled CLI path by hash match: $($resolved.FullName)"
-            Write-Output $resolved.FullName
+            Write-Host "Materialized hash-matched Windows CLI to executable path: $materializedPath"
+            Write-Output $materializedPath
             return
         }
     }
