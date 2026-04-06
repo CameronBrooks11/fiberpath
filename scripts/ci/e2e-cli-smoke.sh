@@ -9,7 +9,7 @@ output_path="$3"
 [[ -f "$wind_path" ]] || { echo "Input .wind file not found: $wind_path"; exit 1; }
 
 echo "Running CLI smoke checks with: $cli_path"
-"$cli_path" --version
+"$cli_path" --help >/dev/null
 
 validate_output=$("$cli_path" validate "$wind_path" --json)
 echo "validate --json => $validate_output"

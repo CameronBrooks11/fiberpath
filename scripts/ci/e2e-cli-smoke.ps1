@@ -18,9 +18,15 @@ if (-not (Test-Path -LiteralPath $WindPath)) {
 }
 
 Write-Host "Running CLI smoke checks with: $CliPath"
-& $CliPath --version
+& $CliPath --help | Out-Null
+if ($LASTEXITCODE -ne 0) {
+    throw "CLI root help command failed with exit code $LASTEXITCODE"
+}
 
 $validateOutput = & $CliPath validate $WindPath --json
+if ($LASTEXITCODE -ne 0) {
+    throw "CLI validate command failed with exit code $LASTEXITCODE"
+}
 Write-Host "validate --json => $validateOutput"
 
 $outputDir = Split-Path -Parent $OutputPath
@@ -29,6 +35,9 @@ if (-not (Test-Path -LiteralPath $outputDir)) {
 }
 
 $planOutput = & $CliPath plan $WindPath --json --output $OutputPath
+if ($LASTEXITCODE -ne 0) {
+    throw "CLI plan command failed with exit code $LASTEXITCODE"
+}
 Write-Host "plan --json => $planOutput"
 
 if (-not (Test-Path -LiteralPath $OutputPath)) {
