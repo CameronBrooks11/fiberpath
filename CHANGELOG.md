@@ -8,6 +8,16 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+### Added
+
+- Documented critical helical coverage defect: `lockDegrees` compatibility with `patternNumber` is not fully validated and can allow partial mandrel coverage without a planner error for incompatible combinations (for example `lockDegrees=270`, `patternNumber=3`).
+- Documented required compatibility rule for helical coverage safety: `(2 × lockDegrees) % (360 / patternNumber) == 0`.
+- Documented planned validator hardening to reject `lockDegrees`/`patternNumber` combinations that produce overlapping or aliased in-pattern positions.
+- Documented planned behavior fix where `skipIndex` is currently schema-validated but not yet applied to helical in-pattern visit order.
+- Documented planned schema normalization for `skipInitialNearLock` from nullable boolean to `bool` with default `false`.
+- Documented required docs correction scope for `lockDegrees`, `patternNumber`, and coverage-vs-ply-count semantics, including clarification that feed-rate clamping in planner math is planned, not currently implemented.
+- Documented required example updates for compatibility: `examples/rocketry/AvBay(470mm).wind` layer 1 and `examples/rocketry/MainChute(585mm).wind` layer 1 should use `lockDegrees=540` instead of `270`.
+
 ## [0.6.0] - 2026-04-06
 
 ### Added
@@ -105,3 +115,14 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 - Marlin streaming pause/cancel behavior refinements.
 - Documentation overhaul and workflow cleanup.
+
+## Prior (To Organize)
+
+- v0.1.0
+  - Core planning engine, geometry, simulation baseline, and initial CLI/API hardening.
+- v0.2.0
+  - GUI rehaul and Tauri/React workflow maturation.
+- v0.3.0
+  - Quality/stability pass, testing expansion, error handling, and CI/CD organization.
+- v0.4.0
+  - Tabbed interface and Marlin streaming integration maturity.

@@ -188,7 +188,6 @@ See [roadmap-v6.md](roadmap-v6.md) for comprehensive cross-platform testing and 
 The following items from earlier roadmap drafts have been moved to roadmap-backlog.md:
 
 - **Storybook:** High maintenance overhead, not critical for current team size
-- **Dark mode:** Cosmetic feature, no user demand, significant implementation effort
 - **Panel resize handles:** Attempted before, didn't work well, low priority
 - **Keyboard shortcut customization:** Niche feature, current shortcuts sufficient
 - **Workspace layout presets:** Premature optimization, no user demand

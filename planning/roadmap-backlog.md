@@ -58,17 +58,6 @@ Use this file to track intentionally deferred scope. Do not treat it as an activ
 
 ## Category 3: Advanced UX Features
 
-### Dark Mode Theme Toggle
-
-**Why Deferred:**
-
-- Cosmetic feature without functional value
-- Design token system exists (CSS variables) but full theme switching requires significant work
-- Would need: theme context, storage persistence, theme-specific asset variants, testing across all components
-- No user demand for this feature
-
-**Reconsider If:** Multiple users request it, commitment to maintaining both themes long-term.
-
 ### Panel Resize Handles
 
 **Why Rejected:**
