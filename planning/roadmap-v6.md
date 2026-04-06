@@ -1,7 +1,7 @@
 # FiberPath Roadmap v6 - Release Validation & E2E Automation
 
 **Target Release:** v0.6.0  
-**Status:** Planned (0/44 tasks complete)  
+**Status:** Active (0/44 tasks complete)
 **Prerequisites:** v0.5.4 released with dependency stabilization and scanning close-out complete  
 **Timeline:** 2-3 weeks (36-52 hours)
 
@@ -14,6 +14,48 @@
 ## Objective
 
 Ship durable cross-platform confidence for FiberPath by combining manual platform validation with automated package-level E2E checks in CI.
+
+## Review Outcome (2026-04-06)
+
+- v6 scope is approved and remains the correct release gate for v0.6.0.
+- No dependency or security blockers remain from v0.5.4 stabilization close-out.
+- Critical path is now: Linux install/runtime validation -> macOS install/runtime validation -> docs and fallback mode verification -> CI package-level E2E automation.
+- Finding 3 in [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md) is the only remaining technical finding explicitly tied to v0.6.0 closure.
+
+## Dive-In Plan (Execution Order)
+
+1. Start Linux and CI smoke scaffolding in parallel so package assumptions are validated early.
+2. Run macOS validation immediately after Linux happy-path install and bundled CLI checks pass.
+3. Complete fallback mode and cross-platform docs once platform behavior is confirmed.
+4. Close with workflow hardening and release-gate evidence consolidation.
+
+## Day 0 Readiness Checklist (Enablement, Not Counted in 44 Tasks)
+
+- [ ] Create a v6 tracking issue with 4 checklist sections matching phases below.
+- [ ] Confirm latest packaging artifacts exist for Windows/Linux/macOS and are downloadable from CI.
+- [ ] Define evidence capture locations (screenshots, logs, command transcripts) under `docs/testing/`.
+- [ ] Confirm test hosts are available: Ubuntu 22.04, Debian 12, Fedora 39, macOS Intel, macOS Apple Silicon.
+- [ ] Prepare serial test strategy per platform (real hardware vs virtual serial fallback).
+- [ ] Lock sample files for validation runs (`examples/simple_cylinder/input.wind` and one helical sample).
+- [ ] Confirm ownership and time-box for each phase before first execution run.
+- [ ] Create issue labels for v6 execution tracking (`v6-linux`, `v6-macos`, `v6-docs`, `v6-e2e`).
+
+## Evidence Requirements (Release Gate Artifacts)
+
+| Area | Minimum Evidence Required |
+| ---- | ------------------------- |
+| Linux install/runtime | Installer run notes, bundled CLI `--version`, command outputs for validate/plan, streaming and serial notes |
+| macOS install/runtime | Gatekeeper launch notes, bundled CLI `--version`, command outputs for validate/plan, driver/serial notes |
+| Fallback mode | Logs proving PATH-based CLI discovery with bundled CLI disabled on Linux and macOS |
+| Docs | Updated docs pages with platform-specific install, serial, troubleshooting, and fallback guidance |
+| CI E2E | Green matrix run proving artifact presence plus bundled CLI smoke execution on all 3 OSes |
+
+## Week 1 Target Outcomes
+
+- Linux validation reaches at least 10/15 tasks complete, including bundled CLI checks.
+- CI E2E workflow scaffold exists and can run manually via `workflow_dispatch`.
+- macOS validation begins with installer + Gatekeeper + bundled CLI verification.
+- Any blockers are filed as issues within 24 hours with severity and proposed owner.
 
 ---
 
@@ -77,7 +119,7 @@ Ship durable cross-platform confidence for FiberPath by combining manual platfor
 
 ## Phase 4: Cross-Platform E2E CI Automation
 
-- [ ] Create `.github/workflows/gui-e2e-smoke.yml` matrix workflow (Windows/Linux/macOS)
+- [x] Create `.github/workflows/gui-e2e-smoke.yml` matrix workflow (Windows/Linux/macOS)
 - [ ] Trigger via `workflow_run` from GUI Packaging and `workflow_dispatch`
 - [ ] Add reusable smoke scripts under `scripts/ci/` (shell + PowerShell)
 - [ ] Validate packaged artifact presence per OS (`.msi/.exe`, `.deb/.AppImage`, `.dmg/.app`)
@@ -85,7 +127,7 @@ Ship durable cross-platform confidence for FiberPath by combining manual platfor
 - [ ] Run bundled CLI `validate` and `plan` on sample input; assert output generated
 - [ ] Add clear pass/fail diagnostics in workflow logs for fast triage
 
-**Progress:** 0/7 tasks
+**Progress:** 1/7 tasks
 
 ---
 
