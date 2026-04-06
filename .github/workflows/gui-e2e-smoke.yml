@@ -65,6 +65,18 @@ jobs:
           chmod +x scripts/ci/find-bundled-cli.sh
           chmod +x e2e-artifacts/cli/fiberpath
 
+      - name: Check packaged artifacts (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./scripts/ci/e2e-check-artifacts.ps1 -BundleRoot "e2e-artifacts/bundle" -RunnerOs "$env:RUNNER_OS"
+
+      - name: Check packaged artifacts (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          ./scripts/ci/e2e-check-artifacts.sh "e2e-artifacts/bundle" "$RUNNER_OS"
+
       - name: Extract package runtime payload (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -153,18 +165,6 @@ jobs:
           } > e2e-artifacts/diagnostics/cli-selection.txt
           printf 'EFFECTIVE_CLI_PATH=%s\n' "$effective_cli_path" >> "$GITHUB_ENV"
           printf 'CLI_SOURCE=%s\n' "$cli_source" >> "$GITHUB_ENV"
-
-      - name: Check packaged artifacts (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          ./scripts/ci/e2e-check-artifacts.ps1 -BundleRoot "e2e-artifacts/bundle" -RunnerOs "$env:RUNNER_OS"
-
-      - name: Check packaged artifacts (Unix)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          ./scripts/ci/e2e-check-artifacts.sh "e2e-artifacts/bundle" "$RUNNER_OS"
 
       - name: CLI smoke test (Windows)
         if: runner.os == 'Windows'

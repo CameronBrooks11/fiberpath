@@ -23,18 +23,20 @@ if (Test-Path -LiteralPath $OutputRoot) {
 }
 
 New-Item -ItemType Directory -Path $OutputRoot | Out-Null
+$resolvedOutputRoot = (Resolve-Path -LiteralPath $OutputRoot).Path
 
 Write-Host "Extracting MSI package: $($msi.FullName)"
 $process = Start-Process -FilePath "msiexec.exe" -ArgumentList @(
     "/a",
     $msi.FullName,
-    "/qn",
-    "TARGETDIR=$OutputRoot"
-) -Wait -PassThru -NoNewWindow
+    "TARGETDIR=$resolvedOutputRoot",
+    "/quiet",
+    "/norestart"
+) -Wait -PassThru -WindowStyle Hidden
 
 if ($process.ExitCode -ne 0) {
     throw "MSI extraction failed with exit code $($process.ExitCode)"
 }
 
-Write-Host "Extracted package payload to: $OutputRoot"
-Write-Output $OutputRoot
+Write-Host "Extracted package payload to: $resolvedOutputRoot"
+Write-Output $resolvedOutputRoot
