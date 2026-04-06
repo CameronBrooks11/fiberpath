@@ -1,7 +1,7 @@
 # FiberPath Roadmap v6 - Release Validation & E2E Automation
 
 **Target Release:** v0.6.0  
-**Status:** Active (0/44 tasks complete)
+**Status:** Closed — v0.6.0 shipped 2026-04-06. See closure note below.
 **Prerequisites:** v0.5.4 released with dependency stabilization and scanning close-out complete  
 **Timeline:** 2-3 weeks (36-52 hours)
 
@@ -21,6 +21,16 @@ Ship durable cross-platform confidence for FiberPath by combining manual platfor
 - No dependency or security blockers remain from v0.5.4 stabilization close-out.
 - Critical path is now: Linux install/runtime validation -> macOS install/runtime validation -> docs and fallback mode verification -> CI package-level E2E automation.
 - Finding 3 in [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md) is the only remaining technical finding explicitly tied to v0.6.0 closure.
+
+## Closure Note (2026-04-06)
+
+v0.6.0 was shipped with the following scope disposition:
+
+- **Phase 4 (CI E2E):** Fully implemented. All 7 tasks complete. Workflow (`gui-e2e-smoke.yml`) runs artifact presence checks, bundled CLI discovery, `validate` and `plan` invocations, and pass/fail exit codes on all 3 OSes. Checkbox state in the doc was stale — marked correct below.
+- **Phase 3 (Docs):** Substantively complete. `docs/troubleshooting.md` covers Gatekeeper, dialout group, serial port naming (Windows/Linux/macOS), and bundled CLI discovery. `docs/getting-started.md` covers platform install. Fallback/dev mode documented in troubleshooting. `docs/testing/cross-platform-checklist.md` was never created — waived; CI E2E covers the equivalent automated gate.
+- **Phases 1 & 2 (Manual platform validation):** **Not executed.** 29 manual tasks requiring Linux and macOS hardware were not performed before v0.6.0 shipped. These are formally waived for v0.6.0. A tracking entry has been added to `TODO.md` for the next release cycle. `OUTSTANDING_VALIDATION.md` was never created.
+
+This document is retained for reference. No further work is expected against it.
 
 ## Dive-In Plan (Execution Order)
 
@@ -104,16 +114,16 @@ Ship durable cross-platform confidence for FiberPath by combining manual platfor
 
 ## Phase 3: Fallback, Docs, and Release Guidance
 
-- [ ] Linux/macOS: build without bundled CLI, verify system PATH fallback works
-- [ ] Test `pip install -e .` in venv, verify CLI discovery on both platforms
-- [ ] Document dev mode in `fiberpath_gui/docs/development.md`, add troubleshooting
-- [ ] Create `docs/testing/cross-platform-checklist.md` with platform-specific considerations
-- [ ] Update `README.md`, `docs/getting-started.md`, `fiberpath_gui/README.md` with platform notes
-- [ ] Create `docs/troubleshooting.md`: Linux (`dialout` group), macOS (Gatekeeper, drivers), Windows (v0.5.1)
-- [ ] Document serial naming: Windows (`COM1`), Linux (`/dev/ttyUSB0`), macOS (`/dev/tty.usbserial-*`)
-- [ ] Fix critical bugs, document non-critical quirks, create GitHub issues, update CI if needed
+- [ ] Linux/macOS: build without bundled CLI, verify system PATH fallback works — *waived; documented in troubleshooting.md*
+- [ ] Test `pip install -e .` in venv, verify CLI discovery on both platforms — *waived; documented in troubleshooting.md*
+- [x] Document dev mode in `fiberpath_gui/docs/development.md`, add troubleshooting
+- [ ] Create `docs/testing/cross-platform-checklist.md` with platform-specific considerations — *waived; CI E2E covers equivalent gate*
+- [x] Update `README.md`, `docs/getting-started.md`, `fiberpath_gui/README.md` with platform notes
+- [x] Create `docs/troubleshooting.md`: Linux (`dialout` group), macOS (Gatekeeper, drivers), Windows
+- [x] Document serial naming: Windows (`COM1`), Linux (`/dev/ttyUSB0`), macOS (`/dev/tty.usbserial-*`)
+- [x] Fix critical bugs, document non-critical quirks, create GitHub issues, update CI if needed
 
-**Progress:** 0/8 tasks
+**Progress:** 5/8 tasks (3 waived — see closure note)
 
 ---
 
@@ -122,12 +132,12 @@ Ship durable cross-platform confidence for FiberPath by combining manual platfor
 - [x] Create `.github/workflows/gui-e2e-smoke.yml` matrix workflow (Windows/Linux/macOS)
 - [x] Trigger via `workflow_run` from GUI Packaging and `workflow_dispatch`
 - [x] Add reusable smoke scripts under `scripts/ci/` (shell + PowerShell)
-- [ ] Validate packaged artifact presence per OS (`.msi/.exe`, `.deb/.AppImage`, `.dmg/.app`)
-- [ ] Verify bundled CLI `--version` from packaged outputs on each OS
-- [ ] Run bundled CLI `validate` and `plan` on sample input; assert output generated
-- [ ] Add clear pass/fail diagnostics in workflow logs for fast triage
+- [x] Validate packaged artifact presence per OS (`.msi/.exe`, `.deb/.AppImage`, `.dmg/.app`)
+- [x] Verify bundled CLI `--version` from packaged outputs on each OS
+- [x] Run bundled CLI `validate` and `plan` on sample input; assert output generated
+- [x] Add clear pass/fail diagnostics in workflow logs for fast triage
 
-**Progress:** 3/7 tasks
+**Progress:** 7/7 tasks — complete
 
 ---
 
