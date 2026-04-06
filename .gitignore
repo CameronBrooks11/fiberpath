@@ -214,3 +214,7 @@ __marimo__/
 
 # negations
 !fiberpath_gui/src/lib/
+
+# temporary files
+temp/
+tmp/
