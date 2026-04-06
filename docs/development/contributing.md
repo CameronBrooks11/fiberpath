@@ -4,7 +4,7 @@ Thanks for investing time in the project! This guide explains how to set up a de
 
 ## Development Environment
 
-1. **Install prerequisites:** Python 3.11+, Node.js 18+ (for the GUI), Rust toolchain (for Tauri), and `uv` for deterministic Python environments.
+1. **Install prerequisites:** Python 3.11+, Node.js 24.x + npm 11.x (for the GUI), Rust toolchain (for Tauri), and `uv` for deterministic Python environments.
 2. **Create a virtual environment:**
 
    ```sh
@@ -35,7 +35,7 @@ Thanks for investing time in the project! This guide explains how to set up a de
 1. `uv run ruff check`
 2. `uv run mypy`
 3. `uv run pytest`
-4. Update documentation and add changelog entries (once release tracking is in place).
+4. Update documentation and add changelog entries in `CHANGELOG.md` when behavior changes.
 5. Ensure commits are scoped and descriptive. Squash locally if needed before opening the PR.
 
 CI will enforce the same Ruff/MyPy/Pytest pipeline on every PR. If a job fails, reproduce locally with the matching `uv run …` command.
@@ -45,7 +45,7 @@ CI will enforce the same Ruff/MyPy/Pytest pipeline on every PR. If a job fails, 
 FiberPath uses GitHub Actions with specialized workflows:
 
 - **backend-ci.yml** - Python linting (Ruff), type checking (MyPy), testing (pytest on 3 OS)
-- **gui-ci.yml** - GUI linting (ESLint), type checking (tsc), testing (Vitest), building (Vite)
+- **gui-ci.yml** - GUI type/lint checks (tsc, stylelint, CSS var guard), testing (Vitest), building (Vite), Rust checks (fmt + clippy)
 - **docs-ci.yml** - Documentation validation (MkDocs --strict)
 - **dependency-audit.yml** - Scheduled and PR-gated dependency security audit (pip-audit, npm audit, cargo audit)
 - **docs-deploy.yml** - Documentation deployment to GitHub Pages (main branch only)

@@ -4,12 +4,12 @@ Complete guide to CSS architecture and styling patterns in FiberPath GUI.
 
 ## Overview
 
-FiberPath GUI uses a **design token system** with modular CSS. All styles are centralized in design tokens, and components use CSS modules for scoped styling.
+FiberPath GUI uses a **design token system** with global CSS organized by feature/domain. All styles are centralized in design tokens and applied through shared primitive and component class names.
 
 **Key Principles:**
 
 - **Design Tokens:** All colors, spacing, typography defined once
-- **Modular CSS:** Component-specific styles in `.module.css` files
+- **Global CSS by domain:** Shared primitives in `src/styles/*.css`, feature-specific rules in component CSS files (for example `components/StreamTab/*.css`)
 - **No CSS-in-JS:** Plain CSS for performance and simplicity
 - **No Utility Classes:** Avoid Tailwind-style utilities (semantic class names instead)
 
@@ -137,7 +137,7 @@ All design system variables defined as CSS custom properties:
 
 ## Component Styling
 
-### CSS Modules Pattern
+### Global CSS Pattern
 
 **File Structure:**
 
@@ -145,20 +145,20 @@ All design system variables defined as CSS custom properties:
 src/
 ├── components/
 │   ├── PlanForm.tsx
-│   └── PlanForm.module.css
+│   └── StreamTab/FileStreamingSection.css
 └── styles/
     ├── tokens.css
-    └── App.module.css
+    ├── forms.css
+    └── buttons.css
 ```
 
 **Component:**
 
 ```typescript
-import styles from './PlanForm.module.css';
 export function PlanForm() {
   return (
-    <div className={styles.container}>
-      <button className={styles.submitButton}>
+    <div className="panel panel--form">
+      <button className="button button--primary">
         Generate G-code
       </button>
     </div>
@@ -166,15 +166,15 @@ export function PlanForm() {
 }
 ```
 
-**CSS Module:**
+**Global CSS:**
 
 ```css
-.container {
+.panel--form {
   padding: var(--spacing-lg);
   background-color: var(--color-bg-panel);
   border-radius: var(--border-radius-lg);
 }
-.submitButton {
+.button--primary {
   padding: var(--spacing-sm) var(--spacing-lg);
   background-color: var(--color-primary);
   color: var(--color-text-inverse);
@@ -185,16 +185,16 @@ export function PlanForm() {
   cursor: pointer;
   transition: var(--transition-colors);
 }
-.submitButton:hover {
+.button--primary:hover {
   background-color: var(--color-primary-hover);
 }
 ```
 
 **Benefits:**
 
-- Scoped class names (no collisions)
-- TypeScript autocomplete for class names
-- Tree-shakeable (unused styles removed)
+- Shared primitives stay visually consistent across tabs and dialogs
+- No runtime styling abstraction, so cascade/debug behavior is predictable
+- Easy grep-based audits for token usage and style debt
 
 ### State Modifiers
 
@@ -220,7 +220,7 @@ export function PlanForm() {
 **Usage:**
 
 ```typescript
-<button className={`${styles.button} ${isPrimary ? styles.primary : styles.secondary}`}>
+<button className={isPrimary ? "button primary" : "button secondary"}>
   Click
 </button>
 ```
@@ -228,17 +228,17 @@ export function PlanForm() {
 ### Conditional Classes
 
 ```typescript
-import clsx from 'clsx'; // Optional utility
 function Button({ variant, disabled }: ButtonProps) {
+  const className = [
+    "button",
+    variant === "primary" ? "primary" : "secondary",
+    disabled ? "disabled" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <button
-      className={clsx(
-        styles.button,
-        variant === 'primary' && styles.primary,
-        variant === 'secondary' && styles.secondary,
-        disabled && styles.disabled
-      )}
-    >
+    <button className={className}>
       Click
     </button>
   );

@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.5.4](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.6.0](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,18 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.5.4**
+-   :material-new-box:{ .lg .middle } **What's New in v0.6.0**
 
     ---
 
-    High-risk dependency migrations and automation close-out:
+    Packaging and validation hardening for production releases:
 
-    - Completed Bucket B upgrades across Python, Node, and Rust (React 19, Vite 8, Zod 4, thiserror 2)
-    - Added dependency automation guardrails: Dependabot, gated dependency-audit workflow, and SBOM release artifacts
-    - Remediated all known pip-audit findings and aligned GUI runtime/tooling to Node 24
-    - Established ongoing dependency policy and triage SLAs to keep future releases green
+    - Added cross-platform GUI E2E smoke validation across Windows/macOS/Linux package artifacts
+    - Added bundled CLI discovery and smoke validation against packaged outputs
+    - Hardened package artifact checks and improved workflow diagnostics for faster CI triage
+    - Fixed E2E reliability issues on Ubuntu, macOS executable-bit handling, and Windows MSI extraction paths
 
-    Builds on the v0.5.3 low-risk refresh baseline.
+    Builds on the v0.5.4 dependency-hardening baseline.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 

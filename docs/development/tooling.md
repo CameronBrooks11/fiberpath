@@ -55,25 +55,25 @@ Commands run from `fiberpath_gui/` directory with `npm run <script>`:
 - Vite: `vite.config.ts` in `fiberpath_gui/`
 - Rust: `src-tauri/Cargo.toml`
 
-**Full Check Sequence:**
+**Recommended Local Sequence:**
 
-````sh
+```sh
 cd fiberpath_gui
-npm run lint              # TypeScript type check
-npm run lint:css          # CSS lint
-npm run format:check      # Rust format check
-npm run clippy            # Rust lint
-npm test                  # Run tests
-npm run build             # Production build
-# Or run all checks at once:
-## Combined Pre-Commit Workflow
+npm run check:all
+npm test
+npm run build
+```
+
+**Combined Pre-Commit Workflow:**
+
 Run from project root before committing:
+
 ```sh
 # Python stack
 uv run ruff check && uv run ruff format && uv run mypy && uv run pytest -v
 # GUI stack
-cd fiberpath_gui && npm run check:all && npm test && cd ..
-````
+cd fiberpath_gui && npm run check:all && npm test && npm run build && cd ..
+```
 
 ## CI/CD Equivalents
 
@@ -92,10 +92,10 @@ uv run pytest -v --cov --cov-report=xml
 
 ```sh
 cd fiberpath_gui
-npm run lint                     # ESLint (disabled - using tsc)
-npx tsc --noEmit                 # TypeScript type checking
+npm run lint                     # TypeScript type checking (tsc --noEmit)
 npm run lint:css                 # Stylelint (CSS)
-npm run format:check             # Rust formatting
+npm run lint:css:vars            # CSS variable guard
+npm run format:check             # Rust formatting check
 npm run clippy                   # Rust linting
 npm test                         # Vitest
 npm run test:coverage            # Coverage report

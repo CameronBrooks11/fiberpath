@@ -95,7 +95,7 @@ FiberPath.app/Contents/Resources/bundled-cli/fiberpath
 
 ### All Platforms
 
-1. **Node.js 20+** – matches `fiberpath_gui/package.json` engines field
+1. **Node.js 24.x + npm 11.x** – matches `fiberpath_gui/package.json` engines field
 2. **Rust toolchain** – via `rustup`, includes `cargo`, `clippy`, `rustfmt`
 
 ### Windows-Specific

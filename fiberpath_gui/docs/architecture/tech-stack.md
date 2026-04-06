@@ -4,7 +4,7 @@ Complete technical specifications for FiberPath GUI technology stack.
 
 ## Frontend Stack
 
-### React 18.3.1
+### React 19.x
 
 **Why React:**
 
@@ -39,7 +39,7 @@ export function PlanForm() {
 }
 ```
 
-### TypeScript 5.0+
+### TypeScript 6.x
 
 **Why TypeScript:**
 
@@ -72,7 +72,7 @@ export function PlanForm() {
 - Exhaustive switch statements
 - Type guards for runtime safety
 
-### Vite 5.0
+### Vite 8.x
 
 **Why Vite:**
 
@@ -104,7 +104,7 @@ export default defineConfig({
 - HMR updates in ~50ms
 - Production build in ~10 seconds
 
-### Zustand 5.0.9
+### Zustand 5.x
 
 **Why Zustand:**
 
@@ -160,7 +160,7 @@ const mandrel = useProjectStore(
 );
 ```
 
-### Zod 3.25.76
+### Zod 4.x
 
 **Why Zod:**
 
@@ -226,7 +226,7 @@ if (!result.success) {
 
 ## Desktop Shell
 
-### Tauri 2.0
+### Tauri 2.x
 
 **Why Tauri:**
 
@@ -349,38 +349,9 @@ it('should update mandrel diameter', () => {
 
 ## Build Tools
 
-### ESLint 8.x
+### TypeScript Compiler (tsc)
 
-**Configuration:**
-
-```json
-{
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react-hooks/recommended"
-  ],
-  "rules": {
-    "no-unused-vars": "error",
-    "@typescript-eslint/no-explicit-any": "warn"
-  }
-}
-```
-
-### Prettier 3.x
-
-**Configuration:**
-
-```json
-{
-  "semi": true,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5"
-}
-```
-
-### TypeScript Compiler
+The GUI's primary static analysis gate is `npm run lint`, which runs `tsc --noEmit`.
 
 **Key Flags:**
 
@@ -388,19 +359,34 @@ it('should update mandrel diameter', () => {
 - `noUncheckedIndexedAccess: true` - Array access safety
 - `noUnusedLocals: true` - Dead code detection
 
+### Stylelint 17.x
+
+CSS quality is enforced through:
+
+- `npm run lint:css` - standard CSS lint checks
+- `npm run lint:css:vars` - verifies referenced CSS variables are defined
+
+### Rustfmt + Clippy
+
+Tauri-side Rust quality gates are part of the GUI workflow:
+
+- `npm run format:check` - `cargo fmt --check`
+- `npm run clippy` - `cargo clippy -- -D warnings`
+
 ## Version Matrix
 
 | Package                | Version | Purpose            |
 | ---------------------- | ------- | ------------------ |
-| react                  | 18.3.1  | UI framework       |
-| typescript             | 5.0+    | Type safety        |
-| vite                   | 5.0.10  | Build tool         |
-| zustand                | 5.0.9   | State management   |
-| zod                    | 3.25.76 | Runtime validation |
-| @tauri-apps/api        | 2.0.0   | Tauri bindings     |
+| react                  | 19.2.4  | UI framework       |
+| typescript             | 6.0.2   | Type safety        |
+| vite                   | 8.0.5   | Build tool         |
+| zustand                | 5.0.12  | State management   |
+| zod                    | 4.0.0   | Runtime validation |
+| @tauri-apps/api        | 2.10.1  | Tauri bindings     |
 | @hello-pangea/dnd      | 18.0.1  | Drag & drop        |
-| vitest                 | 1.0+    | Test runner        |
-| @testing-library/react | 14.0+   | Component testing  |
+| vitest                 | 4.0.0   | Test runner        |
+| @testing-library/react | 16.3.2  | Component testing  |
+| stylelint              | 17.6.0  | CSS linting        |
 
 ## Platform Support
 

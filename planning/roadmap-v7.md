@@ -1,15 +1,15 @@
 # FiberPath Roadmap v7 - Production Polish & Developer Infrastructure
 
 **Target Release:** v0.7.0  
-**Status:** Planned (0/31 tasks complete)  
+**Status:** Planned (1/31 tasks complete)  
 **Focus:** Essential production-readiness improvements and developer workflow  
-**Prerequisites:** v6 release validation complete and/or blockers explicitly documented  
+**Prerequisites:** Cross-platform validation baseline complete and/or blockers explicitly documented  
 **Timeline:** 2-3 weeks  
 **Priority:** High - foundational improvements for long-term maintainability
 
 **Scope Boundary:** v7 owns developer tooling, architecture cleanup, performance, and validation UX.  
-**Related Roadmaps:** [roadmap-v6.md](roadmap-v6.md) owns release validation, platform verification, and E2E automation.  
-**Validation Reference:** [OUTSTANDING_VALIDATION.md](OUTSTANDING_VALIDATION.md)
+**Related Planning:** [roadmap-backlog.md](roadmap-backlog.md) tracks deferred v7+ work and post-cutover follow-ups.  
+**Validation Reference:** Release validation notes in [CHANGELOG.md](../CHANGELOG.md) and packaged-app validation workflow [`gui-e2e-smoke.yml`](../.github/workflows/gui-e2e-smoke.yml)
 
 **Philosophy:** Focus on practical improvements that directly benefit development velocity and production quality. Defer speculative features to backlog.
 
@@ -19,7 +19,7 @@
 
 **Goal:** Establish proper release tracking and versioning practices
 
-- [ ] Create CHANGELOG.md retroactively from [RELEASE_HISTORY.md](RELEASE_HISTORY.md) and completed v5.1 notes
+- [x] Create and maintain `CHANGELOG.md` as the release source of truth (retroactive history captured through v0.6.0)
   - v1: Core planning & G-code generation
   - v2: CLI commands, simulation, API
   - v3: GUI with Tauri/React, code quality improvements
@@ -29,9 +29,9 @@
 - [ ] Use semantic versioning convention: `## [X.X.X] - YYYY-MM-DD`
 - [ ] Add "Unreleased" section at top for ongoing work
 
-**Progress:** 0/4 tasks complete
+**Progress:** 1/4 tasks complete
 
-**Rationale:** CHANGELOG.md is essential for users and maintainers to understand version history. Currently missing despite 5 major versions.
+**Rationale:** CHANGELOG.md is essential for users and maintainers to understand version history. The file now exists; this phase keeps process and formatting disciplined.
 
 ---
 
@@ -42,10 +42,10 @@
 - [ ] Add ESLint configuration with React and TypeScript rules
   - Recommended rules: react-hooks, @typescript-eslint
   - Configure in `.eslintrc.json`
-  - Add `npm run lint` script
+  - Add `npm run lint:js` script (keep existing `npm run lint` type-check gate)
 - [ ] Add Prettier for automatic code formatting
   - Configure in `.prettierrc.json`
-  - Add `npm run format` script
+  - Add `npm run format:js` script
   - Set up VSCode settings for format-on-save
 - [ ] Set up pre-commit hooks with husky and lint-staged
   - Run ESLint and Prettier on staged files
@@ -60,7 +60,7 @@
 
 **Progress:** 0/5 tasks complete
 
-**Rationale:** Currently no linting or formatting enforcement. This is foundational for team development and code quality. All modern projects need this.
+**Rationale:** Current enforcement covers TypeScript, CSS, and Rust checks. This phase is specifically for optional JS/TS lint + formatting ergonomics (ESLint/Prettier) if the team decides the added maintenance is worth it.
 
 ---
 
@@ -179,7 +179,7 @@
 
 **Cross-Platform Testing:** v6 is the dedicated roadmap for Linux/macOS validation and E2E automation. v7 does not duplicate that scope.
 
-See [roadmap-v6.md](roadmap-v6.md) for comprehensive cross-platform testing and automation plan.
+Cross-platform testing and automation are now tracked through CI workflows and release notes (`CHANGELOG.md`).
 
 ---
 
@@ -188,7 +188,6 @@ See [roadmap-v6.md](roadmap-v6.md) for comprehensive cross-platform testing and 
 The following items from earlier roadmap drafts have been moved to roadmap-backlog.md:
 
 - **Storybook:** High maintenance overhead, not critical for current team size
-- **Dark mode:** Cosmetic feature, no user demand, significant implementation effort
 - **Panel resize handles:** Attempted before, didn't work well, low priority
 - **Keyboard shortcut customization:** Niche feature, current shortcuts sufficient
 - **Workspace layout presets:** Premature optimization, no user demand
@@ -202,7 +201,7 @@ The following items from earlier roadmap drafts have been moved to roadmap-backl
 
 ## Overall Progress
 
-**Note:** Cross-platform testing moved to dedicated v6 roadmap, restoring v7 to production polish scope.
+**Note:** Cross-platform validation is handled through CI workflows and release hardening; v7 remains focused on production polish scope.
 
 **Estimated Effort:**
 
@@ -226,7 +225,7 @@ The following items from earlier roadmap drafts have been moved to roadmap-backl
 - ✅ Bundle size <2MB, tracked in CI
 - ✅ JSDoc coverage >80% for exported functions
 - ✅ Validation errors visible in UI, not just console
-- ✅ Cross-platform blockers from v6 are addressed or explicitly tracked
+- ✅ Cross-platform blockers are addressed or explicitly tracked in active planning docs
 
 ---
 

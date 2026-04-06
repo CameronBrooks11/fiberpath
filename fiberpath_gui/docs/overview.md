@@ -70,11 +70,11 @@ The GUI acts as a shell around the FiberPath CLI, providing visual workflows whi
 
 ## Technology Stack
 
-- **Frontend:** React 18, TypeScript, Vite
-- **Desktop Shell:** Tauri 2.0 (Rust)
+- **Frontend:** React 19, TypeScript 6, Vite 8
+- **Desktop Shell:** Tauri 2.x (Rust)
 - **State Management:** Zustand with shallow selectors
 - **Validation:** Zod runtime schemas
-- **Styling:** Modular CSS with design tokens
+- **Styling:** Global CSS organized by feature/domain with design tokens
 - **Testing:** Vitest, React Testing Library
 
 ## Key Features
@@ -108,7 +108,7 @@ The GUI acts as a shell around the FiberPath CLI, providing visual workflows whi
 
 **Prerequisites:**
 
-- Node.js 18+
+- Node.js 24.x and npm 11.x
 - Rust toolchain
 - Python CLI installed (`pip install fiberpath` or `uv pip install fiberpath`)
 
@@ -152,7 +152,7 @@ fiberpath_gui/
 │   ├── state/            # Zustand stores (projectStore)
 │   ├── lib/              # Utilities (commands, schemas, validation)
 │   ├── types/            # TypeScript types
-│   ├── styles/           # Modular CSS with design tokens
+│   ├── styles/           # Global CSS + design tokens
 │   └── tests/            # Test files
 ├── src-tauri/
 │   ├── src/
@@ -169,7 +169,7 @@ fiberpath_gui/
 
 See the main [Contributing Guide](../development/contributing.md) for:
 
-- Coding standards (Ruff, MyPy for Python; ESLint, TypeScript for GUI)
+- Coding standards (Ruff, MyPy for Python; TypeScript, Stylelint for GUI)
 - Pull request workflow
 - CI/CD pipelines
 - Issue triage

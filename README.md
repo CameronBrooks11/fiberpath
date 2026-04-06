@@ -4,7 +4,7 @@
 
 **Plan, simulate, and manufacture composite parts with precision fiber winding.**
 
-[![Version](https://img.shields.io/badge/version-0.5.4-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.6.0-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-00695C.svg)](LICENSE)
 [![Backend CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/backend-ci.yml)
 [![GUI CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-ci.yml)
@@ -12,7 +12,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=black)
+![React](https://img.shields.io/badge/React-19+-61DAFB?logo=react&logoColor=black)
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-FFC131?logo=tauri&logoColor=white)
 
 [Download](https://github.com/CameronBrooks11/fiberpath/releases/latest) · [Documentation](https://cameronbrooks11.github.io/fiberpath) · [Examples](examples/)

@@ -23,7 +23,7 @@ def _parse_allowed_roots() -> list[Path]:
         # Ensure each configured root is absolute and normalized.
         root_path = Path(value).expanduser()
         if not root_path.is_absolute():
-            root_path = (Path.cwd() / root_path)
+            root_path = Path.cwd() / root_path
         roots.append(root_path.resolve())
 
     return roots or [Path.cwd().resolve()]
