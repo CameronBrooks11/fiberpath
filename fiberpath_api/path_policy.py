@@ -25,14 +25,33 @@ def _parse_allowed_roots() -> list[Path]:
     return roots or [Path.cwd().resolve()]
 
 
-def _resolve_user_path(user_path: str) -> Path:
+def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
     if not user_path.strip():
         raise HTTPException(status_code=400, detail="Path must not be empty")
 
     candidate = Path(user_path).expanduser()
-    if not candidate.is_absolute():
-        candidate = Path.cwd() / candidate
-    return candidate.resolve(strict=False)
+    resolved_candidates: list[Path] = []
+
+    if candidate.is_absolute():
+        resolved_candidates.append(candidate.resolve(strict=False))
+    else:
+        # Resolve relative paths from each allowed root, not from unrestricted CWD.
+        for root in roots:
+            resolved_candidates.append((root / candidate).resolve(strict=False))
+
+    for resolved in resolved_candidates:
+        if _is_within_roots(resolved, roots):
+            return resolved
+
+    roots_str = ", ".join(str(root) for root in roots)
+    raise HTTPException(
+        status_code=403,
+        detail=(
+            f"Path '{user_path}' is outside allowed API roots. "
+            f"Configure {_ALLOWED_ROOTS_ENV} to permit additional roots. "
+            f"Current roots: {roots_str}"
+        ),
+    )
 
 
 def _is_within_roots(path: Path, roots: list[Path]) -> bool:
@@ -48,21 +67,8 @@ def _is_within_roots(path: Path, roots: list[Path]) -> bool:
 
 def enforce_input_path_policy(user_path: str) -> Path:
     """Resolve and validate an input path against configured allowed roots."""
-    resolved = _resolve_user_path(user_path)
     roots = _parse_allowed_roots()
-
-    if not _is_within_roots(resolved, roots):
-        roots_str = ", ".join(str(root) for root in roots)
-        raise HTTPException(
-            status_code=403,
-            detail=(
-                f"Path '{user_path}' is outside allowed API roots. "
-                f"Configure {_ALLOWED_ROOTS_ENV} to permit additional roots. "
-                f"Current roots: {roots_str}"
-            ),
-        )
-
-    return resolved
+    return _resolve_user_path(user_path, roots)
 
 
 def enforce_output_path_policy(path: Path) -> Path:
