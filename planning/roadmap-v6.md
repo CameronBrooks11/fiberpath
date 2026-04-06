@@ -120,14 +120,14 @@ Ship durable cross-platform confidence for FiberPath by combining manual platfor
 ## Phase 4: Cross-Platform E2E CI Automation
 
 - [x] Create `.github/workflows/gui-e2e-smoke.yml` matrix workflow (Windows/Linux/macOS)
-- [ ] Trigger via `workflow_run` from GUI Packaging and `workflow_dispatch`
-- [ ] Add reusable smoke scripts under `scripts/ci/` (shell + PowerShell)
+- [x] Trigger via `workflow_run` from GUI Packaging and `workflow_dispatch`
+- [x] Add reusable smoke scripts under `scripts/ci/` (shell + PowerShell)
 - [ ] Validate packaged artifact presence per OS (`.msi/.exe`, `.deb/.AppImage`, `.dmg/.app`)
 - [ ] Verify bundled CLI `--version` from packaged outputs on each OS
 - [ ] Run bundled CLI `validate` and `plan` on sample input; assert output generated
 - [ ] Add clear pass/fail diagnostics in workflow logs for fast triage
 
-**Progress:** 1/7 tasks
+**Progress:** 3/7 tasks
 
 ---
 
