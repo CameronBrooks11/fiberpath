@@ -108,7 +108,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $resolved = ./scripts/ci/find-bundled-cli.ps1 -BundleRoot "$env:PACKAGE_RUNTIME_ROOT" -RunnerOs "$env:RUNNER_OS"
+          $resolved = ./scripts/ci/find-bundled-cli.ps1 `
+            -BundleRoot "$env:PACKAGE_RUNTIME_ROOT" `
+            -RunnerOs "$env:RUNNER_OS" `
+            -ReferenceCliPath "e2e-artifacts/cli/fiberpath.exe"
           $resolvedPath = ""
           if ($resolved) {
             $resolvedPath = ($resolved | Select-Object -Last 1)
@@ -126,14 +129,12 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $effectiveCliPath = "e2e-artifacts/cli/fiberpath.exe"
-          $cliSource = "standalone-artifact"
-          if ($env:BUNDLED_CLI_PATH) {
-            $effectiveCliPath = $env:BUNDLED_CLI_PATH
-            $cliSource = "packaged-output"
-          } else {
-            Write-Warning "Falling back to standalone CLI artifact because bundled CLI is not directly discoverable in packaged Windows output."
+          if (-not $env:BUNDLED_CLI_PATH) {
+            throw "Bundled CLI was not resolved from packaged Windows output; refusing standalone fallback."
           }
+
+          $effectiveCliPath = $env:BUNDLED_CLI_PATH
+          $cliSource = "packaged-output"
           New-Item -ItemType Directory -Force -Path "e2e-artifacts/diagnostics" | Out-Null
           @(
             "runner_os=$env:RUNNER_OS",

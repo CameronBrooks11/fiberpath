@@ -10,7 +10,7 @@ if [[ ! -d "$bundle_root" ]]; then
 fi
 
 echo "Inspecting bundle root: $bundle_root"
-find "$bundle_root" -type f | head -20 || true
+find "$bundle_root" -type f | awk 'NR <= 20 { print }'
 
 case "$runner_os" in
   Linux)
