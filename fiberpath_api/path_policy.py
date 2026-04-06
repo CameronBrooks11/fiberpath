@@ -26,6 +26,9 @@ def _parse_allowed_roots() -> list[Path]:
 
 
 def _resolve_user_path(user_path: str) -> Path:
+    if not user_path.strip():
+        raise HTTPException(status_code=400, detail="Path must not be empty")
+
     candidate = Path(user_path).expanduser()
     if not candidate.is_absolute():
         candidate = Path.cwd() / candidate
@@ -33,7 +36,14 @@ def _resolve_user_path(user_path: str) -> Path:
 
 
 def _is_within_roots(path: Path, roots: list[Path]) -> bool:
-    return any(path == root or path.is_relative_to(root) for root in roots)
+    for root in roots:
+        try:
+            if os.path.commonpath([str(path), str(root)]) == str(root):
+                return True
+        except ValueError:
+            # Different drives on Windows can raise ValueError; treat as non-match.
+            continue
+    return False
 
 
 def enforce_input_path_policy(user_path: str) -> Path:
