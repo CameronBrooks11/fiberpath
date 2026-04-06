@@ -24,7 +24,7 @@ Reusable setup steps used across multiple workflows:
    - Used by: backend-ci, backend-publish, docs-ci, docs-deploy
 
 2. **setup-node/**
-   - Sets up Node.js 20
+   - Sets up Node.js 24
    - Configures npm cache
    - Installs GUI dependencies
    - Used by: gui-ci, gui-packaging
@@ -51,7 +51,7 @@ Reusable setup steps used across multiple workflows:
 
 - Triggers: Push to main, PRs affecting GUI code
 - Jobs:
-  1. Lint & Type Check (ESLint, TypeScript)
+  1. Type/lint checks (TypeScript, Stylelint, CSS variable guard)
   2. Test & Build (Vitest, coverage, Vite build)
 - Status: [![GUI CI](https://github.com/USER/fiberpath/actions/workflows/gui-ci.yml/badge.svg)](https://github.com/USER/fiberpath/actions/workflows/gui-ci.yml)
 

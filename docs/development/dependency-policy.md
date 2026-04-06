@@ -17,11 +17,11 @@ Applies to:
 
 - Patch updates: monthly
 - Minor updates: quarterly review window
-- Major updates: dedicated release slot (for example, v0.5.4-style migration release)
+- Major updates: dedicated release slot (for example, a migration-focused release like v0.6.0 or similar)
 
 ## Ownership
 
-- Primary triage owner: maintainers responsible for release planning (`planning/ROADMAP_STATUS.md`)
+- Primary triage owner: maintainers responsible for the active release planning document in `planning/`
 - PR review owner: area maintainer for the affected ecosystem
 - Security escalation owner: release manager on current target milestone
 
@@ -62,6 +62,6 @@ When an update is deferred:
 
 ## Documentation and Traceability
 
-- Roadmap and release source of truth: `planning/RELEASE_HISTORY.md` and current active roadmaps in `planning/`.
-- Release-level summary: `planning/RELEASE_HISTORY.md`.
+- Roadmap and release source of truth: `CHANGELOG.md` and current active planning documents in `planning/`.
+- Release-level summary: `CHANGELOG.md`.
 - CI architecture reference: `docs/development/ci-cd.md`.

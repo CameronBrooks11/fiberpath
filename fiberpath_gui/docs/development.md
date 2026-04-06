@@ -6,7 +6,7 @@ Complete setup and workflow documentation for developing FiberPath GUI.
 
 ### Required
 
-- **Node.js** 18+ ([nodejs.org](https://nodejs.org))
+- **Node.js** 24.x and **npm** 11.x ([nodejs.org](https://nodejs.org))
 - **Rust** 1.70+ ([rustup.rs](https://rustup.rs))
 - **Python CLI** installed and available in PATH (for development mode)
   - Via pip: `pip install fiberpath`
@@ -195,7 +195,7 @@ This runs:
 **Release Checklist:**
 
 - [ ] Update version in `package.json`, `Cargo.toml`, `tauri.conf.json`
-- [ ] Run `npm run check:all` (lint, format, typecheck, test, clippy)
+- [ ] Run `npm run check:all` and `npm test`
 - [ ] Test on target platforms
 - [ ] Build production bundles
 - [ ] Verify bundle functionality
@@ -211,10 +211,10 @@ npm run check:all
 
 Runs in sequence:
 
-1. ESLint (JavaScript/TypeScript linting)
-2. Prettier (formatting check)
-3. TypeScript compiler (type checking)
-4. Vitest (test suite)
+1. TypeScript compiler (`tsc --noEmit`)
+2. Stylelint (`src/**/*.css`)
+3. CSS variable guard (`lint:css:vars`)
+4. Rust formatter check (`cargo fmt --check`)
 5. Clippy (Rust linting)
 
 **CI Pipeline:** This command runs on every PR. All must pass before merge.
@@ -222,16 +222,19 @@ Runs in sequence:
 ### Individual Commands
 
 ```sh
-# Linting
-npm run lint              # ESLint
-npm run lint:fix          # Auto-fix ESLint issues
-# Formatting
-npm run format:check      # Check Prettier
-npm run format            # Auto-format with Prettier
-# Type Checking
-npm run typecheck         # TypeScript compiler (no emit)
-# Rust Linting
-npm run clippy            # Cargo clippy
+# TypeScript and CSS checks
+npm run lint              # TypeScript type check (tsc --noEmit)
+npm run lint:css          # Stylelint
+npm run lint:css:vars     # CSS variable guard
+npm run lint:css:fix      # Auto-fix CSS lint issues
+# Rust checks
+npm run format:check      # cargo fmt --check
+npm run format:fix        # cargo fmt
+npm run clippy            # cargo clippy -- -D warnings
+# Tests and build
+npm test                  # Vitest
+npm run test:coverage     # Vitest with coverage
+npm run build             # Vite production build
 ```
 
 ## Project Structure
@@ -241,36 +244,19 @@ fiberpath_gui/
 ├── src/                          # Frontend code
 │   ├── main.tsx                  # App entry point
 │   ├── App.tsx                   # Root component with tab layout
-│   ├── components/               # React components
-│   │   ├── AboutDialog.tsx       # Version and info modal
-│   │   ├── AxisFormatToggle.tsx  # XAB/XYZ switcher
-│   │   ├── ManualControl.tsx     # Manual G-code entry
-│   │   ├── PlanForm.tsx          # Project builder form
-│   │   ├── PlotPanel.tsx         # Visualization viewer
-│   │   ├── SerialConnect.tsx     # Connection manager
-│   │   ├── SimulatePanel.tsx     # Simulation results
-│   │   ├── StreamPanel.tsx       # Streaming interface
-│   │   └── LayerManager.tsx      # Layer list with drag-drop
-│   ├── state/                    # State management
-│   │   ├── projectStore.ts       # Zustand project store
-│   │   └── projectStore.test.ts  # Store tests
-│   ├── lib/                      # Utilities
-│   │   ├── commands.ts           # Tauri command bindings
-│   │   ├── schemas.ts            # Zod validation schemas
-│   │   ├── schemas.test.ts       # Schema validation tests
-│   │   ├── validation.ts         # Helpers and error handling
-│   │   └── errors.ts             # Custom error classes
-│   ├── types/                    # TypeScript types
-│   │   ├── fiberpath.ts          # Project/layer/mandrel types
-│   │   └── streaming.ts          # Streaming state types
-│   └── styles/                   # CSS modules
-│       ├── tokens.css            # Design tokens (colors, spacing)
-│       ├── App.module.css        # Layout styles
-│       └── *.module.css          # Component styles
+│   ├── components/               # UI components (tabs, dialogs, forms, stream)
+│   ├── hooks/                    # Custom React hooks
+│   ├── layouts/                  # Layout wrappers
+│   ├── lib/                      # Tauri command bindings, validation helpers
+│   ├── state/                    # Project editing store
+│   ├── stores/                   # Streaming and toast stores
+│   ├── styles/                   # Global CSS + design tokens
+│   ├── tests/                    # Integration and setup files
+│   └── types/                    # TypeScript domain models
 ├── src-tauri/                    # Rust backend
 │   ├── src/
-│   │   ├── main.rs               # Tauri commands (plan, plot, simulate)
-│   │   └── marlin.rs             # Streaming state management
+│   │   ├── main.rs               # Tauri command registration + app bootstrap
+│   │   └── marlin.rs             # Streaming state and command handling
 │   ├── Cargo.toml                # Rust dependencies
 │   ├── tauri.conf.json           # Tauri configuration
 │   └── icons/                    # App icons
@@ -278,7 +264,7 @@ fiberpath_gui/
 │   └── FiberPathProject.schema.json
 ├── docs/                         # This documentation
 ├── package.json                  # NPM scripts and dependencies
-├── tsconfig.json                 # TypeScript config
+├── tsconfig.json                 # TypeScript config (strict mode)
 ├── vite.config.ts                # Vite build config
 └── vitest.config.ts              # Test configuration
 ```

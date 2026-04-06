@@ -29,7 +29,7 @@ Cross-platform desktop application for FiberPath filament winding. Built with Ta
 
 ### Prerequisites
 
-- **Node.js 18+** ([nodejs.org](https://nodejs.org))
+- **Node.js 24.x + npm 11.x** ([nodejs.org](https://nodejs.org))
 - **Rust 1.70+** ([rustup.rs](https://rustup.rs))
 - **Platform-specific tools:**
   - Windows: Visual C++ Build Tools, WebView2
@@ -95,7 +95,7 @@ Connect to Marlin-compatible hardware and stream G-code:
 3. **Stream Files** – Select a G-code file, click Start Stream, and monitor progress in real-time.
 4. **Monitor** – View command/response log with timestamps and status updates.
 
-See [docs/marlin-streaming.md](docs/marlin-streaming.md) for detailed streaming documentation.
+See [../docs/guides/marlin-streaming.md](../docs/guides/marlin-streaming.md) for detailed streaming documentation.
 
 ## Schema Management
 
@@ -129,9 +129,11 @@ npm run package
 macOS). Windows packaging works locally, while macOS/Linux artifacts require running the command on
 those respective platforms (handled automatically in CI).
 
-See `fiberpath_gui/docs/` for more details on architecture and schema generation, contains:
+See `fiberpath_gui/docs/` for detailed documentation:
 
-- `ARCHITECTURE.md` – high-level design of the Tauri + React GUI
-- `SCHEMA.md` – how JSON Schema and TypeScript types are generated
-- `PERFORMANCE_PROFILING.md` – guide to profiling React performance
-- `STORE_SPLITTING_ANALYSIS.md` – analysis of Zustand store splitting considerations
+- `overview.md` – GUI capabilities and architecture overview
+- `development.md` – setup, build, and quality workflows
+- `testing.md` – GUI test strategy and commands
+- `architecture/` – stack details, CLI bridge, and streaming state model
+- `guides/` – styling, schema, and performance guides
+- `reference/type-safety.md` – end-to-end type contracts

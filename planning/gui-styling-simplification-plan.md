@@ -37,19 +37,19 @@ FiberPath GUI should feel like a precise engineering instrument, not a visually 
 ## Baseline Snapshot
 
 - CSS files: **20 total** — 12 global in `styles/`, 7 in `components/StreamTab/`, 1 in `components/Toast/`
-- CSS LOC: ~3395 (exact per-file breakdown captured in Phase 0)
-- Frontend TS/TSX LOC: ~8506
+- CSS LOC: **3942** (baseline recaptured on 2026-04-06; exact per-file breakdown in `planning/baseline-css-loc.txt`)
+- Frontend TS/TSX LOC: **9484**
 - Top CSS hotspots by LOC:
-  - `styles/dialogs.css` — 471
-  - `styles/panels.css` — 385
-  - `styles/layout.css` — 372
-  - `styles/canvas.css` — 315
-  - `components/StreamTab/FileStreamingSection.css` — 233
-  - `styles/forms.css` — 216
-  - `styles/buttons.css` — 153
-  - `styles/tokens.css` — 187
-- Known inline style debt: ~17 `style={{}}` call sites across ~6 components (exact per-component count established by Phase 3 audit)
-- Dead dependencies confirmed in `package.json`: `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu` — not imported in any TSX file
+  - `styles/dialogs.css` — 551
+  - `styles/panels.css` — 446
+  - `styles/layout.css` — 431
+  - `styles/canvas.css` — 364
+  - `components/StreamTab/FileStreamingSection.css` — 271
+  - `styles/forms.css` — 251
+  - `styles/tokens.css` — 217
+  - `styles/buttons.css` — 175
+- Known inline style debt: **17** `style={{}}` call sites across **7** components (exact call sites captured in baseline file)
+- Dead dependencies confirmed in `package.json`: `@radix-ui/react-dropdown-menu`, `@radix-ui/react-menubar`, `clsx` — not imported in current TS/TSX source
 
 ---
 
@@ -356,7 +356,7 @@ Known call sites from baseline scan (verify/extend with audit above):
 
 **Tasks:**
 
-- [ ] Remove dead Radix UI packages: `npm uninstall @radix-ui/react-dialog @radix-ui/react-dropdown-menu` — confirm no TSX imports exist before running
+- [ ] Remove confirmed dead packages: `npm uninstall @radix-ui/react-dropdown-menu @radix-ui/react-menubar clsx` — confirm no TSX imports exist before running
 - [ ] Run `npm run check:all` and `npm run test` after removal to confirm nothing broke
 - [ ] Cross-platform visual QA: open app on Windows, macOS, and Linux; check for rendering differences
 - [ ] Contrast and readability check on all major surfaces
@@ -412,12 +412,12 @@ npm run test        # vitest
 
 | Metric                  | Baseline | After Phase 1 | After Phase 2 | After Phase 4 | Final |
 | ----------------------- | -------- | ------------- | ------------- | ------------- | ----- |
-| Total CSS LOC           | ~3395    |               |               |               |       |
-| dialogs.css LOC         | 471      | —             |               | —             |       |
-| panels.css LOC          | 385      | —             |               | —             |       |
-| layout.css LOC          | 372      | —             |               | —             |       |
-| canvas.css LOC          | 315      | —             |               | —             |       |
-| `style={{}}` call sites | ~17      | —             | —             | —             |       |
+| Total CSS LOC           | 3942     |               |               |               |       |
+| dialogs.css LOC         | 551      | —             |               | —             |       |
+| panels.css LOC          | 446      | —             |               | —             |       |
+| layout.css LOC          | 431      | —             |               | —             |       |
+| canvas.css LOC          | 364      | —             |               | —             |       |
+| `style={{}}` call sites | 17       | —             | —             | —             |       |
 | Token count (total)     | TBD      |               | —             | —             |       |
 | Legacy alias count      | TBD      |               | —             | —             |       |
 
