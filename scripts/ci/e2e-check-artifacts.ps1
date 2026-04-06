@@ -20,8 +20,8 @@ switch ($RunnerOs) {
     "Windows" {
         $msi = @(Get-ChildItem -Path $BundleRoot -Recurse -Filter *.msi -File -ErrorAction SilentlyContinue)
         $exe = @(Get-ChildItem -Path $BundleRoot -Recurse -Filter *.exe -File -ErrorAction SilentlyContinue)
-        if (($msi.Count + $exe.Count) -eq 0) {
-            throw "No Windows installer found (.msi or .exe) under $BundleRoot"
+        if ($msi.Count -eq 0) {
+            throw "No Windows .msi installer found under $BundleRoot"
         }
         Write-Host "Found Windows installers: msi=$($msi.Count), exe=$($exe.Count)"
     }
@@ -38,10 +38,14 @@ switch ($RunnerOs) {
     }
     "macOS" {
         $dmg = @(Get-ChildItem -Path $BundleRoot -Recurse -Filter *.dmg -File -ErrorAction SilentlyContinue)
+        $app = @(Get-ChildItem -Path $BundleRoot -Recurse -Directory -Filter *.app -ErrorAction SilentlyContinue)
         if ($dmg.Count -eq 0) {
             throw "No macOS .dmg installer found under $BundleRoot"
         }
-        Write-Host "Found macOS artifacts: dmg=$($dmg.Count)"
+        if ($app.Count -eq 0) {
+            throw "No macOS .app bundle found under $BundleRoot"
+        }
+        Write-Host "Found macOS artifacts: dmg=$($dmg.Count), app=$($app.Count)"
     }
     default {
         throw "Unsupported runner OS: $RunnerOs"

@@ -22,8 +22,10 @@ case "$runner_os" in
     ;;
   macOS)
     dmg_count=$(find "$bundle_root" -type f -name "*.dmg" | wc -l | tr -d ' ')
+    app_count=$(find "$bundle_root" -type d -name "*.app" | wc -l | tr -d ' ')
     [[ "$dmg_count" -gt 0 ]] || { echo "No macOS .dmg installer found"; exit 1; }
-    echo "Found macOS artifacts: dmg=$dmg_count"
+    [[ "$app_count" -gt 0 ]] || { echo "No macOS .app bundle found"; exit 1; }
+    echo "Found macOS artifacts: dmg=$dmg_count app=$app_count"
     ;;
   *)
     echo "Unsupported runner OS for shell checker: $runner_os"

@@ -8,7 +8,7 @@ Last Updated: 2026-04-06
   - Target Release: v0.6.0
   - Status: Active
   - Completion: 7%
-  - Notes: Second CI slice in progress; workflow now resolves bundled CLI paths from package output where discoverable, falls back explicitly when not, and uploads diagnostics
+  - Notes: Runtime-validation slice in progress; workflow now extracts package payloads (MSI, .deb, .app) and prefers bundled CLI execution from installed-style runtime layouts
 - Production Polish ([roadmap-v7.md](roadmap-v7.md))
   - Target Release: v0.7.0
   - Status: Planned
