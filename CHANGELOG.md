@@ -18,6 +18,25 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 - Documented required docs correction scope for `lockDegrees`, `patternNumber`, and coverage-vs-ply-count semantics, including clarification that feed-rate clamping in planner math is planned, not currently implemented.
 - Documented required example updates for compatibility: `examples/rocketry/AvBay(470mm).wind` layer 1 and `examples/rocketry/MainChute(585mm).wind` layer 1 should use `lockDegrees=540` instead of `270`.
 
+## [0.6.2] - 2026-04-07
+
+### Added
+
+- Added stream-domain action hooks (`useConnectionActions`, `useStreamingActions`, `useManualCommandActions`) and consolidated stream feedback helpers for consistent toast/log behavior.
+- Added focused integration coverage for stream lifecycle transitions in `streamLifecycle.test.ts`.
+- Added shared React UI primitives/utilities including `LayerNumericField`, `numericFields`, `helicalValidation`, `usePreviewGeneration`, and `BaseDialog`.
+
+### Changed
+
+- Completed the v0.6.2 React hotspot cleanup roadmap (Waves A-D), including StreamTab domain decomposition, menu/file orchestration cleanup, and canvas/editor component simplification.
+- Standardized store boundaries by moving `projectStore` into `src/stores` and removing StreamTab wrapper path indirection.
+- Updated release-facing docs to reflect v0.6.2 as the current release.
+
+### Fixed
+
+- Removed remaining imperative `alert(...)` UI fallback paths in favor of app-level notifications.
+- Eliminated final inline-style residue in streaming UI components to keep styling maintainable and class-driven.
+
 ## [0.6.1] - 2026-04-07
 
 ### Added
