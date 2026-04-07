@@ -83,7 +83,7 @@
 }
 
 .log-empty {
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   font-style: italic;
   text-align: center;
   padding: 40px 20px;
@@ -99,7 +99,7 @@
 }
 
 .log-entry:hover {
-  background: var(--bg-hover);
+  background: var(--color-bg-hover);
 }
 
 .log-entry__prefix {

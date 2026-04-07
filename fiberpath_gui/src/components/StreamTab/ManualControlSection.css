@@ -61,7 +61,7 @@
 .manual-input-group label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text);
 }
 
 .input-row {

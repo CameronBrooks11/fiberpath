@@ -14,7 +14,7 @@
 
 /* Dialog Content */
 .dialog-content {
-  background: var(--bg-panel);
+  background: var(--color-bg-panel);
   border-radius: 8px;
   box-shadow: 0 8px 32px rgb(0, 0, 0, 0.5);
   max-width: 600px;
@@ -22,7 +22,7 @@
   max-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   margin: auto;
 }
 
@@ -33,7 +33,7 @@
 /* Dialog Header */
 .dialog-header {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -43,13 +43,13 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text);
 }
 
 .dialog-close {
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   font-size: 1.75rem;
   line-height: 1;
   cursor: pointer;
@@ -64,8 +64,8 @@
 }
 
 .dialog-close:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  background: var(--color-bg-hover);
+  color: var(--color-text);
 }
 
 /* Dialog Body */
@@ -78,7 +78,7 @@
 /* Dialog Footer */
 .dialog-footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
@@ -109,17 +109,17 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--color-text);
 }
 
 .about-version {
   margin: 0.25rem 0 0;
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
 
 .about-description {
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   line-height: 1.6;
   margin: 0;
 }
@@ -128,13 +128,13 @@
   margin: 0 0 0.75rem;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text);
 }
 
 .about-features {
   margin: 0;
   padding-left: 1.5rem;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
 }
 
 .about-features li {
@@ -149,9 +149,9 @@
 }
 
 .link-button {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
+  background: var(--color-bg-panel-alt);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
   padding: 0.75rem 1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -164,21 +164,21 @@
 }
 
 .link-button:hover {
-  background: var(--bg-hover);
-  border-color: var(--primary);
+  background: var(--color-bg-hover);
+  border-color: var(--color-primary);
 }
 
 .about-footer {
   text-align: center;
   padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--color-border);
 }
 
 .about-copyright,
 .about-license {
   margin: 0.25rem 0;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
 
 /* Diagnostics Dialog Specific */
@@ -193,7 +193,7 @@
 .diagnostics-section h3 {
   margin: 0 0 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.875rem;
@@ -211,20 +211,20 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 0.75rem;
-  background: var(--bg-card);
+  background: var(--color-bg-panel-alt);
   border-radius: 6px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
 }
 
 .diagnostics-label {
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   font-size: 0.875rem;
   flex-shrink: 0;
 }
 
 .diagnostics-value {
-  color: var(--text-primary);
+  color: var(--color-text);
   font-size: 0.875rem;
   text-align: right;
   font-family: Consolas, Monaco, monospace;
@@ -236,15 +236,15 @@
 }
 
 .status-healthy {
-  color: var(--success);
+  color: var(--color-success);
 }
 
 .status-warning {
-  color: var(--warning);
+  color: var(--color-warning);
 }
 
 .status-error {
-  color: var(--error);
+  color: var(--color-error);
 }
 
 /* Export Confirmation Dialog */
@@ -274,13 +274,13 @@
 
 .export-validation__status--success {
   background: rgb(18, 168, 154, 0.1);
-  color: var(--primary);
+  color: var(--color-primary);
   border: 1px solid rgb(18, 168, 154, 0.3);
 }
 
 .export-validation__status--error {
   background: rgb(255, 138, 138, 0.1);
-  color: var(--error);
+  color: var(--color-error);
   border: 1px solid rgb(255, 138, 138, 0.3);
 }
 
@@ -306,8 +306,8 @@
 }
 
 .export-validation__errors {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  background: var(--color-bg-panel-alt);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 0.75rem;
   margin-bottom: 1rem;
@@ -317,13 +317,13 @@
 
 .export-validation__error {
   font-size: 0.875rem;
-  color: var(--error);
+  color: var(--color-error);
   padding: 0.25rem 0;
   font-family: "Courier New", monospace;
 }
 
 .export-validation__message {
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   font-size: 0.875rem;
   margin: 0;
 }
@@ -337,10 +337,10 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   margin: 0 0 0.75rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--color-border-soft);
 }
 
 .export-summary__grid {
@@ -350,16 +350,16 @@
 }
 
 .export-summary__item {
-  background: var(--bg-card);
+  background: var(--color-bg-panel-alt);
   padding: 0.75rem;
   border-radius: 4px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--color-border-soft);
 }
 
 .export-summary__label {
   display: block;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   margin-bottom: 0.25rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -368,7 +368,7 @@
 .export-summary__value {
   display: block;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: var(--color-text);
   font-weight: 500;
 }
 
@@ -378,7 +378,7 @@
   border-radius: 4px;
   padding: 0.75rem;
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   line-height: 1.5;
 }
 
@@ -391,7 +391,7 @@
    ======================================================================== */
 
 .dialog-content--warning .dialog-header h2 {
-  color: var(--warning);
+  color: var(--color-warning);
 }
 
 .dialog-message {
@@ -412,7 +412,7 @@
 .dialog-error-details strong {
   display: block;
   margin-bottom: 0.5rem;
-  color: var(--error);
+  color: var(--color-error);
 }
 
 .dialog-error-details code {
@@ -424,16 +424,16 @@
 .dialog-help-section {
   margin: 1.5rem 0;
   padding: 1rem;
-  background: var(--bg-hover);
+  background: var(--color-bg-hover);
   border-radius: 4px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--color-border-soft);
 }
 
 .dialog-help-section h3 {
   margin: 0 0 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text);
 }
 
 .dialog-help-section ol {
@@ -457,11 +457,11 @@
 .dialog-hint {
   margin: 1rem 0 0;
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
 
 .dialog-hint code {
-  color: var(--primary);
+  color: var(--color-primary);
 }
 
 /* ========================================================================
@@ -473,13 +473,13 @@
 }
 
 .diagnostics-value--error {
-  color: var(--error);
+  color: var(--color-error);
   font-family: var(--font-family-mono);
   font-size: 0.8125rem;
 }
 
 .status-warning {
-  color: var(--warning);
+  color: var(--color-warning);
 }
 
 /* CLI Diagnostics Display */
@@ -488,7 +488,7 @@
   padding: 1rem;
   background: rgb(0, 0, 0, 0.2);
   border-radius: 4px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   max-height: 400px;
   overflow-y: auto;
 }
@@ -496,7 +496,7 @@
 .dialog-diagnostics h3 {
   margin: 0 0 1rem;
   font-size: 1rem;
-  color: var(--primary);
+  color: var(--color-primary);
 }
 
 .diagnostic-section {
@@ -506,7 +506,7 @@
 .diagnostic-section h4 {
   margin: 0 0 0.5rem;
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -524,7 +524,7 @@
 
 .diagnostic-table td:first-child {
   width: 150px;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
 
 .diagnostic-table code {
@@ -547,5 +547,5 @@
   white-space: pre-wrap;
   word-break: break-all;
   max-height: 200px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
 }

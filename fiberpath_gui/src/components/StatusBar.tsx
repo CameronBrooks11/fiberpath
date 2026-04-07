@@ -36,15 +36,15 @@ export function StatusBar() {
   const getCliStatusColor = (): string => {
     switch (cliStatus) {
       case "ready":
-        return "var(--success)";
+        return "var(--color-success)";
       case "checking":
-        return "var(--text-muted)";
+        return "var(--color-text-muted)";
       case "unavailable":
-        return "var(--error)";
+        return "var(--color-error)";
       case "unknown":
-        return "var(--text-muted)";
+        return "var(--color-text-muted)";
       default:
-        return "var(--text-muted)";
+        return "var(--color-text-muted)";
     }
   };
 

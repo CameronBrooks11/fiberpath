@@ -43,7 +43,7 @@
   margin: 0;
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--color-text);
 }
 
 .close-button {
@@ -83,7 +83,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   margin: 0 0 16px;
 }
 

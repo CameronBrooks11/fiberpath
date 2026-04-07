@@ -12,7 +12,7 @@
 .main-layout__menubar {
   height: 48px;
   background: rgb(12, 12, 14, 0.95);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 100;
@@ -35,8 +35,8 @@
 
 .main-layout__left-panel {
   width: 320px;
-  background: linear-gradient(120deg, var(--bg-panel), var(--bg-panel-alt));
-  border-right: 1px solid var(--border);
+  background: linear-gradient(120deg, var(--color-bg-panel), var(--color-bg-panel-alt));
+  border-right: 1px solid var(--color-border);
   overflow: hidden auto;
   transition:
     width 0.3s ease,
@@ -50,8 +50,8 @@
 
 .main-layout__right-panel {
   width: 360px;
-  background: linear-gradient(120deg, var(--bg-panel), var(--bg-panel-alt));
-  border-left: 1px solid var(--border);
+  background: linear-gradient(120deg, var(--color-bg-panel), var(--color-bg-panel-alt));
+  border-left: 1px solid var(--color-border);
   overflow: hidden auto;
   transition:
     width 0.3s ease,
@@ -70,7 +70,7 @@
   min-width: 0;
   max-height: 100%;
   height: 100%;
-  background: var(--bg);
+  background: var(--color-bg);
   overflow: hidden;
 }
 
@@ -91,21 +91,21 @@
   height: clamp(200px, 25vh, 300px);
   min-height: 200px;
   max-height: 300px;
-  background: linear-gradient(120deg, var(--bg-panel), var(--bg-panel-alt));
-  border-top: 1px solid var(--border);
+  background: linear-gradient(120deg, var(--color-bg-panel), var(--color-bg-panel-alt));
+  border-top: 1px solid var(--color-border);
   overflow: hidden auto;
 }
 
 .main-layout__statusbar {
   height: 32px;
   background: rgb(9, 9, 11, 0.95);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   padding: 0 1rem;
   gap: 1.5rem;
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   z-index: 100;
 }
 
@@ -130,7 +130,7 @@
   .main-layout__right-panel {
     width: 100%;
     border: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .main-layout__left-panel.collapsed,
@@ -153,7 +153,7 @@
 
 .panel-header {
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
   background: rgb(0, 0, 0, 0.2);
 }
 
@@ -163,7 +163,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
 
 .panel-content {
@@ -180,15 +180,15 @@
   align-items: center;
   justify-content: center;
   background:
-    linear-gradient(90deg, var(--border-soft) 1px, transparent 1px),
-    linear-gradient(0deg, var(--border-soft) 1px, transparent 1px);
+    linear-gradient(90deg, var(--color-border-soft) 1px, transparent 1px),
+    linear-gradient(0deg, var(--color-border-soft) 1px, transparent 1px);
   background-size: 40px 40px;
   position: relative;
 }
 
 .canvas-placeholder {
   text-align: center;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   padding: 2rem;
 }
 
@@ -217,7 +217,7 @@
   gap: 0.5rem;
   margin-right: 1rem;
   font-weight: 600;
-  color: var(--primary-soft);
+  color: var(--color-primary-soft);
 }
 
 .menubar__brand-icon {
@@ -245,7 +245,7 @@
   user-select: none;
   border-radius: 0.35rem;
   font-size: 0.9rem;
-  color: var(--text);
+  color: var(--color-text);
   transition: background 0.15s ease;
 }
 
@@ -266,8 +266,8 @@
   top: calc(100% + 0.25rem);
   left: 0;
   min-width: 220px;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   padding: 0.35rem;
   box-shadow: 0 10px 30px rgb(0, 0, 0, 0.5);
@@ -280,7 +280,7 @@
   padding: 0.5rem 0.75rem;
   border: none;
   background: transparent;
-  color: var(--text);
+  color: var(--color-text);
   cursor: pointer;
   border-radius: 0.35rem;
   font-size: 0.88rem;
@@ -302,24 +302,24 @@
 .menubar__dropdown hr {
   margin: 0.35rem 0;
   border: none;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--color-border);
 }
 
 .menubar__shortcut {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   margin-left: auto;
   padding-left: 1.5rem;
 }
 
 .menubar__external {
   margin-left: 0.5rem;
-  color: var(--primary-soft);
+  color: var(--color-primary-soft);
 }
 
 .menubar__submenu-label {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -336,12 +336,12 @@
 
 .menubar__recent-name {
   font-weight: 500;
-  color: var(--text);
+  color: var(--color-text);
 }
 
 .menubar__recent-path {
   font-size: 0.7rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
 
 /* StatusBar Styles */
@@ -359,17 +359,17 @@
 }
 
 .statusbar__label {
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
 .statusbar__value {
-  color: var(--text);
+  color: var(--color-text);
   font-weight: 600;
 }
 
 .statusbar__dirty {
-  color: var(--accent);
+  color: var(--color-accent);
   margin-left: 0.15rem;
 }
 
@@ -395,14 +395,14 @@
 
 .legacy-workflows__header h3 {
   margin: 0 0 0.5rem;
-  color: var(--accent);
+  color: var(--color-accent);
   font-size: 1rem;
 }
 
 .legacy-workflows__header p {
   margin: 0;
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
 
 .legacy-workflows__grid {
@@ -425,7 +425,7 @@
 }
 
 .panel-placeholder-text {
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   font-size: 0.9rem;
   line-height: 1.6;
 }

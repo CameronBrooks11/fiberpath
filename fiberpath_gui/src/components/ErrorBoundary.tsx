@@ -35,8 +35,8 @@ export class ErrorBoundary extends Component<Props, State> {
           style={{
             padding: "40px",
             textAlign: "center",
-            color: "var(--text-primary, #e0e0e0)",
-            background: "var(--bg-primary, #0d0d0f)",
+            color: "var(--color-text, #e0e0e0)",
+            background: "var(--color-bg, #0d0d0f)",
             minHeight: "100vh",
             display: "flex",
             flexDirection: "column",
@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <pre
                 style={{
                   padding: "10px",
-                  background: "var(--bg-card, #1a1a1c)",
+                  background: "var(--color-bg-panel-alt, #1a1a1c)",
                   borderRadius: "4px",
                   overflow: "auto",
                   fontSize: "12px",
@@ -81,7 +81,7 @@ export class ErrorBoundary extends Component<Props, State> {
             style={{
               marginTop: "30px",
               padding: "10px 20px",
-              background: "var(--primary, #12a89a)",
+              background: "var(--color-primary, #12a89a)",
               color: "white",
               border: "none",
               borderRadius: "4px",

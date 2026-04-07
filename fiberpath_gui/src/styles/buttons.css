@@ -24,7 +24,7 @@ button {
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
   cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
+  transition: var(--transition-colors), transform var(--transition-base);
 }
 
 .btn--primary:hover:not(:disabled) {
@@ -52,7 +52,7 @@ button {
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-base);
   cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
+  transition: var(--transition-colors), transform var(--transition-base);
 }
 
 .btn--secondary:hover:not(:disabled) {
@@ -76,7 +76,7 @@ button {
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
   cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
+  transition: var(--transition-colors), transform var(--transition-base);
 }
 
 .btn--danger:hover:not(:disabled) {
@@ -103,7 +103,7 @@ button {
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-base);
   cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
+  transition: var(--transition-colors), transform var(--transition-base);
 }
 
 .btn--ghost:hover:not(:disabled) {
@@ -156,7 +156,7 @@ button:focus-visible {
   color: var(--color-text);
   background: transparent;
   cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
+  transition: var(--transition-colors), transform var(--transition-base);
 }
 
 .btn:focus-visible {

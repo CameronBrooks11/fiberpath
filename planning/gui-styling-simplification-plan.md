@@ -115,17 +115,19 @@ This is a solo project. The role breakdown below is a personal discipline checkl
   - [ ] A dialog (diagnostics or about)
   - [ ] Layer panel
   - [ ] Stream tab with controls visible
-- [ ] Record exact CSS LOC per file:
+- [x] Record exact CSS LOC per file:
   - Run from repo root: `Get-ChildItem -Recurse -Filter "*.css" fiberpath_gui\src | ForEach-Object { $c = (Get-Content $_.FullName | Measure-Object -Line).Lines; "$c $($_.Name)" } | Sort-Object { [int]($_ -split ' ')[0] } -Descending`
-  - Save output to `planning/baseline-css-loc.txt`
-- [ ] Record exact inline style count:
+  - [x] Save output to `planning/baseline-css-loc.txt`
+- [x] Record exact inline style count:
   - Run from repo root: `Select-String -Path "fiberpath_gui\src\**\*.tsx" -Pattern "style=\{\{" -Recurse | Measure-Object | Select-Object -ExpandProperty Count`
-  - Append count to `planning/baseline-css-loc.txt`
+  - [x] Append count to `planning/baseline-css-loc.txt`
+
+**Environment note:** Screenshot capture from a launched GUI is blocked in this execution environment (WSL1 Node runtime limitation).
 
 **Exit criteria:**
 
 - [ ] Before-state screenshots saved (committed or attached to PR-1)
-- [ ] `planning/baseline-css-loc.txt` committed
+- [x] `planning/baseline-css-loc.txt` committed
 
 ---
 
@@ -141,32 +143,34 @@ This is a solo project. The role breakdown below is a personal discipline checkl
 
 **Tasks:**
 
-- [ ] Audit token usage: `Select-String -Path "fiberpath_gui\src\**\*.css" -Pattern "var\(--" -Recurse` — note which tokens are used, how many times, and which are zero-usage
-- [ ] Reorganize `tokens.css` into clearly commented semantic sections:
-  - [ ] Surface / elevation
-  - [ ] Text hierarchy
-  - [ ] Border / separator
-  - [ ] Status / state (success, warning, error, info)
-  - [ ] Spacing scale
-  - [ ] Border radius scale
-  - [ ] Transitions / motion
-- [ ] Mark every legacy alias with `/* DEPRECATED: use --canonical-name */`
-- [ ] Delete only aliases confirmed zero-usage (grep before deleting)
-- [ ] Consolidate spacing values that differ by ≤2px into a single token
-- [ ] Reduce transitions to ≤3 reusable values
-- [ ] For any renamed token: update all 20 CSS files in the same commit
+- [x] Audit token usage: `Select-String -Path "fiberpath_gui\src\**\*.css" -Pattern "var\(--" -Recurse` — note which tokens are used, how many times, and which are zero-usage
+- [x] Reorganize `tokens.css` into clearly commented semantic sections:
+  - [x] Surface / elevation
+  - [x] Text hierarchy
+  - [x] Border / separator
+  - [x] Status / state (success, warning, error, info)
+  - [x] Spacing scale
+  - [x] Border radius scale
+  - [x] Transitions / motion
+- [x] Mark every legacy alias with `/* DEPRECATED: use --canonical-name */`
+- [x] Delete only aliases confirmed zero-usage (grep before deleting)
+- [x] Consolidate spacing values that differ by ≤2px into a single token (no merges required; existing spacing scale has no ≤2px neighbors)
+- [x] Reduce transitions to ≤3 reusable values
+- [x] For any renamed token: update all 20 CSS files in the same commit
 
 **Deliverables:**
 
-- [ ] Revised `tokens.css` with semantic section headers
-- [ ] Token count delta (total before → after) appended to `planning/baseline-css-loc.txt`
+- [x] Revised `tokens.css` with semantic section headers
+- [x] Token count delta (total before → after) appended to `planning/baseline-css-loc.txt`
 
 **Exit criteria:**
 
-- [ ] All semantic sections present and named consistently
-- [ ] No legacy alias has more usages than its canonical form
-- [ ] Zero one-off color literals introduced
+- [x] All semantic sections present and named consistently
+- [x] No legacy alias has more usages than its canonical form
+- [x] Zero one-off color literals introduced
 - [ ] `npm run check:all` passes from `fiberpath_gui/`
+
+**Environment note:** `npm run check:all` is blocked in this execution environment (WSL1 Node runtime limitation).
 
 ---
 

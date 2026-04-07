@@ -24,12 +24,12 @@
 .file-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
 }
 
 .file-name {
   font-size: 13px;
-  color: var(--text-primary);
+  color: var(--color-text);
   font-family: Consolas, Monaco, "Courier New", monospace;
   flex: 1;
   overflow: hidden;
@@ -45,7 +45,7 @@
   background: none;
   border: none;
   border-radius: 3px;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
@@ -96,7 +96,7 @@
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text);
   margin-bottom: 4px;
 }
 
@@ -138,13 +138,13 @@
 .current-command label {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
 }
 
 .command-text {
   font-size: 12px;
   font-family: Consolas, Monaco, "Courier New", monospace;
-  color: var(--text-primary);
+  color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

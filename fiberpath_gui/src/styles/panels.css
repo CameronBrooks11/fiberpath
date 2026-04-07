@@ -118,7 +118,7 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
+  transition: var(--transition-colors), transform var(--transition-base);
 }
 
 .layer-stack__add-btn:hover {
@@ -150,7 +150,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
   cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
+  transition: var(--transition-colors), transform var(--transition-base);
   color: var(--color-text);
 }
 
@@ -244,7 +244,7 @@
   cursor: grab;
   color: var(--color-text-muted);
   opacity: 0.5;
-  transition: var(--transition-opacity);
+  transition: opacity var(--transition-base);
 }
 
 .layer-row:hover .layer-row__drag-handle {
@@ -311,7 +311,7 @@
   display: flex;
   gap: var(--spacing-xs);
   opacity: 0;
-  transition: var(--transition-opacity);
+  transition: opacity var(--transition-base);
 }
 
 .layer-row:hover .layer-row__actions,
@@ -391,7 +391,7 @@
   color: var(--color-text-muted);
   cursor: help;
   opacity: 0.6;
-  transition: var(--transition-opacity);
+  transition: opacity var(--transition-base);
 }
 
 .layer-editor__tooltip:hover {
