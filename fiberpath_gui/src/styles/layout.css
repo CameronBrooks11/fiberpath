@@ -11,7 +11,7 @@
 
 .main-layout__menubar {
   height: 48px;
-  background: rgb(12, 12, 14, 0.95);
+  background: var(--color-bg-panel);
   border-bottom: 1px solid var(--color-border);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -98,7 +98,7 @@
 
 .main-layout__statusbar {
   height: 32px;
-  background: rgb(9, 9, 11, 0.95);
+  background: var(--color-bg);
   border-top: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -234,6 +234,10 @@
   gap: 0.25rem;
 }
 
+.menubar__spacer {
+  flex: 1 1 auto;
+}
+
 .menubar__menu {
   position: relative;
 }
@@ -254,11 +258,11 @@
 }
 
 .menubar__menu summary:hover {
-  background: rgb(255, 255, 255, 0.05);
+  background: var(--color-bg-hover);
 }
 
 .menubar__menu[open] summary {
-  background: rgb(255, 255, 255, 0.08);
+  background: var(--color-bg-active);
 }
 
 .menubar__dropdown {
@@ -291,7 +295,7 @@
 }
 
 .menubar__dropdown button:hover:not(:disabled) {
-  background: rgb(255, 255, 255, 0.08);
+  background: var(--color-bg-hover);
 }
 
 .menubar__dropdown button:disabled {
@@ -341,6 +345,47 @@
 
 .menubar__recent-path {
   font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+.menubar__theme-toggle {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-panel);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: var(--transition-colors), transform var(--transition-base);
+}
+
+.menubar__theme-toggle:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+
+.menubar__theme-toggle:active {
+  transform: translateY(1px);
+}
+
+.menubar__theme-toggle:focus-visible {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 2px rgb(18, 168, 154, 0.2);
+}
+
+.menubar__theme-toggle[data-theme-state="dark"] {
+  color: var(--color-primary-soft);
+}
+
+.menubar__theme-toggle[data-theme-state="light"] {
+  color: var(--color-accent);
+}
+
+.menubar__theme-toggle[data-theme-state="system"] {
   color: var(--color-text-muted);
 }
 

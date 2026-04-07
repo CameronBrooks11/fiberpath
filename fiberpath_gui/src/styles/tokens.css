@@ -8,6 +8,8 @@
  */
 
 :root {
+  color-scheme: dark;
+
   /* ========================================
      SURFACE / ELEVATION
      ======================================== */
@@ -16,10 +18,8 @@
   --color-bg-panel-alt: #1d1d20;
   --color-bg-hover: #222226;
   --color-bg-active: #2a2a2e;
-
   --color-console-bg-dark: #0c0c0e;
   --color-console-bg-mid: #18181b;
-
   --shadow-sm: 0 1px 2px rgb(0, 0, 0, 0.3);
   --shadow-md: 0 4px 8px rgb(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 16px rgb(0, 0, 0, 0.5);
@@ -31,12 +31,10 @@
   --color-text: #f7f8fa;
   --color-text-muted: #8f929c;
   --color-text-inverse: #09090b;
-
   --font-family-base:
     "Segoe UI", "Inter", system-ui, -apple-system, blinkmacsystemfont,
     sans-serif;
   --font-family-mono: "Cascadia Code", "Consolas", "Monaco", monospace;
-
   --font-size-xs: 0.7rem; /* 11.2px */
   --font-size-sm: 0.75rem; /* 12px */
   --font-size-base: 0.875rem; /* 14px */
@@ -44,12 +42,10 @@
   --font-size-lg: 1rem; /* 16px */
   --font-size-xl: 1.25rem; /* 20px */
   --font-size-2xl: 1.5rem; /* 24px */
-
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-
   --line-height-tight: 1.2;
   --line-height-normal: 1.4;
   --line-height-relaxed: 1.6;
@@ -60,13 +56,13 @@
   --color-border: #242428;
   --color-border-soft: rgb(255, 255, 255, 0.04);
   --color-border-focus: var(--color-primary);
-
   --border-width-thin: 1px;
   --border-width-medium: 2px;
 
   /* ========================================
      STATUS / STATE
      ======================================== */
+
   /* Brand and accent */
   --color-primary: #12a89a;
   --color-primary-soft: #75e3d8;
@@ -162,13 +158,10 @@
      ======================================== */
   --menubar-height: 2rem;
   --statusbar-height: 1.75rem;
-
   --panel-header-height: 2.5rem;
   --panel-min-width: 15rem;
   --panel-max-width: 30rem;
-
   --layer-row-height: 3.5rem;
-
   --input-height: 2rem;
   --input-height-sm: 1.75rem;
   --input-height-lg: 2.5rem;
@@ -180,23 +173,89 @@
   --primary: var(--color-primary); /* DEPRECATED: use --color-primary */
   --primary-soft: var(--color-primary-soft); /* DEPRECATED: use --color-primary-soft */
   --accent: var(--color-accent); /* DEPRECATED: use --color-accent */
-
   --bg: var(--color-bg); /* DEPRECATED: use --color-bg */
   --bg-panel: var(--color-bg-panel); /* DEPRECATED: use --color-bg-panel */
   --bg-panel-alt: var(--color-bg-panel-alt); /* DEPRECATED: use --color-bg-panel-alt */
   --bg-card: var(--color-bg-panel-alt); /* DEPRECATED: use --color-bg-panel-alt */
   --bg-hover: var(--color-bg-hover); /* DEPRECATED: use --color-bg-hover */
-
   --border: var(--color-border); /* DEPRECATED: use --color-border */
   --border-color: var(--color-border); /* DEPRECATED: use --color-border */
   --border-soft: var(--color-border-soft); /* DEPRECATED: use --color-border-soft */
-
   --text: var(--color-text); /* DEPRECATED: use --color-text */
   --text-primary: var(--color-text); /* DEPRECATED: use --color-text */
   --text-secondary: var(--color-text-muted); /* DEPRECATED: use --color-text-muted */
   --text-muted: var(--color-text-muted); /* DEPRECATED: use --color-text-muted */
-
   --success: var(--color-success); /* DEPRECATED: use --color-success */
   --warning: var(--color-warning); /* DEPRECATED: use --color-warning */
   --error: var(--color-error); /* DEPRECATED: use --color-error */
+}
+
+/* Manual light theme override */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: #f9f9fb;
+  --color-bg-panel: #ffffff;
+  --color-bg-panel-alt: #f4f4f6;
+  --color-bg-hover: #ececf0;
+  --color-bg-active: #e2e2e8;
+  --color-console-bg-dark: #f0f0f2;
+  --color-console-bg-mid: #f6f6f8;
+  --color-text: #14161a;
+  --color-text-muted: #5d6470;
+  --color-text-inverse: #ffffff;
+  --color-border: #d4d8e1;
+  --color-border-soft: rgb(20, 22, 26, 0.08);
+  --color-border-focus: var(--color-primary);
+  --color-primary-soft: #0f8f82;
+  --color-slate-400: #64748b;
+  --color-slate-500: #475569;
+  --color-slate-600: #334155;
+  --color-blue-400: #2563eb;
+  --color-blue-500: #1d4ed8;
+  --color-blue-600: #1e40af;
+  --color-blue-800: #1e3a8a;
+  --color-blue-900: #172554;
+  --color-green-400: #15803d;
+  --color-cyan-400: #0e7490;
+  --color-cyan-600: #0c4a6e;
+  --color-zinc-200: #f4f4f5;
+  --color-zinc-700: #52525b;
+  --color-zinc-800: #3f3f46;
+}
+
+/* System preference fallback when no manual theme override is stored */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+
+    --color-bg: #f9f9fb;
+    --color-bg-panel: #ffffff;
+    --color-bg-panel-alt: #f4f4f6;
+    --color-bg-hover: #ececf0;
+    --color-bg-active: #e2e2e8;
+    --color-console-bg-dark: #f0f0f2;
+    --color-console-bg-mid: #f6f6f8;
+    --color-text: #14161a;
+    --color-text-muted: #5d6470;
+    --color-text-inverse: #ffffff;
+    --color-border: #d4d8e1;
+    --color-border-soft: rgb(20, 22, 26, 0.08);
+    --color-border-focus: var(--color-primary);
+    --color-primary-soft: #0f8f82;
+    --color-slate-400: #64748b;
+    --color-slate-500: #475569;
+    --color-slate-600: #334155;
+    --color-blue-400: #2563eb;
+    --color-blue-500: #1d4ed8;
+    --color-blue-600: #1e40af;
+    --color-blue-800: #1e3a8a;
+    --color-blue-900: #172554;
+    --color-green-400: #15803d;
+    --color-cyan-400: #0e7490;
+    --color-cyan-600: #0c4a6e;
+    --color-zinc-200: #f4f4f5;
+    --color-zinc-700: #52525b;
+    --color-zinc-800: #3f3f46;
+  }
 }
