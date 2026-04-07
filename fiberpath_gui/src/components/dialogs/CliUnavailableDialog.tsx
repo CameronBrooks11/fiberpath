@@ -1,17 +1,14 @@
-import { createPortal } from "react-dom";
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { useErrorNotification } from "../../contexts/ErrorNotificationContext";
 import type { DialogBaseProps } from "../../types/components";
+import { BaseDialog } from "./BaseDialog";
 import "../../styles/dialogs.css";
 
 interface CliUnavailableDialogProps extends DialogBaseProps {
-  /** Whether the dialog is currently visible */
   isOpen: boolean;
-  /** CLI version if known */
   version: string | null;
-  /** Error message from health check */
   errorMessage: string | null;
-  /** Callback to retry the health check */
   onRetry: () => void;
 }
 
@@ -27,24 +24,6 @@ interface CliDiagnostics {
   executionExitCode: number | null;
 }
 
-/**
- * Dialog displayed when the CLI backend becomes unavailable.
- *
- * This dialog informs the user that file operations cannot be performed
- * until the CLI is available again. Provides a retry button and helpful
- * troubleshooting information.
- *
- * @example
- * ```tsx
- * <CliUnavailableDialog
- *   isOpen={!isCliHealthy}
- *   version={cliVersion}
- *   errorMessage={errorMessage}
- *   onRetry={refreshCliHealth}
- *   onClose={() => {}}
- * />
- * ```
- */
 export function CliUnavailableDialog({
   isOpen,
   version,
@@ -55,14 +34,7 @@ export function CliUnavailableDialog({
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [diagnostics, setDiagnostics] = useState<CliDiagnostics | null>(null);
   const [loadingDiagnostics, setLoadingDiagnostics] = useState(false);
-
-  if (!isOpen) return null;
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
+  const { showError, showInfo } = useErrorNotification();
 
   const loadDiagnostics = async () => {
     setLoadingDiagnostics(true);
@@ -71,163 +43,186 @@ export function CliUnavailableDialog({
       setDiagnostics(result);
       setShowDiagnostics(true);
     } catch (error) {
-      console.error("Failed to load diagnostics:", error);
-      alert(`Failed to load diagnostics: ${error}`);
+      const message = `Failed to load diagnostics: ${String(error)}`;
+      console.error(message);
+      showError(message);
     } finally {
       setLoadingDiagnostics(false);
     }
   };
 
-  const copyDiagnostics = () => {
-    if (diagnostics) {
-      navigator.clipboard.writeText(JSON.stringify(diagnostics, null, 2));
-      alert("Diagnostics copied to clipboard!");
+  const copyDiagnostics = async () => {
+    if (!diagnostics) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(diagnostics, null, 2));
+      showInfo("Diagnostics copied to clipboard.");
+    } catch (error) {
+      showError(`Failed to copy diagnostics: ${String(error)}`);
     }
   };
 
-  const dialogContent = (
-    <div className="dialog-overlay" onClick={handleOverlayClick}>
-      <div className="dialog-content dialog-content--warning">
-        <div className="dialog-header">
-          <h2>⚠️ CLI Backend Unavailable</h2>
-          <button className="dialog-close" onClick={onClose}>
-            ×
-          </button>
-        </div>
-
-        <div className="dialog-body">
-          <p className="dialog-message">
-            The FiberPath CLI backend is not available. File operations
-            (planning, simulation, export) cannot be performed until the CLI is
-            detected.
-          </p>
-
-          {errorMessage && (
-            <div className="dialog-error-details">
-              <strong>Error details:</strong>
-              <code>{errorMessage}</code>
-            </div>
-          )}
-
-          <div className="dialog-help-section">
-            <h3>Troubleshooting Steps:</h3>
-            <ol>
-              <li>
-                Ensure the <code>fiberpath</code> CLI is installed
-              </li>
-              <li>Verify it's accessible from your system PATH</li>
-              <li>
-                Try running <code>fiberpath --version</code> in a terminal
-              </li>
-              <li>
-                Reinstall the FiberPath package if needed:{" "}
-                <code>pip install fiberpath</code>
-              </li>
-            </ol>
-          </div>
-
-          {version && (
-            <p className="dialog-hint">
-              Last known CLI version: <code>{version}</code>
-            </p>
-          )}
-
-          {!showDiagnostics && (
-            <div className="dialog-help-section">
-              <button
-                className="btn btn--ghost btn--small"
-                onClick={loadDiagnostics}
-                disabled={loadingDiagnostics}
-              >
-                {loadingDiagnostics ? "Loading..." : "🔍 Show Advanced Diagnostics"}
-              </button>
-            </div>
-          )}
-
-          {showDiagnostics && diagnostics && (
-            <div className="dialog-diagnostics">
-              <h3>Advanced Diagnostics</h3>
-              
-              <div className="diagnostic-section">
-                <h4>Platform</h4>
-                <p><code>{diagnostics.platform}</code></p>
-              </div>
-
-              <div className="diagnostic-section">
-                <h4>Path Resolution</h4>
-                <table className="diagnostic-table">
-                  <tbody>
-                    <tr>
-                      <td><strong>Resource Dir:</strong></td>
-                      <td><code>{diagnostics.resourceDir}</code></td>
-                    </tr>
-                    <tr>
-                      <td><strong>Bundled Path:</strong></td>
-                      <td><code>{diagnostics.bundledPath}</code></td>
-                    </tr>
-                    <tr>
-                      <td><strong>Path Exists:</strong></td>
-                      <td className={diagnostics.bundledExists ? "status-healthy" : "status-error"}>
-                        {diagnostics.bundledExists ? "✓ Yes" : "✗ No"}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><strong>Is File:</strong></td>
-                      <td className={diagnostics.bundledIsFile ? "status-healthy" : "status-error"}>
-                        {diagnostics.bundledIsFile ? "✓ Yes" : "✗ No"}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><strong>System PATH:</strong></td>
-                      <td><code>{diagnostics.systemPath}</code></td>
-                    </tr>
-                    <tr>
-                      <td><strong>Actual CLI Used:</strong></td>
-                      <td><code>{diagnostics.actualCliUsed}</code></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="diagnostic-section">
-                <h4>Execution Test</h4>
-                <table className="diagnostic-table">
-                  <tbody>
-                    <tr>
-                      <td><strong>Result:</strong></td>
-                      <td className={diagnostics.executionResult === "Success" ? "status-healthy" : "status-error"}>
-                        {diagnostics.executionResult}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><strong>Exit Code:</strong></td>
-                      <td><code>{diagnostics.executionExitCode ?? 'N/A'}</code></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <button
-                className="btn btn--ghost btn--small"
-                onClick={copyDiagnostics}
-              >
-                📋 Copy to Clipboard
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div className="dialog-footer">
+  return (
+    <BaseDialog
+      isOpen={isOpen}
+      title="⚠️ CLI Backend Unavailable"
+      onClose={onClose}
+      contentClassName="dialog-content--warning"
+      footer={
+        <>
           <button className="btn btn--primary" onClick={onRetry}>
             Retry Connection
           </button>
           <button className="btn btn--secondary" onClick={onClose}>
             Continue Anyway
           </button>
-        </div>
-      </div>
-    </div>
-  );
+        </>
+      }
+    >
+      <p className="dialog-message">
+        The FiberPath CLI backend is not available. File operations (planning,
+        simulation, export) cannot be performed until the CLI is detected.
+      </p>
 
-  return createPortal(dialogContent, document.body);
+      {errorMessage && (
+        <div className="dialog-error-details">
+          <strong>Error details:</strong>
+          <code>{errorMessage}</code>
+        </div>
+      )}
+
+      <div className="dialog-help-section">
+        <h3>Troubleshooting Steps:</h3>
+        <ol>
+          <li>
+            Ensure the <code>fiberpath</code> CLI is installed
+          </li>
+          <li>Verify it&apos;s accessible from your system PATH</li>
+          <li>
+            Try running <code>fiberpath --version</code> in a terminal
+          </li>
+          <li>
+            Reinstall the FiberPath package if needed: <code>pip install fiberpath</code>
+          </li>
+        </ol>
+      </div>
+
+      {version && (
+        <p className="dialog-hint">
+          Last known CLI version: <code>{version}</code>
+        </p>
+      )}
+
+      {!showDiagnostics && (
+        <div className="dialog-help-section">
+          <button
+            className="btn btn--ghost btn--small"
+            onClick={loadDiagnostics}
+            disabled={loadingDiagnostics}
+          >
+            {loadingDiagnostics ? "Loading..." : "🔍 Show Advanced Diagnostics"}
+          </button>
+        </div>
+      )}
+
+      {showDiagnostics && diagnostics && (
+        <div className="dialog-diagnostics">
+          <h3>Advanced Diagnostics</h3>
+
+          <div className="diagnostic-section">
+            <h4>Platform</h4>
+            <p>
+              <code>{diagnostics.platform}</code>
+            </p>
+          </div>
+
+          <div className="diagnostic-section">
+            <h4>Path Resolution</h4>
+            <table className="diagnostic-table">
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Resource Dir:</strong>
+                  </td>
+                  <td>
+                    <code>{diagnostics.resourceDir}</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Bundled Path:</strong>
+                  </td>
+                  <td>
+                    <code>{diagnostics.bundledPath}</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Path Exists:</strong>
+                  </td>
+                  <td className={diagnostics.bundledExists ? "status-healthy" : "status-error"}>
+                    {diagnostics.bundledExists ? "✓ Yes" : "✗ No"}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Is File:</strong>
+                  </td>
+                  <td className={diagnostics.bundledIsFile ? "status-healthy" : "status-error"}>
+                    {diagnostics.bundledIsFile ? "✓ Yes" : "✗ No"}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>System PATH:</strong>
+                  </td>
+                  <td>
+                    <code>{diagnostics.systemPath}</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Actual CLI Used:</strong>
+                  </td>
+                  <td>
+                    <code>{diagnostics.actualCliUsed}</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="diagnostic-section">
+            <h4>Execution Test</h4>
+            <table className="diagnostic-table">
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Result:</strong>
+                  </td>
+                  <td className={diagnostics.executionResult === "Success" ? "status-healthy" : "status-error"}>
+                    {diagnostics.executionResult}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Exit Code:</strong>
+                  </td>
+                  <td>
+                    <code>{diagnostics.executionExitCode ?? "N/A"}</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <button className="btn btn--ghost btn--small" onClick={copyDiagnostics}>
+            📋 Copy to Clipboard
+          </button>
+        </div>
+      )}
+    </BaseDialog>
+  );
 }

@@ -1,87 +1,102 @@
-import { useState, FocusEvent } from "react";
+import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
+import type { LayerEditorBaseProps } from "../../types/components";
 import type { HelicalLayer } from "../../types/project";
-import type {
-  LayerEditorBaseProps,
-  NumericRange,
-} from "../../types/components";
-import { NUMERIC_RANGES, validateNumericRange } from "../../types/components";
+import {
+  validateHelicalField,
+  type HelicalNumericField,
+} from "../../lib/helicalValidation";
+import { setFieldError } from "../../lib/numericFields";
+import { LayerNumericField } from "./LayerNumericField";
 
-/**
- * Props for the HelicalLayerEditor component.
- */
 interface HelicalLayerEditorProps extends LayerEditorBaseProps {
   // HelicalLayerEditor uses only the base props
 }
 
-/**
- * Editor component for helical layer properties.
- *
- * Helical layers wind at an angle to the mandrel axis, creating
- * structural reinforcement. Parameters include:
- * - **Wind angle**: Angle relative to the mandrel axis (0° to 90°, exclusive)
- * - **Pattern number**: Number of circuits in the pattern (must be coprime with skip_index)
- * - **Skip index**: Number of circuits to skip (must be coprime with pattern_number)
- * - **Terminal**: Whether this is the first/last layer
- * - **Turn offsets**: Start/end turning points for the wind
- * - **Circuit offsets**: Offset circuits at start/end
- *
- * The pattern_number and skip_index must be coprime (GCD = 1) to ensure
- * proper coverage of the mandrel surface.
- *
- * @example
- * ```tsx
- * <HelicalLayerEditor layerId="layer-789" />
- * ```
- *
- * @param props - Component props
- * @param props.layerId - The unique identifier of the helical layer to edit
- * @returns The helical layer editor UI, or null if the layer is not found or is not a helical layer
- */
+interface HelicalFieldConfig {
+  field: HelicalNumericField;
+  label: string;
+  tooltip: string;
+  unit?: string;
+  step?: string;
+  integer?: boolean;
+}
+
+const HELICAL_FIELD_CONFIGS: HelicalFieldConfig[] = [
+  {
+    field: "wind_angle",
+    label: "Wind Angle",
+    tooltip:
+      "Angle between fiber path and mandrel axis: 0 degrees is axial, 90 degrees is hoop. Helical layers must be > 0 and <= 90.",
+    unit: "°",
+    step: "0.1",
+  },
+  {
+    field: "pattern_number",
+    label: "Pattern Number",
+    tooltip:
+      "How many helical bands the layer is split into around the circumference. Must be a positive integer and must divide the computed circuit count.",
+    integer: true,
+    step: "1",
+  },
+  {
+    field: "skip_index",
+    label: "Skip Index",
+    tooltip:
+      "Stride used to move between helical bands each circuit. Must be a positive integer and coprime with pattern number to visit every band.",
+    integer: true,
+    step: "1",
+  },
+  {
+    field: "lock_degrees",
+    label: "Lock Degrees",
+    tooltip:
+      "Extra mandrel rotation at the lock point for stable termination/restart alignment between circuits.",
+    unit: "°",
+    step: "0.1",
+  },
+  {
+    field: "lead_in_mm",
+    label: "Lead-in",
+    tooltip:
+      "Linear approach distance before the main winding path starts; used to smooth fiber entry onto the part.",
+    unit: "mm",
+    step: "0.1",
+  },
+  {
+    field: "lead_out_degrees",
+    label: "Lead-out Degrees",
+    tooltip:
+      "Extra mandrel rotation after the main path ends; used to smooth exit and maintain placement continuity.",
+    unit: "°",
+    step: "0.1",
+  },
+];
+
+const DEFAULT_HELICAL: HelicalLayer = {
+  wind_angle: 45,
+  pattern_number: 3,
+  skip_index: 2,
+  lock_degrees: 5,
+  lead_in_mm: 10,
+  lead_out_degrees: 5,
+  skip_initial_near_lock: false,
+};
+
 export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
   const layers = useProjectStore((state) => state.project.layers);
   const updateLayer = useProjectStore((state) => state.updateLayer);
+  const [errors, setErrors] = useState<Partial<Record<HelicalNumericField, string>>>({});
 
-  const layer = layers.find((l) => l.id === layerId);
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const layer = layers.find((item) => item.id === layerId);
 
   if (!layer || layer.type !== "helical" || !layer.helical) {
     return null;
   }
+  const helical = layer.helical;
 
-  /**
-   * Calculate the greatest common divisor of two numbers.
-   * Used to validate that pattern_number and skip_index are coprime.
-   */
-  const gcd = (a: number, b: number): number => {
-    return b === 0 ? a : gcd(b, a % b);
-  };
-
-  /**
-   * Validates that pattern_number and skip_index are coprime (GCD = 1).
-   * This ensures proper coverage of the mandrel surface.
-   */
-  const validateCoprime = (
-    pattern: number,
-    skip: number,
-  ): string | undefined => {
-    if (gcd(pattern, skip) !== 1) {
-      return "Pattern and skip must be coprime (GCD = 1)";
-    }
-    return undefined;
-  };
-
-  const handleChange = (field: keyof HelicalLayer, value: number | boolean) => {
-    const currentHelical = layer.helical || {
-      wind_angle: 45,
-      pattern_number: 3,
-      skip_index: 2,
-      lock_degrees: 5,
-      lead_in_mm: 10,
-      lead_out_degrees: 5,
-      skip_initial_near_lock: false,
-    };
+  const handleNumericChange = (field: HelicalNumericField, value: number) => {
+    const currentHelical = helical || DEFAULT_HELICAL;
 
     updateLayer(layerId, {
       helical: {
@@ -91,242 +106,48 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
     });
   };
 
-  const handleBlur = (field: string, value: number) => {
-    let error: string | undefined;
+  const handleNumericBlur = (field: HelicalNumericField, value: number) => {
+    const error = validateHelicalField(field, value, helical);
+    setFieldError(setErrors, field, error);
+  };
 
-    switch (field) {
-      case "wind_angle":
-        error = validateNumericRange(
-          value,
-          NUMERIC_RANGES.WIND_ANGLE,
-          "Wind angle",
-        );
-        break;
-      case "pattern_number":
-        error = validateNumericRange(
-          value,
-          NUMERIC_RANGES.PATTERN_SKIP,
-          "Pattern number",
-        );
-        if (!error && layer.helical) {
-          error = validateCoprime(value, layer.helical.skip_index);
-        }
-        break;
-      case "skip_index":
-        error = validateNumericRange(
-          value,
-          NUMERIC_RANGES.PATTERN_SKIP,
-          "Skip index",
-        );
-        if (!error && layer.helical) {
-          error = validateCoprime(layer.helical.pattern_number, value);
-        }
-        break;
-      case "lock_degrees":
-      case "lead_out_degrees":
-        // Non-negative validation for degree values
-        error =
-          value < 0
-            ? `${field.replace("_", " ")} must be non-negative`
-            : undefined;
-        break;
-      case "lead_in_mm":
-        // Non-negative validation for lead-in
-        error = value < 0 ? "Lead-in must be non-negative" : undefined;
-        break;
-    }
+  const handleSkipNearLockChange = (checked: boolean) => {
+    const currentHelical = helical || DEFAULT_HELICAL;
 
-    setErrors((prev) => ({
-      ...prev,
-      [field]: error || "",
-    }));
+    updateLayer(layerId, {
+      helical: {
+        ...currentHelical,
+        skip_initial_near_lock: checked,
+      },
+    });
   };
 
   return (
     <div className="layer-editor">
       <h3 className="layer-editor__title">Helical Layer Properties</h3>
 
-      <div className="layer-editor__group">
-        <label
-          htmlFor={`wind-angle-${layerId}`}
-          className="layer-editor__label"
-        >
-          Wind Angle
-          <span
-            className="layer-editor__tooltip"
-            title="Angle between fiber path and mandrel axis: 0 degrees is axial, 90 degrees is hoop. Helical layers must be > 0 and <= 90."
-          >
-            ⓘ
-          </span>
-        </label>
-        <div className="layer-editor__input-wrapper">
-          <input
-            id={`wind-angle-${layerId}`}
-            type="number"
-            step="0.1"
-            value={layer.helical.wind_angle}
-            onChange={(e) =>
-              handleChange("wind_angle", parseFloat(e.target.value))
-            }
-            onBlur={(e) => handleBlur("wind_angle", parseFloat(e.target.value))}
-            className={`layer-editor__input ${errors.wind_angle ? "layer-editor__input--error" : ""}`}
-          />
-          <span className="layer-editor__unit">°</span>
-        </div>
-        {errors.wind_angle && (
-          <span className="layer-editor__error">{errors.wind_angle}</span>
-        )}
-      </div>
-
-      <div className="layer-editor__group">
-        <label htmlFor={`pattern-${layerId}`} className="layer-editor__label">
-          Pattern Number
-          <span
-            className="layer-editor__tooltip"
-            title="How many helical bands the layer is split into around the circumference. Must be a positive integer and must divide the computed circuit count."
-          >
-            ⓘ
-          </span>
-        </label>
-        <input
-          id={`pattern-${layerId}`}
-          type="number"
-          step="1"
-          value={layer.helical.pattern_number}
-          onChange={(e) =>
-            handleChange("pattern_number", parseInt(e.target.value))
-          }
-          onBlur={(e) => handleBlur("pattern_number", parseInt(e.target.value))}
-          className={`layer-editor__input ${errors.pattern_number ? "layer-editor__input--error" : ""}`}
+      {HELICAL_FIELD_CONFIGS.map((config) => (
+        <LayerNumericField
+          key={config.field}
+          id={`${config.field}-${layerId}`}
+          label={config.label}
+          tooltip={config.tooltip}
+          value={helical[config.field]}
+          step={config.step}
+          unit={config.unit}
+          integer={config.integer}
+          error={errors[config.field]}
+          onChange={(value) => handleNumericChange(config.field, value)}
+          onBlur={(value) => handleNumericBlur(config.field, value)}
         />
-        {errors.pattern_number && (
-          <span className="layer-editor__error">{errors.pattern_number}</span>
-        )}
-      </div>
-
-      <div className="layer-editor__group">
-        <label htmlFor={`skip-${layerId}`} className="layer-editor__label">
-          Skip Index
-          <span
-            className="layer-editor__tooltip"
-            title="Stride used to move between helical bands each circuit. Must be a positive integer and coprime with pattern number to visit every band."
-          >
-            ⓘ
-          </span>
-        </label>
-        <input
-          id={`skip-${layerId}`}
-          type="number"
-          step="1"
-          value={layer.helical.skip_index}
-          onChange={(e) => handleChange("skip_index", parseInt(e.target.value))}
-          onBlur={(e) => handleBlur("skip_index", parseInt(e.target.value))}
-          className={`layer-editor__input ${errors.skip_index ? "layer-editor__input--error" : ""}`}
-        />
-        {errors.skip_index && (
-          <span className="layer-editor__error">{errors.skip_index}</span>
-        )}
-      </div>
-
-      <div className="layer-editor__group">
-        <label htmlFor={`lock-${layerId}`} className="layer-editor__label">
-          Lock Degrees
-          <span
-            className="layer-editor__tooltip"
-            title="Extra mandrel rotation at the lock point for stable termination/restart alignment between circuits."
-          >
-            ⓘ
-          </span>
-        </label>
-        <div className="layer-editor__input-wrapper">
-          <input
-            id={`lock-${layerId}`}
-            type="number"
-            step="0.1"
-            value={layer.helical.lock_degrees}
-            onChange={(e) =>
-              handleChange("lock_degrees", parseFloat(e.target.value))
-            }
-            onBlur={(e) =>
-              handleBlur("lock_degrees", parseFloat(e.target.value))
-            }
-            className={`layer-editor__input ${errors.lock_degrees ? "layer-editor__input--error" : ""}`}
-          />
-          <span className="layer-editor__unit">°</span>
-        </div>
-        {errors.lock_degrees && (
-          <span className="layer-editor__error">{errors.lock_degrees}</span>
-        )}
-      </div>
-
-      <div className="layer-editor__group">
-        <label htmlFor={`lead-in-${layerId}`} className="layer-editor__label">
-          Lead-in
-          <span
-            className="layer-editor__tooltip"
-            title="Linear approach distance before the main winding path starts; used to smooth fiber entry onto the part."
-          >
-            ⓘ
-          </span>
-        </label>
-        <div className="layer-editor__input-wrapper">
-          <input
-            id={`lead-in-${layerId}`}
-            type="number"
-            step="0.1"
-            value={layer.helical.lead_in_mm}
-            onChange={(e) =>
-              handleChange("lead_in_mm", parseFloat(e.target.value))
-            }
-            onBlur={(e) => handleBlur("lead_in_mm", parseFloat(e.target.value))}
-            className={`layer-editor__input ${errors.lead_in_mm ? "layer-editor__input--error" : ""}`}
-          />
-          <span className="layer-editor__unit">mm</span>
-        </div>
-        {errors.lead_in_mm && (
-          <span className="layer-editor__error">{errors.lead_in_mm}</span>
-        )}
-      </div>
-
-      <div className="layer-editor__group">
-        <label htmlFor={`lead-out-${layerId}`} className="layer-editor__label">
-          Lead-out Degrees
-          <span
-            className="layer-editor__tooltip"
-            title="Extra mandrel rotation after the main path ends; used to smooth exit and maintain placement continuity."
-          >
-            ⓘ
-          </span>
-        </label>
-        <div className="layer-editor__input-wrapper">
-          <input
-            id={`lead-out-${layerId}`}
-            type="number"
-            step="0.1"
-            value={layer.helical.lead_out_degrees}
-            onChange={(e) =>
-              handleChange("lead_out_degrees", parseFloat(e.target.value))
-            }
-            onBlur={(e) =>
-              handleBlur("lead_out_degrees", parseFloat(e.target.value))
-            }
-            className={`layer-editor__input ${errors.lead_out_degrees ? "layer-editor__input--error" : ""}`}
-          />
-          <span className="layer-editor__unit">°</span>
-        </div>
-        {errors.lead_out_degrees && (
-          <span className="layer-editor__error">{errors.lead_out_degrees}</span>
-        )}
-      </div>
+      ))}
 
       <div className="layer-editor__group">
         <label className="layer-editor__checkbox-label">
           <input
             type="checkbox"
-            checked={layer.helical.skip_initial_near_lock}
-            onChange={(e) =>
-              handleChange("skip_initial_near_lock", e.target.checked)
-            }
+            checked={helical.skip_initial_near_lock}
+            onChange={(e) => handleSkipNearLockChange(e.target.checked)}
             className="layer-editor__checkbox"
           />
           <span className="layer-editor__checkbox-text">
@@ -334,7 +155,8 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
           </span>
         </label>
         <p className="layer-editor__hint">
-          Skip the first near-lock handling step. Enable only when you intentionally want custom lock behavior.
+          Skip the first near-lock handling step. Enable only when you
+          intentionally want custom lock behavior.
         </p>
       </div>
     </div>

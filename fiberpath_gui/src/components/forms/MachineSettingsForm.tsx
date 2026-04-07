@@ -1,5 +1,18 @@
-import { useState, FocusEvent } from "react";
+import { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
+import { parseNumericInput, setFieldError } from "../../lib/numericFields";
+
+type MachineSettingsField = "defaultFeedRate";
+
+const validateFeedRate = (value: number): string | undefined => {
+  if (Number.isNaN(value) || value <= 0) {
+    return "Feed rate must be greater than 0";
+  }
+  if (value > 10000) {
+    return "Feed rate seems unreasonably high";
+  }
+  return undefined;
+};
 
 export function MachineSettingsForm() {
   const defaultFeedRate = useProjectStore(
@@ -11,27 +24,17 @@ export function MachineSettingsForm() {
   );
   const setAxisFormat = useProjectStore((state) => state.setAxisFormat);
 
-  const [errors, setErrors] = useState<{ defaultFeedRate?: string }>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<MachineSettingsField, string>>
+  >({});
 
-  const validateFeedRate = (value: number): string | undefined => {
-    if (isNaN(value) || value <= 0) {
-      return "Feed rate must be greater than 0";
-    }
-    if (value > 10000) {
-      return "Feed rate seems unreasonably high";
-    }
-    return undefined;
+  const handleFeedRateChange = (rawValue: string) => {
+    updateDefaultFeedRate(parseNumericInput(rawValue));
   };
 
-  const handleFeedRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    updateDefaultFeedRate(value);
-  };
-
-  const handleFeedRateBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    const error = validateFeedRate(value);
-    setErrors((prev) => ({ ...prev, defaultFeedRate: error }));
+  const handleFeedRateBlur = (rawValue: string) => {
+    const value = parseNumericInput(rawValue);
+    setFieldError(setErrors, "defaultFeedRate", validateFeedRate(value));
   };
 
   const handleAxisFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -52,8 +55,8 @@ export function MachineSettingsForm() {
             id="defaultFeedRate"
             type="number"
             value={defaultFeedRate}
-            onChange={handleFeedRateChange}
-            onBlur={handleFeedRateBlur}
+            onChange={(e) => handleFeedRateChange(e.target.value)}
+            onBlur={(e) => handleFeedRateBlur(e.target.value)}
             min="1"
             max="10000"
             step="100"

@@ -5,7 +5,7 @@
 **Created:** 2026-04-07  
 **Last Updated:** 2026-04-07  
 **Owner:** GUI maintainers  
-**Status:** In progress (Wave A, Wave B, and Wave C complete)
+**Status:** Completed (Wave A-D complete)
 
 ## Objective
 
@@ -17,18 +17,18 @@ Evidence collected from the current `fiberpath_gui/src` tree on 2026-04-07:
 
 | Signal | Value |
 | --- | ---: |
-| TSX LOC total | 4772 |
-| Largest TSX file | `components/StreamTab/FileStreamingSection.tsx` (395 LOC) |
-| Additional large TSX files | `MenuBar.tsx` (362), `HelicalLayerEditor.tsx` (342), `ConnectionSection.tsx` (275), `VisualizationCanvas.tsx` (234), `App.tsx` (234) |
-| `useEffect(...)` call sites in TSX | 11 |
-| Zustand store-hook call sites (`useProjectStore/useStreamStore/useToastStore`) | 30 |
+| TSX LOC total | 3807 |
+| Largest TSX file | `components/MenuBar.tsx` (230 LOC) |
+| Additional large TSX files | `CliUnavailableDialog.tsx` (228), `VisualizationCanvas.tsx` (211), `App.tsx` (187), `LayerStack.tsx` (171), `FileStreamingSection.tsx` (165) |
+| `useEffect(...)` call sites in TSX | 9 |
+| Zustand store-hook call sites (`useProjectStore/useStreamStore/useToastStore`) | 33 |
 | Tauri `invoke(...)` call sites | 15 |
 | Tauri `listen(...)` call sites | 1 |
-| Remaining inline style instances | 1 (`FileStreamingSection.tsx`) |
-| `createFileOperations(...)` wiring sites | 2 (`App.tsx`, `MenuBar.tsx`) |
-| `alert(...)` usage in UI code | 2 (`CliUnavailableDialog.tsx`) |
-| Imports from `state/projectStore` | 14 |
-| StreamTab wrapper import sites (`components/tabs/StreamTab`) | 1 (`App.tsx`) |
+| Remaining inline style instances | 0 |
+| `createFileOperations(...)` wiring sites | 1 (`useFileOperations.ts`) |
+| `alert(...)` usage in UI code | 0 |
+| Imports from `state/projectStore` | 0 |
+| StreamTab wrapper import sites (`components/tabs/StreamTab`) | 0 |
 
 Primary finding: styling entropy is already significantly reduced; remaining risk is concentrated in React responsibility density and boundary inconsistency.
 
@@ -59,6 +59,16 @@ Wave C is complete with the following outcomes:
 - Menu interaction behavior extracted into `src/hooks/useMenubarInteractions.ts`.
 - `MenuBar.tsx` reduced and focused on rendering/config-driven dispatch.
 - `App.tsx` no longer directly wires `createFileOperations(...)`.
+
+Wave D is complete with the following outcomes:
+
+- Shared numeric input helpers extracted in `src/lib/numericFields.ts`.
+- Helical validation logic extracted in `src/lib/helicalValidation.ts`.
+- `LayerNumericField` reusable editor input component added in `src/components/editors/LayerNumericField.tsx`.
+- `HelicalLayerEditor` and `SkipLayerEditor` decomposed to helper-driven field rendering.
+- `VisualizationCanvas` decomposed with extracted preview hook `src/hooks/canvas/usePreviewGeneration.ts` and smaller visual state components.
+- Dialog shell mechanics centralized in `src/components/dialogs/BaseDialog.tsx` and applied across about/diagnostics/export/CLI dialogs.
+- `alert(...)` fallbacks removed from `CliUnavailableDialog` in favor of app notifications.
 
 ## Priority Hotspots
 
@@ -223,18 +233,18 @@ Wave C is complete with the following outcomes:
 
 ### Wave D - Editors/canvas/dialog hardening
 
-- [ ] Extract form/editor validation helpers.
-- [ ] Decompose `HelicalLayerEditor` and `VisualizationCanvas`.
-- [ ] Introduce `BaseDialog` and remove `alert(...)` fallbacks.
+- [x] Extract form/editor validation helpers.
+- [x] Decompose `HelicalLayerEditor` and `VisualizationCanvas`.
+- [x] Introduce `BaseDialog` and remove `alert(...)` fallbacks.
 
 ---
 
 ## Definition of Done for v0.6.2
 
-- [ ] Largest React hotspots are decomposed to maintainable size (target < 250 LOC where practical).
-- [ ] Architectural drift points are removed (`state/` vs `stores/`, StreamTab wrapper indirection, ad-hoc alerts).
-- [ ] Stream and file/menu behavior is validated with tests at behavior boundaries.
-- [ ] No regressions in `npm run test`, `npm run build`, and `npm run check:all`.
+- [x] Largest React hotspots are decomposed to maintainable size (target < 250 LOC where practical).
+- [x] Architectural drift points are removed (`state/` vs `stores/`, StreamTab wrapper indirection, ad-hoc alerts).
+- [x] Stream and file/menu behavior is validated with tests at behavior boundaries.
+- [x] No regressions in `npm run test`, `npm run build`, and `npm run check:all`.
 
 ## Out of Scope
 
