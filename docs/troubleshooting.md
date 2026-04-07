@@ -18,7 +18,7 @@ Common issues and solutions for FiberPath installation and usage.
 4. Go to System Settings → Privacy & Security if needed
 5. Click "Open Anyway" next to the security warning
 
-**Future:** Code signing will be added in v0.6.0 to eliminate this step.
+**Future:** Code signing is planned for a future release to eliminate this step.
 
 ### Desktop GUI Won't Install (Windows)
 
@@ -35,7 +35,7 @@ Common issues and solutions for FiberPath installation and usage.
    - Add exclusion for download folder or installed app
 4. Alternatively, install via `.msi` (may be trusted more than `.exe`)
 
-**Note:** This is a known limitation of unsigned executables. Code signing planned for v0.6.0.
+**Note:** This is a known limitation of unsigned executables. Code signing is planned for a future release.
 
 ### Linux .deb Installation Fails
 
@@ -51,7 +51,7 @@ sudo apt update
 sudo apt install -f  # Fix broken dependencies
 sudo apt install libwebkit2gtk-4.1-0 libappindicator3-1
 # Then retry
-sudo dpkg -i fiberpath_0.5.3_amd64.deb
+sudo dpkg -i fiberpath_0.6.1_amd64.deb
 ```
 
 ### AppImage Won't Run (Linux)
@@ -63,8 +63,8 @@ sudo dpkg -i fiberpath_0.5.3_amd64.deb
 **Solution:**
 
 ```sh
-chmod +x fiberpath_0.5.3_amd64.AppImage
-./fiberpath_0.5.3_amd64.AppImage
+chmod +x fiberpath_0.6.1_amd64.AppImage
+./fiberpath_0.6.1_amd64.AppImage
 ```
 
 **FUSE Requirement:** Some older Linux systems require FUSE for AppImage:

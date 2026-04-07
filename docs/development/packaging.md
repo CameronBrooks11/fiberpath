@@ -154,7 +154,7 @@ GitHub Actions workflow (`.github/workflows/gui-packaging.yml`) handles full pro
 ## Future Enhancements
 
 - **Code signing:** macOS (`developer-id`) and Windows (`signtool` + certificate) when credentials available
-- **Auto-updates:** Tauri updater for in-app version checks and downloads (v0.6.0)
+- **Auto-updates:** Tauri updater for in-app version checks and downloads (planned post-v0.6.1)
 - **Bundle optimization:** Reduce frozen CLI size through dependency analysis
 - **Universal macOS binaries:** Single `.dmg` supporting both Intel and Apple Silicon (currently separate builds)
 
