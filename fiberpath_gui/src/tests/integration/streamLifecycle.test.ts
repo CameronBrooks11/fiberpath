@@ -228,11 +228,13 @@ describe("Integration Tests - Stream Lifecycle", () => {
     expect(useStreamStore.getState().isStreaming).toBe(false);
     expect(useStreamStore.getState().progress).toBeNull();
 
-    useStreamStore.getState().markStreamingStarted();
-    useStreamStore.getState().setProgress({
-      sent: 50,
-      total: 100,
-      currentCommand: "G1 X20",
+    act(() => {
+      useStreamStore.getState().markStreamingStarted();
+      useStreamStore.getState().setProgress({
+        sent: 50,
+        total: 100,
+        currentCommand: "G1 X20",
+      });
     });
 
     act(() => {

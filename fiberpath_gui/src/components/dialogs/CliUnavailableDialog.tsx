@@ -44,7 +44,6 @@ export function CliUnavailableDialog({
       setShowDiagnostics(true);
     } catch (error) {
       const message = `Failed to load diagnostics: ${String(error)}`;
-      console.error(message);
       showError(message);
     } finally {
       setLoadingDiagnostics(false);
