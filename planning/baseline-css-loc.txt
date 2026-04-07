@@ -69,3 +69,28 @@ Zero-usage alias removal:
 
 Spacing consolidation check:
 - Existing scale has no neighboring values within <=2px, so no spacing merges were performed.
+
+Phase 2 layout/primitive hardening snapshot
+Captured: 2026-04-06
+
+Touched file LOC (before -> after)
+- styles/layout.css: 476 -> 440 (-36)
+- styles/panels.css: 446 -> 468 (+22)
+- styles/dialogs.css: 551 -> 555 (+4)
+- styles/canvas.css: 364 -> 351 (-13)
+- styles/buttons.css: 175 -> 146 (-29)
+- styles/forms.css: 251 -> 213 (-38)
+- styles/typography.css: 128 -> 127 (-1)
+
+Touched set combined LOC:
+- Before: 2391
+- After: 2300
+- Delta: -91
+
+Original hotspot combined LOC (dialogs + panels + layout + canvas):
+- Before: 1837
+- After: 1814
+- Delta: -23 (downward trend)
+
+Current whole-project CSS LOC (all 20 files): 3940
+Inline style call sites (`style={{}}`): 17 (unchanged)
