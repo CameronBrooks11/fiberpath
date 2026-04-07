@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { useProjectStore } from "../../state/projectStore";
+import { useProjectStore } from "../../stores/projectStore";
 import {
   projectToWindDefinition,
   windDefinitionToProject,

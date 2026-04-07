@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Eye } from "lucide-react";
-import { useProjectStore } from "../../state/projectStore";
+import { useProjectStore } from "../../stores/projectStore";
 import { useErrorNotification } from "../../contexts/ErrorNotificationContext";
 import { LayerScrubber } from "./LayerScrubber";
 import { CanvasControls } from "./CanvasControls";

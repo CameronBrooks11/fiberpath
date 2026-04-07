@@ -1,5 +1,5 @@
 import { useState, FocusEvent } from "react";
-import { useProjectStore } from "../../state/projectStore";
+import { useProjectStore } from "../../stores/projectStore";
 import type { LayerEditorBaseProps } from "../../types/components";
 
 /**

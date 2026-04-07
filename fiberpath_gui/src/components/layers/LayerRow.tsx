@@ -1,4 +1,4 @@
-import { useProjectStore } from "../../state/projectStore";
+import { useProjectStore } from "../../stores/projectStore";
 import { Layer, LayerType } from "../../types/project";
 import type { OnCloseCallback } from "../../types/components";
 

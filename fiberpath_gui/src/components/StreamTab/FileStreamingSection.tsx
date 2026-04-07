@@ -254,11 +254,6 @@ export function FileStreamingSection() {
     }
   };
 
-  const getProgressPercentage = () => {
-    if (!progress || progress.total === 0) return 0;
-    return (progress.sent / progress.total) * 100;
-  };
-
   return (
     <section className="file-streaming-section panel panel--compact">
       <h3 className="panel-title">File Streaming</h3>
@@ -299,15 +294,11 @@ export function FileStreamingSection() {
                 {progress.sent} / {progress.total}
               </span>
             </div>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{
-                  /* dynamic: progress width is computed from runtime stream state */
-                  width: `${getProgressPercentage()}%`,
-                }}
-              />
-            </div>
+            <progress
+              className="stream-progress__bar"
+              value={progress.sent}
+              max={Math.max(progress.total, 1)}
+            />
             <div className="current-command">
               <span className="stream-progress__label">Current</span>
               <span className="command-text text-mono">{progress.currentCommand}</span>

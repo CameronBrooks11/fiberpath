@@ -2,7 +2,7 @@ import { open as openExternal } from "@tauri-apps/plugin-shell";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { useProjectStore } from "../state/projectStore";
+import { useProjectStore } from "../stores/projectStore";
 import { useErrorNotification } from "../contexts/ErrorNotificationContext";
 import { useTheme } from "../hooks/useTheme";
 import {

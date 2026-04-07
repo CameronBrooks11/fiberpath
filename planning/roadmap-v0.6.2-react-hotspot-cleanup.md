@@ -5,7 +5,7 @@
 **Created:** 2026-04-07  
 **Last Updated:** 2026-04-07  
 **Owner:** GUI maintainers  
-**Status:** Proposed
+**Status:** In progress (Wave A complete)
 
 ## Objective
 
@@ -33,6 +33,14 @@ Evidence collected from the current `fiberpath_gui/src` tree on 2026-04-07:
 Primary finding: styling entropy is already significantly reduced; remaining risk is concentrated in React responsibility density and boundary inconsistency.
 
 ---
+
+## Progress Update (2026-04-07)
+
+Wave A is complete with the following outcomes:
+
+- `projectStore` moved from `src/state/` to `src/stores/` and imports updated.
+- StreamTab wrapper indirection removed (`src/components/tabs/StreamTab.tsx` deleted; `App.tsx` now imports canonical StreamTab module).
+- Remaining inline style usage removed from `FileStreamingSection` by switching to a styled `progress` element.
 
 ## Priority Hotspots
 
@@ -179,9 +187,9 @@ Primary finding: styling entropy is already significantly reduced; remaining ris
 
 ### Wave A - Structural fast wins
 
-- [ ] Move `projectStore` to `src/stores/` and update imports.
-- [ ] Remove StreamTab wrapper indirection after import update.
-- [ ] Remove remaining inline style usage in `FileStreamingSection`.
+- [x] Move `projectStore` to `src/stores/` and update imports.
+- [x] Remove StreamTab wrapper indirection after import update.
+- [x] Remove remaining inline style usage in `FileStreamingSection`.
 
 ### Wave B - Stream domain cleanup
 

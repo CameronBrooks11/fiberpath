@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { getRecentFiles } from "../../lib/recentFiles";
-import { useProjectStore } from "../../state/projectStore";
+import { useProjectStore } from "../../stores/projectStore";
 import { useCliHealthContext } from "../../contexts/CliHealthContext";
 import type { DialogBaseProps } from "../../types/components";
 import "../../styles/dialogs.css";
