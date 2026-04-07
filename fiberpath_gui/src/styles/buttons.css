@@ -108,6 +108,40 @@ button:focus-visible {
   background: var(--color-error);
 }
 
+/* Success Button */
+.btn--success {
+  background: var(--status-success);
+  border-color: var(--status-success);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+}
+
+.btn--success:hover:not(:disabled) {
+  background: var(--color-success-green-hover);
+  border-color: var(--color-success-green-hover);
+}
+
+.btn--success:active:not(:disabled) {
+  background: var(--status-success);
+}
+
+/* Warning Button */
+.btn--warning {
+  background: var(--status-warning);
+  border-color: var(--status-warning);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+}
+
+.btn--warning:hover:not(:disabled) {
+  background: var(--color-warning-orange-hover);
+  border-color: var(--color-warning-orange-hover);
+}
+
+.btn--warning:active:not(:disabled) {
+  background: var(--status-warning);
+}
+
 /* Ghost Button */
 .btn--ghost {
   background: transparent;

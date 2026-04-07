@@ -13,6 +13,11 @@
   padding: var(--spacing-xl);
 }
 
+.panel--compact {
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+}
+
 .panel-container {
   display: flex;
   flex-direction: column;

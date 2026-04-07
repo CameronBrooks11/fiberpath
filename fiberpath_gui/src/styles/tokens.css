@@ -96,6 +96,17 @@
   --color-info: #64b5f6;
   --color-info-bg: rgb(100, 181, 246, 0.1);
 
+  /* Canonical status aliases for semantic UI states */
+  --status-success: var(--color-success-green);
+  --status-success-bg: var(--color-success-bg);
+  --status-warning: var(--color-warning-orange);
+  --status-warning-bg: var(--color-warning-bg);
+  --status-caution: var(--color-warning-yellow);
+  --status-error: var(--color-error-red);
+  --status-error-bg: var(--color-error-bg);
+  --status-info: var(--color-info);
+  --status-info-bg: var(--color-info-bg);
+
   /* Stream/console utility palette */
   --color-slate-400: #94a3b8;
   --color-slate-500: #64748b;

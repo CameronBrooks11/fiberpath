@@ -29,13 +29,7 @@ export function ManualControlSection() {
   const manualControlsEnabled = isConnected && (!isStreaming || status === "paused");
 
   const handleSendCommand = async (gcode: string) => {
-    console.log('[ManualControl] ========== START handleSendCommand ==========');
-    console.log('[ManualControl] gcode:', gcode);
-    console.log('[ManualControl] isConnected:', isConnected);
-    console.log('[ManualControl] commandLoading:', commandLoading);
-    
     if (!gcode.trim() || !isConnected || commandLoading) {
-      console.log('[ManualControl] Aborting: gcode empty, not connected, or already loading');
       return;
     }
 
@@ -73,7 +67,6 @@ export function ManualControlSection() {
       }
     } catch (error) {
       const errorMsg = String(error);
-      console.error('Command failed:', error);
       addLogEntry({
         type: "error",
         content: `Command failed: ${errorMsg}`,
@@ -101,14 +94,14 @@ export function ManualControlSection() {
   };
 
   return (
-    <div className="manual-control-section">
-      <h3 className="section-title">MANUAL CONTROL</h3>
+    <section className="manual-control-section panel panel--compact">
+      <h3 className="panel-title">Manual Control</h3>
 
       <div className="common-commands">
         <button
           onClick={() => handleSendCommand("G28")}
           disabled={!manualControlsEnabled || commandLoading}
-          className="command-button"
+          className="btn btn--secondary manual-command-button"
           title="Home all axes (G28)"
         >
           <Home size={18} />
@@ -118,7 +111,7 @@ export function ManualControlSection() {
         <button
           onClick={() => handleSendCommand("M114")}
           disabled={!manualControlsEnabled || commandLoading}
-          className="command-button"
+          className="btn btn--secondary manual-command-button"
           title="Get current position (M114)"
         >
           <MapPin size={18} />
@@ -128,7 +121,7 @@ export function ManualControlSection() {
         <button
           onClick={() => handleSendCommand("M112")}
           disabled={!manualControlsEnabled || commandLoading}
-          className="command-button emergency-stop"
+          className="btn btn--danger manual-command-button"
           title="Emergency stop (M112) - WARNING: Will disconnect controller"
         >
           <AlertOctagon size={18} />
@@ -138,7 +131,7 @@ export function ManualControlSection() {
         <button
           onClick={() => handleSendCommand("M18")}
           disabled={!manualControlsEnabled || commandLoading}
-          className="command-button"
+          className="btn btn--secondary manual-command-button"
           title="Disable stepper motors (M18)"
         >
           <Power size={18} />
@@ -147,7 +140,9 @@ export function ManualControlSection() {
       </div>
 
       <div className="manual-input-group">
-        <label htmlFor="command-input">Command:</label>
+        <label htmlFor="command-input" className="param-form__label manual-command-label">
+          Command
+        </label>
         <div className="input-row">
           <input
             id="command-input"
@@ -157,18 +152,18 @@ export function ManualControlSection() {
             onKeyDown={handleKeyDown}
             placeholder="Enter G-code command (e.g., G0 X10 Y20)"
             disabled={!manualControlsEnabled || commandLoading}
-            className="command-input"
+            className="param-form__input text-mono manual-command-input"
           />
           <button
             onClick={handleManualSend}
             disabled={!manualControlsEnabled || commandLoading || !commandInput.trim()}
-            className="send-button"
+            className="btn btn--primary manual-send-button"
             title="Send command"
           >
-            {commandLoading ? <div className="spinner" /> : <Send size={18} />}
+            {commandLoading ? <div className="stream-loading-spinner" /> : <Send size={18} />}
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
