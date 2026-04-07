@@ -31,45 +31,17 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div
-          style={{
-            padding: "40px",
-            textAlign: "center",
-            color: "var(--text-primary, #e0e0e0)",
-            background: "var(--bg-primary, #0d0d0f)",
-            minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <h1 style={{ color: "#e74c3c", marginBottom: "20px" }}>
-            Something went wrong
-          </h1>
-          <p style={{ marginBottom: "20px", maxWidth: "600px" }}>
+        <div className="error-boundary">
+          <h1 className="error-boundary__title">Something went wrong</h1>
+          <p className="error-boundary__message">
             An unexpected error occurred. Please try refreshing the page.
           </p>
           {this.state.error && (
-            <details
-              style={{
-                textAlign: "left",
-                maxWidth: "600px",
-                marginTop: "20px",
-              }}
-            >
-              <summary style={{ cursor: "pointer", marginBottom: "10px" }}>
+            <details className="error-boundary__details">
+              <summary className="error-boundary__summary">
                 Error details
               </summary>
-              <pre
-                style={{
-                  padding: "10px",
-                  background: "var(--bg-card, #1a1a1c)",
-                  borderRadius: "4px",
-                  overflow: "auto",
-                  fontSize: "12px",
-                }}
-              >
+              <pre className="error-boundary__stack">
                 {this.state.error.toString()}
                 {"\n\n"}
                 {this.state.error.stack}
@@ -77,17 +49,9 @@ export class ErrorBoundary extends Component<Props, State> {
             </details>
           )}
           <button
+            type="button"
             onClick={() => window.location.reload()}
-            style={{
-              marginTop: "30px",
-              padding: "10px 20px",
-              background: "var(--primary, #12a89a)",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "14px",
-            }}
+            className="btn btn--primary error-boundary__reload"
           >
             Reload Application
           </button>

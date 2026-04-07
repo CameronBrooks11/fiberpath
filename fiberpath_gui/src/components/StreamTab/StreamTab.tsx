@@ -40,12 +40,13 @@ export function StreamTab() {
   return (
     <div className="main-layout__workspace">
       <div className="stream-tab">
-        <div className="stream-tab__header">
-          <h2>Marlin Streaming Control</h2>
+        <div className="stream-tab__header panel-header">
+          <h2 className="panel-title stream-tab__title">Marlin Streaming Control</h2>
           <button
             onClick={() => setShowShortcuts(true)}
-            className="help-button"
+            className="btn btn--ghost btn--icon-only"
             title="Keyboard shortcuts (?)"
+            aria-label="Open keyboard shortcuts"
           >
             <HelpCircle size={20} />
           </button>

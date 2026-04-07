@@ -1,116 +1,162 @@
 /**
  * Button Styles
- * 
- * All button variants and states used throughout the application.
+ *
+ * Shared button primitives and deterministic variant states.
  */
 
 /* Base Button Reset */
 button {
-  font: inherit;
-  cursor: pointer;
+  margin: 0;
+  padding: 0;
   border: none;
   background: none;
-  padding: 0;
-  margin: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Utility base class for consistent button chrome */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  transition:
+    var(--transition-colors),
+    opacity var(--transition-fast);
+}
+
+.btn:focus-visible,
+.btn--icon-only:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn--icon-only:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn--loading,
+.btn[aria-busy="true"] {
+  opacity: 0.7;
+  cursor: progress;
+  pointer-events: none;
+}
+
+.btn--small {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
 }
 
 /* Primary Button */
 .btn--primary {
-  padding: var(--spacing-sm) var(--spacing-lg);
   background: var(--color-primary);
+  border-color: var(--color-primary);
   color: var(--color-text-inverse);
-  border: 1px solid var(--color-primary);
-  border-radius: var(--border-radius-md);
   font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-base);
-  cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
 }
 
 .btn--primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
   border-color: var(--color-primary-hover);
-  transform: translateY(-1px);
 }
 
 .btn--primary:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn--primary:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+  background: var(--color-primary);
 }
 
 /* Secondary Button */
 .btn--secondary {
-  padding: var(--spacing-sm) var(--spacing-lg);
   background: var(--color-bg-panel-alt);
-  border: 1px solid var(--color-border);
+  border-color: var(--color-border);
   color: var(--color-text);
-  border-radius: var(--border-radius-md);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-base);
-  cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
 }
 
 .btn--secondary:hover:not(:disabled) {
-  border-color: var(--color-primary);
   background: var(--color-bg-hover);
-  transform: translateY(-1px);
+  border-color: var(--color-border-focus);
 }
 
-.btn--secondary:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+.btn--secondary:active:not(:disabled) {
+  background: var(--color-bg-active);
 }
 
 /* Danger Button */
 .btn--danger {
-  padding: var(--spacing-sm) var(--spacing-lg);
   background: var(--color-error);
+  border-color: var(--color-error);
   color: var(--color-text-inverse);
-  border: 1px solid var(--color-error);
-  border-radius: var(--border-radius-md);
   font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-base);
-  cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
 }
 
 .btn--danger:hover:not(:disabled) {
   background: var(--color-error-red-light);
   border-color: var(--color-error-red-light);
-  transform: translateY(-1px);
 }
 
 .btn--danger:active:not(:disabled) {
-  transform: translateY(0);
+  background: var(--color-error);
 }
 
-.btn--danger:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+/* Success Button */
+.btn--success {
+  background: var(--status-success);
+  border-color: var(--status-success);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
 }
 
-/* Ghost Button (minimal styling) */
+.btn--success:hover:not(:disabled) {
+  background: var(--color-success-green-hover);
+  border-color: var(--color-success-green-hover);
+}
+
+.btn--success:active:not(:disabled) {
+  background: var(--status-success);
+}
+
+/* Warning Button */
+.btn--warning {
+  background: var(--status-warning);
+  border-color: var(--status-warning);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+}
+
+.btn--warning:hover:not(:disabled) {
+  background: var(--color-warning-orange-hover);
+  border-color: var(--color-warning-orange-hover);
+}
+
+.btn--warning:active:not(:disabled) {
+  background: var(--status-warning);
+}
+
+/* Ghost Button */
 .btn--ghost {
-  padding: var(--spacing-sm) var(--spacing-md);
   background: transparent;
+  border-color: var(--color-border-soft);
   color: var(--color-text-muted);
-  border: 1px solid var(--color-border-soft);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
 }
 
 .btn--ghost:hover:not(:disabled) {
-  color: var(--color-text);
   background: var(--color-bg-hover);
   border-color: var(--color-border);
-  transform: translateY(-1px);
+  color: var(--color-text);
+}
+
+.btn--ghost:active:not(:disabled) {
+  background: var(--color-bg-active);
 }
 
 /* Icon Button */
@@ -118,58 +164,17 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  background: transparent;
-  border: none;
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
+  border: 1px solid transparent;
   border-radius: var(--border-radius-md);
+  background: transparent;
   color: var(--color-text-muted);
-  cursor: pointer;
   transition: var(--transition-colors);
 }
 
 .btn--icon-only:hover:not(:disabled) {
-  color: var(--color-text);
   background: var(--color-bg-hover);
-}
-
-/* Focus Styles for Accessibility */
-button:focus-visible {
-  outline: 2px solid var(--color-border-focus);
-  outline-offset: 2px;
-}
-
-/* Utility base class for consistent spacing and focus states. */
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--border-radius-md);
-  border: 1px solid transparent;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  line-height: 1;
+  border-color: var(--color-border);
   color: var(--color-text);
-  background: transparent;
-  cursor: pointer;
-  transition: var(--transition-colors), var(--transition-transform);
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--color-border-focus);
-  outline-offset: 2px;
-}
-
-.btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.btn--small {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: var(--font-size-sm);
 }

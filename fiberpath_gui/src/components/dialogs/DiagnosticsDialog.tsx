@@ -151,9 +151,8 @@ export function DiagnosticsDialog({ isOpen, onClose }: DiagnosticsDialogProps) {
               )}
             </div>
             <button
-              className="btn btn--secondary"
+              className="btn btn--secondary diagnostics-refresh-btn"
               onClick={refresh}
-              style={{ marginTop: "0.5rem" }}
             >
               Refresh CLI Status
             </button>

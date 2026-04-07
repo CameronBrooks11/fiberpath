@@ -50,13 +50,15 @@ export function StreamLog() {
   };
 
   return (
-    <div className="stream-log">
-      <div className="stream-log__header">
-        <h3>Output Log</h3>
+    <div className="stream-log panel-container">
+      <div className="stream-log__header panel-header">
+        <h3 className="panel-title">Output Log</h3>
         <div className="stream-log__controls">
           <button
             onClick={toggleAutoScroll}
-            className={`auto-scroll-button ${autoScroll ? "active" : ""}`}
+            className={`btn btn--ghost btn--icon-only stream-log__auto-scroll ${
+              autoScroll ? "stream-log__auto-scroll--active" : ""
+            }`}
             title={
               autoScroll
                 ? "Auto-scroll enabled (click to disable)"
@@ -67,7 +69,7 @@ export function StreamLog() {
           </button>
           <button
             onClick={clearLog}
-            className="clear-button"
+            className="btn btn--ghost btn--icon-only stream-log__clear"
             title="Clear log"
             disabled={logEntries.length === 0}
           >
@@ -76,7 +78,7 @@ export function StreamLog() {
         </div>
       </div>
 
-      <div className="stream-log__content" ref={scrollContainerRef}>
+      <div className="stream-log__content panel-body text-mono" ref={scrollContainerRef}>
         {logEntries.length === 0 ? (
           <div className="log-empty">
             No log entries yet. Connect to a device to get started.

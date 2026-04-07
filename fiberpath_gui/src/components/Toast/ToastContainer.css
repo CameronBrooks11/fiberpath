@@ -2,37 +2,24 @@
 
 .toast-container {
   position: fixed;
-  top: 80px;
-  right: 20px;
-  z-index: 1000;
+  top: calc(var(--menubar-height) + var(--statusbar-height) + var(--spacing-lg));
+  right: var(--spacing-xl);
+  z-index: var(--z-index-toast);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 400px;
+  gap: var(--spacing-md);
+  max-width: 25rem;
 }
 
 .toast {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background: var(--color-console-bg-mid);
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
   border: 1px solid var(--color-border);
-  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.3);
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  border-radius: var(--border-radius-lg);
+  background: var(--color-bg-panel);
+  box-shadow: var(--shadow-md);
 }
 
 .toast__icon {
@@ -44,56 +31,43 @@
 
 .toast__message {
   flex: 1;
-  font-size: 14px;
-  line-height: 1.5;
   color: var(--color-text);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
 }
 
 .toast__close {
   flex-shrink: 0;
-  padding: 4px;
-  border: none;
-  background: transparent;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s;
 }
 
-.toast__close:hover {
-  background: rgb(255, 255, 255, 0.1);
-  color: var(--color-text);
-}
-
-/* Toast type styles */
 .toast--success {
-  border-color: var(--color-success-green);
+  border-color: var(--status-success);
 }
 
 .toast--success .toast__icon {
-  color: var(--color-success-green);
+  color: var(--status-success);
 }
 
 .toast--error {
-  border-color: var(--color-error-red);
+  border-color: var(--status-error);
 }
 
 .toast--error .toast__icon {
-  color: var(--color-error-red);
+  color: var(--status-error);
 }
 
 .toast--warning {
-  border-color: var(--color-warning-orange);
+  border-color: var(--status-warning);
 }
 
 .toast--warning .toast__icon {
-  color: var(--color-warning-orange);
+  color: var(--status-warning);
 }
 
 .toast--info {
-  border-color: var(--color-blue-500);
+  border-color: var(--status-info);
 }
 
 .toast--info .toast__icon {
-  color: var(--color-blue-500);
+  color: var(--status-info);
 }

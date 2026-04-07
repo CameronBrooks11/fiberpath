@@ -260,19 +260,19 @@ export function FileStreamingSection() {
   };
 
   return (
-    <div className="file-streaming-section">
-      <h3 className="section-title">FILE STREAMING</h3>
+    <section className="file-streaming-section panel panel--compact">
+      <h3 className="panel-title">File Streaming</h3>
 
       <div className="file-selection">
         <div className="file-info">
-          <span className="file-label">File:</span>
-          <span className="file-name">
+          <span className="file-label">File</span>
+          <span className="file-name text-mono">
             {selectedFile || "No file selected"}
           </span>
           {selectedFile && !isStreaming && (
             <button
               onClick={handleClearFile}
-              className="clear-file-button"
+              className="btn btn--ghost btn--icon-only clear-file-button"
               title="Clear file selection"
               aria-label="Clear file selection"
             >
@@ -283,7 +283,7 @@ export function FileStreamingSection() {
         <button
           onClick={handleSelectFile}
           disabled={isStreaming}
-          className="select-file-button"
+          className="btn btn--secondary file-select-button"
           title="Select a G-code file to stream"
         >
           Select File
@@ -292,22 +292,26 @@ export function FileStreamingSection() {
 
       {progress && (
         <>
-          <div className="progress-section">
-            <label>Progress:</label>
+          <div className="stream-progress">
+            <div className="stream-progress__header">
+              <span className="stream-progress__label">Progress</span>
+              <span className="stream-progress__text">
+                {progress.sent} / {progress.total}
+              </span>
+            </div>
             <div className="progress-bar">
               <div
                 className="progress-fill"
-                style={{ width: `${getProgressPercentage()}%` }}
+                style={{
+                  /* dynamic: progress width is computed from runtime stream state */
+                  width: `${getProgressPercentage()}%`,
+                }}
               />
             </div>
-            <div className="progress-text">
-              {progress.sent} / {progress.total}
+            <div className="current-command">
+              <span className="stream-progress__label">Current</span>
+              <span className="command-text text-mono">{progress.currentCommand}</span>
             </div>
-          </div>
-
-          <div className="current-command">
-            <label>Current:</label>
-            <span className="command-text">{progress.currentCommand}</span>
           </div>
         </>
       )}
@@ -317,23 +321,23 @@ export function FileStreamingSection() {
           <button
             onClick={handleStartStream}
             disabled={!isConnected || !filePath}
-            className="start-button"
+            className="btn btn--success stream-action-button"
             title="Start streaming the selected G-code file"
           >
             <Play size={18} />
             <span>Start Stream</span>
           </button>
         ) : (
-          <div className="stream-controls">
+          <div className="stream-buttons-grid">
             {!isPaused ? (
               <button
                 onClick={handlePause}
                 disabled={streamControlLoading}
-                className="pause-button"
+                className="btn btn--warning stream-action-button"
                 title="Pause streaming (sends M0)"
               >
                 {streamControlLoading ? (
-                  <div className="spinner" />
+                  <div className="stream-loading-spinner" />
                 ) : (
                   <Pause size={18} />
                 )}
@@ -343,11 +347,11 @@ export function FileStreamingSection() {
               <button
                 onClick={handleResume}
                 disabled={streamControlLoading}
-                className="resume-button"
+                className="btn btn--success stream-action-button"
                 title="Resume streaming (sends M108)"
               >
                 {streamControlLoading ? (
-                  <div className="spinner" />
+                  <div className="stream-loading-spinner" />
                 ) : (
                   <Play size={18} />
                 )}
@@ -358,11 +362,11 @@ export function FileStreamingSection() {
               <button
                 onClick={handleCancel}
                 disabled={streamControlLoading}
-                className="cancel-button"
+                className="btn btn--secondary stream-action-button"
                 title="Cancel job (stays connected)"
               >
                 {streamControlLoading ? (
-                  <div className="spinner" />
+                  <div className="stream-loading-spinner" />
                 ) : (
                   <Square size={18} />
                 )}
@@ -372,11 +376,11 @@ export function FileStreamingSection() {
               <button
                 onClick={handleStop}
                 disabled={streamControlLoading}
-                className="stop-button"
+                className="btn btn--danger stream-action-button"
                 title="Emergency stop (M112) - WARNING: Will disconnect controller"
               >
                 {streamControlLoading ? (
-                  <div className="spinner" />
+                  <div className="stream-loading-spinner" />
                 ) : (
                   <Square size={18} />
                 )}
@@ -386,6 +390,6 @@ export function FileStreamingSection() {
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }

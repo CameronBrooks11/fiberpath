@@ -1,110 +1,56 @@
 /* StreamLog.css */
 
 .stream-log {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-height: 100%;
-  background: var(--color-console-bg-dark);
-  overflow: hidden;
+  min-height: 0;
 }
 
 .stream-log__header {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-console-bg-mid);
-}
-
-.stream-log__header h3 {
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-text-muted);
-  margin: 0;
 }
 
 .stream-log__controls {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
-.auto-scroll-button,
-.clear-button {
-  padding: 6px 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: var(--color-console-bg-dark);
-  color: var(--color-text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: all 0.2s;
+.stream-log__auto-scroll--active {
+  border-color: var(--status-info);
+  background: var(--status-info-bg);
+  color: var(--status-info);
 }
 
-.auto-scroll-button:hover,
-.clear-button:hover:not(:disabled) {
-  background: var(--color-bg-hover);
-  border-color: var(--color-text-muted);
-}
-
-.auto-scroll-button.active {
-  background: var(--color-blue-900);
-  color: var(--color-blue-400);
-  border-color: var(--color-blue-500);
-}
-
-.auto-scroll-button.active:hover {
-  background: var(--color-blue-800);
-}
-
-.clear-button:hover:not(:disabled) {
-  color: var(--color-error-red);
-  border-color: var(--color-error-red);
-}
-
-.clear-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.stream-log__clear:hover:not(:disabled) {
+  border-color: var(--status-error);
+  color: var(--status-error);
 }
 
 .stream-log__content {
-  flex: 1 1 0;
-  min-height: 0;
-  max-height: 100%;
-  overflow: hidden auto;
-  padding: 16px;
-  font-family: Consolas, Monaco, "Courier New", monospace;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
 }
 
 .log-empty {
-  color: var(--text-secondary);
+  color: var(--color-text-muted);
   font-style: italic;
   text-align: center;
-  padding: 40px 20px;
+  padding: var(--spacing-3xl) var(--spacing-xl);
 }
 
 .log-entry {
   display: flex;
-  gap: 8px;
-  margin-bottom: 4px;
-  padding: 4px 8px;
-  border-radius: 2px;
-  transition: background 0.1s;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
 }
 
 .log-entry:hover {
-  background: var(--bg-hover);
+  background: var(--color-bg-hover);
 }
 
 .log-entry__prefix {
-  font-weight: 700;
-  min-width: 16px;
+  min-width: 1rem;
+  font-weight: var(--font-weight-semibold);
 }
 
 .log-entry__content {
@@ -112,7 +58,6 @@
   word-break: break-word;
 }
 
-/* Log entry type styles */
 .log-entry--info {
   color: var(--color-slate-500);
 }
@@ -122,25 +67,25 @@
 }
 
 .log-entry--command {
-  color: var(--color-blue-400);
-  font-weight: 600;
+  color: var(--color-primary-soft);
+  font-weight: var(--font-weight-medium);
 }
 
 .log-entry--command .log-entry__prefix {
-  color: var(--color-blue-500);
+  color: var(--color-primary);
 }
 
 .log-entry--response {
-  color: var(--color-green-400);
+  color: var(--status-success);
 }
 
 .log-entry--response .log-entry__prefix {
-  color: var(--color-success-green);
+  color: var(--status-success);
 }
 
 .log-entry--stream {
   color: var(--color-slate-400);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
 }
 
 .log-entry--stream .log-entry__prefix {
@@ -148,37 +93,19 @@
 }
 
 .log-entry--progress {
-  color: var(--color-cyan-400);
+  color: var(--status-info);
 }
 
 .log-entry--progress .log-entry__prefix {
-  color: var(--color-cyan-600);
+  color: var(--status-info);
 }
 
 .log-entry--error {
-  color: var(--color-error-red-light);
-  font-weight: 600;
-  background: rgb(248, 113, 113, 0.1);
+  color: var(--status-error);
+  font-weight: var(--font-weight-medium);
+  background: var(--status-error-bg);
 }
 
 .log-entry--error .log-entry__prefix {
-  color: var(--color-error-red);
-}
-
-/* Scrollbar styling */
-.stream-log__content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.stream-log__content::-webkit-scrollbar-track {
-  background: var(--color-console-bg-mid);
-}
-
-.stream-log__content::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 4px;
-}
-
-.stream-log__content::-webkit-scrollbar-thumb:hover {
-  background: var(--color-slate-500);
+  color: var(--status-error);
 }

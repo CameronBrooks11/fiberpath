@@ -29,7 +29,6 @@ export function ConnectionSection() {
     selectedPort,
     baudRate,
     availablePorts,
-    isStreaming,
     setStatus,
     setSelectedPort,
     setBaudRate,
@@ -156,17 +155,17 @@ export function ConnectionSection() {
     }
   };
 
-  const getStatusColor = () => {
+  const getStatusTone = () => {
     switch (status) {
       case "connected":
-        return "#22c55e"; // green
+        return "connected";
       case "connecting":
-        return "#f97316"; // orange
+        return "connecting";
       case "paused":
-        return "#eab308"; // yellow
+        return "paused";
       case "disconnected":
       default:
-        return "#ef4444"; // red
+        return "disconnected";
     }
   };
 
@@ -185,18 +184,20 @@ export function ConnectionSection() {
   };
 
   return (
-    <div className="connection-section">
-      <h3 className="section-title">CONNECTION</h3>
+    <section className="connection-section panel panel--compact">
+      <h3 className="panel-title">Connection</h3>
 
       <div className="connection-row">
-        <label htmlFor="port-select">Port:</label>
+        <label htmlFor="port-select" className="connection-label">
+          Port
+        </label>
         <div className="port-select-group">
           <select
             id="port-select"
             value={selectedPort || ""}
             onChange={(e) => setSelectedPort(e.target.value)}
             disabled={status !== "disconnected"}
-            className="port-select"
+            className="param-form__select connection-select"
           >
             {availablePorts.length === 0 ? (
               <option value="">No ports found</option>
@@ -211,22 +212,28 @@ export function ConnectionSection() {
           <button
             onClick={refreshPorts}
             disabled={refreshing || status !== "disconnected"}
-            className="refresh-button"
+            className="btn btn--secondary btn--icon-only"
             title="Refresh ports"
+            aria-label="Refresh serial ports"
           >
-            <RefreshCw size={16} className={refreshing ? "spinning" : ""} />
+            <RefreshCw
+              size={16}
+              className={refreshing ? "stream-icon-spin" : undefined}
+            />
           </button>
         </div>
       </div>
 
       <div className="connection-row">
-        <label htmlFor="baud-select">Baud:</label>
+        <label htmlFor="baud-select" className="connection-label">
+          Baud
+        </label>
         <select
           id="baud-select"
           value={baudRate}
           onChange={(e) => setBaudRate(Number(e.target.value))}
           disabled={status !== "disconnected"}
-          className="baud-select"
+          className="param-form__select connection-select"
         >
           <option value={115200}>115200</option>
           <option value={250000}>250000</option>
@@ -234,16 +241,21 @@ export function ConnectionSection() {
         </select>
       </div>
 
-      <div className="status-row">
-        <Circle size={12} fill={getStatusColor()} color={getStatusColor()} />
-        <span className="status-text">{getStatusText()}</span>
+      <div className={`connection-status connection-status--${getStatusTone()}`}>
+        <Circle
+          size={12}
+          fill="currentColor"
+          color="currentColor"
+          className="connection-status__dot"
+        />
+        <span className="connection-status__text">{getStatusText()}</span>
       </div>
 
       {status === "disconnected" ? (
         <button
           onClick={handleConnect}
           disabled={!selectedPort || availablePorts.length === 0}
-          className="connect-button"
+          className="btn btn--primary connection-action-button"
           title="Connect to the selected serial port"
         >
           Connect
@@ -252,12 +264,12 @@ export function ConnectionSection() {
         <button
           onClick={handleDisconnect}
           disabled={status === "connecting"}
-          className="disconnect-button"
+          className="btn btn--secondary connection-action-button"
           title="Disconnect from the current device"
         >
           Disconnect
         </button>
       )}
-    </div>
+    </section>
   );
 }

@@ -33,18 +33,18 @@ export function StatusBar() {
     }
   };
 
-  const getCliStatusColor = (): string => {
+  const getCliStatusClass = (): string => {
     switch (cliStatus) {
       case "ready":
-        return "var(--success)";
+        return "statusbar__indicator--ready";
       case "checking":
-        return "var(--text-muted)";
+        return "statusbar__indicator--checking";
       case "unavailable":
-        return "var(--error)";
+        return "statusbar__indicator--unavailable";
       case "unknown":
-        return "var(--text-muted)";
+        return "statusbar__indicator--unknown";
       default:
-        return "var(--text-muted)";
+        return "statusbar__indicator--unknown";
     }
   };
 
@@ -65,11 +65,8 @@ export function StatusBar() {
         </div>
       )}
 
-      <div className="statusbar__item" style={{ marginLeft: "auto" }}>
-        <span
-          className="statusbar__indicator"
-          style={{ background: getCliStatusColor() }}
-        />
+      <div className="statusbar__item statusbar__item--meta">
+        <span className={`statusbar__indicator ${getCliStatusClass()}`} />
         <span className="statusbar__value">{getCliStatusText()}</span>
       </div>
     </div>

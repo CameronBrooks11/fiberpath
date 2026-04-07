@@ -153,10 +153,10 @@ export default function App() {
             leftPanel={
               <LeftPanel>
                 <MandrelForm />
-                <div style={{ marginTop: "1.5rem" }}>
+                <div className="app-form-section">
                   <TowForm />
                 </div>
-                <div style={{ marginTop: "1.5rem" }}>
+                <div className="app-form-section">
                   <MachineSettingsForm />
                 </div>
               </LeftPanel>

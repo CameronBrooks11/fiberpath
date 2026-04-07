@@ -167,14 +167,14 @@ export function CliUnavailableDialog({
                     </tr>
                     <tr>
                       <td><strong>Path Exists:</strong></td>
-                      <td style={{ color: diagnostics.bundledExists ? '#4CAF50' : '#f44336' }}>
-                        {diagnostics.bundledExists ? '✓ Yes' : '✗ No'}
+                      <td className={diagnostics.bundledExists ? "status-healthy" : "status-error"}>
+                        {diagnostics.bundledExists ? "✓ Yes" : "✗ No"}
                       </td>
                     </tr>
                     <tr>
                       <td><strong>Is File:</strong></td>
-                      <td style={{ color: diagnostics.bundledIsFile ? '#4CAF50' : '#f44336' }}>
-                        {diagnostics.bundledIsFile ? '✓ Yes' : '✗ No'}
+                      <td className={diagnostics.bundledIsFile ? "status-healthy" : "status-error"}>
+                        {diagnostics.bundledIsFile ? "✓ Yes" : "✗ No"}
                       </td>
                     </tr>
                     <tr>
@@ -195,7 +195,7 @@ export function CliUnavailableDialog({
                   <tbody>
                     <tr>
                       <td><strong>Result:</strong></td>
-                      <td style={{ color: diagnostics.executionResult === 'Success' ? '#4CAF50' : '#f44336' }}>
+                      <td className={diagnostics.executionResult === "Success" ? "status-healthy" : "status-error"}>
                         {diagnostics.executionResult}
                       </td>
                     </tr>

@@ -1,8 +1,10 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../state/projectStore";
 import { useErrorNotification } from "../contexts/ErrorNotificationContext";
+import { useTheme } from "../hooks/useTheme";
 import {
   getRecentFiles,
   formatRecentFileName,
@@ -27,6 +29,7 @@ export function MenuBar({
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [showDiagnosticsDialog, setShowDiagnosticsDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const { theme, setTheme, isSystemTheme } = useTheme();
 
   // Use shallow comparison for multiple selectors
   const {
@@ -86,6 +89,27 @@ export function MenuBar({
   const handleDocsLink = () => {
     void openExternal("https://cameronbrooks11.github.io/fiberpath");
   };
+
+  const cycleTheme = () => {
+    if (isSystemTheme) {
+      setTheme("dark");
+      return;
+    }
+
+    if (theme === "dark") {
+      setTheme("light");
+      return;
+    }
+
+    setTheme(null);
+  };
+
+  const themeState = isSystemTheme ? "system" : theme;
+  const themeLabel = isSystemTheme
+    ? "System"
+    : theme === "dark"
+      ? "Dark"
+      : "Light";
 
   useEffect(() => {
     const handleToggle = (event: Event) => {
@@ -293,6 +317,25 @@ export function MenuBar({
           </div>
         </details>
       </div>
+
+      <div className="menubar__spacer" />
+
+      <button
+        type="button"
+        className="menubar__theme-toggle"
+        data-theme-state={themeState}
+        onClick={cycleTheme}
+        title={`Theme: ${themeLabel} (click to cycle)`}
+        aria-label={`Theme: ${themeLabel}. Click to cycle dark, light, and system.`}
+      >
+        {isSystemTheme ? (
+          <Monitor size={16} aria-hidden="true" />
+        ) : theme === "dark" ? (
+          <Moon size={16} aria-hidden="true" />
+        ) : (
+          <Sun size={16} aria-hidden="true" />
+        )}
+      </button>
 
       <AboutDialog
         isOpen={showAboutDialog}

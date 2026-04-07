@@ -32,7 +32,7 @@ export function ToastContainer() {
           <div className="toast__icon">{getIcon(toast.type)}</div>
           <div className="toast__message">{toast.message}</div>
           <button
-            className="toast__close"
+            className="btn btn--ghost btn--icon-only toast__close"
             onClick={() => removeToast(toast.id)}
             aria-label="Close notification"
           >
