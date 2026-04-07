@@ -49,12 +49,19 @@ interface StreamState {
 
   // Actions
   setStatus: (status: ConnectionStatus) => void;
+  markConnecting: () => void;
+  markConnected: () => void;
+  markPaused: () => void;
+  markDisconnected: () => void;
   setSelectedPort: (port: string | null) => void;
   setBaudRate: (rate: number) => void;
   setAvailablePorts: (ports: SerialPort[]) => void;
   setIsStreaming: (streaming: boolean) => void;
+  markStreamingStarted: () => void;
+  markStreamingStopped: () => void;
   setSelectedFile: (file: string | null) => void;
   setProgress: (progress: StreamProgress | null) => void;
+  resetAfterCancel: () => void;
   setCommandLoading: (loading: boolean) => void;
   setStreamControlLoading: (loading: boolean) => void;
   addLogEntry: (entry: Omit<LogEntry, "id" | "timestamp">) => void;
@@ -82,6 +89,14 @@ export const useStreamStore = create<StreamState>((set) => ({
   // Actions
   setStatus: (status) => set({ status }),
 
+  markConnecting: () => set({ status: "connecting" }),
+
+  markConnected: () => set({ status: "connected" }),
+
+  markPaused: () => set({ status: "paused" }),
+
+  markDisconnected: () => set({ status: "disconnected" }),
+
   setSelectedPort: (port) => set({ selectedPort: port }),
 
   setBaudRate: (rate) => set({ baudRate: rate }),
@@ -90,9 +105,20 @@ export const useStreamStore = create<StreamState>((set) => ({
 
   setIsStreaming: (streaming) => set({ isStreaming: streaming }),
 
+  markStreamingStarted: () => set({ isStreaming: true }),
+
+  markStreamingStopped: () => set({ isStreaming: false }),
+
   setSelectedFile: (file) => set({ selectedFile: file }),
 
   setProgress: (progress) => set({ progress }),
+
+  resetAfterCancel: () =>
+    set({
+      isStreaming: false,
+      status: "connected",
+      progress: null,
+    }),
 
   setCommandLoading: (loading) => set({ commandLoading: loading }),
 

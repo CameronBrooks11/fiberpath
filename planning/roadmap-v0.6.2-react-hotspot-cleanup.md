@@ -5,7 +5,7 @@
 **Created:** 2026-04-07  
 **Last Updated:** 2026-04-07  
 **Owner:** GUI maintainers  
-**Status:** In progress (Wave A complete)
+**Status:** In progress (Wave A and Wave B complete)
 
 ## Objective
 
@@ -41,6 +41,16 @@ Wave A is complete with the following outcomes:
 - `projectStore` moved from `src/state/` to `src/stores/` and imports updated.
 - StreamTab wrapper indirection removed (`src/components/tabs/StreamTab.tsx` deleted; `App.tsx` now imports canonical StreamTab module).
 - Remaining inline style usage removed from `FileStreamingSection` by switching to a styled `progress` element.
+
+Wave B is complete with the following outcomes:
+
+- Stream domain action hooks extracted:
+  - `src/hooks/stream/useConnectionActions.ts`
+  - `src/hooks/stream/useStreamingActions.ts`
+  - `src/hooks/stream/useManualCommandActions.ts`
+- Named stream transition actions added in `src/stores/streamStore.ts` (`markConnecting`, `markConnected`, `markPaused`, `markDisconnected`, `markStreamingStarted`, `markStreamingStopped`, `resetAfterCancel`).
+- Stream toast/log policy consolidated into `src/lib/streamFeedback.ts` and applied by stream hooks and `useStreamEvents`.
+- Stream lifecycle integration coverage added in `src/tests/integration/streamLifecycle.test.ts`.
 
 ## Priority Hotspots
 
@@ -193,9 +203,9 @@ Wave A is complete with the following outcomes:
 
 ### Wave B - Stream domain cleanup
 
-- [ ] Extract stream action hooks and named transition actions.
-- [ ] Consolidate stream toast/log policy helpers.
-- [ ] Add stream lifecycle integration tests.
+- [x] Extract stream action hooks and named transition actions.
+- [x] Consolidate stream toast/log policy helpers.
+- [x] Add stream lifecycle integration tests.
 
 ### Wave C - App/menu/file-operation cleanup
 
