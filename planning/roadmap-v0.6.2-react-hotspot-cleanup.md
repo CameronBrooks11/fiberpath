@@ -5,7 +5,7 @@
 **Created:** 2026-04-07  
 **Last Updated:** 2026-04-07  
 **Owner:** GUI maintainers  
-**Status:** In progress (Wave A and Wave B complete)
+**Status:** In progress (Wave A, Wave B, and Wave C complete)
 
 ## Objective
 
@@ -51,6 +51,14 @@ Wave B is complete with the following outcomes:
 - Named stream transition actions added in `src/stores/streamStore.ts` (`markConnecting`, `markConnected`, `markPaused`, `markDisconnected`, `markStreamingStarted`, `markStreamingStopped`, `resetAfterCancel`).
 - Stream toast/log policy consolidated into `src/lib/streamFeedback.ts` and applied by stream hooks and `useStreamEvents`.
 - Stream lifecycle integration coverage added in `src/tests/integration/streamLifecycle.test.ts`.
+
+Wave C is complete with the following outcomes:
+
+- File operation wiring centralized in `src/hooks/useFileOperations.ts` and consumed by `App` + `MenuBar`.
+- Menu definitions moved to typed config in `src/lib/menuConfig.ts`.
+- Menu interaction behavior extracted into `src/hooks/useMenubarInteractions.ts`.
+- `MenuBar.tsx` reduced and focused on rendering/config-driven dispatch.
+- `App.tsx` no longer directly wires `createFileOperations(...)`.
 
 ## Priority Hotspots
 
@@ -209,9 +217,9 @@ Wave B is complete with the following outcomes:
 
 ### Wave C - App/menu/file-operation cleanup
 
-- [ ] Introduce `useFileOperations` adapter.
-- [ ] Split `MenuBar` behavior from rendering; move menu definitions to config.
-- [ ] Keep `App` focused on high-level composition only.
+- [x] Introduce `useFileOperations` adapter.
+- [x] Split `MenuBar` behavior from rendering; move menu definitions to config.
+- [x] Keep `App` focused on high-level composition only.
 
 ### Wave D - Editors/canvas/dialog hardening
 

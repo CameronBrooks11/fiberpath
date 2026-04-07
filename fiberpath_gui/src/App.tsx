@@ -1,4 +1,4 @@
-import { FormEvent, useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { MainLayout } from "./layouts/MainLayout";
@@ -23,11 +23,8 @@ import { HelicalLayerEditor } from "./components/editors/HelicalLayerEditor";
 import { SkipLayerEditor } from "./components/editors/SkipLayerEditor";
 import { ExportConfirmationDialog } from "./components/dialogs/ExportConfirmationDialog";
 import { useProjectStore } from "./stores/projectStore";
-import { useErrorNotification } from "./contexts/ErrorNotificationContext";
-import { useCliHealthContext } from "./contexts/CliHealthContext";
-import { createFileOperations } from "./lib/fileOperations";
+import { useFileOperations } from "./hooks/useFileOperations";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
-import { getRecentFiles } from "./lib/recentFiles";
 
 export default function App() {
   // Tab state
@@ -38,28 +35,13 @@ export default function App() {
     project,
     activeLayerId,
     layers,
-    newProject,
-    loadProject,
-    setFilePath,
-    clearDirty,
-    duplicateLayer,
-    removeLayer,
   } = useProjectStore(
     useShallow((state) => ({
       project: state.project,
       activeLayerId: state.project.activeLayerId,
       layers: state.project.layers,
-      newProject: state.newProject,
-      loadProject: state.loadProject,
-      setFilePath: state.setFilePath,
-      clearDirty: state.clearDirty,
-      duplicateLayer: state.duplicateLayer,
-      removeLayer: state.removeLayer,
     })),
   );
-
-  // Error notifications
-  const { showError, showInfo } = useErrorNotification();
 
   // Find active layer
   const activeLayer = activeLayerId
@@ -71,36 +53,7 @@ export default function App() {
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
 
-  // Create file operations handlers (memoized to prevent recreation on every render)
-  const fileOps = useMemo(
-    () =>
-      createFileOperations({
-        getProject: () => useProjectStore.getState().project,
-        newProject,
-        loadProject,
-        setFilePath,
-        clearDirty,
-        getActiveLayerId: () =>
-          useProjectStore.getState().project.activeLayerId,
-        duplicateLayer,
-        removeLayer,
-        showError,
-        showInfo,
-        updateRecentFiles: () => {
-          getRecentFiles();
-        },
-      }),
-    [
-      newProject,
-      loadProject,
-      setFilePath,
-      clearDirty,
-      duplicateLayer,
-      removeLayer,
-      showError,
-      showInfo,
-    ],
-  );
+  const fileOps = useFileOperations();
 
   // Wire up keyboard shortcuts
   useKeyboardShortcuts({

@@ -1,16 +1,17 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
 import { Monitor, Moon, Sun } from "lucide-react";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../stores/projectStore";
-import { useErrorNotification } from "../contexts/ErrorNotificationContext";
 import { useTheme } from "../hooks/useTheme";
+import { useFileOperations } from "../hooks/useFileOperations";
+import { useMenubarInteractions } from "../hooks/useMenubarInteractions";
+import { MENU_DEFINITIONS, type MenuActionId } from "../lib/menuConfig";
 import {
   getRecentFiles,
   formatRecentFileName,
   formatRecentFilePath,
 } from "../lib/recentFiles";
-import { createFileOperations } from "../lib/fileOperations";
 import { AboutDialog } from "./dialogs/AboutDialog";
 import { DiagnosticsDialog } from "./dialogs/DiagnosticsDialog";
 import { ExportConfirmationDialog } from "./dialogs/ExportConfirmationDialog";
@@ -20,75 +21,34 @@ interface MenuBarProps {
   onToggleRightPanel?: () => void;
 }
 
+type MenuActionHandler = () => unknown;
+
 export function MenuBar({
   onToggleLeftPanel,
   onToggleRightPanel,
 }: MenuBarProps) {
-  const menuRefs = useRef<(HTMLDetailsElement | null)[]>([]);
+  const { project, activeLayerId } = useProjectStore(
+    useShallow((state) => ({
+      project: state.project,
+      activeLayerId: state.project.activeLayerId,
+    })),
+  );
+
   const [recentFiles, setRecentFiles] = useState(getRecentFiles());
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [showDiagnosticsDialog, setShowDiagnosticsDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
+
+  const refreshRecentFiles = useCallback(() => {
+    setRecentFiles(getRecentFiles());
+  }, []);
+
+  const fileOps = useFileOperations({
+    onRecentFilesChanged: refreshRecentFiles,
+  });
+
+  const { setMenuRef } = useMenubarInteractions();
   const { theme, setTheme, isSystemTheme } = useTheme();
-
-  // Use shallow comparison for multiple selectors
-  const {
-    project,
-    activeLayerId,
-    newProject,
-    loadProject,
-    setFilePath,
-    clearDirty,
-    duplicateLayer,
-    removeLayer,
-  } = useProjectStore(
-    useShallow((state) => ({
-      project: state.project,
-      activeLayerId: state.project.activeLayerId,
-      newProject: state.newProject,
-      loadProject: state.loadProject,
-      setFilePath: state.setFilePath,
-      clearDirty: state.clearDirty,
-      duplicateLayer: state.duplicateLayer,
-      removeLayer: state.removeLayer,
-    })),
-  );
-
-  // Error notifications
-  const { showError, showInfo } = useErrorNotification();
-
-  // Create file operation handlers (memoized to prevent recreation on every render)
-  const fileOps = useMemo(
-    () =>
-      createFileOperations({
-        getProject: () => useProjectStore.getState().project,
-        newProject,
-        loadProject,
-        setFilePath,
-        clearDirty,
-        getActiveLayerId: () =>
-          useProjectStore.getState().project.activeLayerId,
-        duplicateLayer,
-        removeLayer,
-        updateRecentFiles: () => setRecentFiles(getRecentFiles()),
-        showError,
-        showInfo,
-      }),
-    [
-      newProject,
-      loadProject,
-      setFilePath,
-      clearDirty,
-      duplicateLayer,
-      removeLayer,
-      showError,
-      showInfo,
-    ],
-  );
-
-  const handleDocsLink = () => {
-    void openExternal("https://cameronbrooks11.github.io/fiberpath");
-  };
 
   const cycleTheme = () => {
     if (isSystemTheme) {
@@ -111,55 +71,55 @@ export function MenuBar({
       ? "Dark"
       : "Light";
 
-  useEffect(() => {
-    const handleToggle = (event: Event) => {
-      const target = event.target as HTMLDetailsElement;
-      if (target.open) {
-        // Close all other menus when one opens
-        menuRefs.current.forEach((menu) => {
-          if (menu && menu !== target && menu.open) {
-            menu.open = false;
-          }
-        });
-      }
-    };
+  const actionHandlers: Partial<Record<MenuActionId, MenuActionHandler>> = {
+    "file.new": fileOps.handleNewProject,
+    "file.open": fileOps.handleOpen,
+    "file.save": fileOps.handleSave,
+    "file.saveAs": fileOps.handleSaveAs,
+    "file.export": () => setShowExportDialog(true),
+    "edit.duplicateLayer": fileOps.handleDuplicateLayer,
+    "edit.deleteLayer": fileOps.handleDeleteLayer,
+    "view.toggleLeftPanel": onToggleLeftPanel,
+    "view.toggleRightPanel": onToggleRightPanel,
+    "tools.validateDefinition": fileOps.handleValidate,
+    "help.documentation": () =>
+      openExternal("https://cameronbrooks11.github.io/fiberpath"),
+    "help.about": () => setShowAboutDialog(true),
+    "help.diagnostics": () => setShowDiagnosticsDialog(true),
+  };
 
-    menuRefs.current.forEach((menu) => {
-      if (menu) {
-        menu.addEventListener("toggle", handleToggle);
-      }
-    });
+  const isActionDisabled = (
+    actionId: MenuActionId,
+    configDisabled: boolean | undefined,
+  ) => {
+    if (configDisabled) {
+      return true;
+    }
 
-    return () => {
-      menuRefs.current.forEach((menu) => {
-        if (menu) {
-          menu.removeEventListener("toggle", handleToggle);
-        }
-      });
-    };
-  }, []);
+    if (
+      (actionId === "edit.duplicateLayer" || actionId === "edit.deleteLayer") &&
+      !activeLayerId
+    ) {
+      return true;
+    }
 
-  // Close menus when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const clickedInsideMenu = menuRefs.current.some(
-        (menu) => menu && menu.contains(event.target as Node),
-      );
+    if (actionId === "view.toggleLeftPanel" && !onToggleLeftPanel) {
+      return true;
+    }
 
-      if (!clickedInsideMenu) {
-        menuRefs.current.forEach((menu) => {
-          if (menu && menu.open) {
-            menu.open = false;
-          }
-        });
-      }
-    };
+    if (actionId === "view.toggleRightPanel" && !onToggleRightPanel) {
+      return true;
+    }
 
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+    return !actionHandlers[actionId];
+  };
+
+  const handleMenuAction = (actionId: MenuActionId) => {
+    const handler = actionHandlers[actionId];
+    if (handler) {
+      void handler();
+    }
+  };
 
   return (
     <nav className="menubar">
@@ -169,153 +129,60 @@ export function MenuBar({
       </div>
 
       <div className="menubar__menus">
-        <details
-          className="menubar__menu"
-          ref={(el) => {
-            menuRefs.current[0] = el;
-          }}
-        >
-          <summary>File</summary>
-          <div className="menubar__dropdown">
-            <button onClick={fileOps.handleNewProject}>
-              New Project<span className="menubar__shortcut">Ctrl+N</span>
-            </button>
-            <button onClick={fileOps.handleOpen}>
-              Open<span className="menubar__shortcut">Ctrl+O</span>
-            </button>
-            <hr />
-            <button onClick={fileOps.handleSave}>
-              Save<span className="menubar__shortcut">Ctrl+S</span>
-            </button>
-            <button onClick={fileOps.handleSaveAs}>
-              Save As<span className="menubar__shortcut">Ctrl+Shift+S</span>
-            </button>
-            <hr />
-            <button onClick={() => setShowExportDialog(true)}>
-              Export G-code<span className="menubar__shortcut">Ctrl+E</span>
-            </button>
-            {recentFiles.length > 0 && (
-              <>
-                <hr />
-                <div className="menubar__submenu-label">Recent Files</div>
-                {recentFiles.map((file) => (
+        {MENU_DEFINITIONS.map((menu, menuIndex) => (
+          <details
+            key={menu.id}
+            className="menubar__menu"
+            ref={setMenuRef(menuIndex)}
+          >
+            <summary>{menu.label}</summary>
+            <div className="menubar__dropdown">
+              {menu.entries.map((entry, entryIndex) => {
+                if (entry.type === "separator") {
+                  return <hr key={`${menu.id}-separator-${entryIndex}`} />;
+                }
+
+                return (
                   <button
-                    key={file.path}
-                    onClick={() => fileOps.handleOpenRecent(file.path)}
-                    className="menubar__recent-file"
-                    title={file.path}
+                    key={entry.actionId}
+                    onClick={() => handleMenuAction(entry.actionId)}
+                    disabled={isActionDisabled(entry.actionId, entry.disabled)}
                   >
-                    <span className="menubar__recent-name">
-                      {formatRecentFileName(file.path)}
-                    </span>
-                    <span className="menubar__recent-path">
-                      {formatRecentFilePath(file.path)}
-                    </span>
+                    {entry.label}
+                    {entry.shortcut && (
+                      <span className="menubar__shortcut">{entry.shortcut}</span>
+                    )}
+                    {entry.external && (
+                      <span className="menubar__external">↗</span>
+                    )}
                   </button>
-                ))}
-              </>
-            )}
-          </div>
-        </details>
+                );
+              })}
 
-        <details
-          className="menubar__menu"
-          ref={(el) => {
-            menuRefs.current[1] = el;
-          }}
-        >
-          <summary>Edit</summary>
-          <div className="menubar__dropdown">
-            <button disabled>
-              Undo<span className="menubar__shortcut">Ctrl+Z</span>
-            </button>
-            <button disabled>
-              Redo<span className="menubar__shortcut">Ctrl+Y</span>
-            </button>
-            <hr />
-            <button
-              onClick={fileOps.handleDuplicateLayer}
-              disabled={!activeLayerId}
-            >
-              Duplicate Layer<span className="menubar__shortcut">Ctrl+D</span>
-            </button>
-            <button
-              onClick={fileOps.handleDeleteLayer}
-              disabled={!activeLayerId}
-            >
-              Delete Layer<span className="menubar__shortcut">Del</span>
-            </button>
-          </div>
-        </details>
-
-        <details
-          className="menubar__menu"
-          ref={(el) => {
-            menuRefs.current[2] = el;
-          }}
-        >
-          <summary>View</summary>
-          <div className="menubar__dropdown">
-            <button onClick={onToggleLeftPanel} disabled={!onToggleLeftPanel}>
-              Toggle Parameters Panel
-            </button>
-            <button onClick={onToggleRightPanel} disabled={!onToggleRightPanel}>
-              Toggle Properties Panel
-            </button>
-            <hr />
-            <button disabled>Reset Layout</button>
-            <button disabled>
-              Zoom In<span className="menubar__shortcut">Ctrl++</span>
-            </button>
-            <button disabled>
-              Zoom Out<span className="menubar__shortcut">Ctrl+-</span>
-            </button>
-            <button disabled>
-              Zoom to Fit<span className="menubar__shortcut">Ctrl+0</span>
-            </button>
-          </div>
-        </details>
-
-        <details
-          className="menubar__menu"
-          ref={(el) => {
-            menuRefs.current[3] = el;
-          }}
-        >
-          <summary>Tools</summary>
-          <div className="menubar__dropdown">
-            <button onClick={fileOps.handleValidate}>
-              Validate Definition
-            </button>
-            <hr />
-            <button disabled>Check for Updates</button>
-            <button disabled>
-              Preferences<span className="menubar__shortcut">Ctrl+,</span>
-            </button>
-          </div>
-        </details>
-
-        <details
-          className="menubar__menu"
-          ref={(el) => {
-            menuRefs.current[4] = el;
-          }}
-        >
-          <summary>Help</summary>
-          <div className="menubar__dropdown">
-            <button onClick={handleDocsLink}>
-              Documentation<span className="menubar__external">↗</span>
-            </button>
-            <hr />
-            <button onClick={() => setShowAboutDialog(true)}>
-              About FiberPath
-            </button>
-            <button disabled>Check for Updates</button>
-            <button onClick={() => setShowDiagnosticsDialog(true)}>
-              Diagnostics
-            </button>
-          </div>
-        </details>
+              {menu.id === "file" && recentFiles.length > 0 && (
+                <>
+                  <hr />
+                  <div className="menubar__submenu-label">Recent Files</div>
+                  {recentFiles.map((file) => (
+                    <button
+                      key={file.path}
+                      onClick={() => fileOps.handleOpenRecent(file.path)}
+                      className="menubar__recent-file"
+                      title={file.path}
+                    >
+                      <span className="menubar__recent-name">
+                        {formatRecentFileName(file.path)}
+                      </span>
+                      <span className="menubar__recent-path">
+                        {formatRecentFilePath(file.path)}
+                      </span>
+                    </button>
+                  ))}
+                </>
+              )}
+            </div>
+          </details>
+        ))}
       </div>
 
       <div className="menubar__spacer" />
@@ -353,6 +220,7 @@ export function MenuBar({
           onConfirm={async () => {
             setShowExportDialog(false);
             await fileOps.handleExportGcode();
+            refreshRecentFiles();
           }}
           onCancel={() => setShowExportDialog(false)}
         />
