@@ -8,84 +8,20 @@
  * - Disabled when not connected
  */
 
-import { useState, KeyboardEvent } from "react";
+import { KeyboardEvent } from "react";
 import { Home, MapPin, AlertOctagon, Power, Send } from "lucide-react";
-import { useStreamStore } from "../../stores/streamStore";
-import { useToastStore } from "../../stores/toastStore";
-import { sendCommand } from "../../lib/marlin-api";
-import { TOAST_DURATION_ERROR_MS } from "../../lib/constants";
-import { toastMessages } from "../../lib/toastMessages";
+import { useManualCommandActions } from "../../hooks/stream/useManualCommandActions";
 import "./ManualControlSection.css";
 
 export function ManualControlSection() {
-  const { status, isStreaming, commandLoading, setCommandLoading, addLogEntry } =
-    useStreamStore();
-
-  const { addToast } = useToastStore();
-  const [commandInput, setCommandInput] = useState("");
-
-  const isConnected = status === "connected" || status === "paused";
-  // Disable manual controls during active streaming (safety), but allow during pause
-  const manualControlsEnabled = isConnected && (!isStreaming || status === "paused");
-
-  const handleSendCommand = async (gcode: string) => {
-    if (!gcode.trim() || !isConnected || commandLoading) {
-      return;
-    }
-
-    setCommandLoading(true);
-
-    // Add command to log
-    addLogEntry({
-      type: "command",
-      content: gcode,
-    });
-
-    try {
-      const responses = await sendCommand(gcode);
-
-      // Add responses to log
-      responses.forEach((response) => {
-        addLogEntry({
-          type: "response",
-          content: response,
-        });
-      });
-
-      // Show success toast for important commands
-      if (gcode === "G28") {
-        addToast({
-          type: "success",
-          message: toastMessages.command.homingComplete(),
-        });
-      } else if (gcode === "M112") {
-        addToast({
-          type: "warning",
-          message: toastMessages.command.emergencyStop(),
-          duration: TOAST_DURATION_ERROR_MS,
-        });
-      }
-    } catch (error) {
-      const errorMsg = String(error);
-      addLogEntry({
-        type: "error",
-        content: `Command failed: ${errorMsg}`,
-      });
-      addToast({
-        type: "error",
-        message: toastMessages.command.failed(errorMsg),
-      });
-    } finally {
-      setCommandLoading(false);
-    }
-  };
-
-  const handleManualSend = async () => {
-    if (commandInput.trim()) {
-      await handleSendCommand(commandInput.trim());
-      setCommandInput(""); // Clear input after sending
-    }
-  };
+  const {
+    commandInput,
+    setCommandInput,
+    commandLoading,
+    manualControlsEnabled,
+    handleSendCommand,
+    handleManualSend,
+  } = useManualCommandActions();
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {

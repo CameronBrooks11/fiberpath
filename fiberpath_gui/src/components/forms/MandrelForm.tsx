@@ -1,62 +1,30 @@
-import { useState, FocusEvent } from "react";
-import { useProjectStore } from "../../state/projectStore";
+import { useState } from "react";
+import { useProjectStore } from "../../stores/projectStore";
 import { NUMERIC_RANGES, validateNumericRange } from "../../types/components";
+import { parseNumericInput, setFieldError } from "../../lib/numericFields";
 
-/**
- * Form component for editing mandrel parameters.
- *
- * The mandrel is the cylindrical form around which the fiber is wound.
- * This form allows editing of:
- * - **Diameter**: The outer diameter of the mandrel (mm, must be > 0)
- * - **Wind Length**: The axial length available for winding (mm, must be > 0)
- *
- * Both fields are validated on blur to ensure positive values.
- * Invalid values are highlighted with error messages.
- *
- * @example
- * ```tsx
- * <MandrelForm />
- * ```
- *
- * @returns The mandrel parameter form UI
- */
+type MandrelField = "diameter" | "wind_length";
+
 export function MandrelForm() {
   const mandrel = useProjectStore((state) => state.project.mandrel);
   const updateMandrel = useProjectStore((state) => state.updateMandrel);
 
-  const [errors, setErrors] = useState<{
-    diameter?: string;
-    wind_length?: string;
-  }>({});
+  const [errors, setErrors] = useState<Partial<Record<MandrelField, string>>>({});
 
-  const handleDiameterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    updateMandrel({ diameter: value });
+  const handleNumericChange = (field: MandrelField, rawValue: string) => {
+    updateMandrel({
+      [field]: parseNumericInput(rawValue),
+    });
   };
 
-  const handleDiameterBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    const error = validateNumericRange(
-      value,
-      NUMERIC_RANGES.MANDREL_DIAMETER,
-      "Diameter",
-    );
-    setErrors((prev) => ({ ...prev, diameter: error }));
-  };
+  const handleNumericBlur = (field: MandrelField, rawValue: string) => {
+    const value = parseNumericInput(rawValue);
+    const error =
+      field === "diameter"
+        ? validateNumericRange(value, NUMERIC_RANGES.MANDREL_DIAMETER, "Diameter")
+        : validateNumericRange(value, NUMERIC_RANGES.WIND_LENGTH, "Wind length");
 
-  const handleWindLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    updateMandrel({ wind_length: value });
-  };
-
-  const handleWindLengthBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    const error = validateNumericRange(
-      value,
-      NUMERIC_RANGES.WIND_LENGTH,
-      "Wind length",
-    );
-    setErrors((prev) => ({ ...prev, wind_length: error }));
+    setFieldError(setErrors, field, error);
   };
 
   return (
@@ -74,8 +42,8 @@ export function MandrelForm() {
             step="0.1"
             min="0"
             value={mandrel.diameter}
-            onChange={handleDiameterChange}
-            onBlur={handleDiameterBlur}
+            onChange={(e) => handleNumericChange("diameter", e.target.value)}
+            onBlur={(e) => handleNumericBlur("diameter", e.target.value)}
             className={`param-form__input ${errors.diameter ? "param-form__input--error" : ""}`}
           />
           <span className="param-form__unit">mm</span>
@@ -96,8 +64,8 @@ export function MandrelForm() {
             step="0.1"
             min="0"
             value={mandrel.wind_length}
-            onChange={handleWindLengthChange}
-            onBlur={handleWindLengthBlur}
+            onChange={(e) => handleNumericChange("wind_length", e.target.value)}
+            onBlur={(e) => handleNumericBlur("wind_length", e.target.value)}
             className={`param-form__input ${errors.wind_length ? "param-form__input--error" : ""}`}
           />
           <span className="param-form__unit">mm</span>

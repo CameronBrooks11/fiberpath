@@ -1,61 +1,30 @@
-import { useState, FocusEvent } from "react";
-import { useProjectStore } from "../../state/projectStore";
+import { useState } from "react";
+import { useProjectStore } from "../../stores/projectStore";
 import { NUMERIC_RANGES, validateNumericRange } from "../../types/components";
+import { parseNumericInput, setFieldError } from "../../lib/numericFields";
 
-/**
- * Form component for editing tow (fiber) parameters.
- *
- * The tow represents the fiber material being wound onto the mandrel.
- * This form allows editing of:
- * - **Width**: The width of the tow strip (mm, must be > 0)
- * - **Thickness**: The thickness of the tow strip (mm, must be > 0)
- *
- * Both fields are validated on blur to ensure positive values.
- * Invalid values are highlighted with error messages.
- *
- * @example
- * ```tsx
- * <TowForm />
- * ```
- *
- * @returns The tow parameter form UI
- */
+type TowField = "width" | "thickness";
+
 export function TowForm() {
   const tow = useProjectStore((state) => state.project.tow);
   const updateTow = useProjectStore((state) => state.updateTow);
 
-  const [errors, setErrors] = useState<{ width?: string; thickness?: string }>(
-    {},
-  );
+  const [errors, setErrors] = useState<Partial<Record<TowField, string>>>({});
 
-  const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    updateTow({ width: value });
+  const handleNumericChange = (field: TowField, rawValue: string) => {
+    updateTow({
+      [field]: parseNumericInput(rawValue),
+    });
   };
 
-  const handleWidthBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    const error = validateNumericRange(
-      value,
-      NUMERIC_RANGES.TOW_WIDTH,
-      "Width",
-    );
-    setErrors((prev) => ({ ...prev, width: error }));
-  };
+  const handleNumericBlur = (field: TowField, rawValue: string) => {
+    const value = parseNumericInput(rawValue);
+    const error =
+      field === "width"
+        ? validateNumericRange(value, NUMERIC_RANGES.TOW_WIDTH, "Width")
+        : validateNumericRange(value, NUMERIC_RANGES.TOW_THICKNESS, "Thickness");
 
-  const handleThicknessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    updateTow({ thickness: value });
-  };
-
-  const handleThicknessBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    const error = validateNumericRange(
-      value,
-      NUMERIC_RANGES.TOW_THICKNESS,
-      "Thickness",
-    );
-    setErrors((prev) => ({ ...prev, thickness: error }));
+    setFieldError(setErrors, field, error);
   };
 
   return (
@@ -73,15 +42,13 @@ export function TowForm() {
             step="0.1"
             min="0"
             value={tow.width}
-            onChange={handleWidthChange}
-            onBlur={handleWidthBlur}
+            onChange={(e) => handleNumericChange("width", e.target.value)}
+            onBlur={(e) => handleNumericBlur("width", e.target.value)}
             className={`param-form__input ${errors.width ? "param-form__input--error" : ""}`}
           />
           <span className="param-form__unit">mm</span>
         </div>
-        {errors.width && (
-          <span className="param-form__error">{errors.width}</span>
-        )}
+        {errors.width && <span className="param-form__error">{errors.width}</span>}
       </div>
 
       <div className="param-form__group">
@@ -95,8 +62,8 @@ export function TowForm() {
             step="0.01"
             min="0"
             value={tow.thickness}
-            onChange={handleThicknessChange}
-            onBlur={handleThicknessBlur}
+            onChange={(e) => handleNumericChange("thickness", e.target.value)}
+            onBlur={(e) => handleNumericBlur("thickness", e.target.value)}
             className={`param-form__input ${errors.thickness ? "param-form__input--error" : ""}`}
           />
           <span className="param-form__unit">mm</span>

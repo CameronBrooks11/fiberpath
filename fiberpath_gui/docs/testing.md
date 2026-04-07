@@ -61,7 +61,7 @@ src/
 ├── lib/
 │   ├── schemas.test.ts        # 43 tests - Zod schema validation
 │   └── validation.test.ts     # JSON schema validation (AJV)
-├── state/
+├── stores/
 │   └── projectStore.test.ts   # Zustand store actions
 ├── types/
 │   └── converters.test.ts     # Type conversion utilities
@@ -272,7 +272,7 @@ it('should display error message on validation failure', () => {
 
 - Schema validation (`src/lib/schemas.ts`)
 - Error handling (`src/lib/validation.ts`)
-- State management (`src/state/projectStore.ts`)
+- State management (`src/stores/projectStore.ts`)
 
 ### Lower Priority (50%+ acceptable)
 

@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.6.1](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.6.2](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,18 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.6.1**
+-   :material-new-box:{ .lg .middle } **What's New in v0.6.2**
 
     ---
 
-    GUI styling simplification and release lock-in:
+    React hotspot cleanup and architectural hardening:
 
-    - Consolidated styling around token-first primitives for cleaner, more maintainable UI CSS
-    - Added stable light/dark theme architecture with system preference fallback and persisted user override
-    - Removed dead GUI dependencies and aligned styling documentation to actual implementation
-    - Added automated `useTheme` behavior tests and completed final GUI quality gates (`check:all` + `test`)
+    - Decomposed stream controls into dedicated action hooks with centralized toast/log policy
+    - Unified file/menu orchestration through `useFileOperations` and typed menu configuration
+    - Extracted shared editor/canvas/dialog primitives to reduce component responsibility density
+    - Removed remaining store/import drift and imperative UI fallback paths
 
-    Builds on the v0.6.0 packaging and validation hardening baseline.
+    Builds on the v0.6.1 styling simplification baseline.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 

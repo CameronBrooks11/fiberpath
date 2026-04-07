@@ -10,7 +10,7 @@
  * Automatically handles cleanup on unmount.
  */
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useStreamStore } from "../stores/streamStore";
 import { useToastStore } from "../stores/toastStore";
 import {
@@ -22,9 +22,8 @@ import {
 import {
   PROGRESS_MILESTONE_PERCENTAGES,
   LOG_PROGRESS_EVERY_N_COMMANDS,
-  TOAST_DURATION_ERROR_MS,
 } from "../lib/constants";
-import { toastMessages } from "../lib/toastMessages";
+import { createStreamFeedback } from "../lib/streamFeedback";
 
 /**
  * Hook to set up streaming event listeners
@@ -33,20 +32,21 @@ import { toastMessages } from "../lib/toastMessages";
  * Updates stream store state and shows toast notifications appropriately.
  */
 export function useStreamEvents() {
-  const { setIsStreaming, setProgress, setStatus, addLogEntry } =
+  const { markStreamingStarted, setProgress, resetAfterCancel, addLogEntry } =
     useStreamStore();
   const { addToast } = useToastStore();
+  const feedback = useMemo(
+    () => createStreamFeedback({ addLogEntry, addToast }),
+    [addLogEntry, addToast],
+  );
 
   useEffect(() => {
     // Set up event listeners for streaming events
     const unlistenPromises = [
       // Stream started event
       onStreamStarted((started) => {
-        setIsStreaming(true);
-        addLogEntry({
-          type: "info",
-          content: `Streaming started: ${started.file} (${started.totalCommands} commands)`,
-        });
+        markStreamingStarted();
+        feedback.streaming.startedEvent(started.file, started.totalCommands);
       }),
 
       // Stream progress event
@@ -62,10 +62,11 @@ export function useStreamEvents() {
           progress.commandsSent % LOG_PROGRESS_EVERY_N_COMMANDS === 0 ||
           progress.commandsSent === progress.commandsTotal
         ) {
-          addLogEntry({
-            type: "stream",
-            content: `[${progress.commandsSent}/${progress.commandsTotal}] ${progress.command}`,
-          });
+          feedback.streaming.progressLog(
+            progress.commandsSent,
+            progress.commandsTotal,
+            progress.command,
+          );
         }
 
         // Show milestone toasts at 25%, 50%, 75%
@@ -73,42 +74,23 @@ export function useStreamEvents() {
           (progress.commandsSent / progress.commandsTotal) * 100,
         );
         if (PROGRESS_MILESTONE_PERCENTAGES.includes(percentage)) {
-          addToast({
-            type: "info",
-            message: toastMessages.streaming.progress(percentage),
-          });
+          feedback.streaming.progressMilestone(percentage);
         }
       }),
 
       // Stream complete event
       onStreamComplete((complete) => {
-        setIsStreaming(false);
-        setProgress(null);
-        setStatus("connected");
-        addLogEntry({
-          type: "info",
-          content: `Streaming complete: ${complete.commandsSent}/${complete.commandsTotal} commands sent`,
-        });
-        addToast({
-          type: "success",
-          message: toastMessages.streaming.complete(complete.commandsSent),
-        });
+        resetAfterCancel();
+        feedback.streaming.complete(
+          complete.commandsSent,
+          complete.commandsTotal,
+        );
       }),
 
       // Stream error event
       onStreamError((error) => {
-        setIsStreaming(false);
-        setProgress(null);
-        setStatus("connected");
-        addLogEntry({
-          type: "error",
-          content: `Streaming error: ${error.message}`,
-        });
-        addToast({
-          type: "error",
-          message: toastMessages.streaming.error(error.message),
-          duration: TOAST_DURATION_ERROR_MS,
-        });
+        resetAfterCancel();
+        feedback.streaming.error(error.message);
       }),
     ];
 
@@ -118,5 +100,5 @@ export function useStreamEvents() {
         unlisteners.forEach((unlisten) => unlisten());
       });
     };
-  }, [setIsStreaming, setProgress, setStatus, addLogEntry, addToast]);
+  }, [markStreamingStarted, setProgress, resetAfterCancel, feedback]);
 }

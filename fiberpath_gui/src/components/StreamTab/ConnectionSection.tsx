@@ -9,18 +9,10 @@
  * - Connection status indicator
  */
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { RefreshCw, Circle } from "lucide-react";
 import { useStreamStore } from "../../stores/streamStore";
-import { useToastStore } from "../../stores/toastStore";
-import {
-  listSerialPorts,
-  startInteractive,
-  connectMarlin,
-  disconnectMarlin,
-} from "../../lib/marlin-api";
-import { TOAST_DURATION_ERROR_MS } from "../../lib/constants";
-import { toastMessages } from "../../lib/toastMessages";
+import { useConnectionActions } from "../../hooks/stream/useConnectionActions";
 import "./ConnectionSection.css";
 
 export function ConnectionSection() {
@@ -29,131 +21,16 @@ export function ConnectionSection() {
     selectedPort,
     baudRate,
     availablePorts,
-    setStatus,
     setSelectedPort,
     setBaudRate,
-    setAvailablePorts,
-    addLogEntry,
-    clearStreamingState,
   } = useStreamStore();
-
-  const { addToast } = useToastStore();
-  const [refreshing, setRefreshing] = useState(false);
+  const { refreshing, refreshPorts, handleConnect, handleDisconnect } =
+    useConnectionActions();
 
   // Load ports on mount
   useEffect(() => {
-    refreshPorts();
+    void refreshPorts();
   }, []);
-
-  const refreshPorts = async () => {
-    setRefreshing(true);
-    try {
-      const ports = await listSerialPorts();
-      setAvailablePorts(ports);
-
-      // Auto-select first port if none selected
-      if (!selectedPort && ports.length > 0) {
-        setSelectedPort(ports[0].port);
-      }
-
-      if (ports.length === 0) {
-        addToast({
-          type: "warning",
-          message: toastMessages.connection.noPortsFound(),
-        });
-      }
-    } catch (error) {
-      addLogEntry({
-        type: "error",
-        content: `Failed to list ports: ${error}`,
-      });
-      addToast({
-        type: "error",
-        message: toastMessages.connection.listPortsFailed(String(error)),
-      });
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  const handleConnect = async () => {
-    if (!selectedPort) {
-      addLogEntry({
-        type: "error",
-        content: "Please select a port",
-      });
-      addToast({
-        type: "error",
-        message: toastMessages.connection.noPortSelected(),
-      });
-      return;
-    }
-
-    setStatus("connecting");
-    addLogEntry({
-      type: "info",
-      content: `Connecting to ${selectedPort} at ${baudRate} baud...`,
-    });
-
-    try {
-      // Start the interactive subprocess first
-      await startInteractive();
-
-      // Connect to the selected port
-      await connectMarlin(selectedPort, baudRate);
-
-      setStatus("connected");
-      addLogEntry({
-        type: "info",
-        content: `Connected to ${selectedPort} at ${baudRate} baud`,
-      });
-      addToast({
-        type: "success",
-        message: toastMessages.connection.success(selectedPort),
-      });
-
-      // Clear any previous streaming state (file selection, progress)
-      // This ensures a fresh start after reconnecting
-      clearStreamingState();
-    } catch (error) {
-      setStatus("disconnected");
-      const errorMsg = String(error);
-      addLogEntry({
-        type: "error",
-        content: `Connection failed: ${errorMsg}`,
-      });
-      addToast({
-        type: "error",
-        message: toastMessages.connection.failed(errorMsg),
-        duration: TOAST_DURATION_ERROR_MS,
-      });
-    }
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      await disconnectMarlin();
-      setStatus("disconnected");
-      addLogEntry({
-        type: "info",
-        content: "Disconnected",
-      });
-      addToast({
-        type: "info",
-        message: toastMessages.connection.disconnected(),
-      });
-    } catch (error) {
-      const errorMsg = String(error);
-      addLogEntry({
-        type: "error",
-        content: `Disconnect failed: ${errorMsg}`,
-      });
-      addToast({
-        type: "error",
-        message: `Disconnect failed: ${errorMsg}`,
-      });
-    }
-  };
 
   const getStatusTone = () => {
     switch (status) {

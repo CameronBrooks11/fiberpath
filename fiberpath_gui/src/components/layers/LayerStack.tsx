@@ -6,7 +6,7 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import { useShallow } from "zustand/react/shallow";
-import { useProjectStore } from "../../state/projectStore";
+import { useProjectStore } from "../../stores/projectStore";
 import { LayerType } from "../../types/project";
 import { LayerRow } from "./LayerRow";
 

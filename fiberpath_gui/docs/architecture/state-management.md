@@ -75,7 +75,7 @@ interface FiberPathProject {
 
 ## Store Creation
 
-### Definition (`src/state/projectStore.ts`)
+### Definition (`src/stores/projectStore.ts`)
 
 ```typescript
 import { create } from "zustand";

@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { useProjectStore } from "../state/projectStore";
+import { useProjectStore } from "../stores/projectStore";
 import { useCliHealthContext } from "../contexts/CliHealthContext";
 
 export function StatusBar() {
