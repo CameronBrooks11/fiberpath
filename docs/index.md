@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.6.0](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.6.1](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,18 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.6.0**
+-   :material-new-box:{ .lg .middle } **What's New in v0.6.1**
 
     ---
 
-    Packaging and validation hardening for production releases:
+    GUI styling simplification and release lock-in:
 
-    - Added cross-platform GUI E2E smoke validation across Windows/macOS/Linux package artifacts
-    - Added bundled CLI discovery and smoke validation against packaged outputs
-    - Hardened package artifact checks and improved workflow diagnostics for faster CI triage
-    - Fixed E2E reliability issues on Ubuntu, macOS executable-bit handling, and Windows MSI extraction paths
+    - Consolidated styling around token-first primitives for cleaner, more maintainable UI CSS
+    - Added stable light/dark theme architecture with system preference fallback and persisted user override
+    - Removed dead GUI dependencies and aligned styling documentation to actual implementation
+    - Added automated `useTheme` behavior tests and completed final GUI quality gates (`check:all` + `test`)
 
-    Builds on the v0.5.4 dependency-hardening baseline.
+    Builds on the v0.6.0 packaging and validation hardening baseline.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 

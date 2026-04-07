@@ -77,7 +77,7 @@ Refresh dependency locks after version updates:
 - [ ] Download and test one GUI installer per platform
 - [ ] Verify documentation site updated with new version: https://cameronbrooks11.github.io/fiberpath
 - [ ] Update any external links or announcements referencing old version
-- [ ] Create PR to bump version to next development version (e.g., `0.6.0-dev`)
+- [ ] Create PR to bump version to next development version (e.g., `0.6.2-dev`)
 
 ## Notes
 

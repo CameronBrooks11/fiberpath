@@ -18,6 +18,23 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 - Documented required docs correction scope for `lockDegrees`, `patternNumber`, and coverage-vs-ply-count semantics, including clarification that feed-rate clamping in planner math is planned, not currently implemented.
 - Documented required example updates for compatibility: `examples/rocketry/AvBay(470mm).wind` layer 1 and `examples/rocketry/MainChute(585mm).wind` layer 1 should use `lockDegrees=540` instead of `270`.
 
+## [0.6.1] - 2026-04-07
+
+### Added
+
+- Automated `useTheme` hook regression tests covering system preference fallback, persisted manual overrides, and reset-to-system behavior.
+
+### Changed
+
+- Completed GUI styling simplification rollout with token-first cleanup, reduced style entropy, and updated styling guidance to match implementation reality.
+- Updated release-facing docs to reflect v0.6.1 as the current release and refreshed versioned troubleshooting examples.
+
+### Fixed
+
+- Removed dead GUI dependencies (`@radix-ui/react-dropdown-menu`, `@radix-ui/react-menubar`, `clsx`) from package metadata.
+- Resolved stylelint compliance issues in `StreamTab.css` (`currentcolor` keyword casing and media range notation syntax).
+- Synchronized release version metadata across Python, npm, Cargo, and Tauri config to eliminate cross-stack version drift.
+
 ## [0.6.0] - 2026-04-06
 
 ### Added

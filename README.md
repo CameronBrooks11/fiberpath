@@ -4,7 +4,7 @@
 
 **Plan, simulate, and manufacture composite parts with precision fiber winding.**
 
-[![Version](https://img.shields.io/badge/version-0.6.0-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.6.1-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-00695C.svg)](LICENSE)
 [![Backend CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/backend-ci.yml)
 [![GUI CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-ci.yml)
@@ -216,7 +216,7 @@ FiberPath consists of four coordinated components:
 
 - **CLI and API are parallel interfaces** to the same Core Engine
 - **GUI calls CLI via IPC** for offline operation (no server required)
-- **Core is deterministic** and thoroughly tested (113 passing tests)
+- **Core is deterministic** and thoroughly tested
 - **Modular architecture** allows using components independently
 
 See [Architecture Documentation](https://cameronbrooks11.github.io/fiberpath/architecture/overview/) for detailed design rationale.
