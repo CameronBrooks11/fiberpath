@@ -139,13 +139,14 @@ export function LayerStack() {
                   >
                     {(provided, snapshot) => (
                       <div
+                        className={`layer-stack__draggable ${snapshot.isDragging ? "layer-stack__draggable--dragging" : ""}`}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        style={{
-                          ...provided.draggableProps.style,
-                          opacity: snapshot.isDragging ? 0.8 : 1,
-                        }}
+                        style={
+                          /* dynamic: required by drag-and-drop library for runtime transform/positioning */
+                          provided.draggableProps.style
+                        }
                       >
                         <LayerRow
                           layer={layer}

@@ -94,3 +94,38 @@ Original hotspot combined LOC (dialogs + panels + layout + canvas):
 
 Current whole-project CSS LOC (all 20 files): 3940
 Inline style call sites (`style={{}}`): 17 (unchanged)
+
+Phase 3 inline-style debt snapshot
+Captured: 2026-04-06
+
+Inline style audit (`style={{}}`) before refactor:
+- Count: 17
+- fiberpath_gui/src/App.tsx:156
+- fiberpath_gui/src/App.tsx:159
+- fiberpath_gui/src/components/StatusBar.tsx:68
+- fiberpath_gui/src/components/StatusBar.tsx:71
+- fiberpath_gui/src/components/ErrorBoundary.tsx:35
+- fiberpath_gui/src/components/ErrorBoundary.tsx:47
+- fiberpath_gui/src/components/ErrorBoundary.tsx:50
+- fiberpath_gui/src/components/ErrorBoundary.tsx:55
+- fiberpath_gui/src/components/ErrorBoundary.tsx:61
+- fiberpath_gui/src/components/ErrorBoundary.tsx:65
+- fiberpath_gui/src/components/ErrorBoundary.tsx:81
+- fiberpath_gui/src/components/layers/LayerStack.tsx:145
+- fiberpath_gui/src/components/dialogs/CliUnavailableDialog.tsx:170
+- fiberpath_gui/src/components/dialogs/CliUnavailableDialog.tsx:176
+- fiberpath_gui/src/components/dialogs/CliUnavailableDialog.tsx:198
+- fiberpath_gui/src/components/dialogs/DiagnosticsDialog.tsx:156
+- fiberpath_gui/src/components/StreamTab/FileStreamingSection.tsx:300
+
+Inline style audit (`style={{}}`) after refactor:
+- Count: 1
+- fiberpath_gui/src/components/StreamTab/FileStreamingSection.tsx:300 (`width` is computed from runtime progress)
+
+Remaining inline styles (all dynamic, including non-`style={{}}`):
+- fiberpath_gui/src/components/StreamTab/FileStreamingSection.tsx:300
+  - dynamic: progress-bar width is computed from streaming state
+- fiberpath_gui/src/components/layers/LayerStack.tsx:146
+  - dynamic: drag-and-drop library requires runtime inline positioning/transform styles
+
+Phase 3 count delta (`style={{}}`): 17 -> 1 (-16)

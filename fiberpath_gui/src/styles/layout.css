@@ -367,6 +367,10 @@
   padding-right: 1.5rem;
 }
 
+.statusbar__item--meta {
+  margin-left: auto;
+}
+
 .statusbar__label {
   color: var(--color-text-muted);
   font-weight: 500;
@@ -387,6 +391,19 @@
   height: 8px;
   border-radius: 50%;
   display: inline-block;
+}
+
+.statusbar__indicator--ready {
+  background: var(--color-success);
+}
+
+.statusbar__indicator--checking,
+.statusbar__indicator--unknown {
+  background: var(--color-text-muted);
+}
+
+.statusbar__indicator--unavailable {
+  background: var(--color-error);
 }
 
 /* Legacy Workflows (temporary) */
@@ -437,4 +454,53 @@
   color: var(--color-text-muted);
   font-size: 0.9rem;
   line-height: 1.6;
+}
+
+/* Error boundary */
+.error-boundary {
+  min-height: 100vh;
+  padding: var(--spacing-3xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.error-boundary__title {
+  margin: 0 0 var(--spacing-xl);
+  color: var(--color-error);
+}
+
+.error-boundary__message {
+  max-width: 37.5rem;
+  margin: 0 0 var(--spacing-xl);
+}
+
+.error-boundary__details {
+  width: min(100%, 37.5rem);
+  margin-top: var(--spacing-xl);
+  text-align: left;
+}
+
+.error-boundary__summary {
+  margin-bottom: var(--spacing-md);
+  cursor: pointer;
+}
+
+.error-boundary__stack {
+  margin: 0;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-bg-panel-alt);
+  overflow: auto;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+}
+
+.error-boundary__reload {
+  margin-top: var(--spacing-2xl);
 }

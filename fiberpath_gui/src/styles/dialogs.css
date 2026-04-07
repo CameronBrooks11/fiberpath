@@ -263,6 +263,10 @@
   font-size: var(--font-size-sm);
 }
 
+.diagnostics-refresh-btn {
+  margin-top: var(--spacing-sm);
+}
+
 .status-healthy {
   color: var(--color-success);
 }

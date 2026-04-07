@@ -206,6 +206,10 @@
   background: var(--color-success-bg);
 }
 
+.layer-stack__draggable--dragging {
+  opacity: 0.8;
+}
+
 /* Layer Stack Empty State */
 .layer-stack__empty {
   display: flex;

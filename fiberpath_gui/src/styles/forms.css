@@ -9,6 +9,11 @@
   padding: 0;
 }
 
+/* App composition helper for stacked forms */
+.app-form-section {
+  margin-top: var(--spacing-xl);
+}
+
 .param-form__title {
   margin: 0 0 var(--spacing-lg);
   padding-bottom: var(--spacing-sm);

@@ -297,7 +297,10 @@ export function FileStreamingSection() {
             <div className="progress-bar">
               <div
                 className="progress-fill"
-                style={{ width: `${getProgressPercentage()}%` }}
+                style={{
+                  /* dynamic: progress width is computed from runtime stream state */
+                  width: `${getProgressPercentage()}%`,
+                }}
               />
             </div>
             <div className="progress-text">

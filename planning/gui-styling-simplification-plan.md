@@ -294,24 +294,26 @@ Known call sites from baseline scan (verify/extend with audit above):
 
 **Tasks:**
 
-- [ ] Run audit; record full list of `style={{}}` call sites as phase baseline
-- [ ] Verify `useTheme` hook integration: confirm toggle button is accessible and keyboard-operable
-- [ ] For each call site: evaluate whether the value is truly runtime-dynamic
+- [x] Run audit; record full list of `style={{}}` call sites as phase baseline
+- [x] Verify `useTheme` hook integration: confirm toggle button is accessible and keyboard-operable
+- [x] For each call site: evaluate whether the value is truly runtime-dynamic
   - If static → replace with a CSS class using a token
   - If dynamic (calculated at render time) → keep inline, add `/* dynamic: reason */` comment
-- [ ] Add any required new utility classes to the appropriate global CSS file (not a new file)
-- [ ] Ensure all new class names follow existing naming conventions
+- [x] Add any required new utility classes to the appropriate global CSS file (not a new file)
+- [x] Ensure all new class names follow existing naming conventions
 
 **Deliverables:**
 
-- [ ] Inline style call site count before → after appended to `planning/baseline-css-loc.txt`
-- [ ] A brief note on any remaining inline styles and why they are legitimately dynamic
+- [x] Inline style call site count before → after appended to `planning/baseline-css-loc.txt`
+- [x] A brief note on any remaining inline styles and why they are legitimately dynamic
 
 **Exit criteria:**
 
-- [ ] Inline `style={{}}` count reduced to dynamic exceptions only (target ≤4)
+- [x] Inline `style={{}}` count reduced to dynamic exceptions only (target ≤4)
 - [ ] All touched components pass visual review
 - [ ] `npm run check:all` passes from `fiberpath_gui/`
+
+**Environment note:** Visual pass + `npm run check:all` remain pending local verification in this execution environment (WSL1 runtime limitation).
 
 ---
 
