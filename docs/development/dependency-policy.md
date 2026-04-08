@@ -17,7 +17,7 @@ Applies to:
 
 - Patch updates: monthly
 - Minor updates: quarterly review window
-- Major updates: dedicated release slot (for example, a migration-focused release like v0.6.2 or similar)
+- Major updates: dedicated release slot (for example, a migration-focused release like v0.7.0 or similar)
 
 ## Ownership
 

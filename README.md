@@ -4,7 +4,7 @@
 
 **Plan, simulate, and manufacture composite parts with precision fiber winding.**
 
-[![Version](https://img.shields.io/badge/version-0.6.2-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.7.0-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-00695C.svg)](LICENSE)
 [![Backend CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/backend-ci.yml)
 [![GUI CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-ci.yml)
@@ -33,7 +33,7 @@ Design multi-layer winding patterns in a visual interface, simulate the full man
 - **Geodesic Path Planning** – Automatic computation of stable fiber trajectories
 - **Hardware Simulation** – Validate motion before manufacturing
 - **Direct Machine Control** – Stream G-code to Marlin controllers with pause/resume
-- **Flexible Axis Mapping** – Support for XAB rotational or XYZ linear axis configurations
+- **XAB-Native Axis Output** – Standardized rotational-axis output with clear logical axis mapping
 - **Cross-Platform Desktop GUI** – Native Windows, macOS, and Linux applications
 - **Command-Line Tools** – Scriptable workflows for automation and CI/CD
 - **Comprehensive Documentation** – Architecture guides, examples, and API reference

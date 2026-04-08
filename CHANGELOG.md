@@ -8,15 +8,33 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-04-08
+
 ### Added
 
-- Documented critical helical coverage defect: `lockDegrees` compatibility with `patternNumber` is not fully validated and can allow partial mandrel coverage without a planner error for incompatible combinations (for example `lockDegrees=270`, `patternNumber=3`).
-- Documented required compatibility rule for helical coverage safety: `(2 × lockDegrees) % (360 / patternNumber) == 0`.
-- Documented planned validator hardening to reject `lockDegrees`/`patternNumber` combinations that produce overlapping or aliased in-pattern positions.
-- Documented planned behavior fix where `skipIndex` is currently schema-validated but not yet applied to helical in-pattern visit order.
-- Documented planned schema normalization for `skipInitialNearLock` from nullable boolean to `bool` with default `false`.
-- Documented required docs correction scope for `lockDegrees`, `patternNumber`, and coverage-vs-ply-count semantics, including clarification that feed-rate clamping in planner math is planned, not currently implemented.
-- Documented required example updates for compatibility: `examples/rocketry/AvBay(470mm).wind` layer 1 and `examples/rocketry/MainChute(585mm).wind` layer 1 should use `lockDegrees=540` instead of `270`.
+- Added GUI bundle-budget enforcement (`npm run perf:bundle`) with CI gating and machine-readable report output.
+- Added stricter repository hygiene checks through pre-commit integration for Python lint/format and GUI type/CSS validation.
+
+### Changed
+
+- Completed the XAB-only axis cutover across core planning, simulation, plotting, CLI, API, and GUI export workflows.
+- Removed legacy XYZ axis-format options from built-in interfaces and aligned fixtures/examples with XAB defaults.
+- Simplified GUI component/style surfaces by removing dead CSS/component paths and tightening shared editor/form boundaries.
+- Hardened packaging/CI helper scripts for bundled CLI discovery and cross-platform release reliability.
+
+### Fixed
+
+- Fixed regression tests and fixtures that drifted during axis-format migration, including layer-strategy and plot-signature expectations.
+- Fixed pre-commit Ruff hook compatibility by migrating from the legacy `ruff` alias to `ruff-check`.
+
+### Documentation
+
+- Updated release-facing docs to position v0.7.0 as current and reflect XAB-only behavior in user/developer guides.
+- Documented helical coverage compatibility caveats and follow-up validation/schema hardening scope in roadmap/release notes.
+
+### Internal
+
+- Synchronized release version metadata across Python (`pyproject.toml`, `uv.lock`), npm (`package.json`, `package-lock.json`), and Tauri (`Cargo.toml`, `Cargo.lock`, `tauri.conf.json`).
 
 ## [0.6.2] - 2026-04-07
 

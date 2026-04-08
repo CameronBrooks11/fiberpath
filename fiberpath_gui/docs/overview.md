@@ -13,7 +13,7 @@ Create and edit winding patterns with visual project builder:
 - Configure mandrel dimensions (diameter, length)
 - Set tow properties (width, thickness)
 - Design multi-layer patterns (hoop, helical, skip)
-- Set machine parameters (feed rate, axis format)
+- Set machine parameters (feed rate and machine-safe defaults)
 - Generate G-code with one click
 
 ### 2. Plot Tab

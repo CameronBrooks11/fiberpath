@@ -21,7 +21,7 @@ Update version strings in these files (single source of truth for each stack):
 - [ ] **`fiberpath_gui/src-tauri/Cargo.toml`** – Line 3: `version = "X.Y.Z"` (Tauri/Rust reads from this)
 - [ ] **`fiberpath_gui/src-tauri/tauri.conf.json`** – Line 10: `"version": "X.Y.Z"` (Tauri bundle metadata)
 - [ ] **`fiberpath_gui/package.json`** – Line 3: `"version": "X.Y.Z"` (npm package metadata)
-- [ ] **`README.md`** – Lines 15-16: Two version badges referencing current release
+- [ ] **`README.md`** – Version badge references current release (`version-X.Y.Z`)
 - [ ] **`docs/index.md`** – Line 5: Download link version reference
 
 **Note:** `fiberpath_api/main.py` and `AboutDialog.tsx` auto-read from `pyproject.toml` and `Cargo.toml` respectively.
@@ -85,7 +85,7 @@ Refresh dependency locks after version updates:
 - [ ] Download and test one GUI installer per platform
 - [ ] Verify documentation site updated with new version: https://cameronbrooks11.github.io/fiberpath
 - [ ] Update any external links or announcements referencing old version
-- [ ] Create PR to bump version to next development version (e.g., `0.6.2-dev`)
+- [ ] Create PR to bump version to next development version (e.g., `0.7.1-dev`)
 
 ## Notes
 

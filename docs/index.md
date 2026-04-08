@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.6.2](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.7.0](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,18 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.6.2**
+-   :material-new-box:{ .lg .middle } **What's New in v0.7.0**
 
     ---
 
-    React hotspot cleanup and architectural hardening:
+    XAB cutover and production-readiness hardening:
 
-    - Decomposed stream controls into dedicated action hooks with centralized toast/log policy
-    - Unified file/menu orchestration through `useFileOperations` and typed menu configuration
-    - Extracted shared editor/canvas/dialog primitives to reduce component responsibility density
-    - Removed remaining store/import drift and imperative UI fallback paths
+    - Removed legacy XYZ axis-format paths; built-in planning, API, and GUI export now target XAB output
+    - Simplified GUI surfaces further by removing dead style/component residue and tightening editor/layout boundaries
+    - Added bundle-budget CI enforcement and refreshed contributor tooling standards for cleaner release gates
+    - Expanded regression coverage for axis mapping, layer strategy fixtures, and visualization signatures
 
-    Builds on the v0.6.1 styling simplification baseline.
+    Builds on the v0.6.x cleanup track and establishes the v0.7 baseline.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 
