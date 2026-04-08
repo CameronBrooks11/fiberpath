@@ -1,232 +1,183 @@
-# FiberPath Roadmap v7 - Production Polish & Developer Infrastructure
+# FiberPath Roadmap v7 - Production Polish and Developer Infrastructure
 
-**Target Release:** v0.7.0  
-**Status:** Planned (1/31 tasks complete)  
-**Focus:** Essential production-readiness improvements and developer workflow  
-**Prerequisites:** Cross-platform validation baseline complete and/or blockers explicitly documented  
-**Timeline:** 2-3 weeks  
-**Priority:** High - foundational improvements for long-term maintainability
+**Target Release:** v0.7.0
+**Status:** Decision-locked post-v0.6.2 (execution in progress)
+**Last Cross-Check:** 2026-04-08
+**Focus:** Production-readiness follow-through after v0.6.2 React hotspot cleanup
+**Timeline:** 2-3 weeks
+**Priority:** High - maintainability, validation UX, and measured performance
 
-**Scope Boundary:** v7 owns developer tooling, architecture cleanup, performance, and validation UX.  
-**Related Planning:** [roadmap-backlog.md](roadmap-backlog.md) tracks deferred v7+ work and post-cutover follow-ups.  
-**Validation Reference:** Release validation notes in [CHANGELOG.md](../CHANGELOG.md) and packaged-app validation workflow [`gui-e2e-smoke.yml`](../.github/workflows/gui-e2e-smoke.yml)
+**Scope Boundary:** v7 owns developer tooling decisions, residual architecture cleanup, performance implementation, and validation UX completion.
+**Related Planning:** [roadmap-backlog.md](roadmap-backlog.md) for intentionally deferred work.
+**Validation Reference:** [CHANGELOG.md](../CHANGELOG.md) and [`gui-e2e-smoke.yml`](../.github/workflows/gui-e2e-smoke.yml)
 
-**Philosophy:** Focus on practical improvements that directly benefit development velocity and production quality. Defer speculative features to backlog.
-
----
-
-## Phase 1: Release Management CHANGELOG.md
-
-**Goal:** Establish proper release tracking and versioning practices
-
-- [x] Create and maintain `CHANGELOG.md` as the release source of truth (retroactive history captured through v0.6.0)
-  - v1: Core planning & G-code generation
-  - v2: CLI commands, simulation, API
-  - v3: GUI with Tauri/React, code quality improvements
-  - v4: Tabbed interface, basic Marlin streaming
-  - v5: Streaming refinements (zero-lag, cancel job), documentation overhaul
-- [ ] Document changelog maintenance process (Keep a Changelog format)
-- [ ] Use semantic versioning convention: `## [X.X.X] - YYYY-MM-DD`
-- [ ] Add "Unreleased" section at top for ongoing work
-
-**Progress:** 1/4 tasks complete
-
-**Rationale:** CHANGELOG.md is essential for users and maintainers to understand version history. The file now exists; this phase keeps process and formatting disciplined.
+**Philosophy:** Keep only high ROI work in v7. Prefer measured changes over speculative rewrites.
 
 ---
 
-## Phase 2: Developer Tooling Setup
+## Decision Lock (2026-04-08)
 
-**Goal:** Establish code quality automation and consistent formatting
+Locked by maintainer input (`1A 2B 3A 4A 5A 6AB*`):
 
-- [ ] Add ESLint configuration with React and TypeScript rules
-  - Recommended rules: react-hooks, @typescript-eslint
-  - Configure in `.eslintrc.json`
-  - Add `npm run lint:js` script (keep existing `npm run lint` type-check gate)
-- [ ] Add Prettier for automatic code formatting
-  - Configure in `.prettierrc.json`
-  - Add `npm run format:js` script
-  - Set up VSCode settings for format-on-save
-- [ ] Set up pre-commit hooks with husky and lint-staged
-  - Run ESLint and Prettier on staged files
-  - Prevent commits with linting errors
-- [ ] Create `.vscode/settings.json` with recommended extensions
-  - ESLint, Prettier, TypeScript, Rust Analyzer
-  - Configure editor settings (format on save, etc.)
-- [ ] Add debugging configurations in `.vscode/launch.json`
-  - Debug GUI (Tauri dev)
-  - Debug Rust backend
-  - Debug tests
-
-**Progress:** 0/5 tasks complete
-
-**Rationale:** Current enforcement covers TypeScript, CSS, and Rust checks. This phase is specifically for optional JS/TS lint + formatting ergonomics (ESLint/Prettier) if the team decides the added maintenance is worth it.
+1. `1A` - Frontend lint strategy is `tsc + stylelint` (no ESLint/Prettier adoption in v7).
+2. `2B` - Use repo-root `pre-commit` for commit-time automation.
+3. `3A` - `docs/gui` is canonical; `fiberpath_gui/docs` is sync output.
+4. `4A` - Performance work is baseline-first, then CI regression threshold.
+5. `5A` - Validation UX uses non-blocking debounced hints; backend submit-time validation remains authoritative.
+6. `6AB*` - Execute docs pass A during v7; full docs pass B is the very last item after the v7 PR is green.
 
 ---
 
-## Phase 3: Code Organization Cleanup
+## Cross-Check Snapshot (Evidence)
 
-**Goal:** Resolve architectural inconsistencies and improve code navigation
+Evidence captured from the current repo state on 2026-04-08:
 
-- [ ] Extract MenuBar menu definitions to configuration file
-  - Current: 310-line component with inline menu structure
-  - Create `lib/menuConfig.ts` with typed menu definitions
-  - Reduces MenuBar.tsx complexity significantly
-- [ ] Consolidate store location inconsistency
-  - Move `state/projectStore.ts` to `stores/projectStore.ts`
-  - Keeps all Zustand stores in one location (streamStore, toastStore already there)
-- [ ] Fix StreamTab component duplication
-  - Remove `components/StreamTab/StreamTab.tsx` (duplicate)
-  - Keep only `components/tabs/StreamTab.tsx`
-  - Move StreamTab components to `components/stream/` subdirectory
-- [ ] Add barrel exports to component subdirectories
-  - Create `index.ts` in canvas/, dialogs/, editors/, forms/, layers/, panels/
-  - Enables cleaner imports: `import { MandrelForm } from '@/components/forms'`
+| Signal | Value |
+| --- | ---: |
+| TSX LOC total | 3806 |
+| Largest TSX file | `components/MenuBar.tsx` (230 LOC) |
+| `state/projectStore` imports in `fiberpath_gui/src` | 0 |
+| Canonical StreamTab path | `components/StreamTab/StreamTab.tsx` |
+| `React.memo` usage | 0 |
+| `React.lazy` usage | 0 |
+| Preview stale-response guard | Present (`usePreviewGeneration` request id check) |
+| Tools > Validate wiring | Present (`tools.validateDefinition -> handleValidate`) |
+| Inline form/editor error styling | Present (`param-form__input--error`, `layer-editor__input--error`) |
+| ESLint/Prettier config files | Not present |
+| pre-commit/husky/lint-staged config | Present (`.pre-commit-config.yaml`) |
+| `.vscode/launch.json` | Not present |
+| Stale docs refs to `src/state/projectStore.ts` | 0 (Pass A complete) |
 
-**Progress:** 0/4 tasks complete
-
-**Rationale:** These are known architectural issues identified in v5 review. Small changes with high impact on code maintainability.
-
----
-
-## Phase 4: Performance Implementation
-
-**Goal:** Implement documented performance optimizations
-
-- [ ] Add React.memo to pure components
-  - LayerRow (re-renders for every layer update)
-  - Form input components (MandrelForm, TowForm, etc.)
-  - StatusBar, StatusText (only update on actual state changes)
-- [ ] Implement lazy loading for dialogs
-  - Use React.lazy() for AboutDialog, DiagnosticsDialog, ExportConfirmationDialog
-  - Reduces initial bundle size
-  - Dialogs only loaded when opened
-- [ ] Optimize preview image handling
-  - Implement image caching (cache last 3 previews)
-  - Cancel pending preview requests on new request
-  - Prevents memory buildup during rapid plan iterations
-- [ ] Profile and optimize bundle size
-  - Run `vite-bundle-visualizer` to identify large dependencies
-  - Implement tree-shaking for unused imports
-  - Target: <2MB initial bundle (currently unknown, needs measurement)
-- [ ] Add performance budget to CI
-  - Fail build if bundle exceeds size threshold
-  - Tracks performance regressions automatically
-
-**Progress:** 0/5 tasks complete
-
-**Rationale:** Performance documentation exists (performance.md with detailed strategies). Time to implement. All tasks have clear ROI.
-
-**Note:** Virtualization of LayerStack deferred - not needed unless users report issues with 50+ layers.
+Primary finding: v0.6.2 delivered most architecture cleanup goals; v7 now needs to focus on tooling decision clarity, performance implementation, and doc/validation follow-through.
 
 ---
 
-## Phase 5: Documentation Completeness
+## Phase 1: Release Management and Changelog Discipline
 
-**Goal:** Fill remaining documentation gaps
+**Goal:** Keep release history process explicit and durable.
 
-- [ ] Add JSDoc comments to all exported functions
-  - Focus on: commands.ts, validation.ts, converters.ts, marlin-api.ts
-  - Document parameters, return types, thrown errors
-  - Examples for complex functions
-- [ ] Document keyboard shortcut system
-  - Create `docs/gui/guides/keyboard-shortcuts.md`
-  - List all shortcuts (Ctrl+S, Ctrl+O, Alt+1/2, etc.)
-  - Document shortcut registration pattern for future additions
-- [ ] Document development tasks guide
-  - Create `docs/development/common-tasks.md`
-  - How to add a new layer type
-  - How to add a menu item
-  - How to add a Tauri command
-  - Common troubleshooting steps
+- [x] `CHANGELOG.md` is the release source of truth and includes v0.6.2.
+- [x] Semantic version heading convention is in use (`## [X.Y.Z] - YYYY-MM-DD`).
+- [x] `Unreleased` section exists at the top.
+- [ ] Add explicit maintenance guidance in release docs (who updates changelog, when, and required section structure).
 
-**Progress:** 0/3 tasks complete
-
-**Rationale:** Documentation is 90% complete. These are the final gaps before considering it comprehensive.
+**Progress:** 3/4 tasks complete
 
 ---
 
-## Phase 6: Enhanced Validation UX
+## Phase 2: Developer Tooling Alignment
 
-**Goal:** Improve user-facing validation feedback (leverage existing backend)
+**Goal:** Remove ambiguity in frontend lint/format workflow and tighten local ergonomics.
 
-- [ ] Audit current "Tools > Validate" implementation
-  - Test with various .wind files (valid, invalid, edge cases)
-  - Document current behavior and limitations
-  - Determine if useful or needs redesign
-- [ ] Show validation errors inline in forms
-  - Display errors below input fields (not just console)
-  - Use error state styling (red border, error text)
-  - Clear errors on input change
-- [ ] Implement field-level validation with debouncing
-  - Validate mandrel dimensions as user types (300ms debounce)
-  - Validate pattern numbers immediately
-  - Prevent invalid inputs before submission
-- [ ] Add cross-field validation
-  - Pattern number compatibility with mandrel circumference
-  - Feed rate range validation based on axis format
-  - Display validation warnings (not blocking, informational)
+- [x] Tooling strategy locked for v7: `tsc + stylelint` is the enforced frontend path.
+- [x] VSCode extension recommendations already include ESLint/Prettier/Rust tooling (`.vscode/extensions.json`).
+- [x] Rename misleading GUI CI labels/step names to match executed commands.
+- [x] Add repo-root `.pre-commit-config.yaml` and document usage for cross-stack checks.
+- [ ] Add `.vscode/launch.json` debug profiles (GUI dev, Rust backend, Vitest target).
 
-**Progress:** 0/4 tasks complete
+**Progress:** 4/5 tasks complete
 
-**Rationale:** JSON Schema validation backend is solid (37 tests, schemas.md docs). UX needs improvement - errors currently only in console.
-
-**Note:** Comprehensive edge case validation deferred to backlog - current schema validation is sufficient.
+**Note:** GUI CI label drift is resolved (type-check step now matches `npm run lint` behavior).
 
 ---
 
-## Dependency on v6
+## Phase 3: Architecture and Navigation Cleanup
 
-**Cross-Platform Testing:** v6 is the dedicated roadmap for Linux/macOS validation and E2E automation. v7 does not duplicate that scope.
+**Goal:** Keep import boundaries and component ownership unambiguous.
 
-Cross-platform testing and automation are now tracked through CI workflows and release notes (`CHANGELOG.md`).
+- [x] Menu definitions extracted to `src/lib/menuConfig.ts`.
+- [x] Project store consolidated under `src/stores/projectStore.ts`.
+- [x] StreamTab wrapper indirection removed; app imports canonical module path.
+- [ ] Evaluate barrel exports only where they improve readability and do not hide ownership.
+- [x] Remove stale docs/examples referencing `src/state/projectStore.ts`.
+
+**Progress:** 4/5 tasks complete
+
+---
+
+## Phase 4: Performance Implementation (Measured, Not Assumed)
+
+**Goal:** Convert performance guidance into validated implementation and guardrails.
+
+- [x] Added latest-request-wins race protection in preview generation (`usePreviewGeneration`).
+- [ ] Establish baseline metrics (bundle size, startup time, common interaction render cost) and record them in docs.
+- [ ] Lazy-load low-frequency dialogs (`AboutDialog`, `DiagnosticsDialog`, `ExportConfirmationDialog`) and verify UX impact.
+- [ ] Apply targeted `React.memo` only for measured hotspots (for example `LayerRow`) after profiling.
+- [ ] Decide on preview caching policy; if implemented, bound memory and define invalidation rules.
+- [ ] Add CI performance guardrail (bundle budget + reporting artifact).
+
+**Progress:** 1/6 tasks complete
+
+---
+
+## Phase 5: Documentation Completeness and Drift Control
+
+**Goal:** Eliminate drift between code reality and developer docs.
+
+- [x] Keyboard shortcuts are documented in `docs/guides/marlin-streaming.md`.
+- [x] GUI development common tasks already exist in `docs/gui/development.md`.
+- [x] Docs source-of-truth policy locked: `docs/gui` canonical, `fiberpath_gui/docs` sync output.
+- [x] Pass A (in-scope now): fix targeted stale refs (for example `src/state/projectStore.ts`) and directly related drift.
+- [ ] Pass B (final close-out): full docs-wide sweep after v7 PR is green.
+- [ ] Raise JSDoc coverage for exported utility APIs in `commands.ts` and `validation.ts` (converters and marlin-api already have baseline docs).
+
+**Progress:** 4/6 tasks complete
+
+---
+
+## Phase 6: Validation UX Completion
+
+**Goal:** Move from basic validation signaling to high-clarity in-form guidance.
+
+- [x] "Tools > Validate Definition" is wired through file operations and user notifications.
+- [x] Inline field error presentation exists in forms/editors (error text + error classes).
+- [x] Validation UX policy locked: non-blocking debounced hints + backend submit-time hard validation.
+- [ ] Add debounced on-change validation for high-frequency numeric inputs while keeping blur validation.
+- [ ] Map schema/backend validation errors to specific form fields where possible (not only aggregate messages).
+- [ ] Add frontend cross-field hints for geometry-dependent checks without replacing backend hard validation.
+
+**Progress:** 3/6 tasks complete
+
+---
+
+## Execution Order (Recommended)
+
+1. Execute Phase 2 with locked strategy (`1A` + `2B`): CI label cleanup and repo-root pre-commit.
+2. Execute docs Pass A and targeted architecture-doc cleanup (`3A` + Phase 3/5 leftovers).
+3. Implement validation UX work under locked non-blocking model (`5A`).
+4. Run performance baseline-first implementation and CI regression guardrail (`4A`).
+5. Execute docs Pass B as final close-out task only after v7 PR is green (`6AB*`).
 
 ---
 
 ## Deferred to Backlog
 
-The following items from earlier roadmap drafts have been moved to roadmap-backlog.md:
-
-- **Storybook:** High maintenance overhead, not critical for current team size
-- **Panel resize handles:** Attempted before, didn't work well, low priority
-- **Keyboard shortcut customization:** Niche feature, current shortcuts sufficient
-- **Workspace layout presets:** Premature optimization, no user demand
-- **Undo/redo system:** Complex implementation, unclear benefit, no user demand
-- **Layer presets:** Advanced feature, unclear use case, no user demand
-- **Advanced layer strategies:** v7 content, requires user demand first
-- **Custom G-code configuration:** v7 content, users can edit .gcode manually
-- **Accessibility compliance:** Important but can wait until v7, 9 tasks, no blocking issues
+Items with poor complexity/value ratio remain in [roadmap-backlog.md](roadmap-backlog.md), including Storybook, panel resize handles, shortcut customization, workspace presets, undo/redo, advanced visualization rewrites, and cloud sync.
 
 ---
 
-## Overall Progress
+## Updated Effort Estimate
 
-**Note:** Cross-platform validation is handled through CI workflows and release hardening; v7 remains focused on production polish scope.
+- Phase 1: 1-2 hours
+- Phase 2: 4-7 hours
+- Phase 3: 2-4 hours
+- Phase 4: 8-12 hours
+- Phase 5: 4-8 hours
+- Phase 6: 6-10 hours
 
-**Estimated Effort:**
-
-- Phase 1 (Changelog): 4-6 hours
-- Phase 2 (Tooling): 6-8 hours
-- Phase 3 (Code Org): 4-6 hours
-- Phase 4 (Performance): 8-10 hours
-- Phase 5 (Docs): 4-6 hours
-- Phase 6 (Validation): 6-8 hours
-
-**Total:** 36-50 hours (2-3 weeks at 15-20 hours/week)
+**Total:** 25-43 hours
 
 ---
 
 ## Success Criteria
 
-- ✅ CHANGELOG.md exists and documents all versions
-- ✅ ESLint and Prettier running in CI, no warnings
-- ✅ Code organization consistent (stores in stores/, no duplicates)
-- ✅ React DevTools shows <10ms render times for common actions
-- ✅ Bundle size <2MB, tracked in CI
-- ✅ JSDoc coverage >80% for exported functions
-- ✅ Validation errors visible in UI, not just console
-- ✅ Cross-platform blockers are addressed or explicitly tracked in active planning docs
+- [ ] Tooling strategy is explicit and reflected in scripts, CI labels, and contributor docs.
+- [ ] No stale `state/projectStore` docs references remain.
+- [ ] Validation errors are visible and actionable near the relevant inputs.
+- [ ] Performance changes are measured and gated (not just documented intentions).
+- [ ] Docs Pass B completes after v7 PR is green, with no unresolved broken/stale references.
+- [ ] v7 closes remaining production-polish gaps without reopening architecture churn.
 
 ---
 
-**Next:** After v7, proceed to advanced feature work only if there is explicit user demand. Otherwise, focus on bug fixes and incremental polish.
+**Next:** Execute v7 in thin, verifiable slices; avoid broad refactors without profiling or concrete drift evidence.
