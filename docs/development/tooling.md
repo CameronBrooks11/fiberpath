@@ -44,6 +44,7 @@ Commands run from `fiberpath_gui/` directory with `npm run <script>`:
 | `test`          | `vitest`                                      | Vitest     | Run GUI tests (watch mode)                    |
 | `test:coverage` | `vitest run --coverage`                       | Vitest     | Run tests with coverage report                |
 | `build`         | `vite build`                                  | Vite       | Build production bundle                       |
+| `perf:bundle`   | `node scripts/check-bundle-budget.mjs`        | Node       | Enforce JS/CSS bundle budget + emit metrics   |
 
 **Alias Location:** `fiberpath_gui/package.json` → `"scripts"`
 
@@ -112,6 +113,7 @@ npm run clippy                   # Rust linting
 npm test                         # Vitest
 npm run test:coverage            # Coverage report
 npm run build                    # Vite build
+npm run perf:bundle              # Bundle budget + metrics report
 ```
 
 ## Quick Command Summary

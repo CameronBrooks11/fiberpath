@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { MainLayout } from "./layouts/MainLayout";
@@ -21,10 +21,15 @@ import { LayerStack } from "./components/layers/LayerStack";
 import { HoopLayerEditor } from "./components/editors/HoopLayerEditor";
 import { HelicalLayerEditor } from "./components/editors/HelicalLayerEditor";
 import { SkipLayerEditor } from "./components/editors/SkipLayerEditor";
-import { ExportConfirmationDialog } from "./components/dialogs/ExportConfirmationDialog";
 import { useProjectStore } from "./stores/projectStore";
 import { useFileOperations } from "./hooks/useFileOperations";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+
+const ExportConfirmationDialog = lazy(() =>
+  import("./components/dialogs/ExportConfirmationDialog").then((module) => ({
+    default: module.ExportConfirmationDialog,
+  })),
+);
 
 export default function App() {
   // Tab state
@@ -172,16 +177,18 @@ export default function App() {
     >
       <CliHealthWarning />
       <ToastContainer />
-      {showExportDialog && (
-        <ExportConfirmationDialog
-          project={project}
-          onConfirm={async () => {
-            setShowExportDialog(false);
-            await fileOps.handleExportGcode();
-          }}
-          onCancel={() => setShowExportDialog(false)}
-        />
-      )}
+      <Suspense fallback={null}>
+        {showExportDialog && (
+          <ExportConfirmationDialog
+            project={project}
+            onConfirm={async () => {
+              setShowExportDialog(false);
+              await fileOps.handleExportGcode();
+            }}
+            onCancel={() => setShowExportDialog(false)}
+          />
+        )}
+      </Suspense>
     </MainLayout>
   );
 }

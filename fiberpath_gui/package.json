@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "perf:bundle": "node scripts/check-bundle-budget.mjs",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
     "lint:css": "stylelint \"src/**/*.css\"",

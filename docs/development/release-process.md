@@ -42,6 +42,14 @@ Refresh dependency locks after version updates:
 - [ ] Verify all code examples and CLI commands in docs reflect current syntax
 - [ ] Check for any outdated version references in documentation
 
+### CHANGELOG Maintenance Rules
+
+- **Owner:** The release manager for the target milestone owns final changelog curation for that release cut.
+- **Timing:** Update `## [Unreleased]` during development as PRs merge; before release, move finalized bullets into the new `## [X.Y.Z] - YYYY-MM-DD` section.
+- **Required section order:** `Added`, `Changed`, `Fixed`, `Documentation`, `Internal` (omit empty sections).
+- **Entry format:** One behavior-oriented bullet per change (user impact first, implementation detail second if needed).
+- **Pre-release check:** No placeholder bullets (`TBD`, `WIP`, `misc`) in release-bound sections.
+
 ## Quality Checks
 
 - [ ] Verify Python package builds cleanly: `uv build` (check `dist/` output)

@@ -1,4 +1,4 @@
-import { useProjectStore } from "../../stores/projectStore";
+import { memo } from "react";
 import { Layer, LayerType } from "../../types/project";
 import type { OnCloseCallback } from "../../types/components";
 
@@ -53,7 +53,31 @@ interface LayerRowProps {
  * @param props - Component props
  * @returns The layer row UI
  */
-export function LayerRow({
+function getLayerSummary(layer: Layer): string {
+  switch (layer.type) {
+    case "hoop":
+      return layer.hoop?.terminal ? "Hoop (Terminal)" : "Hoop";
+    case "helical":
+      return `Helical ${layer.helical?.wind_angle ?? 45}°`;
+    case "skip":
+      return `Skip ${layer.skip?.mandrel_rotation ?? 90}°`;
+    default:
+      return "Unknown";
+  }
+}
+
+function getLayerIcon(type: LayerType): string {
+  switch (type) {
+    case "hoop":
+      return "○";
+    case "helical":
+      return "⟋";
+    case "skip":
+      return "↻";
+  }
+}
+
+function LayerRowComponent({
   layer,
   index,
   isActive,
@@ -61,30 +85,6 @@ export function LayerRow({
   onRemove,
   onDuplicate,
 }: LayerRowProps) {
-  const getLayerSummary = (layer: Layer): string => {
-    switch (layer.type) {
-      case "hoop":
-        return layer.hoop?.terminal ? "Hoop (Terminal)" : "Hoop";
-      case "helical":
-        return `Helical ${layer.helical?.wind_angle ?? 45}°`;
-      case "skip":
-        return `Skip ${layer.skip?.mandrel_rotation ?? 90}°`;
-      default:
-        return "Unknown";
-    }
-  };
-
-  const getLayerIcon = (type: LayerType): string => {
-    switch (type) {
-      case "hoop":
-        return "○";
-      case "helical":
-        return "⟋";
-      case "skip":
-        return "↻";
-    }
-  };
-
   return (
     <div
       className={`layer-row ${isActive ? "layer-row--active" : ""}`}
@@ -124,3 +124,16 @@ export function LayerRow({
     </div>
   );
 }
+
+function areLayerRowPropsEqual(
+  previous: LayerRowProps,
+  next: LayerRowProps,
+): boolean {
+  return (
+    previous.layer === next.layer &&
+    previous.index === next.index &&
+    previous.isActive === next.isActive
+  );
+}
+
+export const LayerRow = memo(LayerRowComponent, areLayerRowPropsEqual);

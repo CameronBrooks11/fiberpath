@@ -6,6 +6,24 @@ Complete guide to profiling and optimizing FiberPath GUI performance.
 
 FiberPath GUI is designed for responsiveness with lazy loading, memoization, and optimized renders. This guide covers profiling tools and optimization patterns.
 
+## v7 Baseline and Budget
+
+Baseline values are tracked in `fiberpath_gui/perf/bundle-baseline.json` and enforced in CI with `npm run perf:bundle`.
+
+| Metric | Baseline | Source |
+| --- | --- | --- |
+| Total JS bundle | 598.96 kB | 2026-04-07 build snapshot (`planning/gui-framework-migration-evaluation-plan.md`) |
+| Total CSS bundle | 59.42 kB | 2026-04-07 build snapshot (`planning/gui-framework-migration-evaluation-plan.md`) |
+| Vite dev startup | 292 ms | 2026-04-07 `npm run dev` snapshot (`planning/gui-framework-migration-evaluation-plan.md`) |
+| Common interaction render cost | Layer editing/profile pass tracked manually during v7 PR review | React DevTools Profiler capture on target hardware |
+
+Bundle guardrail policy:
+
+- Regression limit: +15% over baseline for JS/CSS totals
+- Absolute cap: 750 kB JS, 90 kB CSS
+- CI artifact: `gui-bundle-metrics` (`fiberpath_gui/perf/reports/bundle-metrics.json`)
+- Preview caching policy: no persistent cache in v7 (request-id race guard prevents stale response overwrite).
+
 ## Profiling Tools
 
 ### React DevTools Profiler

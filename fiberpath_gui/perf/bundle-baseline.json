@@ -1,0 +1,11 @@
+{
+  "capturedAt": "2026-04-07",
+  "source": "planning/gui-framework-migration-evaluation-plan.md",
+  "maxRegressionPercent": 15,
+  "absoluteJsBudgetBytes": 750000,
+  "absoluteCssBudgetBytes": 90000,
+  "baseline": {
+    "totalJsBytes": 598960,
+    "totalCssBytes": 59420
+  }
+}

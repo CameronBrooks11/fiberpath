@@ -457,6 +457,10 @@
   line-height: var(--line-height-normal);
 }
 
+.layer-editor__hint--warning {
+  color: var(--color-warning);
+}
+
 /* App Footer */
 .app-footer {
   padding: var(--spacing-xl);

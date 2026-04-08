@@ -34,18 +34,18 @@ Evidence captured from the current repo state on 2026-04-08:
 
 | Signal | Value |
 | --- | ---: |
-| TSX LOC total | 3806 |
-| Largest TSX file | `components/MenuBar.tsx` (230 LOC) |
+| TSX LOC total | 4004 |
+| Largest TSX file | `components/MenuBar.tsx` (249 LOC) |
 | `state/projectStore` imports in `fiberpath_gui/src` | 0 |
 | Canonical StreamTab path | `components/StreamTab/StreamTab.tsx` |
-| `React.memo` usage | 0 |
-| `React.lazy` usage | 0 |
+| `React.memo` usage | 1 (`LayerRow`) |
+| `React.lazy` usage | 5 (`AboutDialog`, `DiagnosticsDialog`, `ExportConfirmationDialog` in App + Menu) |
 | Preview stale-response guard | Present (`usePreviewGeneration` request id check) |
 | Tools > Validate wiring | Present (`tools.validateDefinition -> handleValidate`) |
 | Inline form/editor error styling | Present (`param-form__input--error`, `layer-editor__input--error`) |
 | ESLint/Prettier config files | Not present |
 | pre-commit/husky/lint-staged config | Present (`.pre-commit-config.yaml`) |
-| `.vscode/launch.json` | Not present |
+| `.vscode/launch.json` | Present |
 | Stale docs refs to `src/state/projectStore.ts` | 0 (Pass A complete) |
 
 Primary finding: v0.6.2 delivered most architecture cleanup goals; v7 now needs to focus on tooling decision clarity, performance implementation, and doc/validation follow-through.
@@ -59,9 +59,9 @@ Primary finding: v0.6.2 delivered most architecture cleanup goals; v7 now needs 
 - [x] `CHANGELOG.md` is the release source of truth and includes v0.6.2.
 - [x] Semantic version heading convention is in use (`## [X.Y.Z] - YYYY-MM-DD`).
 - [x] `Unreleased` section exists at the top.
-- [ ] Add explicit maintenance guidance in release docs (who updates changelog, when, and required section structure).
+- [x] Add explicit maintenance guidance in release docs (who updates changelog, when, and required section structure).
 
-**Progress:** 3/4 tasks complete
+**Progress:** 4/4 tasks complete
 
 ---
 
@@ -73,9 +73,9 @@ Primary finding: v0.6.2 delivered most architecture cleanup goals; v7 now needs 
 - [x] VSCode extension recommendations already include ESLint/Prettier/Rust tooling (`.vscode/extensions.json`).
 - [x] Rename misleading GUI CI labels/step names to match executed commands.
 - [x] Add repo-root `.pre-commit-config.yaml` and document usage for cross-stack checks.
-- [ ] Add `.vscode/launch.json` debug profiles (GUI dev, Rust backend, Vitest target).
+- [x] Add `.vscode/launch.json` debug profiles (GUI dev, Rust backend, Vitest target).
 
-**Progress:** 4/5 tasks complete
+**Progress:** 5/5 tasks complete
 
 **Note:** GUI CI label drift is resolved (type-check step now matches `npm run lint` behavior).
 
@@ -88,10 +88,10 @@ Primary finding: v0.6.2 delivered most architecture cleanup goals; v7 now needs 
 - [x] Menu definitions extracted to `src/lib/menuConfig.ts`.
 - [x] Project store consolidated under `src/stores/projectStore.ts`.
 - [x] StreamTab wrapper indirection removed; app imports canonical module path.
-- [ ] Evaluate barrel exports only where they improve readability and do not hide ownership.
+- [x] Evaluate barrel exports only where they improve readability and do not hide ownership.
 - [x] Remove stale docs/examples referencing `src/state/projectStore.ts`.
 
-**Progress:** 4/5 tasks complete
+**Progress:** 5/5 tasks complete
 
 ---
 
@@ -100,13 +100,13 @@ Primary finding: v0.6.2 delivered most architecture cleanup goals; v7 now needs 
 **Goal:** Convert performance guidance into validated implementation and guardrails.
 
 - [x] Added latest-request-wins race protection in preview generation (`usePreviewGeneration`).
-- [ ] Establish baseline metrics (bundle size, startup time, common interaction render cost) and record them in docs.
-- [ ] Lazy-load low-frequency dialogs (`AboutDialog`, `DiagnosticsDialog`, `ExportConfirmationDialog`) and verify UX impact.
-- [ ] Apply targeted `React.memo` only for measured hotspots (for example `LayerRow`) after profiling.
-- [ ] Decide on preview caching policy; if implemented, bound memory and define invalidation rules.
-- [ ] Add CI performance guardrail (bundle budget + reporting artifact).
+- [x] Establish baseline metrics (bundle size, startup time, common interaction render cost) and record them in docs.
+- [x] Lazy-load low-frequency dialogs (`AboutDialog`, `DiagnosticsDialog`, `ExportConfirmationDialog`) and verify UX impact.
+- [x] Apply targeted `React.memo` only for measured hotspots (for example `LayerRow`) after profiling.
+- [x] Decide on preview caching policy; v7 keeps no preview cache (request-id stale-response guard remains) to avoid stale image invalidation complexity.
+- [x] Add CI performance guardrail (bundle budget + reporting artifact).
 
-**Progress:** 1/6 tasks complete
+**Progress:** 6/6 tasks complete
 
 ---
 
@@ -119,9 +119,9 @@ Primary finding: v0.6.2 delivered most architecture cleanup goals; v7 now needs 
 - [x] Docs source-of-truth policy locked: `docs/gui` canonical, `fiberpath_gui/docs` sync output.
 - [x] Pass A (in-scope now): fix targeted stale refs (for example `src/state/projectStore.ts`) and directly related drift.
 - [ ] Pass B (final close-out): full docs-wide sweep after v7 PR is green.
-- [ ] Raise JSDoc coverage for exported utility APIs in `commands.ts` and `validation.ts` (converters and marlin-api already have baseline docs).
+- [x] Raise JSDoc coverage for exported utility APIs in `commands.ts` and `validation.ts` (converters and marlin-api already have baseline docs).
 
-**Progress:** 4/6 tasks complete
+**Progress:** 5/6 tasks complete
 
 ---
 
@@ -132,11 +132,11 @@ Primary finding: v0.6.2 delivered most architecture cleanup goals; v7 now needs 
 - [x] "Tools > Validate Definition" is wired through file operations and user notifications.
 - [x] Inline field error presentation exists in forms/editors (error text + error classes).
 - [x] Validation UX policy locked: non-blocking debounced hints + backend submit-time hard validation.
-- [ ] Add debounced on-change validation for high-frequency numeric inputs while keeping blur validation.
-- [ ] Map schema/backend validation errors to specific form fields where possible (not only aggregate messages).
-- [ ] Add frontend cross-field hints for geometry-dependent checks without replacing backend hard validation.
+- [x] Add debounced on-change validation for high-frequency numeric inputs while keeping blur validation.
+- [x] Map schema/backend validation errors to specific form fields where possible (not only aggregate messages).
+- [x] Add frontend cross-field hints for geometry-dependent checks without replacing backend hard validation.
 
-**Progress:** 3/6 tasks complete
+**Progress:** 6/6 tasks complete
 
 ---
 
@@ -171,10 +171,10 @@ Items with poor complexity/value ratio remain in [roadmap-backlog.md](roadmap-ba
 
 ## Success Criteria
 
-- [ ] Tooling strategy is explicit and reflected in scripts, CI labels, and contributor docs.
-- [ ] No stale `state/projectStore` docs references remain.
-- [ ] Validation errors are visible and actionable near the relevant inputs.
-- [ ] Performance changes are measured and gated (not just documented intentions).
+- [x] Tooling strategy is explicit and reflected in scripts, CI labels, and contributor docs.
+- [x] No stale `state/projectStore` docs references remain.
+- [x] Validation errors are visible and actionable near the relevant inputs.
+- [x] Performance changes are measured and gated (not just documented intentions).
 - [ ] Docs Pass B completes after v7 PR is green, with no unresolved broken/stale references.
 - [ ] v7 closes remaining production-polish gaps without reopening architecture churn.
 

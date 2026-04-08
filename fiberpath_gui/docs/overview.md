@@ -149,7 +149,7 @@ See [development.md](development.md) for detailed setup instructions.
 fiberpath_gui/
 ├── src/
 │   ├── components/       # React components (Plan, Plot, Simulate, Stream tabs)
-│   ├── state/            # Zustand stores (projectStore)
+│   ├── stores/           # Zustand stores (project, stream, toast)
 │   ├── lib/              # Utilities (commands, schemas, validation)
 │   ├── types/            # TypeScript types
 │   ├── styles/           # Global CSS + design tokens

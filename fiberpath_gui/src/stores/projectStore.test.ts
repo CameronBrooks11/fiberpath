@@ -5,7 +5,10 @@ import { createEmptyProject } from "../types/project";
 describe("projectStore", () => {
   beforeEach(() => {
     // Reset store to empty project before each test
-    useProjectStore.setState({ project: createEmptyProject() });
+    useProjectStore.setState({
+      project: createEmptyProject(),
+      validationErrors: {},
+    });
   });
 
   describe("Project Management", () => {
@@ -321,6 +324,34 @@ describe("projectStore", () => {
     it("should not mark dirty when setting file path", () => {
       useProjectStore.getState().setFilePath("/test/file.wind");
       expect(useProjectStore.getState().project.isDirty).toBe(false);
+    });
+  });
+
+  describe("Validation State", () => {
+    it("should set and clear field validation errors", () => {
+      useProjectStore
+        .getState()
+        .setValidationError("mandrel.diameter", "Diameter must be > 0");
+
+      expect(useProjectStore.getState().validationErrors["mandrel.diameter"]).toBe(
+        "Diameter must be > 0",
+      );
+
+      useProjectStore.getState().setValidationError("mandrel.diameter", undefined);
+
+      expect(
+        useProjectStore.getState().validationErrors["mandrel.diameter"],
+      ).toBeUndefined();
+    });
+
+    it("should reset validation errors when creating a new project", () => {
+      useProjectStore
+        .getState()
+        .setValidationError("tow.width", "Width must be > 0");
+
+      useProjectStore.getState().newProject();
+
+      expect(useProjectStore.getState().validationErrors).toEqual({});
     });
   });
 });

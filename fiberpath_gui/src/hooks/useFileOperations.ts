@@ -22,6 +22,8 @@ export function useFileOperations(options: UseFileOperationsOptions = {}) {
     clearDirty,
     duplicateLayer,
     removeLayer,
+    setValidationErrors,
+    clearValidationErrors,
   } = useProjectStore(
     useShallow((state) => ({
       newProject: state.newProject,
@@ -30,6 +32,8 @@ export function useFileOperations(options: UseFileOperationsOptions = {}) {
       clearDirty: state.clearDirty,
       duplicateLayer: state.duplicateLayer,
       removeLayer: state.removeLayer,
+      setValidationErrors: state.setValidationErrors,
+      clearValidationErrors: state.clearValidationErrors,
     })),
   );
 
@@ -49,6 +53,8 @@ export function useFileOperations(options: UseFileOperationsOptions = {}) {
         updateRecentFiles: onRecentFilesChanged,
         showError,
         showInfo,
+        setValidationErrors,
+        clearValidationErrors,
       }),
     [
       newProject,
@@ -57,6 +63,8 @@ export function useFileOperations(options: UseFileOperationsOptions = {}) {
       clearDirty,
       duplicateLayer,
       removeLayer,
+      setValidationErrors,
+      clearValidationErrors,
       onRecentFilesChanged,
       showError,
       showInfo,

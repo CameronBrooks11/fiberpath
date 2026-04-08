@@ -1,0 +1,35 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FiberPath GUI: Tauri Dev",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd fiberpath_gui && npm run tauri dev"
+    },
+    {
+      "name": "FiberPath GUI: Vite Dev Server",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd fiberpath_gui && npm run dev"
+    },
+    {
+      "name": "FiberPath GUI: Vitest (Watch)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd fiberpath_gui && npm run test"
+    },
+    {
+      "name": "FiberPath GUI: Vitest (Coverage)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd fiberpath_gui && npm run test:coverage"
+    },
+    {
+      "name": "FiberPath Rust Backend: cargo run",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd fiberpath_gui/src-tauri && cargo run"
+    }
+  ]
+}

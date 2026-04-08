@@ -22,6 +22,10 @@ export interface ValidationError {
   message: string;
 }
 
+/**
+ * Validates a wind definition object against the generated JSON Schema.
+ * Returns structured field/message pairs for UI mapping.
+ */
 export function validateWindDefinition(data: unknown): {
   valid: boolean;
   errors: ValidationError[];
@@ -43,6 +47,10 @@ export function validateWindDefinition(data: unknown): {
   return { valid: false, errors };
 }
 
+/**
+ * Type guard for narrowing unknown data to FiberPathWindDefinition.
+ * Useful when only a boolean validity check is needed.
+ */
 export function isValidWindDefinition(
   data: unknown,
 ): data is FiberPathWindDefinition {
