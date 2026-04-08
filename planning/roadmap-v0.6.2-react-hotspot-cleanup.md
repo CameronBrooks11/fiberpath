@@ -1,10 +1,10 @@
 # FiberPath v0.6.2 React Hotspot Cleanup Plan
 
-**Document Type:** Focused implementation plan (post-v0.6.1 cleanup)  
-**Target Release:** v0.6.2  
-**Created:** 2026-04-07  
-**Last Updated:** 2026-04-07  
-**Owner:** GUI maintainers  
+**Document Type:** Focused implementation plan (post-v0.6.1 cleanup)
+**Target Release:** v0.6.2
+**Created:** 2026-04-07
+**Last Updated:** 2026-04-07
+**Owner:** GUI maintainers
 **Status:** Completed (Wave A-D complete)
 
 ## Objective

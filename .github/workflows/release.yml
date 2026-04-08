@@ -175,17 +175,17 @@ jobs:
                 base: prevTag,
                 head: newTag
               });
-              
+
               // Categorize commits
               const added = [];
               const fixed = [];
               const changed = [];
-              
+
               comparison.commits.forEach(commit => {
                 const msg = commit.commit.message.split('\n')[0];
                 const sha = commit.sha.substring(0, 7);
                 const entry = `- ${msg} (\`${sha}\`)`;
-                
+
                 const lower = msg.toLowerCase();
                 if (lower.startsWith('add') || lower.startsWith('feat')) {
                   added.push(entry);
@@ -195,7 +195,7 @@ jobs:
                   changed.push(entry);
                 }
               });
-              
+
               if (added.length > 0) {
                 notes += `### Added\n${added.join('\n')}\n\n`;
               }
@@ -205,7 +205,7 @@ jobs:
               if (changed.length > 0) {
                 notes += `### Changed\n${changed.join('\n')}\n\n`;
               }
-              
+
               notes += `**Full Changelog:** https://github.com/${repo.owner}/${repo.repo}/compare/${prevTag}...${newTag}\n`;
             } else {
               notes += `Initial release.\n`;
