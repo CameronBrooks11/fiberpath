@@ -31,7 +31,7 @@ async fn plan_wind(
     output_path: Option<String>,
 ) -> Result<Value, String> {
     let output_file = output_path.unwrap_or_else(|| temp_path("gcode"));
-    let mut args = vec![
+    let args = vec![
         "plan".to_string(),
         input_path,
         "--output".into(),
