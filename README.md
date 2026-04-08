@@ -29,7 +29,7 @@ Design multi-layer winding patterns in a visual interface, simulate the full man
 
 ### Features
 
-- **Visual Layer Editor** – Design winding patterns with real-time 3D preview
+- **Visual Layer Editor** – Design winding patterns with live preview
 - **Geodesic Path Planning** – Automatic computation of stable fiber trajectories
 - **Hardware Simulation** – Validate motion before manufacturing
 - **Direct Machine Control** – Stream G-code to Marlin controllers with pause/resume
@@ -117,13 +117,17 @@ pytest
 fiberpath plan examples/simple_cylinder/input.wind -o output.gcode
 ```
 
-### Visualizing Toolpaths
+### Visualizing Toolpaths (2D)
 
 ```sh
 # Create 2D unwrapped plot
 fiberpath plot output.gcode --output preview.png --scale 0.8
+```
 
-# Interactive 3D simulation (GUI)
+### Simulating Jobs
+
+```sh
+# Simulation summary (time/material estimates; no interactive 3D viewer)
 fiberpath simulate output.gcode
 ```
 
@@ -146,7 +150,7 @@ The GUI provides two main workflows:
 **Main Tab:**
 
 - Visual layer editor with add/remove/reorder
-- Real-time 3D canvas preview
+- Real-time unwrapped toolpath preview
 - Parameter forms for mandrel, tow, and machine settings
 - Export to G-code or save as `.wind` project file
 
@@ -181,7 +185,7 @@ FiberPath consists of four coordinated components:
 ┌─────────────────────────────────────────────────┐
 │              Desktop GUI (Tauri + React)        │
 │  • Visual layer editor                          │
-│  • 3D canvas preview                            │
+│  • 2D preview canvas                            │
 │  • Serial communication controls                │
 └───────────────┬─────────────────────────────────┘
                 │ IPC calls

@@ -1,4 +1,4 @@
-# FiberPath Roadmap - Future Backlog (Low Priority / Speculative)
+# Feature Backlog (Low Priority / Speculative)
 
 **Focus:** Speculative features with unclear value or disproportionate complexity
 **Status:** Backlog - only implement with strong user demand and clear value proposition
@@ -11,9 +11,9 @@ Use this file to track intentionally deferred scope. Do not treat it as an activ
 
 ## Category 1: Complex Visualization Features
 
-### 3D Streaming Visualization
+### 3D Streaming Visualization (Backlog Concept, Not Shipped)
 
-**Description:** Real-time 3D toolpath visualization during Marlin streaming using Three.js
+**Description:** Real-time 3D toolpath visualization during Marlin streaming using Three.js (future concept only).
 
 **Why Rejected:**
 
