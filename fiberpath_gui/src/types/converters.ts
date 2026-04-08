@@ -6,7 +6,7 @@ import type {
   FiberPathProject,
 } from "./project";
 import type {
-  FiberPathWindDefinition,
+  WindDefinition,
   HoopLayer,
   HelicalLayer,
   SkipLayer,
@@ -59,7 +59,7 @@ export function projectToWindDefinition(
     defaultFeedRate: number;
   },
   visibleLayerCount?: number,
-): FiberPathWindDefinition {
+): WindDefinition {
   const layersToInclude = visibleLayerCount
     ? project.layers.slice(0, visibleLayerCount)
     : project.layers;
@@ -125,7 +125,7 @@ export function convertWindSchemaToLayer(
  * Convert .wind definition format to GUI project format
  */
 export function windDefinitionToProject(
-  windDef: FiberPathWindDefinition,
+  windDef: WindDefinition,
   filePath: string | null = null,
 ): FiberPathProject {
   return {

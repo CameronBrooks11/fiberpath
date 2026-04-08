@@ -6,7 +6,7 @@ import {
   windDefinitionToProject,
 } from "./converters";
 import type { Layer, FiberPathProject } from "./project";
-import type { FiberPathWindDefinition } from "./wind-schema";
+import type { WindDefinition } from "./wind-schema";
 
 describe("converters", () => {
   describe("convertLayerToWindSchema", () => {
@@ -311,7 +311,7 @@ describe("converters", () => {
 
   describe("windDefinitionToProject", () => {
     it("should convert wind definition to project", () => {
-      const windDef: FiberPathWindDefinition = {
+      const windDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 130,
@@ -360,7 +360,7 @@ describe("converters", () => {
     });
 
     it("should default filePath to null when not provided", () => {
-      const windDef: FiberPathWindDefinition = {
+      const windDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: { diameter: 100, windLength: 200 },
         towParameters: { width: 3, thickness: 0.25 },
@@ -374,7 +374,7 @@ describe("converters", () => {
     });
 
     it("should handle empty layers array", () => {
-      const windDef: FiberPathWindDefinition = {
+      const windDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: { diameter: 100, windLength: 200 },
         towParameters: { width: 3, thickness: 0.25 },
@@ -389,7 +389,7 @@ describe("converters", () => {
     });
 
     it("should preserve layer order", () => {
-      const windDef: FiberPathWindDefinition = {
+      const windDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: { diameter: 100, windLength: 200 },
         towParameters: { width: 3, thickness: 0.25 },

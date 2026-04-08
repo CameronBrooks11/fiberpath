@@ -2,7 +2,7 @@
  * Panel & Card Components
  *
  * Primitive classes: `.panel`, `.panel-container`, `.panel-header`,
- * `.panel-title`, `.panel-body` (with `.panel-content` alias)
+ * `.panel-title`, `.panel-body`
  */
 
 /* Structural panel primitives */
@@ -43,33 +43,10 @@
   color: var(--color-text-muted);
 }
 
-.panel-body,
-.panel-content {
+.panel-body {
   flex: 1;
   padding: var(--spacing-lg);
   overflow: hidden auto;
-}
-
-/* Result Card */
-.result-card {
-  margin-top: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: var(--color-bg-panel-alt);
-  border-radius: var(--border-radius-lg);
-  border: 1px solid var(--color-border);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-base);
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.result-card strong {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  color: var(--color-accent);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: var(--font-size-sm);
 }
 
 /* Layer Stack Panel */

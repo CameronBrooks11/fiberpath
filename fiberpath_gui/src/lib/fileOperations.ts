@@ -23,7 +23,7 @@ import {
   type UiValidationErrors,
 } from "./validationErrors";
 import type { FiberPathProject } from "../types/project";
-import type { FiberPathWindDefinition } from "../types/wind-schema";
+import type { WindDefinition } from "../types/wind-schema";
 
 export interface FileOperationCallbacks {
   getProject: () => FiberPathProject; // Changed to function to get current state
@@ -122,7 +122,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
 
     try {
       const content = await loadWindFile(filePath);
-      const windDef: FiberPathWindDefinition = JSON.parse(content);
+      const windDef: WindDefinition = JSON.parse(content);
 
       // Runtime validation of loaded .wind file structure
       validateData(WindDefinitionSchema, windDef, `.wind file at ${filePath}`);
@@ -227,7 +227,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
 
     try {
       const content = await loadWindFile(filePath);
-      const windDef: FiberPathWindDefinition = JSON.parse(content);
+      const windDef: WindDefinition = JSON.parse(content);
 
       // Runtime validation of loaded .wind file structure
       validateData(WindDefinitionSchema, windDef, `.wind file at ${filePath}`);

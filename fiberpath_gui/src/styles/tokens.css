@@ -18,8 +18,6 @@
   --color-bg-panel-alt: #1d1d20;
   --color-bg-hover: #222226;
   --color-bg-active: #2a2a2e;
-  --color-console-bg-dark: #0c0c0e;
-  --color-console-bg-mid: #18181b;
   --shadow-md: 0 4px 8px rgb(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 16px rgb(0, 0, 0, 0.5);
 
@@ -104,7 +102,6 @@
   --color-slate-400: #94a3b8;
   --color-slate-500: #64748b;
   --color-blue-500: #3b82f6;
-  --color-red-500: #ef4444;
 
   /* ========================================
      SPACING SCALE
@@ -163,8 +160,6 @@
   --color-bg-panel-alt: #f4f4f6;
   --color-bg-hover: #ececf0;
   --color-bg-active: #e2e2e8;
-  --color-console-bg-dark: #f0f0f2;
-  --color-console-bg-mid: #f6f6f8;
   --color-text: #14161a;
   --color-text-muted: #5d6470;
   --color-text-inverse: #ffffff;
@@ -187,8 +182,6 @@
     --color-bg-panel-alt: #f4f4f6;
     --color-bg-hover: #ececf0;
     --color-bg-active: #e2e2e8;
-    --color-console-bg-dark: #f0f0f2;
-    --color-console-bg-mid: #f6f6f8;
     --color-text: #14161a;
     --color-text-muted: #5d6470;
     --color-text-inverse: #ffffff;

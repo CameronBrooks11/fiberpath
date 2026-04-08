@@ -5,7 +5,7 @@ import {
   windDefinitionToProject,
 } from "../../types/converters";
 import { createEmptyProject } from "../../types/project";
-import type { FiberPathWindDefinition } from "../../types/wind-schema";
+import type { WindDefinition } from "../../types/wind-schema";
 
 // Mock Tauri commands
 vi.mock("../../lib/commands", () => ({
@@ -97,7 +97,7 @@ describe("Integration Tests - Complete Workflows", () => {
       expect(state.project.isDirty).toBe(false);
 
       // Step 7: Simulate load (parse and convert back)
-      const loadedWindDef: FiberPathWindDefinition =
+      const loadedWindDef: WindDefinition =
         JSON.parse(savedWindDefJson);
       const loadedProject = windDefinitionToProject(
         loadedWindDef,
@@ -127,7 +127,7 @@ describe("Integration Tests - Complete Workflows", () => {
       let state = useProjectStore.getState();
 
       // Step 1: Create and load initial project
-      const initialWindDef: FiberPathWindDefinition = {
+      const initialWindDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: { diameter: 100, windLength: 200 },
         towParameters: { width: 3, thickness: 0.25 },
