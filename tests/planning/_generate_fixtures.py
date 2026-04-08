@@ -50,7 +50,7 @@ def update_layer_fixtures() -> None:
                 "windAngle": 35.0,
                 "patternNumber": 3,
                 "skipIndex": 2,
-                "lockDegrees": 160.0,
+                "lockDegrees": 180.0,
                 "leadInMM": 4.0,
                 "leadOutDegrees": 12.0,
             }
