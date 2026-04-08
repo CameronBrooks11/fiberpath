@@ -122,10 +122,6 @@ select:focus,
     0 0 0 var(--border-width-medium) var(--color-border-focus);
 }
 
-.param-form__input--success {
-  border-color: var(--color-success);
-}
-
 /* Input Unit Labels */
 .param-form__unit,
 .layer-editor__unit {

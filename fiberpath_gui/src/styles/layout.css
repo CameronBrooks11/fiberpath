@@ -151,22 +151,6 @@
   position: relative;
 }
 
-.canvas-placeholder {
-  text-align: center;
-  color: var(--color-text-muted);
-  padding: 2rem;
-}
-
-.canvas-placeholder-icon {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
-  opacity: 0.3;
-}
-
-.canvas-placeholder-text {
-  font-size: 0.95rem;
-}
-
 /* MenuBar Styles */
 .menubar {
   display: flex;
@@ -404,40 +388,6 @@
 
 .statusbar__indicator--unavailable {
   background: var(--color-error);
-}
-
-/* Legacy Workflows (temporary) */
-.legacy-workflows {
-  padding: 1rem;
-}
-
-.legacy-workflows__header {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: var(--color-warning-bg);
-  border: 1px solid var(--color-warning);
-  border-radius: 0.5rem;
-}
-
-.legacy-workflows__header h3 {
-  margin: 0 0 0.5rem;
-  color: var(--color-accent);
-  font-size: 1rem;
-}
-
-.legacy-workflows__header p {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-}
-
-.legacy-workflows__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
-  max-height: calc(180px - 6rem);
-  overflow-y: auto;
-  padding-right: 0.5rem;
 }
 
 /* Panel Placeholder */
