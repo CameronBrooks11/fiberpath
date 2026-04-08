@@ -138,10 +138,8 @@ fiberpath plan my_first_wind.wind -o my_first.gcode
 ### Planning
 
 ```sh
-# Basic plan with default XAB axes
+# Basic plan (XAB rotational axes)
 fiberpath plan input.wind -o output.gcode
-# Plan with legacy XYZ axes for compatibility
-fiberpath plan input.wind -o output.gcode --axis-format xyz
 # Verbose output with layer details
 fiberpath plan input.wind -o output.gcode --verbose
 ```
@@ -181,7 +179,7 @@ fiberpath stream output.gcode --port COM3 --baud-rate 115200
 ## Next Steps
 
 - **Learn the Wind Format:** See [Wind Format Guide](guides/wind-format.md) for complete schema documentation
-- **Understand Axis Mapping:** Read [Axis Mapping Guide](guides/axis-mapping.md) to choose XAB vs XYZ
+- **Understand Axis Mapping:** Read [Axis Mapping Guide](guides/axis-mapping.md) for XAB output details and migration notes
 - **Stream to Hardware:** Follow [Marlin Streaming Guide](guides/marlin-streaming.md) for connection and control
 - **Explore Examples:** Check `examples/` directory for sample wind definitions (simple cylinder, multi-layer, sized cylinder)
 

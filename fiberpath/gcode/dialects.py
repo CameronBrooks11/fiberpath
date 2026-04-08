@@ -10,8 +10,8 @@ class AxisMapping:
     """Maps logical axes to G-code axis letters."""
 
     carriage: str = "X"  # Linear motion along mandrel
-    mandrel: str = "Y"  # Mandrel rotation
-    delivery_head: str = "Z"  # Delivery head rotation
+    mandrel: str = "A"  # Mandrel rotation
+    delivery_head: str = "B"  # Delivery head rotation
 
     @property
     def is_rotational_mandrel(self) -> bool:
@@ -37,11 +37,7 @@ class MarlinDialect:
         return ["G21" if self.units == "mm" else "G20", self.feed_mode]
 
 
-# Predefined dialects
-MARLIN_XYZ_LEGACY = MarlinDialect(
-    axis_mapping=AxisMapping(carriage="X", mandrel="Y", delivery_head="Z"),
-)
-
+# Predefined dialect
 MARLIN_XAB_STANDARD = MarlinDialect(
     axis_mapping=AxisMapping(carriage="X", mandrel="A", delivery_head="B"),
 )

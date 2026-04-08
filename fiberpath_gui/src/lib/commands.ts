@@ -16,23 +16,16 @@ import {
   type ValidationResult,
 } from "./schemas";
 
-export type AxisFormat = "xyz" | "xab";
-
 /**
  * Plans a wind definition file into G-code.
  * Uses runtime schema validation and light retry for transient failures.
  */
 export const planWind = withRetry(
-  async (
-    inputPath: string,
-    outputPath?: string,
-    axisFormat?: AxisFormat,
-  ): Promise<PlanSummary> => {
+  async (inputPath: string, outputPath?: string): Promise<PlanSummary> => {
     try {
       const result = await invoke("plan_wind", {
         inputPath,
         outputPath,
-        axisFormat,
       });
       return validateData(PlanSummarySchema, result, "plan_wind response");
     } catch (error) {

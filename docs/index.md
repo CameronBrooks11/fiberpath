@@ -121,7 +121,7 @@ hide:
 
     ---
 
-    Support for XYZ and XAB coordinate systems with flexible mapping
+    Native XAB rotational-axis output with clear logical axis mapping
 
 -   :material-connection: **Marlin Streaming**
 

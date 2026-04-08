@@ -93,7 +93,6 @@ export interface FiberPathProject {
 
   // Machine settings
   defaultFeedRate: number; // mm/min for G-code generation
-  axisFormat: "xab" | "xyz"; // output format preference
 
   // UI state
   activeLayerId: string | null; // selected in layer stack
@@ -114,7 +113,6 @@ export function createEmptyProject(): FiberPathProject {
     },
     layers: [],
     defaultFeedRate: 400,
-    axisFormat: "xab",
     activeLayerId: null,
   };
 }

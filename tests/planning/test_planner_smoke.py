@@ -3,29 +3,24 @@ from pathlib import Path
 import pytest
 from fiberpath.config import load_wind_definition
 from fiberpath.config.schemas import WindDefinition
-from fiberpath.gcode.dialects import MARLIN_XYZ_LEGACY
+from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
 from fiberpath.planning import LayerValidationError, PlanOptions, plan_wind
 
 REFERENCE_ROOT = Path(__file__).parents[1] / "cyclone_reference_runs"
 REFERENCE_INPUTS = REFERENCE_ROOT / "inputs"
-REFERENCE_OUTPUTS = REFERENCE_ROOT / "outputs"
 
 
 def _reference_definition(name: str = "simple-hoop") -> WindDefinition:
     return load_wind_definition(REFERENCE_INPUTS / f"{name}.wind")
 
 
-def _reference_output(name: str = "simple-hoop") -> list[str]:
-    return (REFERENCE_OUTPUTS / name / "output.gcode").read_text().splitlines()
-
-
 def test_plan_wind_returns_commands() -> None:
-    result = plan_wind(_reference_definition(), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
+    result = plan_wind(_reference_definition())
 
     assert result.commands[0].startswith("; Parameters")
+    assert result.commands[1] == "G0 X0 A0 B0"
     assert result.total_time_s > 0
     assert result.layers[0].commands > 0
-    assert result.commands[-1] == _reference_output()[-1]
 
 
 @pytest.mark.parametrize(
@@ -34,19 +29,28 @@ def test_plan_wind_returns_commands() -> None:
         "simple-hoop",
     ],
 )
-def test_plan_wind_matches_cyclone_reference(case: str) -> None:
-    result = plan_wind(_reference_definition(case), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
-    assert result.commands == _reference_output(case)
+def test_plan_wind_uses_xab_axes(case: str) -> None:
+    result = plan_wind(_reference_definition(case), PlanOptions(dialect=MARLIN_XAB_STANDARD))
+
+    motion_commands = [
+        cmd for cmd in result.commands if cmd.startswith("G0") or cmd.startswith("G1")
+    ]
+    assert any(" A" in cmd for cmd in motion_commands)
+    assert any(" B" in cmd for cmd in motion_commands)
+    assert all(" Y" not in cmd for cmd in motion_commands)
+    assert all(" Z" not in cmd for cmd in motion_commands)
 
 
 def test_plan_wind_rejects_legacy_non_divisible_helical_reference() -> None:
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(_reference_definition("helical-balanced"), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
+        plan_wind(
+            _reference_definition("helical-balanced"), PlanOptions(dialect=MARLIN_XAB_STANDARD)
+        )
 
 
 def test_plan_wind_rejects_legacy_skip_bias_non_divisible_reference() -> None:
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(_reference_definition("skip-bias"), PlanOptions(dialect=MARLIN_XYZ_LEGACY))
+        plan_wind(_reference_definition("skip-bias"), PlanOptions(dialect=MARLIN_XAB_STANDARD))
 
 
 def test_plan_wind_rejects_layers_after_terminal() -> None:

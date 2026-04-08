@@ -141,7 +141,6 @@ export function windDefinitionToProject(
     },
     layers: windDef.layers.map(convertWindSchemaToLayer),
     defaultFeedRate: windDef.defaultFeedRate,
-    axisFormat: "xab", // Default, could be stored in wind file in future
     activeLayerId: null,
   };
 }

@@ -196,7 +196,7 @@ export function createFileOperations(callbacks: FileOperationCallbacks) {
       const tempWindPath = gcodeFilePath.replace(/\.gcode$/, ".wind");
       const content = JSON.stringify(windDef, null, 2);
       await saveWindFile(tempWindPath, content);
-      await planWind(tempWindPath, gcodeFilePath, project.axisFormat);
+      await planWind(tempWindPath, gcodeFilePath);
 
       showInfo?.(`G-code exported to: ${gcodeFilePath}`);
       return true;

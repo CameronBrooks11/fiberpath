@@ -115,9 +115,6 @@ pytest
 ```sh
 # Generate G-code from a .wind configuration
 fiberpath plan examples/simple_cylinder/input.wind -o output.gcode
-
-# Specify axis format for your machine
-fiberpath plan input.wind -o output.gcode --axis-format xab
 ```
 
 ### Visualizing Toolpaths
@@ -223,21 +220,13 @@ See [Architecture Documentation](https://cameronbrooks11.github.io/fiberpath/arc
 
 ## Axis Configuration
 
-FiberPath supports two axis mapping formats:
-
-**XAB (Rotational) - Default**:
+FiberPath uses XAB rotational-axis output in built-in workflows:
 
 - `X` = Carriage position (linear, mm)
 - `A` = Mandrel rotation (rotational, degrees)
 - `B` = Delivery head rotation (rotational, degrees)
 
-**XYZ (Legacy)**:
-
-- `X` = Carriage position (linear, mm)
-- `Y` = Mandrel rotation (treated as linear, degrees)
-- `Z` = Delivery head rotation (treated as linear, degrees)
-
-Use `--axis-format xab` (default) for new projects. The XYZ format maintains compatibility with legacy systems like Cyclone.
+Legacy XYZ programs should be re-generated under current versions. Simulation and plotting reject auto-detected XYZ files with an explicit error so stale programs are surfaced early.
 
 ## Documentation
 

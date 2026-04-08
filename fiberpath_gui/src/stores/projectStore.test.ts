@@ -104,14 +104,6 @@ describe("projectStore", () => {
       expect(project.defaultFeedRate).toBe(3000);
       expect(project.isDirty).toBe(true);
     });
-
-    it("should update axis format", () => {
-      useProjectStore.getState().setAxisFormat("xyz");
-
-      const { project } = useProjectStore.getState();
-      expect(project.axisFormat).toBe("xyz");
-      expect(project.isDirty).toBe(true);
-    });
   });
 
   describe("Layer Operations", () => {

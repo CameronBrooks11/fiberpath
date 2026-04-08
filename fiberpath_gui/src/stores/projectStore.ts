@@ -27,7 +27,6 @@ interface ProjectState {
 
   // Machine settings
   updateDefaultFeedRate: (feedRate: number) => void;
-  setAxisFormat: (format: "xab" | "xyz") => void;
 
   // Layer operations
   addLayer: (type: LayerType) => string; // returns new layer id
@@ -199,12 +198,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   setActiveLayerId: (id: string | null) => {
     set((state) => ({
       project: { ...state.project, activeLayerId: id },
-    }));
-  },
-
-  setAxisFormat: (format: "xab" | "xyz") => {
-    set((state) => ({
-      project: { ...state.project, axisFormat: format, isDirty: true },
     }));
   },
 

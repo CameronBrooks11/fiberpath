@@ -38,8 +38,8 @@ def test_simulate_and_validate_routes(tmp_path: Path) -> None:
                 ),
                 "G0 F6000",
                 "G0 X10",
-                "G0 Y180",
-                "G0 X10 Y360",
+                "G0 A180",
+                "G0 X10 A360",
             ]
         )
         + "\n",

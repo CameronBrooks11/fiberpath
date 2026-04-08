@@ -204,7 +204,6 @@ describe("converters", () => {
           },
         ],
         defaultFeedRate: 2500,
-        axisFormat: "xab",
         activeLayerId: "layer-2",
       };
 
@@ -264,7 +263,6 @@ describe("converters", () => {
           { id: "3", type: "skip", skip: { mandrel_rotation: 90 } },
         ],
         defaultFeedRate: 2000,
-        axisFormat: "xab",
         activeLayerId: null,
       };
 
@@ -299,7 +297,6 @@ describe("converters", () => {
           { id: "3", type: "skip", skip: { mandrel_rotation: 90 } },
         ],
         defaultFeedRate: 2000,
-        axisFormat: "xab",
         activeLayerId: null,
       };
 
@@ -351,7 +348,6 @@ describe("converters", () => {
       expect(result.mandrel).toEqual({ diameter: 130, wind_length: 280 });
       expect(result.tow).toEqual({ width: 5, thickness: 0.4 });
       expect(result.defaultFeedRate).toBe(3000);
-      expect(result.axisFormat).toBe("xab");
       expect(result.layers).toHaveLength(3);
       expect(result.layers[0].type).toBe("hoop");
       expect(result.layers[1].type).toBe("helical");
@@ -451,7 +447,6 @@ describe("converters", () => {
           },
         ],
         defaultFeedRate: 3500,
-        axisFormat: "xab",
         activeLayerId: "layer-2",
       };
 

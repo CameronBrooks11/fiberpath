@@ -11,7 +11,7 @@ def test_stream_route_supports_dry_run() -> None:
     response = client.post(
         "/stream/",
         json={
-            "gcode": "; header\nG0 X10\nG0 Y20",
+            "gcode": "; header\nG0 X10\nG0 A20",
             "dry_run": True,
         },
     )

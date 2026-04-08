@@ -13,7 +13,7 @@ SIMPLE_WIND = EXAMPLES / "simple_cylinder" / "input.wind"
 SIM_HEADER = (
     '; Parameters {"mandrel":{"diameter":50,"windLength":500},"tow":{"width":8,"thickness":0.4}}'
 )
-SIM_PROGRAM = [SIM_HEADER, "G0 F6000", "G0 X10", "G0 Y180", "G0 X10 Y360"]
+SIM_PROGRAM = [SIM_HEADER, "G0 F6000", "G0 X10", "G0 A180", "G0 X10 A360"]
 
 
 def test_plan_command_json(tmp_path: Path) -> None:

@@ -29,7 +29,6 @@ async fn plan_wind(
     app: AppHandle,
     input_path: String,
     output_path: Option<String>,
-    axis_format: Option<String>,
 ) -> Result<Value, String> {
     let output_file = output_path.unwrap_or_else(|| temp_path("gcode"));
     let mut args = vec![
@@ -39,12 +38,6 @@ async fn plan_wind(
         output_file.clone(),
         "--json".into(),
     ];
-
-    // Add axis format flag if specified
-    if let Some(format) = axis_format {
-        args.push("--axis-format".into());
-        args.push(format);
-    }
 
     let output = exec_fiberpath(app, args)
         .await

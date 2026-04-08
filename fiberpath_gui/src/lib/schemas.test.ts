@@ -32,7 +32,6 @@ describe("schemas", () => {
           commands: 150,
           layers: 3,
           metadata: { key: "value" },
-          axisFormat: "xab",
         };
 
         const result = PlanSummarySchema.safeParse(data);

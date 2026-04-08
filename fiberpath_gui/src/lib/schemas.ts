@@ -12,7 +12,6 @@ export const PlanSummarySchema = z.object({
   commands: z.number().int().nonnegative(),
   layers: z.number().int().nonnegative().optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
-  axisFormat: z.string().optional(),
 });
 
 /**

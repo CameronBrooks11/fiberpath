@@ -24,12 +24,11 @@ See [Planner Math](planner-math.md) for detailed formulas.
 
 Controller-specific G-code output formats. FiberPath currently supports Marlin dialects with plans for FANUC and GRBL.
 
-**Marlin dialects:**
+**Built-in Marlin dialect:**
 
 - **XAB (Standard):** Uses native rotational axes (A, B)
-- **XYZ (Legacy):** Treats rotational axes as linear (Y, Z) for backward compatibility
 
-See [Axis Mapping Guide](../guides/axis-mapping.md) for choosing between dialects.
+See [Axis Mapping Guide](../guides/axis-mapping.md) for format details and migration notes.
 
 ## Axis Mapping
 
