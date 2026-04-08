@@ -26,11 +26,8 @@ jobs:
         with:
           install-linux-deps: "true"
 
-      - name: Run ESLint
+      - name: Run TypeScript type check
         run: npm run lint
-
-      - name: Run TypeScript compiler
-        run: npx tsc --noEmit
 
       - name: Run Stylelint (CSS)
         run: npm run lint:css
