@@ -29,10 +29,11 @@ Thanks for investing time in the project! This guide explains how to set up a de
 - **Tests:** `uv run pytest` exercises all unit/integration suites. Add targeted tests for new planner logic, CLI behavior, or API endpoints.
 - **Docs:** Keep `docs/*.md` in sync with feature work. Significant planner or simulator changes usually deserve updates to `docs/architecture.md` or `docs/planner-math.md`.
 - **Dependency hygiene:** Follow `docs/development/dependency-policy.md` for cadence, SLA, and defer/exception handling.
+- **Commit-time automation:** Install and use pre-commit hooks (`pre-commit install`) so baseline Python and GUI checks run before each commit.
 
 ## Pull Request Checklist
 
-1. `uv run ruff check`
+1. `pre-commit run --all-files`
 2. `uv run mypy`
 3. `uv run pytest`
 4. Update documentation and add changelog entries in `CHANGELOG.md` when behavior changes.
