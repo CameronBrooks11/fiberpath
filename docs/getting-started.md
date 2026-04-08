@@ -156,7 +156,7 @@ fiberpath plot output.gcode --output preview.png --scale 0.5
 ### Simulation
 
 ```sh
-# Estimate time and material usage
+# Estimate time and material usage (summary output; no interactive 3D viewer)
 fiberpath simulate output.gcode
 ```
 
