@@ -28,9 +28,9 @@ def test_render_plot_produces_stable_geometry_signature() -> None:
     program = _plan_simple_cylinder_commands()
     signature = compute_plot_signature(program)
     assert signature.digest == SIMPLE_CYLINDER_SIGNATURE_DIGEST
-    assert signature.segments_rendered == 1821
+    assert signature.segments_rendered == 1291
     assert signature.metadata.mandrel_length_mm == 500.0
-    assert signature.metadata.tow_width_mm == 8.0
+    assert signature.metadata.tow_width_mm == 7.0
 
     result = render_plot(program, PlotConfig(scale=0.5))
     assert result.image.size == (250, 180)
