@@ -13,7 +13,7 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.0
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--fix]
         files: ^(fiberpath|fiberpath_api|fiberpath_cli|tests)/.*\.py$
       - id: ruff-format
