@@ -1,6 +1,6 @@
 import Ajv, { type ValidateFunction, type ErrorObject } from "ajv";
 import windSchema from "../../schemas/wind-schema.json";
-import type { FiberPathWindDefinition } from "../types/wind-schema";
+import type { WindDefinition } from "../types/wind-schema";
 
 let ajv: Ajv | null = null;
 let validate: ValidateFunction | null = null;
@@ -22,6 +22,10 @@ export interface ValidationError {
   message: string;
 }
 
+/**
+ * Validates a wind definition object against the generated JSON Schema.
+ * Returns structured field/message pairs for UI mapping.
+ */
 export function validateWindDefinition(data: unknown): {
   valid: boolean;
   errors: ValidationError[];
@@ -43,9 +47,13 @@ export function validateWindDefinition(data: unknown): {
   return { valid: false, errors };
 }
 
+/**
+ * Type guard for narrowing unknown data to WindDefinition.
+ * Useful when only a boolean validity check is needed.
+ */
 export function isValidWindDefinition(
   data: unknown,
-): data is FiberPathWindDefinition {
+): data is WindDefinition {
   const validator = getValidator();
   return validator(data);
 }

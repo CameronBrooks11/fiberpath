@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useProjectStore } from "../../stores/projectStore";
 import type { LayerEditorBaseProps } from "../../types/components";
 import type { HelicalLayer } from "../../types/project";
 import {
   validateHelicalField,
+  getHelicalGeometryHint,
   type HelicalNumericField,
 } from "../../lib/helicalValidation";
 import { setFieldError } from "../../lib/numericFields";
+import type { UiValidationField } from "../../lib/validationErrors";
 import { LayerNumericField } from "./LayerNumericField";
 
 interface HelicalLayerEditorProps extends LayerEditorBaseProps {
@@ -73,6 +76,15 @@ const HELICAL_FIELD_CONFIGS: HelicalFieldConfig[] = [
   },
 ];
 
+const HELICAL_VALIDATION_FIELD_MAP: Record<HelicalNumericField, UiValidationField> = {
+  wind_angle: "layers.helical.wind_angle",
+  pattern_number: "layers.helical.pattern_number",
+  skip_index: "layers.helical.skip_index",
+  lock_degrees: "layers.helical.lock_degrees",
+  lead_in_mm: "layers.helical.lead_in_mm",
+  lead_out_degrees: "layers.helical.lead_out_degrees",
+};
+
 const DEFAULT_HELICAL: HelicalLayer = {
   wind_angle: 45,
   pattern_number: 3,
@@ -85,18 +97,51 @@ const DEFAULT_HELICAL: HelicalLayer = {
 
 export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
   const layers = useProjectStore((state) => state.project.layers);
+  const mandrelDiameter = useProjectStore((state) => state.project.mandrel.diameter);
+  const towWidth = useProjectStore((state) => state.project.tow.width);
+  const validationErrors = useProjectStore((state) => state.validationErrors);
   const updateLayer = useProjectStore((state) => state.updateLayer);
+  const setValidationError = useProjectStore((state) => state.setValidationError);
   const [errors, setErrors] = useState<Partial<Record<HelicalNumericField, string>>>({});
 
   const layer = layers.find((item) => item.id === layerId);
+  const helical =
+    layer && layer.type === "helical" && layer.helical ? layer.helical : null;
+  const debouncedHelical = useDebouncedValue(helical ?? DEFAULT_HELICAL, 300);
 
-  if (!layer || layer.type !== "helical" || !layer.helical) {
+  useEffect(() => {
+    if (!helical) {
+      setErrors({});
+      return;
+    }
+
+    const nextErrors: Partial<Record<HelicalNumericField, string>> = {};
+
+    for (const config of HELICAL_FIELD_CONFIGS) {
+      const error = validateHelicalField(
+        config.field,
+        debouncedHelical[config.field],
+        debouncedHelical,
+      );
+      if (error) {
+        nextErrors[config.field] = error;
+      }
+    }
+
+    setErrors(nextErrors);
+  }, [debouncedHelical, helical]);
+
+  if (!layer || layer.type !== "helical" || !helical) {
     return null;
   }
-  const helical = layer.helical;
 
   const handleNumericChange = (field: HelicalNumericField, value: number) => {
     const currentHelical = helical || DEFAULT_HELICAL;
+    setValidationError(HELICAL_VALIDATION_FIELD_MAP[field], undefined);
+    if (field === "pattern_number" || field === "skip_index") {
+      setValidationError("layers.helical.pattern_number", undefined);
+      setValidationError("layers.helical.skip_index", undefined);
+    }
 
     updateLayer(layerId, {
       helical: {
@@ -122,25 +167,37 @@ export function HelicalLayerEditor({ layerId }: HelicalLayerEditorProps) {
     });
   };
 
+  const geometryHint = getHelicalGeometryHint(helical, mandrelDiameter, towWidth);
+
   return (
     <div className="layer-editor">
       <h3 className="layer-editor__title">Helical Layer Properties</h3>
 
-      {HELICAL_FIELD_CONFIGS.map((config) => (
-        <LayerNumericField
-          key={config.field}
-          id={`${config.field}-${layerId}`}
-          label={config.label}
-          tooltip={config.tooltip}
-          value={helical[config.field]}
-          step={config.step}
-          unit={config.unit}
-          integer={config.integer}
-          error={errors[config.field]}
-          onChange={(value) => handleNumericChange(config.field, value)}
-          onBlur={(value) => handleNumericBlur(config.field, value)}
-        />
-      ))}
+      {HELICAL_FIELD_CONFIGS.map((config) => {
+        const backendError =
+          validationErrors[HELICAL_VALIDATION_FIELD_MAP[config.field]];
+        return (
+          <LayerNumericField
+            key={config.field}
+            id={`${config.field}-${layerId}`}
+            label={config.label}
+            tooltip={config.tooltip}
+            value={helical[config.field]}
+            step={config.step}
+            unit={config.unit}
+            integer={config.integer}
+            error={errors[config.field] || backendError}
+            onChange={(value) => handleNumericChange(config.field, value)}
+            onBlur={(value) => handleNumericBlur(config.field, value)}
+          />
+        );
+      })}
+
+      {geometryHint && (
+        <p className="layer-editor__hint layer-editor__hint--warning">
+          {geometryHint}
+        </p>
+      )}
 
       <div className="layer-editor__group">
         <label className="layer-editor__checkbox-label">

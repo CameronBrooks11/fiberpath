@@ -55,7 +55,7 @@ export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
         <ul className="about-features">
           <li>Visual layer authoring with live preview</li>
           <li>JSON Schema validation</li>
-          <li>Multiple axis formats (XAB, XYZ)</li>
+          <li>XAB rotational-axis G-code output</li>
           <li>Real-time G-code generation</li>
         </ul>
       </div>

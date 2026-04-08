@@ -543,17 +543,3 @@
 .diagnostic-table code {
   word-break: break-all;
 }
-
-.diagnostic-output {
-  margin: var(--spacing-sm) 0;
-  max-height: 200px;
-  overflow: auto;
-  padding: var(--spacing-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-sm);
-  background: var(--color-console-bg-mid);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-sm);
-  white-space: pre-wrap;
-  word-break: break-all;
-}

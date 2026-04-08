@@ -8,9 +8,14 @@ import {
   createEmptyProject,
   createLayer,
 } from "../types/project";
+import type {
+  UiValidationErrors,
+  UiValidationField,
+} from "../lib/validationErrors";
 
 interface ProjectState {
   project: FiberPathProject;
+  validationErrors: UiValidationErrors;
 
   // Project management
   loadProject: (project: FiberPathProject) => void;
@@ -22,7 +27,6 @@ interface ProjectState {
 
   // Machine settings
   updateDefaultFeedRate: (feedRate: number) => void;
-  setAxisFormat: (format: "xab" | "xyz") => void;
 
   // Layer operations
   addLayer: (type: LayerType) => string; // returns new layer id
@@ -40,17 +44,32 @@ interface ProjectState {
 
   // File metadata
   setFilePath: (path: string | null) => void;
+
+  // Validation state
+  setValidationErrors: (errors: UiValidationErrors) => void;
+  setValidationError: (
+    field: UiValidationField,
+    message: string | undefined,
+  ) => void;
+  clearValidationErrors: () => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
   project: createEmptyProject(),
+  validationErrors: {},
 
   loadProject: (project: FiberPathProject) => {
-    set({ project });
+    set({
+      project,
+      validationErrors: {},
+    });
   },
 
   newProject: () => {
-    set({ project: createEmptyProject() });
+    set({
+      project: createEmptyProject(),
+      validationErrors: {},
+    });
   },
 
   updateMandrel: (mandrel: Partial<Mandrel>) => {
@@ -182,12 +201,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     }));
   },
 
-  setAxisFormat: (format: "xab" | "xyz") => {
-    set((state) => ({
-      project: { ...state.project, axisFormat: format, isDirty: true },
-    }));
-  },
-
   markDirty: () => {
     set((state) => ({
       project: { ...state.project, isDirty: true },
@@ -204,5 +217,28 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set((state) => ({
       project: { ...state.project, filePath: path },
     }));
+  },
+
+  setValidationErrors: (errors: UiValidationErrors) => {
+    set({ validationErrors: errors });
+  },
+
+  setValidationError: (
+    field: UiValidationField,
+    message: string | undefined,
+  ) => {
+    set((state) => {
+      const nextErrors = { ...state.validationErrors };
+      if (message) {
+        nextErrors[field] = message;
+      } else {
+        delete nextErrors[field];
+      }
+      return { validationErrors: nextErrors };
+    });
+  },
+
+  clearValidationErrors: () => {
+    set({ validationErrors: {} });
   },
 }));

@@ -40,7 +40,6 @@ interface ProjectState {
   updateTow: (tow: Partial<Tow>) => void;
   // Machine settings
   updateDefaultFeedRate: (feedRate: number) => void;
-  setAxisFormat: (format: "xab" | "xyz") => void;
   // Layer operations
   addLayer: (type: LayerType) => string;
   removeLayer: (id: string) => void;
@@ -65,7 +64,6 @@ interface FiberPathProject {
   mandrel: Mandrel;
   tow: Tow;
   defaultFeedRate: number;
-  axisFormat: "xab" | "xyz";
   layers: Layer[];
   activeLayerId: string | null;
   isDirty: boolean;

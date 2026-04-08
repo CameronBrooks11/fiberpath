@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { validateWindDefinition, isValidWindDefinition } from "./validation";
-import type { FiberPathWindDefinition } from "../types/wind-schema";
+import type { WindDefinition } from "../types/wind-schema";
 
 describe("Wind Definition Validation", () => {
   describe("Valid definitions", () => {
     it("should validate a minimal valid hoop layer definition", () => {
-      const validDef: FiberPathWindDefinition = {
+      const validDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
@@ -31,7 +31,7 @@ describe("Wind Definition Validation", () => {
     });
 
     it("should validate a helical layer with all required fields", () => {
-      const validDef: FiberPathWindDefinition = {
+      const validDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
@@ -62,7 +62,7 @@ describe("Wind Definition Validation", () => {
     });
 
     it("should validate a skip layer", () => {
-      const validDef: FiberPathWindDefinition = {
+      const validDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
@@ -87,7 +87,7 @@ describe("Wind Definition Validation", () => {
     });
 
     it("should validate a definition with multiple layer types", () => {
-      const validDef: FiberPathWindDefinition = {
+      const validDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,
@@ -321,7 +321,7 @@ describe("Wind Definition Validation", () => {
 
   describe("Type guard", () => {
     it("should return true for valid definition", () => {
-      const validDef: FiberPathWindDefinition = {
+      const validDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 150,

@@ -1,7 +1,7 @@
 # FiberPath Roadmap - Future Backlog (Low Priority / Speculative)
 
-**Focus:** Speculative features with unclear value or disproportionate complexity  
-**Status:** Backlog - only implement with strong user demand and clear value proposition  
+**Focus:** Speculative features with unclear value or disproportionate complexity
+**Status:** Backlog - only implement with strong user demand and clear value proposition
 **Priority:** Low to None
 **Role:** Decision/reference log for deferred or rejected features from active roadmaps (v6, v7, and beyond)
 

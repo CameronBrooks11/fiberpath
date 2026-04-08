@@ -7,7 +7,7 @@ from dataclasses import asdict
 from fastapi import APIRouter, HTTPException
 from fiberpath.config import WindFileError, load_wind_definition
 from fiberpath.gcode import write_gcode
-from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, MARLIN_XYZ_LEGACY
+from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
 from fiberpath.planning import PlanOptions, plan_wind
 
 from ..path_policy import enforce_input_path_policy, enforce_output_path_policy
@@ -24,9 +24,7 @@ def plan_from_file(payload: FilePathRequest) -> PlanResponse:
     except WindFileError as exc:  # pragma: no cover - HTTP glue
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    # Select dialect based on axis format
-    dialect = MARLIN_XAB_STANDARD if payload.axis_format == "xab" else MARLIN_XYZ_LEGACY
-    options = PlanOptions(verbose=payload.verbose, dialect=dialect)
+    options = PlanOptions(verbose=payload.verbose, dialect=MARLIN_XAB_STANDARD)
 
     result = plan_wind(definition, options)
     output_path = enforce_output_path_policy(file_path.with_suffix(".gcode"))
@@ -37,6 +35,5 @@ def plan_from_file(payload: FilePathRequest) -> PlanResponse:
         output=str(temp_file),
         timeSeconds=result.total_time_s,
         towMeters=result.total_tow_m,
-        axisFormat=payload.axis_format,
         layers=layers,
     )

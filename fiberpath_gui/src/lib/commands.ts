@@ -16,20 +16,16 @@ import {
   type ValidationResult,
 } from "./schemas";
 
-export type AxisFormat = "xyz" | "xab";
-
-// Core commands with retry logic and runtime validation
+/**
+ * Plans a wind definition file into G-code.
+ * Uses runtime schema validation and light retry for transient failures.
+ */
 export const planWind = withRetry(
-  async (
-    inputPath: string,
-    outputPath?: string,
-    axisFormat?: AxisFormat,
-  ): Promise<PlanSummary> => {
+  async (inputPath: string, outputPath?: string): Promise<PlanSummary> => {
     try {
       const result = await invoke("plan_wind", {
         inputPath,
         outputPath,
-        axisFormat,
       });
       return validateData(PlanSummarySchema, result, "plan_wind response");
     } catch (error) {
@@ -43,6 +39,9 @@ export const planWind = withRetry(
   { maxAttempts: 2 }, // Lower retry for planning - it's usually not transient
 );
 
+/**
+ * Simulates a generated G-code program and returns execution summary metrics.
+ */
 export const simulateProgram = withRetry(
   async (gcodePath: string): Promise<SimulationSummary> => {
     try {
@@ -62,6 +61,9 @@ export const simulateProgram = withRetry(
   },
 );
 
+/**
+ * Generates a preview plot image for a G-code file at a given scale.
+ */
 export const previewPlot = withRetry(
   async (
     gcodePath: string,
@@ -85,6 +87,10 @@ export const previewPlot = withRetry(
   },
 );
 
+/**
+ * Streams G-code to Marlin hardware (or dry-run mode).
+ * This command intentionally does not retry to avoid duplicate serial operations.
+ */
 export async function streamProgram(
   gcodePath: string,
   options: { port?: string; baudRate: number; dryRun: boolean },
@@ -103,6 +109,9 @@ export async function streamProgram(
   }
 }
 
+/**
+ * Plots an in-memory wind definition and returns image payload + warnings.
+ */
 export const plotDefinition = withRetry(
   async (
     definitionJson: string,
@@ -130,7 +139,9 @@ export const plotDefinition = withRetry(
   },
 );
 
-// File operations with retry logic and runtime validation
+/**
+ * Saves `.wind` content to disk through the Tauri backend command bridge.
+ */
 export const saveWindFile = withRetry(
   async (path: string, content: string): Promise<void> => {
     try {
@@ -145,6 +156,9 @@ export const saveWindFile = withRetry(
   },
 );
 
+/**
+ * Loads `.wind` content from disk through the Tauri backend command bridge.
+ */
 export const loadWindFile = withRetry(async (path: string): Promise<string> => {
   try {
     const result = await invoke<string>("load_wind_file", { path });
@@ -157,6 +171,9 @@ export const loadWindFile = withRetry(async (path: string): Promise<string> => {
   }
 });
 
+/**
+ * Validates an in-memory wind definition JSON payload via CLI command.
+ */
 export const validateWindDefinition = withRetry(
   async (definitionJson: string): Promise<ValidationResult> => {
     try {

@@ -1,9 +1,9 @@
 /**
  * FiberPath GUI - Main Stylesheet
- * 
+ *
  * This file imports all CSS modules in the correct order.
  * Import this single file to get all application styles.
- * 
+ *
  * Module Load Order:
  * 1. tokens.css - Design system variables
  * 2. reset.css - Base resets and foundation

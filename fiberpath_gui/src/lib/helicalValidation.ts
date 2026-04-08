@@ -22,6 +22,34 @@ const validateCoprime = (pattern: number, skip: number): string | undefined => {
   return undefined;
 };
 
+function computeCircuitCount(
+  helical: HelicalLayer,
+  mandrelDiameter: number,
+  towWidth: number,
+): number | null {
+  if (
+    !Number.isFinite(mandrelDiameter) ||
+    !Number.isFinite(towWidth) ||
+    mandrelDiameter <= 0 ||
+    towWidth <= 0
+  ) {
+    return null;
+  }
+
+  const angleRadians = (helical.wind_angle * Math.PI) / 180;
+  const cosine = Math.cos(angleRadians);
+  if (cosine <= 0) {
+    return null;
+  }
+
+  const towArcLength = towWidth / cosine;
+  if (towArcLength <= 0) {
+    return null;
+  }
+
+  return Math.ceil((Math.PI * mandrelDiameter) / towArcLength);
+}
+
 export function validateHelicalField(
   field: HelicalNumericField,
   value: number,
@@ -58,4 +86,25 @@ export function validateHelicalField(
     case "lead_in_mm":
       return value < 0 ? "Lead-in must be non-negative" : undefined;
   }
+}
+
+export function getHelicalGeometryHint(
+  helical: HelicalLayer,
+  mandrelDiameter: number,
+  towWidth: number,
+): string | undefined {
+  if (helical.skip_index >= helical.pattern_number) {
+    return "Skip index should be less than pattern number to avoid invalid routing.";
+  }
+
+  const circuitCount = computeCircuitCount(helical, mandrelDiameter, towWidth);
+  if (!circuitCount) {
+    return undefined;
+  }
+
+  if (circuitCount % helical.pattern_number !== 0) {
+    return `Estimated circuits (${circuitCount}) are not divisible by pattern number (${helical.pattern_number}); planning validation may fail.`;
+  }
+
+  return undefined;
 }

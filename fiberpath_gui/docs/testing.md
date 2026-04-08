@@ -173,7 +173,7 @@ describe('MyComponent', () => {
 
 ```typescript
 import { describe, it, expect } from "vitest";
-import { useProjectStore } from "../state/projectStore";
+import { useProjectStore } from "../stores/projectStore";
 describe("Plan Workflow", () => {
   it("should create project, add layer, and update mandrel", () => {
     const store = useProjectStore.getState();

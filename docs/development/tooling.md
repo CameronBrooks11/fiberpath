@@ -44,6 +44,7 @@ Commands run from `fiberpath_gui/` directory with `npm run <script>`:
 | `test`          | `vitest`                                      | Vitest     | Run GUI tests (watch mode)                    |
 | `test:coverage` | `vitest run --coverage`                       | Vitest     | Run tests with coverage report                |
 | `build`         | `vite build`                                  | Vite       | Build production bundle                       |
+| `perf:bundle`   | `node scripts/check-bundle-budget.mjs`        | Node       | Enforce JS/CSS bundle budget + emit metrics   |
 
 **Alias Location:** `fiberpath_gui/package.json` → `"scripts"`
 
@@ -64,16 +65,28 @@ npm test
 npm run build
 ```
 
-**Combined Pre-Commit Workflow:**
+## Pre-Commit Automation
 
-Run from project root before committing:
+FiberPath uses a repo-root pre-commit configuration (`.pre-commit-config.yaml`) for baseline commit-time checks across Python and GUI code.
+
+### One-time setup
 
 ```sh
-# Python stack
-uv run ruff check && uv run ruff format && uv run mypy && uv run pytest -v
-# GUI stack
-cd fiberpath_gui && npm run check:all && npm test && npm run build && cd ..
+uv run pre-commit install
 ```
+
+### Run manually on demand
+
+```sh
+uv run pre-commit run --all-files
+```
+
+### Hook coverage
+
+- File hygiene: trailing whitespace, end-of-file, merge-conflict markers, large-file guard
+- Python: Ruff lint (`--fix`) and Ruff format for backend/test paths
+- GUI: TypeScript type check (`npm --prefix fiberpath_gui run lint`) for TS/TSX changes
+- GUI: Stylelint (`npm --prefix fiberpath_gui run lint:css`) for CSS changes
 
 ## CI/CD Equivalents
 
@@ -100,6 +113,7 @@ npm run clippy                   # Rust linting
 npm test                         # Vitest
 npm run test:coverage            # Coverage report
 npm run build                    # Vite build
+npm run perf:bundle              # Bundle budget + metrics report
 ```
 
 ## Quick Command Summary

@@ -40,9 +40,9 @@ class WinderMachine:
 
         # Import here to avoid circular dependency
         if dialect is None:
-            from fiberpath.gcode.dialects import MARLIN_XYZ_LEGACY
+            from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
 
-            dialect = MARLIN_XYZ_LEGACY
+            dialect = MARLIN_XAB_STANDARD
         self._dialect = dialect
 
     def get_gcode(self) -> list[str]:
@@ -130,11 +130,8 @@ class WinderMachine:
             command_parts.append(f"{axis_letter}{strip_precision(value)}")
             move_component = value - self._last_position[axis]
 
-            # Distance calculation depends on whether axis is truly rotational in Marlin
             if axis == Axis.MANDREL:
-                # For XYZ legacy: Y/Z configured as linear in Marlin
-                # For XAB standard: A/B are rotational in Marlin
-                # In both cases, use degree value directly for distance calculation
+                # Use degree value directly for motion distance.
                 total_distance_sq += move_component**2
                 # For tow length, always convert to arc length
                 arc_length = move_component / 360.0 * self._mandrel_diameter * math.pi

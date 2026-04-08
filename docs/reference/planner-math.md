@@ -8,11 +8,11 @@ strategies can be implemented consistently.
 FiberPath uses three logical axes that map to physical controller axes via the dialect configuration:
 
 - **Carriage axis:** Linear motion along the mandrel's longitudinal axis (typically X). All axial movement is measured in millimeters.
-- **Mandrel rotation:** Rotational movement of the mandrel (A in standard format, Y in legacy). Expressed in degrees; helical layers convert desired fiber angle into simultaneous carriage + mandrel rotation.
-- **Delivery head rotation:** Rotational movement of the delivery head/tow feed (B in standard format, Z in legacy). Expressed in degrees.
+- **Mandrel rotation:** Rotational movement of the mandrel (A in standard format). Expressed in degrees; helical layers convert desired fiber angle into simultaneous carriage + mandrel rotation.
+- **Delivery head rotation:** Rotational movement of the delivery head/tow feed (B in standard format). Expressed in degrees.
 - **Tow width (w):** Linear coverage per wrap; used to compute the number of passes per layer.
 
-The planner operates on these logical axes independent of the physical G-code axis letters, which are determined by the selected dialect (XAB standard or XYZ legacy).
+The planner operates on these logical axes independent of the physical G-code axis letters, which are determined by the active dialect (XAB in built-in workflows).
 
 ## Hoop Layers
 

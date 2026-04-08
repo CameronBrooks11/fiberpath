@@ -26,11 +26,8 @@ jobs:
         with:
           install-linux-deps: "true"
 
-      - name: Run ESLint
+      - name: Run TypeScript type check
         run: npm run lint
-
-      - name: Run TypeScript compiler
-        run: npx tsc --noEmit
 
       - name: Run Stylelint (CSS)
         run: npm run lint:css
@@ -69,6 +66,9 @@ jobs:
       - name: Build Vite assets
         run: npm run build
 
+      - name: Enforce bundle budget
+        run: npm run perf:bundle
+
       - name: Verify build output
         run: |
           if [ ! -d "dist" ]; then
@@ -76,6 +76,13 @@ jobs:
             exit 1
           fi
           echo "Build successful - dist/ directory created"
+
+      - name: Upload bundle metrics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gui-bundle-metrics
+          path: fiberpath_gui/perf/reports/bundle-metrics.json
+          if-no-files-found: error
 
       - name: Setup Rust environment
         uses: ./.github/actions/setup-rust

@@ -2,7 +2,7 @@
  * Panel & Card Components
  *
  * Primitive classes: `.panel`, `.panel-container`, `.panel-header`,
- * `.panel-title`, `.panel-body` (with `.panel-content` alias)
+ * `.panel-title`, `.panel-body`
  */
 
 /* Structural panel primitives */
@@ -43,77 +43,10 @@
   color: var(--color-text-muted);
 }
 
-.panel-body,
-.panel-content {
+.panel-body {
   flex: 1;
   padding: var(--spacing-lg);
   overflow: hidden auto;
-}
-
-/* Result Card */
-.result-card {
-  margin-top: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: var(--color-bg-panel-alt);
-  border-radius: var(--border-radius-lg);
-  border: 1px solid var(--color-border);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-base);
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.result-card strong {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  color: var(--color-accent);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: var(--font-size-sm);
-}
-
-.output-text {
-  margin: 0;
-  max-width: 100%;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  box-sizing: border-box;
-}
-
-/* Preview Images */
-.preview-image {
-  width: 100%;
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-border);
-  margin-top: var(--spacing-md);
-}
-
-/* Status Indicators */
-.status {
-  font-size: var(--font-size-base);
-  margin-top: var(--spacing-md);
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.status.ok,
-.status.success {
-  color: var(--color-success);
-}
-
-.status.error {
-  color: var(--color-error);
-}
-
-.status.warning {
-  color: var(--color-warning);
-}
-
-.status.info {
-  color: var(--color-info);
 }
 
 /* Layer Stack Panel */
@@ -457,16 +390,8 @@
   line-height: var(--line-height-normal);
 }
 
-/* App Footer */
-.app-footer {
-  padding: var(--spacing-xl);
-  border-top: 1px solid var(--color-border);
-  text-align: center;
-  background: var(--color-console-bg-dark);
-}
-
-.app-footer small {
-  color: var(--color-text-muted);
+.layer-editor__hint--warning {
+  color: var(--color-warning);
 }
 
 /* Responsive Design */

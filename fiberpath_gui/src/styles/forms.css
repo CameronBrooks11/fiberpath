@@ -122,10 +122,6 @@ select:focus,
     0 0 0 var(--border-width-medium) var(--color-border-focus);
 }
 
-.param-form__input--success {
-  border-color: var(--color-success);
-}
-
 /* Input Unit Labels */
 .param-form__unit,
 .layer-editor__unit {
@@ -158,21 +154,6 @@ select:focus,
 
 .layer-editor__error {
   font-size: var(--font-size-xs);
-}
-
-.param-form__hint {
-  margin-left: var(--spacing-sm);
-  font-size: var(--font-size-xs);
-  font-style: italic;
-  font-weight: var(--font-weight-normal);
-  color: var(--color-text-muted);
-}
-
-.param-form__description {
-  margin-top: var(--spacing-sm);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-  color: var(--color-text-muted);
 }
 
 /* Remove spinner arrows from number inputs */

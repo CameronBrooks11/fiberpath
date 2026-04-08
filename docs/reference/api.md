@@ -15,7 +15,6 @@ Request body:
 ```json
 {
   "path": "/absolute/path/to/input.wind",
-  "axis_format": "xab",
   "verbose": false
 }
 ```
@@ -23,7 +22,6 @@ Request body:
 **Fields:**
 
 - `path` (required): Absolute path to `.wind` file
-- `axis_format` (optional): Axis coordinate format - `"xab"` (default, standard rotational) or `"xyz"` (legacy compatibility)
 - `verbose` (optional): Include detailed layer metrics in response (default: `false`)
 
 See [Axis Mapping Guide](../guides/axis-mapping.md) for format details.
@@ -36,7 +34,6 @@ Response body:
   "output": "/absolute/path/to/input.gcode",
   "timeSeconds": 42.5,
   "towMeters": 8.1,
-  "axisFormat": "xab",
   "layers": [
     {
       "index": 1,
@@ -134,7 +131,7 @@ Request:
 
 ```json
 {
-  "gcode": "; Parameters ...\nG0 X0 Y0\n",
+  "gcode": "; Parameters ...\nG0 X0 A0\n",
   "port": "COM5",
   "baud_rate": 250000,
   "dry_run": true

@@ -32,7 +32,7 @@ def test_stream_route_dry_run_no_port_needed() -> None:
     response = client.post(
         "/stream/",
         json={
-            "gcode": "G0 X10\nG0 Y20",
+            "gcode": "G0 X10\nG0 A20",
             "dry_run": True,
             # port intentionally omitted
         },

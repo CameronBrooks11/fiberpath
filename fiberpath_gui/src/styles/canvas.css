@@ -1,6 +1,6 @@
 /**
  * Canvas & Visualization Styles
- * 
+ *
  * Styles for the main visualization canvas area including empty states,
  * loading states, and error states.
  */
@@ -64,8 +64,7 @@
   margin-bottom: var(--spacing-sm);
 }
 
-.visualization-canvas__empty-hint,
-.visualization-canvas__placeholder-hint {
+.visualization-canvas__empty-hint {
   font-size: var(--font-size-base);
   color: var(--color-text-muted);
 }

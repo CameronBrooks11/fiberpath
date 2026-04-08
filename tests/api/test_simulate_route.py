@@ -40,10 +40,10 @@ def test_simulate_from_file_success(tmp_path: Path) -> None:
         """; Parameters {"mandrel": {"diameter": 100.0}, "tow": {"width": 3.0}}
 G21
 G90
-G92 X0 Y0 Z0
+G92 X0 A0 B0
 F1000
-G1 X10 Y20 Z30
-G1 X20 Y40 Z60
+G1 X10 A20 B30
+G1 X20 A40 B60
 """,
         encoding="utf-8",
     )

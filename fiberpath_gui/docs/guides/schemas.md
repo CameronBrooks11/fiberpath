@@ -137,7 +137,7 @@ export const ComplexSchema = z.object({
   tow: TowParametersSchema, // Nested object
   settings: z.object({
     // Inline nested object
-    axisFormat: z.enum(["xab", "xyz"]),
+    previewScale: z.number().positive(),
     dryRun: z.boolean(),
   }),
 });
@@ -146,11 +146,11 @@ export const ComplexSchema = z.object({
 ### Enums
 
 ```typescript
-export const AxisFormatSchema = z.enum(["xab", "xyz"]);
-export type AxisFormat = z.infer<typeof AxisFormatSchema>;
+export const LayerTypeSchema = z.enum(["hoop", "helical", "skip"]);
+export type LayerType = z.infer<typeof LayerTypeSchema>;
 // Usage
-const format: AxisFormat = "xab"; // Valid
-const format: AxisFormat = "abc"; // Type error
+const layerType: LayerType = "helical"; // Valid
+const layerType: LayerType = "axial"; // Type error
 ```
 
 ### Records (Dynamic Keys)
@@ -281,11 +281,11 @@ const update: z.infer<typeof PartialMandrelSchema> = { diameter: 200 };
 
 ```typescript
 export const ConfigSchema = z.object({
-  axisFormat: z.enum(["xab", "xyz"]).default("xab"),
+  previewScale: z.number().positive().default(1),
   dryRun: z.boolean().default(false),
 });
 const config = ConfigSchema.parse({});
-// Result: { axisFormat: "xab", dryRun: false }
+// Result: { previewScale: 1, dryRun: false }
 ```
 
 ## Error Handling

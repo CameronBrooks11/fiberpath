@@ -244,12 +244,12 @@ type PartialMandrel = Partial<MandrelParameters>;
 
 ```typescript
 type OptionalConfig = {
-  axisFormat?: "xab" | "xyz";
+  previewScale?: number;
   dryRun?: boolean;
 };
 // All fields required
 type RequiredConfig = Required<OptionalConfig>;
-// Equivalent to: { axisFormat: "xab" | "xyz"; dryRun: boolean; }
+// Equivalent to: { previewScale: number; dryRun: boolean; }
 ```
 
 ### Pick
@@ -277,10 +277,10 @@ type LayerWithoutId = Omit<Layer, "id">;
 ### Exclude
 
 ```typescript
-type AxisFormat = "xab" | "xyz" | "xyzab";
+type OutputMode = "plot" | "simulate" | "stream" | "all";
 // Exclude specific values from union
-type SimpleAxisFormat = Exclude<AxisFormat, "xyzab">;
-// Equivalent to: "xab" | "xyz"
+type InteractiveModes = Exclude<OutputMode, "all">;
+// Equivalent to: "plot" | "simulate" | "stream"
 ```
 
 ### Extract
@@ -340,16 +340,16 @@ removeLayer(projectId); // ❌ Type error
 
 ```typescript
 const config = {
-  axisFormat: "xab",
+  previewScale: 1,
   dryRun: false,
 } as const;
-// Type: { readonly axisFormat: "xab"; readonly dryRun: false; }
+// Type: { readonly previewScale: 1; readonly dryRun: false; }
 // vs
 const config = {
-  axisFormat: "xab",
+  previewScale: 1,
   dryRun: false,
 };
-// Type: { axisFormat: string; dryRun: boolean; }
+// Type: { previewScale: number; dryRun: boolean; }
 ```
 
 **Use Case:** Narrow types to literal values.

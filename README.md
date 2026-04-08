@@ -4,7 +4,7 @@
 
 **Plan, simulate, and manufacture composite parts with precision fiber winding.**
 
-[![Version](https://img.shields.io/badge/version-0.6.2-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.7.0-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-00695C.svg)](LICENSE)
 [![Backend CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/backend-ci.yml)
 [![GUI CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-ci.yml)
@@ -33,7 +33,7 @@ Design multi-layer winding patterns in a visual interface, simulate the full man
 - **Geodesic Path Planning** – Automatic computation of stable fiber trajectories
 - **Hardware Simulation** – Validate motion before manufacturing
 - **Direct Machine Control** – Stream G-code to Marlin controllers with pause/resume
-- **Flexible Axis Mapping** – Support for XAB rotational or XYZ linear axis configurations
+- **XAB-Native Axis Output** – Standardized rotational-axis output with clear logical axis mapping
 - **Cross-Platform Desktop GUI** – Native Windows, macOS, and Linux applications
 - **Command-Line Tools** – Scriptable workflows for automation and CI/CD
 - **Comprehensive Documentation** – Architecture guides, examples, and API reference
@@ -115,9 +115,6 @@ pytest
 ```sh
 # Generate G-code from a .wind configuration
 fiberpath plan examples/simple_cylinder/input.wind -o output.gcode
-
-# Specify axis format for your machine
-fiberpath plan input.wind -o output.gcode --axis-format xab
 ```
 
 ### Visualizing Toolpaths
@@ -223,21 +220,13 @@ See [Architecture Documentation](https://cameronbrooks11.github.io/fiberpath/arc
 
 ## Axis Configuration
 
-FiberPath supports two axis mapping formats:
-
-**XAB (Rotational) - Default**:
+FiberPath uses XAB rotational-axis output in built-in workflows:
 
 - `X` = Carriage position (linear, mm)
 - `A` = Mandrel rotation (rotational, degrees)
 - `B` = Delivery head rotation (rotational, degrees)
 
-**XYZ (Legacy)**:
-
-- `X` = Carriage position (linear, mm)
-- `Y` = Mandrel rotation (treated as linear, degrees)
-- `Z` = Delivery head rotation (treated as linear, degrees)
-
-Use `--axis-format xab` (default) for new projects. The XYZ format maintains compatibility with legacy systems like Cyclone.
+Legacy XYZ programs should be re-generated under current versions. Simulation and plotting reject auto-detected XYZ files with an explicit error so stale programs are surfaced early.
 
 ## Documentation
 

@@ -1,6 +1,6 @@
 import { open as openExternal } from "@tauri-apps/plugin-shell";
 import { Monitor, Moon, Sun } from "lucide-react";
-import { useCallback, useState } from "react";
+import { Suspense, lazy, useCallback, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../stores/projectStore";
 import { useTheme } from "../hooks/useTheme";
@@ -12,9 +12,22 @@ import {
   formatRecentFileName,
   formatRecentFilePath,
 } from "../lib/recentFiles";
-import { AboutDialog } from "./dialogs/AboutDialog";
-import { DiagnosticsDialog } from "./dialogs/DiagnosticsDialog";
-import { ExportConfirmationDialog } from "./dialogs/ExportConfirmationDialog";
+
+const AboutDialog = lazy(() =>
+  import("./dialogs/AboutDialog").then((module) => ({
+    default: module.AboutDialog,
+  })),
+);
+const DiagnosticsDialog = lazy(() =>
+  import("./dialogs/DiagnosticsDialog").then((module) => ({
+    default: module.DiagnosticsDialog,
+  })),
+);
+const ExportConfirmationDialog = lazy(() =>
+  import("./dialogs/ExportConfirmationDialog").then((module) => ({
+    default: module.ExportConfirmationDialog,
+  })),
+);
 
 interface MenuBarProps {
   onToggleLeftPanel?: () => void;
@@ -204,27 +217,33 @@ export function MenuBar({
         )}
       </button>
 
-      <AboutDialog
-        isOpen={showAboutDialog}
-        onClose={() => setShowAboutDialog(false)}
-      />
+      <Suspense fallback={null}>
+        {showAboutDialog && (
+          <AboutDialog
+            isOpen={showAboutDialog}
+            onClose={() => setShowAboutDialog(false)}
+          />
+        )}
 
-      <DiagnosticsDialog
-        isOpen={showDiagnosticsDialog}
-        onClose={() => setShowDiagnosticsDialog(false)}
-      />
+        {showDiagnosticsDialog && (
+          <DiagnosticsDialog
+            isOpen={showDiagnosticsDialog}
+            onClose={() => setShowDiagnosticsDialog(false)}
+          />
+        )}
 
-      {showExportDialog && (
-        <ExportConfirmationDialog
-          project={project}
-          onConfirm={async () => {
-            setShowExportDialog(false);
-            await fileOps.handleExportGcode();
-            refreshRecentFiles();
-          }}
-          onCancel={() => setShowExportDialog(false)}
-        />
-      )}
+        {showExportDialog && (
+          <ExportConfirmationDialog
+            project={project}
+            onConfirm={async () => {
+              setShowExportDialog(false);
+              await fileOps.handleExportGcode();
+              refreshRecentFiles();
+            }}
+            onCancel={() => setShowExportDialog(false)}
+          />
+        )}
+      </Suspense>
     </nav>
   );
 }

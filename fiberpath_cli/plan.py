@@ -8,7 +8,7 @@ from pathlib import Path
 import typer
 from fiberpath.config import WindFileError, load_wind_definition
 from fiberpath.gcode import write_gcode
-from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, MARLIN_XYZ_LEGACY
+from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
 from fiberpath.planning import PlanOptions, plan_wind
 from rich.console import Console
 from rich.table import Table
@@ -27,11 +27,6 @@ JSON_OPTION = typer.Option(
     "--json",
     help="Emit machine-readable JSON instead of human-readable text.",
 )
-AXIS_FORMAT_OPTION = typer.Option(
-    "xab",
-    "--axis-format",
-    help="Axis coordinate format: xyz (legacy) or xab (standard rotational)",
-)
 
 
 def plan_command(
@@ -39,23 +34,16 @@ def plan_command(
     output: Path = OUTPUT_OPTION,
     verbose: bool = VERBOSE_OPTION,
     json_output: bool = JSON_OPTION,
-    axis_format: str = AXIS_FORMAT_OPTION,
 ) -> None:
-    # Validate axis format
-    if axis_format not in {"xyz", "xab"}:
-        typer.echo(f"Invalid axis format: {axis_format}. Must be 'xyz' or 'xab'.", err=True)
-        raise typer.Exit(code=1)
-
-    # Select dialect based on axis format
-    dialect = MARLIN_XAB_STANDARD if axis_format == "xab" else MARLIN_XYZ_LEGACY
-
     try:
         wind_definition = load_wind_definition(wind_file)
     except WindFileError as exc:  # pragma: no cover - CLI glue
         raise typer.BadParameter(str(exc)) from exc
 
     try:
-        result = plan_wind(wind_definition, PlanOptions(verbose=verbose, dialect=dialect))
+        result = plan_wind(
+            wind_definition, PlanOptions(verbose=verbose, dialect=MARLIN_XAB_STANDARD)
+        )
     except Exception as exc:  # pragma: no cover - defensive guard
         typer.echo(f"Planning failed: {exc}", err=True)
         raise typer.Exit(code=1) from exc
@@ -67,7 +55,6 @@ def plan_command(
         "commands": len(result.commands),
         "timeSeconds": result.total_time_s,
         "towMeters": result.total_tow_m,
-        "axisFormat": axis_format,
         "layers": [asdict(metric) for metric in result.layers],
     }
 
@@ -76,8 +63,6 @@ def plan_command(
         return
 
     console.print(f"[green]Wrote[/green] {summary['commands']} commands to {destination}")
-    console.print(f"[dim]Axis format: {axis_format.upper()}[/dim]")
-
     if verbose:
         table = Table(title="Layer metrics", expand=False)
         table.add_column("#", justify="right")

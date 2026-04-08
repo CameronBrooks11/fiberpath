@@ -103,7 +103,7 @@ Prefer these before creating new component-local styles.
 - `.panel-container`
 - `.panel-header`
 - `.panel-title`
-- `.panel-body` (alias: `.panel-content`)
+- `.panel-body`
 
 ### Dialogs (`src/styles/dialogs.css`)
 

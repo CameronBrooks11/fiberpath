@@ -7,7 +7,7 @@ This document provides a technical deep dive into FiberPath's axis mapping syste
 FiberPath uses a **logical-to-physical axis mapping** approach:
 
 1. **Planner operates on logical axes:** Carriage, Mandrel, Delivery Head
-2. **Dialect converts to physical axes:** X/A/B or X/Y/Z depending on configuration
+2. **Dialect converts to physical axes:** Built-in output uses X/A/B; custom mappings are optional
 3. **Planning logic remains unchanged:** Same algorithms work for all output formats
 
 This design allows:
@@ -72,24 +72,6 @@ Maps logical axes to Marlin's native rotational axes:
 - Mandrel → A (rotational)
 - Delivery → B (rotational)
 
-### XYZ Mapping (Legacy)
-
-```python
-MARLIN_XYZ_LEGACY = AxisMapping(
-    carriage="X",
-    mandrel="Y",
-    delivery="Z",
-    is_rotational_mandrel=False,
-    is_rotational_delivery=False
-)
-```
-
-Maps rotational logical axes to linear physical axes:
-
-- Carriage → X (linear)
-- Mandrel → Y (linear, but represents degrees)
-- Delivery → Z (linear, but represents degrees)
-
 ## MarlinDialect Class
 
 The `MarlinDialect` class wraps an `AxisMapping` with Marlin-specific features:
@@ -129,12 +111,6 @@ carriage=50.0, mandrel=180.0, delivery=90.0, feed=2000
 G1 X50.0 A180.0 B90.0 F2000
 ```
 
-**Output XYZ:**
-
-```text
-G1 X50.0 Y180.0 Z90.0 F2000
-```
-
 ## Planning Flow
 
 ### 1. Wind Definition Parsed
@@ -160,7 +136,7 @@ commands = [
 The G-code writer (`fiberpath.gcode.generator`) uses the selected dialect:
 
 ```python
-dialect = MARLIN_XAB_STANDARD  # or MARLIN_XYZ_LEGACY
+dialect = MARLIN_XAB_STANDARD
 gcode = dialect.format_move(carriage, mandrel, delivery, feed)
 ```
 
@@ -206,14 +182,9 @@ To support a new controller (e.g., FANUC):
            ]
    ```
 
-3. **Register in CLI/API:**
+3. **Use in core integration:**
 
-   Add to `fiberpath_cli/plan.py` and `fiberpath_api/routes/plan.py`:
-
-   ```python
-   if axis_format == "fanuc":
-       dialect = FANUC_STANDARD
-   ```
+   Pass it through `PlanOptions(dialect=...)` in direct Python integrations.
 
 ### Custom Axis Configurations
 
@@ -292,7 +263,7 @@ gcode = dialect.format_move(carriage_pos, mandrel_angle, delivery_angle, feed)
 
 - ⚠️ Adds abstraction layer (slight complexity)
 - ⚠️ Dialect-specific optimizations require care
-- ⚠️ Must ensure all code paths use dialect correctly
+- ⚠️ Must ensure advanced/custom integrations pass dialects consistently
 
 ## Future Enhancements
 

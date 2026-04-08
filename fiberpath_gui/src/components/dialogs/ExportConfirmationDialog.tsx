@@ -55,8 +55,6 @@ export function ExportConfirmationDialog({
   }, [project, showError]);
 
   const layerCount = project.layers.length;
-  const axisFormatLabel =
-    project.axisFormat === "xab" ? "XAB (Rotational)" : "XYZ (Legacy)";
 
   return (
     <BaseDialog
@@ -122,10 +120,6 @@ export function ExportConfirmationDialog({
                 <span className="export-summary__value">
                   {layerCount} layer{layerCount !== 1 ? "s" : ""}
                 </span>
-              </div>
-              <div className="export-summary__item">
-                <span className="export-summary__label">Axis Format:</span>
-                <span className="export-summary__value">{axisFormatLabel}</span>
               </div>
               <div className="export-summary__item">
                 <span className="export-summary__label">Default Feed Rate:</span>

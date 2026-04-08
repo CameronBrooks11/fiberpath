@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useProjectStore } from "../../stores/projectStore";
 import { setFieldError } from "../../lib/numericFields";
 import { LayerNumericField } from "./LayerNumericField";
@@ -11,16 +12,18 @@ interface SkipLayerEditorProps extends LayerEditorBaseProps {
 export function SkipLayerEditor({ layerId }: SkipLayerEditorProps) {
   const layers = useProjectStore((state) => state.project.layers);
   const updateLayer = useProjectStore((state) => state.updateLayer);
+  const setValidationError = useProjectStore((state) => state.setValidationError);
+  const backendRotationError = useProjectStore(
+    (state) => state.validationErrors["layers.skip.mandrel_rotation"],
+  );
 
   const [errors, setErrors] = useState<
     Partial<Record<"mandrel_rotation", string>>
   >({});
 
   const layer = layers.find((item) => item.id === layerId);
-
-  if (!layer || layer.type !== "skip" || !layer.skip) {
-    return null;
-  }
+  const skip = layer && layer.type === "skip" && layer.skip ? layer.skip : null;
+  const debouncedRotation = useDebouncedValue(skip?.mandrel_rotation ?? NaN, 300);
 
   const validateRotation = (value: number): string | undefined => {
     if (Number.isNaN(value)) {
@@ -29,7 +32,20 @@ export function SkipLayerEditor({ layerId }: SkipLayerEditorProps) {
     return undefined;
   };
 
+  useEffect(() => {
+    if (!skip) {
+      setErrors({});
+      return;
+    }
+    setFieldError(setErrors, "mandrel_rotation", validateRotation(debouncedRotation));
+  }, [debouncedRotation, skip]);
+
+  if (!layer || layer.type !== "skip" || !skip) {
+    return null;
+  }
+
   const handleRotationChange = (value: number) => {
+    setValidationError("layers.skip.mandrel_rotation", undefined);
     updateLayer(layerId, {
       skip: {
         mandrel_rotation: value,
@@ -49,10 +65,10 @@ export function SkipLayerEditor({ layerId }: SkipLayerEditorProps) {
         id={`rotation-${layerId}`}
         label="Mandrel Rotation"
         tooltip="Mandrel-only rotation performed with no fiber deposition. Use this to reposition the start phase between winding layers."
-        value={layer.skip.mandrel_rotation}
+        value={skip.mandrel_rotation}
         step="0.1"
         unit="°"
-        error={errors.mandrel_rotation}
+        error={errors.mandrel_rotation || backendRotationError}
         onChange={handleRotationChange}
         onBlur={handleRotationBlur}
       />

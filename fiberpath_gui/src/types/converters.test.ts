@@ -6,7 +6,7 @@ import {
   windDefinitionToProject,
 } from "./converters";
 import type { Layer, FiberPathProject } from "./project";
-import type { FiberPathWindDefinition } from "./wind-schema";
+import type { WindDefinition } from "./wind-schema";
 
 describe("converters", () => {
   describe("convertLayerToWindSchema", () => {
@@ -204,7 +204,6 @@ describe("converters", () => {
           },
         ],
         defaultFeedRate: 2500,
-        axisFormat: "xab",
         activeLayerId: "layer-2",
       };
 
@@ -264,7 +263,6 @@ describe("converters", () => {
           { id: "3", type: "skip", skip: { mandrel_rotation: 90 } },
         ],
         defaultFeedRate: 2000,
-        axisFormat: "xab",
         activeLayerId: null,
       };
 
@@ -299,7 +297,6 @@ describe("converters", () => {
           { id: "3", type: "skip", skip: { mandrel_rotation: 90 } },
         ],
         defaultFeedRate: 2000,
-        axisFormat: "xab",
         activeLayerId: null,
       };
 
@@ -311,7 +308,7 @@ describe("converters", () => {
 
   describe("windDefinitionToProject", () => {
     it("should convert wind definition to project", () => {
-      const windDef: FiberPathWindDefinition = {
+      const windDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: {
           diameter: 130,
@@ -351,7 +348,6 @@ describe("converters", () => {
       expect(result.mandrel).toEqual({ diameter: 130, wind_length: 280 });
       expect(result.tow).toEqual({ width: 5, thickness: 0.4 });
       expect(result.defaultFeedRate).toBe(3000);
-      expect(result.axisFormat).toBe("xab");
       expect(result.layers).toHaveLength(3);
       expect(result.layers[0].type).toBe("hoop");
       expect(result.layers[1].type).toBe("helical");
@@ -360,7 +356,7 @@ describe("converters", () => {
     });
 
     it("should default filePath to null when not provided", () => {
-      const windDef: FiberPathWindDefinition = {
+      const windDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: { diameter: 100, windLength: 200 },
         towParameters: { width: 3, thickness: 0.25 },
@@ -374,7 +370,7 @@ describe("converters", () => {
     });
 
     it("should handle empty layers array", () => {
-      const windDef: FiberPathWindDefinition = {
+      const windDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: { diameter: 100, windLength: 200 },
         towParameters: { width: 3, thickness: 0.25 },
@@ -389,7 +385,7 @@ describe("converters", () => {
     });
 
     it("should preserve layer order", () => {
-      const windDef: FiberPathWindDefinition = {
+      const windDef: WindDefinition = {
         schemaVersion: "1.0",
         mandrelParameters: { diameter: 100, windLength: 200 },
         towParameters: { width: 3, thickness: 0.25 },
@@ -451,7 +447,6 @@ describe("converters", () => {
           },
         ],
         defaultFeedRate: 3500,
-        axisFormat: "xab",
         activeLayerId: "layer-2",
       };
 

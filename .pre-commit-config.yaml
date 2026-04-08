@@ -1,0 +1,36 @@
+minimum_pre_commit_version: "3.7.0"
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+        files: ^(fiberpath|fiberpath_api|fiberpath_cli|tests)/.*\.py$
+      - id: ruff-format
+        files: ^(fiberpath|fiberpath_api|fiberpath_cli|tests)/.*\.py$
+
+  - repo: local
+    hooks:
+      - id: gui-typecheck
+        name: gui typecheck (tsc)
+        entry: npm --prefix fiberpath_gui run lint
+        language: system
+        pass_filenames: false
+        files: ^fiberpath_gui/src/.*\.(ts|tsx)$
+
+      - id: gui-css-lint
+        name: gui css lint (stylelint)
+        entry: npm --prefix fiberpath_gui run lint:css
+        language: system
+        pass_filenames: false
+        files: ^fiberpath_gui/src/.*\.css$

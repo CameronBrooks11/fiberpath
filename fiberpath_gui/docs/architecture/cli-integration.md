@@ -181,14 +181,12 @@ package-gui-windows:
 export const planWind = withRetry(
   async (
     inputPath: string,
-    outputPath?: string,
-    axisFormat?: AxisFormat
+    outputPath?: string
   ): Promise<PlanSummary> => {
     try {
       const result = await invoke("plan_wind", {
         inputPath,
         outputPath,
-        axisFormat,
       });
       return validateData(PlanSummarySchema, result, "plan_wind response");
     } catch (error) {
@@ -310,7 +308,6 @@ try {
 async fn plan_wind(
     input_path: String,
     output_path: Option<String>,
-    axis_format: Option<String>,
 ) -> Result<Value, String> {
     let output_file = output_path.unwrap_or_else(|| temp_path("gcode"));
     let mut args = vec![
@@ -320,10 +317,6 @@ async fn plan_wind(
         output_file.clone(),
         "--json".into(),
     ];
-    if let Some(format) = axis_format {
-        args.push("--axis-format".into());
-        args.push(format);
-    }
     let output = exec_fiberpath(args).await.map_err(|err| err.to_string())?;
     parse_json_payload(output).map(|mut payload| {
         if let Value::Object(ref mut obj) = payload {
@@ -336,7 +329,7 @@ async fn plan_wind(
 
 **Flow:**
 
-1. Accept input path and optional output/format
+1. Accept input path and optional output path
 2. Generate temp file if output not specified
 3. Build CLI args with `--json` flag
 4. Execute `fiberpath plan ...`
@@ -446,11 +439,11 @@ fn temp_path(extension: &str) -> String {
 ```text
 1. User clicks "Generate G-code" in PlanForm
    ↓
-2. Component calls planWind(inputPath, outputPath, axisFormat)
+2. Component calls planWind(inputPath, outputPath)
    ↓
 3. Command wrapper invokes Tauri command
    ↓
-4. Rust plan_wind() spawns: fiberpath plan input.wind --output out.gcode --axis-format xab --json
+4. Rust plan_wind() spawns: fiberpath plan input.wind --output out.gcode --json
    ↓
 5. Python CLI reads input.wind, generates G-code, writes out.gcode
    ↓
@@ -621,7 +614,6 @@ it("should handle plan success", async () => {
   expect(invoke).toHaveBeenCalledWith("plan_wind", {
     inputPath: "input.wind",
     outputPath: undefined,
-    axisFormat: undefined,
   });
 });
 ```
@@ -639,7 +631,6 @@ mod tests {
         let result = plan_wind(
             "test_input.wind".into(),
             None,
-            Some("xab".into()),
         ).await;
         assert!(result.is_ok());
     }

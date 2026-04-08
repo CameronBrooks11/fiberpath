@@ -86,7 +86,7 @@ export function ManualControlSection() {
             value={commandInput}
             onChange={(e) => setCommandInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Enter G-code command (e.g., G0 X10 Y20)"
+            placeholder="Enter G-code command (e.g., G0 X10 A20)"
             disabled={!manualControlsEnabled || commandLoading}
             className="param-form__input text-mono manual-command-input"
           />

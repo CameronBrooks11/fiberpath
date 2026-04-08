@@ -43,7 +43,7 @@ def simulate_program(
     commands:
         Iterable of G-code lines (typically `plan_wind(...).commands`).
     default_feed_rate:
-        Fallback feed rate to use until the program sets one explicitly.
+        Default feed rate to use until the program sets one explicitly.
     dialect:
         Dialect specifying axis mapping. If None, attempts auto-detection from G-code.
     """
@@ -170,8 +170,8 @@ def _extract_metadata(program: Sequence[str]) -> dict[str, float]:
 
 
 def _detect_dialect(program: Sequence[str]) -> MarlinDialect:
-    """Auto-detect dialect from G-code by examining axis letters in first move command."""
-    from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, MARLIN_XYZ_LEGACY
+    """Resolve dialect from G-code by examining axis letters in first move command."""
+    from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
 
     for line in program:
         stripped = line.strip()
@@ -182,13 +182,12 @@ def _detect_dialect(program: Sequence[str]) -> MarlinDialect:
             # Check which axes are present
             axes_found = {token[0] for token in parts[1:] if token[0].isalpha() and token[0] != "F"}
 
-            # Check for rotational axes
+            # XAB is the only supported builtin format in v0.7.0+
             if "A" in axes_found or "B" in axes_found:
-                # XAB format
                 return MARLIN_XAB_STANDARD
-            elif "Y" in axes_found or "Z" in axes_found:
-                # XYZ format
-                return MARLIN_XYZ_LEGACY
+            if "Y" in axes_found or "Z" in axes_found:
+                raise SimulationError(
+                    "Detected unsupported XYZ axis program; re-generate using XAB format."
+                )
 
-    # Default to legacy if can't detect
-    return MARLIN_XYZ_LEGACY
+    return MARLIN_XAB_STANDARD

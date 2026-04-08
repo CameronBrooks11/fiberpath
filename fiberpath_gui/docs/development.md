@@ -196,6 +196,7 @@ This runs:
 
 - [ ] Update version in `package.json`, `Cargo.toml`, `tauri.conf.json`
 - [ ] Run `npm run check:all` and `npm test`
+- [ ] Run `npm run build` and `npm run perf:bundle`
 - [ ] Test on target platforms
 - [ ] Build production bundles
 - [ ] Verify bundle functionality
@@ -217,7 +218,7 @@ Runs in sequence:
 4. Rust formatter check (`cargo fmt --check`)
 5. Clippy (Rust linting)
 
-**CI Pipeline:** This command runs on every PR. All must pass before merge.
+**CI Pipeline:** These checks plus `npm run build` and `npm run perf:bundle` run on every PR.
 
 ### Individual Commands
 
@@ -235,6 +236,7 @@ npm run clippy            # cargo clippy -- -D warnings
 npm test                  # Vitest
 npm run test:coverage     # Vitest with coverage
 npm run build             # Vite production build
+npm run perf:bundle       # Enforce bundle budget and emit metrics
 ```
 
 ## Project Structure
@@ -248,8 +250,7 @@ fiberpath_gui/
 │   ├── hooks/                    # Custom React hooks
 │   ├── layouts/                  # Layout wrappers
 │   ├── lib/                      # Tauri command bindings, validation helpers
-│   ├── state/                    # Project editing store
-│   ├── stores/                   # Streaming and toast stores
+│   ├── stores/                   # Project, streaming, and toast stores
 │   ├── styles/                   # Global CSS + design tokens
 │   ├── tests/                    # Integration and setup files
 │   └── types/                    # TypeScript domain models

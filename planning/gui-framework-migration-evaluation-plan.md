@@ -1,9 +1,9 @@
 # GUI Framework Migration Evaluation and Execution Plan
 
-**Document Type:** Planning + Decision/Execution Sequence (non-roadmap)  
-**Created:** 2026-04-06  
-**Last Updated:** 2026-04-07  
-**Owner:** GUI maintainers  
+**Document Type:** Planning + Decision/Execution Sequence (non-roadmap)
+**Created:** 2026-04-06
+**Last Updated:** 2026-04-07
+**Owner:** GUI maintainers
 **Status:** Decision complete - no framework migration at this time
 
 ## Objective
@@ -12,7 +12,7 @@ Evaluate whether moving away from React is justified, then execute only if there
 
 ## Context
 
-Current stack: React + TypeScript + Zustand + Tauri + modular CSS.  
+Current stack: React + TypeScript + Zustand + Tauri + modular CSS.
 Known pain areas were primarily styling complexity and component size, not a proven hard platform blocker.
 
 ## Candidate Paths

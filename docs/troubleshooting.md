@@ -51,7 +51,7 @@ sudo apt update
 sudo apt install -f  # Fix broken dependencies
 sudo apt install libwebkit2gtk-4.1-0 libappindicator3-1
 # Then retry
-sudo dpkg -i fiberpath_0.6.2_amd64.deb
+sudo dpkg -i fiberpath_0.7.0_amd64.deb
 ```
 
 ### AppImage Won't Run (Linux)
@@ -63,8 +63,8 @@ sudo dpkg -i fiberpath_0.6.2_amd64.deb
 **Solution:**
 
 ```sh
-chmod +x fiberpath_0.6.2_amd64.AppImage
-./fiberpath_0.6.2_amd64.AppImage
+chmod +x fiberpath_0.7.0_amd64.AppImage
+./fiberpath_0.7.0_amd64.AppImage
 ```
 
 **FUSE Requirement:** Some older Linux systems require FUSE for AppImage:
