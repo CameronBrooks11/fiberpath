@@ -73,27 +73,9 @@ def test_set_position_commands_use_active_dialect_axes() -> None:
     definition = WindDefinition.model_validate(
         {
             "layers": [
-                {
-                    "windType": "helical",
-                    "windAngle": 45,
-                    "patternNumber": 4,
-                    "skipIndex": 1,
-                    "lockDegrees": 10,
-                    "leadInMM": 10,
-                    "leadOutDegrees": 10,
-                    "skipInitialNearLock": False,
-                },
+                {"windType": "hoop", "terminal": False},
                 {"windType": "skip", "mandrelRotation": 90},
-                {
-                    "windType": "helical",
-                    "windAngle": 45,
-                    "patternNumber": 4,
-                    "skipIndex": 1,
-                    "lockDegrees": 10,
-                    "leadInMM": 10,
-                    "leadOutDegrees": 10,
-                    "skipInitialNearLock": False,
-                },
+                {"windType": "hoop", "terminal": False},
             ],
             "mandrelParameters": {"diameter": 90.0, "windLength": 400.0},
             "towParameters": {"width": 8.0, "thickness": 0.4},
