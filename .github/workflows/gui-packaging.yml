@@ -195,7 +195,7 @@ jobs:
 
       - name: Upload release assets
         if: github.event_name == 'release' || inputs.release_tag != ''
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ inputs.release_tag || github.ref }}
           fail_on_unmatched_files: false
