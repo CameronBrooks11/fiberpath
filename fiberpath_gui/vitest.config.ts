@@ -11,6 +11,7 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     coverage: {
       provider: 'v8',
+      all: true,
       reporter: ['text', 'json', 'html', 'lcov'],
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
@@ -21,10 +22,10 @@ export default defineConfig({
         'src/vite-env.d.ts',
       ],
       thresholds: {
-        lines: 24,
-        functions: 23,
-        branches: 15,
-        statements: 24,
+        lines: 38,
+        functions: 43,
+        branches: 25,
+        statements: 38,
       },
     },
   },
