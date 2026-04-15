@@ -43,7 +43,7 @@ freeze-cli:
         python-version: "3.11"
     - run: pip install . pyinstaller
     - run: python scripts/freeze_cli.py
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: fiberpath-cli-${{ matrix.os }}
         path: dist/fiberpath*

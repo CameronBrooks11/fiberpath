@@ -150,7 +150,7 @@ freeze-cli:
     - name: Freeze CLI
       run: uv run python scripts/freeze_cli.py
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: frozen-cli-windows
         path: dist/fiberpath.exe
