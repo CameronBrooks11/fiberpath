@@ -12,9 +12,9 @@ Baseline values are tracked in `fiberpath_gui/perf/bundle-baseline.json` and enf
 
 | Metric | Baseline | Source |
 | --- | --- | --- |
-| Total JS bundle | 598.96 kB | 2026-04-07 build snapshot (`planning/gui-framework-migration-evaluation-plan.md`) |
-| Total CSS bundle | 59.42 kB | 2026-04-07 build snapshot (`planning/gui-framework-migration-evaluation-plan.md`) |
-| Vite dev startup | 292 ms | 2026-04-07 `npm run dev` snapshot (`planning/gui-framework-migration-evaluation-plan.md`) |
+| Total JS bundle | 598.96 kB | 2026-04-07 build snapshot |
+| Total CSS bundle | 59.42 kB | 2026-04-07 build snapshot |
+| Vite dev startup | 292 ms | 2026-04-07 `npm run dev` snapshot |
 | Common interaction render cost | Layer editing/profile pass tracked manually during v7 PR review | React DevTools Profiler capture on target hardware |
 
 Bundle guardrail policy:
