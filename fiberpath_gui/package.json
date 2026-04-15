@@ -33,10 +33,10 @@
     "@tauri-apps/api": "^2.10.1",
     "@tauri-apps/plugin-dialog": "^2.7.0",
     "@tauri-apps/plugin-shell": "^2.3.5",
-    "lucide-react": "^1.7.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.0.0",
-    "react-zoom-pan-pinch": "^3.7.0",
+    "lucide-react": "^1.8.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-zoom-pan-pinch": "^4.0.3",
     "zod": "^4.0.0",
     "zustand": "^5.0.12"
   },
@@ -49,14 +49,14 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.0.0",
-    "@vitest/coverage-v8": "^4.1.2",
+    "@vitest/coverage-v8": "^4.1.4",
     "ajv": "^8.18.0",
     "jsdom": "^29.0.0",
     "json-schema-to-typescript": "^15.0.4",
-    "stylelint": "^17.6.0",
+    "stylelint": "^17.7.0",
     "stylelint-config-standard": "^40.0.0",
     "typescript": "^6.0.2",
-    "vite": "^8.0.5",
+    "vite": "^8.0.8",
     "vitest": "^4.0.0"
   }
 }
