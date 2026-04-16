@@ -12,7 +12,7 @@
     "esModuleInterop": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["node", "vite/client"],
+    "types": ["node", "vite/client", "@testing-library/jest-dom"],
     "forceConsistentCasingInFileNames": true,
     "strict": true
   },
