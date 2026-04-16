@@ -1,7 +1,7 @@
 import { createContext, useContext, ReactNode } from "react";
 import { useCliHealth, CliStatus } from "../hooks/useCliHealth";
 
-interface CliHealthContextValue {
+export interface CliHealthContextValue {
   status: CliStatus;
   version: string | null;
   errorMessage: string | null;
@@ -12,7 +12,7 @@ interface CliHealthContextValue {
   isUnavailable: boolean;
 }
 
-const CliHealthContext = createContext<CliHealthContextValue | null>(null);
+export const CliHealthContext = createContext<CliHealthContextValue | null>(null);
 
 interface CliHealthProviderProps {
   children: ReactNode;
