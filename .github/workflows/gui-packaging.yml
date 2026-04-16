@@ -157,20 +157,41 @@ jobs:
         run: |
           echo "Checking if Tauri build succeeded with bundled CLI..."
           if [ "$RUNNER_OS" == "Windows" ]; then
-            # Windows: Verify actual installer files were created
-            MSI_COUNT=$(find src-tauri/target/release/bundle/msi -name "*.msi" 2>/dev/null | wc -l)
+            # Windows: Verify MSI was created and use 7-zip to confirm the CLI binary is embedded.
+            MSI_FILE=$(find src-tauri/target/release/bundle/msi -name "*.msi" 2>/dev/null | head -1)
             NSIS_COUNT=$(find src-tauri/target/release/bundle/nsis -name "*.exe" 2>/dev/null | wc -l)
 
-            if [ "$MSI_COUNT" -gt 0 ] || [ "$NSIS_COUNT" -gt 0 ]; then
-              echo "[OK] Windows installers created successfully:"
-              find src-tauri/target/release/bundle -type f \( -name "*.msi" -o -name "*.exe" \) -exec ls -lh {} \;
-            else
+            if [ -z "$MSI_FILE" ] && [ "$NSIS_COUNT" -eq 0 ]; then
               echo "ERROR: No Windows installer files (.msi or .exe) found!"
               echo "MSI directory contents:"
               ls -la src-tauri/target/release/bundle/msi/ 2>/dev/null || echo "  Directory not found"
               echo "NSIS directory contents:"
               ls -la src-tauri/target/release/bundle/nsis/ 2>/dev/null || echo "  Directory not found"
               exit 1
+            fi
+
+            echo "[OK] Windows installers created:"
+            find src-tauri/target/release/bundle -type f \( -name "*.msi" -o -name "*.exe" \) -exec ls -lh {} \;
+
+            # Verify the CLI binary is embedded in the MSI using 7-zip.
+            if [ -n "$MSI_FILE" ]; then
+              SEVENZIP=""
+              if command -v 7z &>/dev/null; then SEVENZIP="7z"; fi
+              if [ -z "$SEVENZIP" ] && [ -f "C:/Program Files/7-Zip/7z.exe" ]; then SEVENZIP="C:/Program Files/7-Zip/7z.exe"; fi
+              if [ -n "$SEVENZIP" ]; then
+                echo "Inspecting MSI contents for fiberpath.exe..."
+                if "$SEVENZIP" l "$MSI_FILE" 2>/dev/null | grep -i "fiberpath.exe"; then
+                  echo "[OK] fiberpath.exe found inside MSI"
+                else
+                  echo "WARNING: fiberpath.exe not directly visible in MSI listing."
+                  echo "This may occur when 7-zip shows only the embedded Cabinet stream;"
+                  echo "the E2E smoke test performs a two-pass extraction to handle this case."
+                  echo "MSI file listing (first 40 entries):"
+                  "$SEVENZIP" l "$MSI_FILE" 2>/dev/null | head -40 || true
+                fi
+              else
+                echo "WARNING: 7-zip not found; skipping MSI content inspection."
+              fi
             fi
           else
             # macOS/Linux: Search for bundled CLI file in app bundle
