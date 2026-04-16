@@ -15,14 +15,9 @@ on:
       - "setup.cfg"
       - "mkdocs.yml"
       - "README.md"
-      - "scripts/sync_gui_docs.py"
-      - ".github/workflows/ci-check.yml"
-      - ".github/workflows/backend-ci.yml"
-      - ".github/workflows/gui-ci.yml"
-      - ".github/workflows/docs-ci.yml"
-      - ".github/actions/setup-python/**"
-      - ".github/actions/setup-node/**"
-      - ".github/actions/setup-rust/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+      - ".github/actions/**"
   pull_request:
     branches: [main]
     paths:
@@ -37,14 +32,9 @@ on:
       - "setup.cfg"
       - "mkdocs.yml"
       - "README.md"
-      - "scripts/sync_gui_docs.py"
-      - ".github/workflows/ci-check.yml"
-      - ".github/workflows/backend-ci.yml"
-      - ".github/workflows/gui-ci.yml"
-      - ".github/workflows/docs-ci.yml"
-      - ".github/actions/setup-python/**"
-      - ".github/actions/setup-node/**"
-      - ".github/actions/setup-rust/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+      - ".github/actions/**"
   workflow_dispatch:
 
 permissions:
