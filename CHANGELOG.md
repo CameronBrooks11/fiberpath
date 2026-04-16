@@ -8,6 +8,38 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-04-16
+
+### Added
+
+- Expanded GUI test suite to 614 tests across 53 files via three RTL sprint phases covering pure components, store-coupled components, hooks, canvas rendering, CLI health, and stream branches (79.81% line / 91.17% branch / 87.73% function coverage).
+
+### Fixed
+
+- Fixed Python audit CI failure caused by CVE-2025-71176 in `pytest 9.0.2`; bumped to `pytest 9.0.3`.
+- Fixed Windows E2E smoke test failure caused by WiX MSI two-pass CAB extraction not being handled in `extract-package-runtime.ps1`.
+- Fixed Windows E2E smoke test failure where accumulated MSI artifacts caused the oldest version to be selected instead of the newest; extraction now sorts by `LastWriteTime` descending.
+- Fixed `cargo audit` CI failure when `cargo-audit` was already installed (`exit 101`); guarded install with a version check.
+- Fixed `ci-check.yml` required-status gate never posting on `scripts/ci/**` and workflow changes; broadened path filter to `scripts/**` and `.github/workflows/**`.
+
+### Changed
+
+- Extended `dependency-audit.yml` and `gui-packaging.yml` to trigger on pull requests, not only post-merge pushes.
+- Improved `find-bundled-cli.ps1` with a wider path regex and full diagnostics output on failure.
+
+### Dependencies
+
+- Bumped `pillow` (uv).
+- Bumped `tokio` (Cargo, two patches).
+- Bumped npm prod and dev minor-patch dependency groups.
+- Bumped `react-zoom-pan-pinch` to 4.0.3.
+- Bumped `actions/upload-pages-artifact` from 4 to 5.
+- Bumped multiple Cargo minor-patch dependency groups.
+
+### Internal
+
+- Synchronized release version metadata across Python (`pyproject.toml`, `uv.lock`), npm (`package.json`, `package-lock.json`), and Tauri (`Cargo.toml`, `Cargo.lock`, `tauri.conf.json`).
+
 ## [0.7.0] - 2026-04-08
 
 ### Added
