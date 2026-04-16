@@ -11,7 +11,11 @@ if (-not (Test-Path -LiteralPath $BundleRoot)) {
     throw "Bundle root not found: $BundleRoot"
 }
 
+# Sort newest-first so that when the artifact bundle contains accumulated MSI files from
+# prior cached builds, the current build's MSI is chosen and its embedded CLI will
+# hash-match the reference fiberpath-cli artifact for the same run.
 $msi = Get-ChildItem -Path $BundleRoot -Recurse -File -Filter *.msi -ErrorAction SilentlyContinue |
+    Sort-Object LastWriteTime -Descending |
     Select-Object -First 1
 
 if (-not $msi) {
