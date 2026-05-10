@@ -3,18 +3,18 @@
 Rejected cases
 --------------
 - NUL bytes in path
-- POSIX absolute path  (/etc/passwd)
-- Windows drive-absolute path  (C:\\Windows\\System32\\file.txt)
-- Windows UNC path  (\\\\server\\share\\file)
-- ``..`` traversal (relative and absolute-with-traversal)
-- Empty string / whitespace-only string
+- POSIX absolute path  (/etc/passwd) → 400
+- Windows drive-absolute path  (C:\\Windows\\System32\\file.txt) → 400
+- Windows UNC path  (\\\\server\\share\\file) → 400
+- ``..`` traversal (relative) → 400
+- Empty string / whitespace-only string → 400
 
 Accepted cases
 --------------
 - Bare filename relative to a configured root
 - Nested relative path under a configured root
-- Absolute path whose resolved location is inside a configured root
-- Multiple configured roots: path in second root accepted
+- Multiple configured roots: relative path resolved against second root
+- Single-dot segments normalised away
 """
 
 from __future__ import annotations
@@ -73,36 +73,56 @@ class TestRejectedPaths:
             enforce_input_path_policy("\x00/etc/passwd")
         assert exc_info.value.status_code == 400
 
-    def test_posix_absolute_outside_root_rejected(
+    def test_posix_absolute_rejected(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """POSIX absolute path outside any configured root → 403."""
+        """POSIX absolute path is rejected with 400 on all platforms."""
         _set_root(tmp_path, monkeypatch)
         with pytest.raises(HTTPException) as exc_info:
             enforce_input_path_policy("/etc/passwd")
-        assert exc_info.value.status_code == 403
-        assert "outside allowed API roots" in exc_info.value.detail
+        assert exc_info.value.status_code == 400
+        assert "absolute" in exc_info.value.detail.lower()
 
-    def test_windows_drive_absolute_outside_root_rejected(
+    def test_windows_drive_absolute_rejected(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Windows drive-absolute path (e.g. C:\\Windows\\...) outside root → 403."""
+        """Windows drive-absolute path is rejected with 400 on all platforms."""
         _set_root(tmp_path, monkeypatch)
-        # Use a drive letter that is definitely outside tmp_path.
         system_path = "C:\\Windows\\System32\\drivers\\etc\\hosts"
         with pytest.raises(HTTPException) as exc_info:
             enforce_input_path_policy(system_path)
-        # Either 400 (if the OS rejects the path during resolution) or 403 (outside root)
-        assert exc_info.value.status_code in (400, 403)
+        assert exc_info.value.status_code == 400
+        assert "absolute" in exc_info.value.detail.lower()
 
-    def test_unc_path_outside_root_rejected(
+    def test_windows_drive_forward_slash_rejected(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """UNC path (\\\\server\\share\\...) outside root → 403."""
+        """Windows drive path with forward slashes is rejected with 400."""
+        _set_root(tmp_path, monkeypatch)
+        with pytest.raises(HTTPException) as exc_info:
+            enforce_input_path_policy("C:/Users/secret/file.txt")
+        assert exc_info.value.status_code == 400
+        assert "absolute" in exc_info.value.detail.lower()
+
+    def test_unc_backslash_rejected(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """UNC path with backslashes is rejected with 400 on all platforms."""
         _set_root(tmp_path, monkeypatch)
         with pytest.raises(HTTPException) as exc_info:
             enforce_input_path_policy("\\\\server\\share\\file.txt")
-        assert exc_info.value.status_code in (400, 403)
+        assert exc_info.value.status_code == 400
+        assert "absolute" in exc_info.value.detail.lower()
+
+    def test_unc_forward_slash_rejected(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """UNC-style path with forward slashes is rejected with 400."""
+        _set_root(tmp_path, monkeypatch)
+        with pytest.raises(HTTPException) as exc_info:
+            enforce_input_path_policy("//server/share/file.txt")
+        assert exc_info.value.status_code == 400
+        assert "absolute" in exc_info.value.detail.lower()
 
     def test_dotdot_relative_traversal_rejected(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -143,25 +163,18 @@ class TestRejectedPaths:
         assert exc_info.value.status_code == 400
         assert "traversal" in exc_info.value.detail.lower()
 
-    def test_relative_path_outside_root_rejected(
+    def test_absolute_path_always_rejected(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """A relative path that resolves outside all configured roots → 403.
-
-        We configure *tmp_path/subdir* as the only root; supplying just
-        ``"another_dir/file.txt"`` will resolve to
-        *tmp_path/subdir/another_dir/file.txt* which is inside the root, so
-        instead we set the root to a *subdirectory* and supply a path that
-        would land in a sibling directory.
-        """
-        restricted_root = tmp_path / "allowed"
-        restricted_root.mkdir()
-        monkeypatch.setenv("FIBERPATH_API_ALLOWED_ROOTS", str(restricted_root))
-
+        """Absolute paths are rejected regardless of whether they sit inside a root."""
+        _set_root(tmp_path, monkeypatch)
+        # Construct an absolute path that IS inside the configured root.
+        inside = tmp_path / "file.wind"
         with pytest.raises(HTTPException) as exc_info:
-            # Absolute path to a file outside the restricted root
-            enforce_input_path_policy(str(tmp_path / "not_allowed" / "file.txt"))
-        assert exc_info.value.status_code == 403
+            enforce_input_path_policy(str(inside))
+        # Must be 400, not 200 and not 403.
+        assert exc_info.value.status_code == 400
+        assert "absolute" in exc_info.value.detail.lower()
 
 
 # ---------------------------------------------------------------------------
@@ -196,51 +209,33 @@ class TestAcceptedPaths:
 
         assert resolved == target.resolve()
 
-    def test_absolute_path_inside_root_accepted(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """An absolute path that is inside the configured root is accepted."""
-        _set_root(tmp_path, monkeypatch)
-        target = tmp_path / "data.wind"
-        target.write_text("content", encoding="utf-8")
-
-        resolved = enforce_input_path_policy(str(target))
-
-        assert resolved == target.resolve()
-
-    def test_absolute_path_in_subdirectory_of_root_accepted(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """An absolute path deep inside the root is accepted."""
-        _set_root(tmp_path, monkeypatch)
-        subdir = tmp_path / "a" / "b" / "c"
-        subdir.mkdir(parents=True)
-        target = subdir / "file.wind"
-        target.write_text("x", encoding="utf-8")
-
-        resolved = enforce_input_path_policy(str(target))
-
-        assert resolved == target.resolve()
-
     def test_path_in_second_of_multiple_roots_accepted(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """When multiple roots are configured, a path in the second root is accepted."""
+        """Multiple configured roots are each individually accepted."""
         root_a = tmp_path / "root_a"
         root_b = tmp_path / "root_b"
         root_a.mkdir()
         root_b.mkdir()
-        target = root_b / "work.wind"
-        target.write_text("multi-root", encoding="utf-8")
+        # Files with distinct names in each root.
+        target_a = root_a / "file_a.wind"
+        target_b = root_b / "file_b.wind"
+        target_a.write_text("in-root-a", encoding="utf-8")
+        target_b.write_text("in-root-b", encoding="utf-8")
 
         monkeypatch.setenv(
             "FIBERPATH_API_ALLOWED_ROOTS",
             os.pathsep.join([str(root_a), str(root_b)]),
         )
 
-        resolved = enforce_input_path_policy(str(target))
+        # file_a.wind resolves against root_a (first configured root).
+        resolved_a = enforce_input_path_policy("file_a.wind")
+        assert resolved_a == target_a.resolve()
 
-        assert resolved == target.resolve()
+        # file_b.wind resolves against root_b when root_a is scoped out.
+        monkeypatch.setenv("FIBERPATH_API_ALLOWED_ROOTS", str(root_b))
+        resolved_b = enforce_input_path_policy("file_b.wind")
+        assert resolved_b == target_b.resolve()
 
     def test_single_dot_in_relative_path_normalised(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch

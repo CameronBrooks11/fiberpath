@@ -36,37 +36,36 @@ def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
     if "\x00" in raw:
         raise HTTPException(status_code=400, detail="Path contains invalid characters")
 
-    # Disallow explicit traversal segments before any filesystem resolution.
-    normalized_raw = raw.replace("\\", "/")
-    parts = [part for part in normalized_raw.split("/") if part not in ("", ".")]
+    # Normalize to forward slashes for cross-platform analysis.
+    normalized = raw.replace("\\", "/")
+
+    # Reject POSIX absolute paths (leading /) and UNC paths (// after
+    # backslash-to-slash normalisation, e.g. \\server\share → //server/share).
+    if normalized.startswith("/"):
+        raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
+
+    # Reject Windows drive-absolute paths (e.g. "C:/..." or "C:\...").
+    if len(normalized) >= 2 and normalized[0].isalpha() and normalized[1] == ":":
+        raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
+
+    # Disallow traversal segments before any filesystem resolution.
+    parts = [part for part in normalized.split("/") if part not in ("", ".")]
     if any(part == ".." for part in parts):
         raise HTTPException(status_code=400, detail="Path traversal is not allowed")
 
-    candidate = Path(raw).expanduser()
+    if not parts:
+        raise HTTPException(status_code=400, detail="Path must not be empty")
 
-    if candidate.is_absolute():
-        # Absolute paths are accepted only when they fall within an allowed root.
-        resolved = candidate.resolve(strict=False)
-    else:
-        # Relative paths are resolved from each allowed root in order.
-        # Pick the first candidate that is within a root.
-        for root in roots:
-            resolved = (root / candidate).resolve(strict=False)
-            if _is_within_roots(resolved, roots):
-                return resolved
-        # None of the root-relative candidates were within a root.
-        roots_str = ", ".join(str(root) for root in roots)
-        raise HTTPException(
-            status_code=403,
-            detail=(
-                f"Path '{user_path}' is outside allowed API roots. "
-                f"Configure {_ALLOWED_ROOTS_ENV} to permit additional roots. "
-                f"Current roots: {roots_str}"
-            ),
-        )
+    # Build a clean relative path from the validated components only.
+    # Using Path(*parts) rather than Path(raw) ensures user-supplied data does
+    # not flow directly into the path constructor after the checks above.
+    candidate = Path(*parts)
 
-    if _is_within_roots(resolved, roots):
-        return resolved
+    # Resolve against each allowed root and verify containment.
+    for root in roots:
+        resolved = (root / candidate).resolve(strict=False)
+        if _is_within_roots(resolved, roots):
+            return resolved
 
     roots_str = ", ".join(str(root) for root in roots)
     raise HTTPException(
