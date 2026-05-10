@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path, PurePath
+from pathlib import Path
 
 from fastapi import HTTPException
 
@@ -36,18 +36,18 @@ def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
     if "\x00" in raw:
         raise HTTPException(status_code=400, detail="Path contains invalid characters")
 
-    # Parse as a pure path first so we can reject anchored paths before creating
-    # any concrete filesystem path object from user input.
-    pure = PurePath(raw).expanduser()
-    if pure.is_absolute() or pure.anchor:
+    expanded = os.path.expanduser(raw)
+    drive, _ = os.path.splitdrive(expanded)
+    if os.path.isabs(expanded) or drive:
         raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
 
-    # Disallow explicit traversal segments before any filesystem resolution.
-    parts = [part for part in pure.parts if part not in ("", ".")]
-    if any(part == ".." for part in parts):
+    normalized = os.path.normpath(expanded)
+    if normalized in ("", "."):
+        raise HTTPException(status_code=400, detail="Path must not be empty")
+    if normalized == ".." or normalized.startswith(f"..{os.sep}") or normalized.startswith("../") or normalized.startswith("..\\"):
         raise HTTPException(status_code=400, detail="Path traversal is not allowed")
 
-    candidate = Path(*parts)
+    candidate = Path(normalized)
 
     # Relative paths are resolved from each allowed root in order.
     # Pick the first candidate that is within a root.
