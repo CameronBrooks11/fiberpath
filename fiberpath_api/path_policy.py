@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
+from pathlib import Path, PurePath
 
 from fastapi import HTTPException
 
@@ -36,38 +36,27 @@ def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
     if "\x00" in raw:
         raise HTTPException(status_code=400, detail="Path contains invalid characters")
 
+    # Parse as a pure path first so we can reject anchored paths before creating
+    # any concrete filesystem path object from user input.
+    pure = PurePath(raw).expanduser()
+    if pure.is_absolute() or pure.anchor:
+        raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
+
     # Disallow explicit traversal segments before any filesystem resolution.
-    normalized_raw = raw.replace("\\", "/")
-    parts = [part for part in normalized_raw.split("/") if part not in ("", ".")]
+    parts = [part for part in pure.parts if part not in ("", ".")]
     if any(part == ".." for part in parts):
         raise HTTPException(status_code=400, detail="Path traversal is not allowed")
 
-    candidate = Path(raw).expanduser()
+    candidate = Path(*parts)
 
-    if candidate.is_absolute():
-        # Absolute paths are accepted only when they fall within an allowed root.
-        resolved = candidate.resolve(strict=False)
-    else:
-        # Relative paths are resolved from each allowed root in order.
-        # Pick the first candidate that is within a root.
-        for root in roots:
-            resolved = (root / candidate).resolve(strict=False)
-            if _is_within_roots(resolved, roots):
-                return resolved
-        # None of the root-relative candidates were within a root.
-        roots_str = ", ".join(str(root) for root in roots)
-        raise HTTPException(
-            status_code=403,
-            detail=(
-                f"Path '{user_path}' is outside allowed API roots. "
-                f"Configure {_ALLOWED_ROOTS_ENV} to permit additional roots. "
-                f"Current roots: {roots_str}"
-            ),
-        )
+    # Relative paths are resolved from each allowed root in order.
+    # Pick the first candidate that is within a root.
+    for root in roots:
+        resolved = (root / candidate).resolve(strict=False)
+        if _is_within_roots(resolved, roots):
+            return resolved
 
-    if _is_within_roots(resolved, roots):
-        return resolved
-
+    # None of the root-relative candidates were within a root.
     roots_str = ", ".join(str(root) for root in roots)
     raise HTTPException(
         status_code=403,
