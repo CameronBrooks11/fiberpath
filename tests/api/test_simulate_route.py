@@ -16,11 +16,9 @@ def test_simulate_from_file_nonexistent(tmp_path: Path) -> None:
 
     os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
 
-    nonexistent = tmp_path / "missing.gcode"
-
     response = client.post(
         "/simulate/from-file",
-        json={"path": str(nonexistent)},
+        json={"path": "missing.gcode"},
     )
 
     assert response.status_code == 404
@@ -50,7 +48,7 @@ G1 X20 A40 B60
 
     response = client.post(
         "/simulate/from-file",
-        json={"path": str(gcode_file)},
+        json={"path": "test.gcode"},
     )
 
     assert response.status_code == 200
@@ -62,15 +60,17 @@ G1 X20 A40 B60
     assert data["total_distance_mm"] > 0
 
 
-def test_simulate_from_file_rejects_path_outside_allowed_roots(tmp_path: Path) -> None:
+def test_simulate_from_file_rejects_absolute_path(tmp_path: Path) -> None:
+    """Absolute paths are rejected with 400 regardless of root membership."""
     import os
 
     app = create_app()
     client = TestClient(app)
     os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
 
-    outside_file = Path(__file__).resolve()
-    response = client.post("/simulate/from-file", json={"path": str(outside_file)})
+    # Pass an absolute path – must be rejected even if it is within the root.
+    absolute_path = str(tmp_path / "test.gcode")
+    response = client.post("/simulate/from-file", json={"path": absolute_path})
 
-    assert response.status_code == 403
-    assert "outside allowed API roots" in response.json()["detail"]
+    assert response.status_code == 400
+    assert "absolute" in response.json()["detail"].lower()

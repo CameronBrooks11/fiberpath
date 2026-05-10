@@ -30,20 +30,40 @@ def _parse_allowed_roots() -> list[Path]:
 
 
 def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
-    if not user_path.strip():
+    raw = user_path.strip()
+    if not raw:
+        raise HTTPException(status_code=400, detail="Path must not be empty")
+    if "\x00" in raw:
+        raise HTTPException(status_code=400, detail="Path contains invalid characters")
+
+    # Normalize to forward slashes for cross-platform analysis.
+    normalized = raw.replace("\\", "/")
+
+    # Reject POSIX absolute paths (leading /) and UNC paths (// after
+    # backslash-to-slash normalisation, e.g. \\server\share → //server/share).
+    if normalized.startswith("/"):
+        raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
+
+    # Reject Windows drive-absolute paths (e.g. "C:/..." or "C:\...").
+    if len(normalized) >= 2 and normalized[0].isalpha() and normalized[1] == ":":
+        raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
+
+    # Disallow traversal segments before any filesystem resolution.
+    parts = [part for part in normalized.split("/") if part not in ("", ".")]
+    if any(part == ".." for part in parts):
+        raise HTTPException(status_code=400, detail="Path traversal is not allowed")
+
+    if not parts:
         raise HTTPException(status_code=400, detail="Path must not be empty")
 
-    candidate = Path(user_path).expanduser()
-    resolved_candidates: list[Path] = []
+    # Build a clean relative path from the validated components only.
+    # Using Path(*parts) rather than Path(raw) ensures user-supplied data does
+    # not flow directly into the path constructor after the checks above.
+    candidate = Path(*parts)
 
-    if candidate.is_absolute():
-        resolved_candidates.append(candidate.resolve(strict=False))
-    else:
-        # Resolve relative paths from each allowed root, not from unrestricted CWD.
-        for root in roots:
-            resolved_candidates.append((root / candidate).resolve(strict=False))
-
-    for resolved in resolved_candidates:
+    # Resolve against each allowed root and verify containment.
+    for root in roots:
+        resolved = (root / candidate).resolve(strict=False)
         if _is_within_roots(resolved, roots):
             return resolved
 
