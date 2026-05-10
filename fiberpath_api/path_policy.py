@@ -36,31 +36,37 @@ def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
     if "\x00" in raw:
         raise HTTPException(status_code=400, detail="Path contains invalid characters")
 
-    # Only allow relative paths from API callers; roots control the base location.
-    # Reject POSIX absolute, Windows drive-absolute, and UNC-style inputs.
-    normalized_raw = raw.replace("\\", "/")
-    if (
-        normalized_raw.startswith("/")
-        or normalized_raw.startswith("//")
-        or (len(normalized_raw) >= 2 and normalized_raw[1] == ":")
-    ):
-        raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
-
     # Disallow explicit traversal segments before any filesystem resolution.
+    normalized_raw = raw.replace("\\", "/")
     parts = [part for part in normalized_raw.split("/") if part not in ("", ".")]
     if any(part == ".." for part in parts):
         raise HTTPException(status_code=400, detail="Path traversal is not allowed")
 
     candidate = Path(raw).expanduser()
-    resolved_candidates: list[Path] = []
 
-    # Resolve relative paths from each allowed root, not from unrestricted CWD.
-    for root in roots:
-        resolved_candidates.append((root / candidate).resolve(strict=False))
+    if candidate.is_absolute():
+        # Absolute paths are accepted only when they fall within an allowed root.
+        resolved = candidate.resolve(strict=False)
+    else:
+        # Relative paths are resolved from each allowed root in order.
+        # Pick the first candidate that is within a root.
+        for root in roots:
+            resolved = (root / candidate).resolve(strict=False)
+            if _is_within_roots(resolved, roots):
+                return resolved
+        # None of the root-relative candidates were within a root.
+        roots_str = ", ".join(str(root) for root in roots)
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                f"Path '{user_path}' is outside allowed API roots. "
+                f"Configure {_ALLOWED_ROOTS_ENV} to permit additional roots. "
+                f"Current roots: {roots_str}"
+            ),
+        )
 
-    for resolved in resolved_candidates:
-        if _is_within_roots(resolved, roots):
-            return resolved
+    if _is_within_roots(resolved, roots):
+        return resolved
 
     roots_str = ", ".join(str(root) for root in roots)
     raise HTTPException(
