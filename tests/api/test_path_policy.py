@@ -73,9 +73,7 @@ class TestRejectedPaths:
             enforce_input_path_policy("\x00/etc/passwd")
         assert exc_info.value.status_code == 400
 
-    def test_posix_absolute_rejected(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_posix_absolute_rejected(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """POSIX absolute path is rejected with 400 on all platforms."""
         _set_root(tmp_path, monkeypatch)
         with pytest.raises(HTTPException) as exc_info:
@@ -104,9 +102,7 @@ class TestRejectedPaths:
         assert exc_info.value.status_code == 400
         assert "absolute" in exc_info.value.detail.lower()
 
-    def test_unc_backslash_rejected(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_unc_backslash_rejected(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """UNC path with backslashes is rejected with 400 on all platforms."""
         _set_root(tmp_path, monkeypatch)
         with pytest.raises(HTTPException) as exc_info:
