@@ -24,9 +24,7 @@ from pathlib import Path
 
 import pytest
 from fastapi import HTTPException
-
 from fiberpath_api.path_policy import enforce_input_path_policy
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -51,7 +49,9 @@ class TestRejectedPaths:
         assert exc_info.value.status_code == 400
         assert "empty" in exc_info.value.detail.lower()
 
-    def test_whitespace_only_rejected(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_whitespace_only_rejected(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         _set_root(tmp_path, monkeypatch)
         with pytest.raises(HTTPException) as exc_info:
             enforce_input_path_policy("   ")
@@ -65,7 +65,9 @@ class TestRejectedPaths:
         assert exc_info.value.status_code == 400
         assert "invalid" in exc_info.value.detail.lower()
 
-    def test_nul_byte_at_start_rejected(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_nul_byte_at_start_rejected(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         _set_root(tmp_path, monkeypatch)
         with pytest.raises(HTTPException) as exc_info:
             enforce_input_path_policy("\x00/etc/passwd")

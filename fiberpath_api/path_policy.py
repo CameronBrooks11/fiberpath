@@ -3,13 +3,11 @@
 from __future__ import annotations
 
 import os
-import re
 from pathlib import Path
 
 from fastapi import HTTPException
 
 _ALLOWED_ROOTS_ENV = "FIBERPATH_API_ALLOWED_ROOTS"
-_SAFE_PATH_SEGMENT_RE = re.compile(r"^[A-Za-z0-9._ -]+$")
 
 
 def _parse_allowed_roots() -> list[Path]:
@@ -38,39 +36,38 @@ def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
     if "\x00" in raw:
         raise HTTPException(status_code=400, detail="Path contains invalid characters")
 
-    expanded = os.path.expanduser(raw)
-    drive, _ = os.path.splitdrive(expanded)
-    if os.path.isabs(expanded) or drive:
-        raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
+    # Disallow explicit traversal segments before any filesystem resolution.
+    normalized_raw = raw.replace("\\", "/")
+    parts = [part for part in normalized_raw.split("/") if part not in ("", ".")]
+    if any(part == ".." for part in parts):
+        raise HTTPException(status_code=400, detail="Path traversal is not allowed")
 
-    normalized = os.path.normpath(expanded)
-    if normalized in ("", "."):
-        raise HTTPException(status_code=400, detail="Path must not be empty")
-    if os.path.isabs(normalized):
-        raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
+    candidate = Path(raw).expanduser()
 
-    parts = Path(normalized).parts
-    if not parts:
-        raise HTTPException(status_code=400, detail="Path must not be empty")
-    for part in parts:
-        if part in ("", ".", ".."):
-            raise HTTPException(status_code=400, detail="Path traversal is not allowed")
-        if not _SAFE_PATH_SEGMENT_RE.fullmatch(part):
-            raise HTTPException(status_code=400, detail="Path contains invalid characters")
+    if candidate.is_absolute():
+        # Absolute paths are accepted only when they fall within an allowed root.
+        resolved = candidate.resolve(strict=False)
+    else:
+        # Relative paths are resolved from each allowed root in order.
+        # Pick the first candidate that is within a root.
+        for root in roots:
+            resolved = (root / candidate).resolve(strict=False)
+            if _is_within_roots(resolved, roots):
+                return resolved
+        # None of the root-relative candidates were within a root.
+        roots_str = ", ".join(str(root) for root in roots)
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                f"Path '{user_path}' is outside allowed API roots. "
+                f"Configure {_ALLOWED_ROOTS_ENV} to permit additional roots. "
+                f"Current roots: {roots_str}"
+            ),
+        )
 
-    candidate = Path(*parts)
+    if _is_within_roots(resolved, roots):
+        return resolved
 
-    # Relative paths are resolved from each allowed root in order.
-    # Pick the first candidate that remains within that same root.
-    for root in roots:
-        resolved = (root / candidate).resolve(strict=False)
-        try:
-            resolved.relative_to(root.resolve(strict=False))
-            return resolved
-        except ValueError:
-            continue
-
-    # None of the root-relative candidates were within a root.
     roots_str = ", ".join(str(root) for root in roots)
     raise HTTPException(
         status_code=403,
