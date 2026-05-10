@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 from fastapi import HTTPException
 
 _ALLOWED_ROOTS_ENV = "FIBERPATH_API_ALLOWED_ROOTS"
+_SAFE_PATH_SEGMENT_RE = re.compile(r"^[A-Za-z0-9._ -]+$")
 
 
 def _parse_allowed_roots() -> list[Path]:
@@ -47,7 +49,16 @@ def _resolve_user_path(user_path: str, roots: list[Path]) -> Path:
     if os.path.isabs(normalized):
         raise HTTPException(status_code=400, detail="Absolute paths are not allowed")
 
-    candidate = Path(normalized)
+    parts = Path(normalized).parts
+    if not parts:
+        raise HTTPException(status_code=400, detail="Path must not be empty")
+    for part in parts:
+        if part in ("", ".", ".."):
+            raise HTTPException(status_code=400, detail="Path traversal is not allowed")
+        if not _SAFE_PATH_SEGMENT_RE.fullmatch(part):
+            raise HTTPException(status_code=400, detail="Path contains invalid characters")
+
+    candidate = Path(*parts)
 
     # Relative paths are resolved from each allowed root in order.
     # Pick the first candidate that remains within that same root.
