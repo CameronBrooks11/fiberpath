@@ -41,11 +41,11 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.11.0",
+    "@tauri-apps/cli": "^2.11.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^24.12.2",
+    "@types/node": "^24.12.3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.0.0",
@@ -53,10 +53,10 @@
     "ajv": "^8.20.0",
     "jsdom": "^29.1.1",
     "json-schema-to-typescript": "^15.0.4",
-    "stylelint": "^17.10.0",
+    "stylelint": "^17.11.0",
     "stylelint-config-standard": "^40.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.10",
+    "vite": "^8.0.12",
     "vitest": "^4.1.4"
   }
 }
