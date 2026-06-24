@@ -163,6 +163,15 @@ jobs:
         with:
           install-linux-deps: "true"
 
+      - name: Clean stale bundle output
+        shell: bash
+        run: |
+          # The setup-rust cache restores target/, which includes previously
+          # built, version-stamped installers under release/bundle/. Remove them
+          # before building so the version-agnostic upload globs only ever pick
+          # up the current build's artifacts (see #120).
+          rm -rf src-tauri/target/release/bundle
+
       - name: Build Tauri bundles
         run: npm run package
 
