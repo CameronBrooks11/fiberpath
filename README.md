@@ -25,18 +25,20 @@
 
 FiberPath automates the complex process of **filament winding**—wrapping fiber-reinforced composites around mandrels to create lightweight, high-strength cylindrical parts like pressure vessels, pipes, and aerospace structures.
 
-Design multi-layer winding patterns in a visual interface, simulate the full manufacturing process, and stream G-code directly to Marlin-based hardware. FiberPath handles the mathematics of geodesic paths, fiber tension calculations, and machine kinematics so you can focus on part design.
+Design multi-layer winding patterns in a visual interface, simulate the full manufacturing process, and stream G-code directly to Marlin-based hardware. FiberPath handles the winding mathematics — hoop and helical path generation, tow coverage, and machine kinematics for cylindrical mandrels — so you can focus on part design.
 
 ### Features
 
 - **Visual Layer Editor** – Design winding patterns with live preview
-- **Geodesic Path Planning** – Automatic computation of stable fiber trajectories
+- **Winding Path Planning** – Automatic hoop, helical, and skip pattern generation for cylindrical mandrels
 - **Hardware Simulation** – Validate motion before manufacturing
 - **Direct Machine Control** – Stream G-code to Marlin controllers with pause/resume
 - **XAB-Native Axis Output** – Standardized rotational-axis output with clear logical axis mapping
 - **Cross-Platform Desktop GUI** – Native Windows, macOS, and Linux applications
 - **Command-Line Tools** – Scriptable workflows for automation and CI/CD
 - **Comprehensive Documentation** – Architecture guides, examples, and API reference
+
+> **Scope & roadmap:** FiberPath currently plans **cylindrical mandrels** with hoop, helical, and skip layers. Non-cylindrical (geodesic) surface support — including tapered and custom mandrels — is planned but not yet implemented.
 
 ## Quick Start
 
@@ -198,10 +200,10 @@ FiberPath consists of four coordinated components:
                 ▼
 ┌─────────────────────────────────────────────────┐
 │           Core Engine (Python)                  │
-│  • Geodesic path planning                       │
+│  • Winding path planning (hoop/helical/skip)    │
 │  • Layer strategies                             │
 │  • G-code generation                            │
-│  • Geometry utilities                           │
+│  • Cylindrical geometry primitives              │
 └─────────────────────────────────────────────────┘
                 ▲
                 │ imports
