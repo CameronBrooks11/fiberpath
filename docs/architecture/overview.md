@@ -24,7 +24,7 @@ together and where to extend them.
 └──────────────────────┘
 ```
 
-- **Core Engine (`fiberpath/`)** – Immutable planners, cylindrical geometry primitives, machine abstractions, and
+- **Core Engine (`fiberpath/`)** – Immutable planners, machine abstractions, and
   G-code emitters. The modules are designed to run without side effects so they can be imported from both CLI and API layers.
 - **Interface Layer** – `fiberpath_cli` hosts the Typer commands, while `fiberpath_api` turns the
   same operations into REST endpoints. The desktop GUI wraps the CLI and communicates via Tauri IPC
@@ -35,7 +35,6 @@ together and where to extend them.
 | Module                 | Responsibility                                                                         | Notes                                                                                            |
 | ---------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `fiberpath.planning`   | Parses `.wind` files, validates machine/layer constraints, produces command sequences. | `PlanOptions` governs verbosity and optional advanced dialect override.                          |
-| `fiberpath.geometry`   | Cylindrical surface/curve data primitives.                                             | Foundation for planned non-cylindrical support; current planning math lives in `fiberpath.planning.calculations`. |
 | `fiberpath.gcode`      | Dialects and writers for Marlin-style controllers.                                     | Extend here when adding custom headers or commands. Axis mapping configured via `MarlinDialect`. |
 | `fiberpath.simulation` | Time/distance estimations based on planned feed rates.                                 | Feeds CLI `simulate` summaries. Axis-aware for proper rotational calculations.                   |
 | `fiberpath.execution`  | PySerial streaming, pause/resume, and progress tracking.                               | Used by CLI streaming and API `/stream`.                                                         |

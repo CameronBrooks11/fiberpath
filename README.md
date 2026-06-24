@@ -203,7 +203,6 @@ FiberPath consists of four coordinated components:
 │  • Winding path planning (hoop/helical/skip)    │
 │  • Layer strategies                             │
 │  • G-code generation                            │
-│  • Cylindrical geometry primitives              │
 └─────────────────────────────────────────────────┘
                 ▲
                 │ imports
