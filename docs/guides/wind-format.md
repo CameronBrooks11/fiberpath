@@ -178,7 +178,7 @@ A helical layer winds at a specified angle, creating a spiral pattern around the
 
 - Pressure vessel cylindrical sections
 - Angled reinforcement (±45° for shear resistance)
-- Complex geodesic patterns
+- Angled helical reinforcement patterns
 
 ### Skip Layer
 
@@ -202,7 +202,7 @@ A skip layer rotates the mandrel without winding, allowing for pattern repositio
 
 - Pattern alignment between layers
 - Creating intentional gaps
-- Repositioning for non-geodesic patterns
+- Repositioning between layers
 
 ## Validation Rules
 
