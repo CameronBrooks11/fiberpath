@@ -11,7 +11,15 @@ from pydantic import BaseModel, ConfigDict, Field, PositiveFloat, PositiveInt
 class BaseFiberPathModel(BaseModel):
     """Base class that applies shared Pydantic configuration."""
 
-    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+    # allow_inf_nan=False rejects NaN/Infinity on every float field. JSON
+    # permits the NaN/Infinity literals, and unguarded non-finite values
+    # otherwise propagate into the generated G-code (a literal "Anan" axis word)
+    # or overflow math.ceil in the planner (uncaught OverflowError).
+    model_config = ConfigDict(
+        populate_by_name=True,
+        str_strip_whitespace=True,
+        allow_inf_nan=False,
+    )
 
 
 class MandrelParameters(BaseFiberPathModel):

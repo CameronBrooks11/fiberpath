@@ -32,6 +32,53 @@ def test_load_wind_definition_invalid_schema(tmp_path: Path) -> None:
         load_wind_definition(bad_schema)
 
 
+def test_load_wind_definition_rejects_infinite_diameter(tmp_path: Path) -> None:
+    """A non-finite geometry value must be rejected at load, not propagated.
+
+    Python's json.loads accepts the ``Infinity`` literal, and an unbounded
+    float previously sailed through validation. Downstream it overflowed
+    ``math.ceil`` in the planner (uncaught OverflowError → 500/traceback).
+    """
+    bad = tmp_path / "inf.wind"
+    bad.write_text(
+        """
+{
+  "mandrelParameters": {"diameter": Infinity, "windLength": 500.0},
+  "towParameters": {"width": 3.0, "thickness": 0.2},
+  "defaultFeedRate": 1000.0,
+  "layers": [{"windType": "hoop", "terminal": false}]
+}
+""",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(WindFileError, match="failed validation"):
+        load_wind_definition(bad)
+
+
+def test_load_wind_definition_rejects_nan_mandrel_rotation(tmp_path: Path) -> None:
+    """A NaN numeric input must be rejected at load.
+
+    ``NaN`` previously passed validation and propagated into the generated
+    G-code as a literal ``Anan`` axis word (and made total_time NaN).
+    """
+    bad = tmp_path / "nan.wind"
+    bad.write_text(
+        """
+{
+  "mandrelParameters": {"diameter": 100.0, "windLength": 500.0},
+  "towParameters": {"width": 3.0, "thickness": 0.2},
+  "defaultFeedRate": 1000.0,
+  "layers": [{"windType": "skip", "mandrelRotation": NaN}]
+}
+""",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(WindFileError, match="failed validation"):
+        load_wind_definition(bad)
+
+
 def test_load_wind_definition_valid_file(tmp_path: Path) -> None:
     """Verify that a valid .wind file loads successfully."""
     valid_wind = tmp_path / "valid.wind"
