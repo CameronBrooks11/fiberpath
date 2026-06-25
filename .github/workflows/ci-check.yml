@@ -20,23 +20,15 @@ on:
       - ".github/workflows/**"
       - ".github/actions/**"
   pull_request:
+    # No paths filter on purpose. "CI Check" is a required status check, so it
+    # must run on EVERY PR to main and always report a result. With a paths
+    # filter, a PR touching only unfiltered files (e.g. a Renovate-managed
+    # .pre-commit-config.yaml or renovate.json) would never trigger the
+    # workflow, leaving the required check stuck "Expected" and blocking merge.
+    # The `changes` job below still gates the heavy jobs by path, and the
+    # `ci-check` aggregator always posts — so cost stays low while every PR is
+    # mergeable.
     branches: [main]
-    paths:
-      - "fiberpath/**"
-      - "fiberpath_api/**"
-      - "fiberpath_cli/**"
-      - "fiberpath_gui/**"
-      - "docs/**"
-      - "tests/**"
-      - "pyproject.toml"
-      - "uv.lock"
-      - "setup.cfg"
-      - "renovate.json"
-      - "README.md"
-      - "CHANGELOG.md"
-      - "scripts/**"
-      - ".github/workflows/**"
-      - ".github/actions/**"
   workflow_dispatch:
 
 permissions:
