@@ -32,6 +32,28 @@ def test_load_wind_definition_invalid_schema(tmp_path: Path) -> None:
         load_wind_definition(bad_schema)
 
 
+def test_load_wind_definition_on_directory_raises_windfileerror(tmp_path: Path) -> None:
+    """A directory path must surface as WindFileError, not a raw IsADirectoryError.
+
+    The API maps WindFileError to HTTP 4xx and the CLI maps it to a clean
+    BadParameter; an unmapped OSError became a 500 / raw traceback.
+    """
+    a_dir = tmp_path / "somedir"
+    a_dir.mkdir()
+
+    with pytest.raises(WindFileError):
+        load_wind_definition(a_dir)
+
+
+def test_load_wind_definition_on_non_utf8_file_raises_windfileerror(tmp_path: Path) -> None:
+    """A binary / non-UTF-8 file must surface as WindFileError, not UnicodeDecodeError."""
+    binary = tmp_path / "binary.wind"
+    binary.write_bytes(b"\xff\xfe\x00\x01\x80\x81")
+
+    with pytest.raises(WindFileError):
+        load_wind_definition(binary)
+
+
 def test_load_wind_definition_rejects_infinite_diameter(tmp_path: Path) -> None:
     """A non-finite geometry value must be rejected at load, not propagated.
 

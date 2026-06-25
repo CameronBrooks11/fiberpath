@@ -10,6 +10,7 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ### Fixed
 
+- Loading a wind definition that is a directory, an unreadable file, or non-UTF-8/binary content now reports a clean error instead of crashing. Previously these raised an unmapped `IsADirectoryError`/`UnicodeDecodeError`, surfacing as an HTTP 500 from the API (`/plan/from-file`, `/validate/from-file`) or a raw traceback from the CLI; they are now mapped to the standard `WindFileError` (4xx / clean CLI message).
 - `fiberpath plan --output <dir>/<file>.gcode` into a directory that does not exist now creates the parent directories instead of crashing with a `FileNotFoundError` traceback (matching the existing `plot` behavior). `write_gcode` creates the destination's parent directory.
 - A helical layer whose `leadInMM` is greater than or equal to the mandrel `windLength` is now rejected during planning. Previously it passed validation and generated G-code that drove the carriage off the end of the mandrel into negative coordinates (inverting the main-pass rotation), risking an end-stop collision.
 - Non-finite numeric inputs (`NaN`, `Infinity`) in a `.wind` file are now rejected at load instead of being silently accepted. Previously a `NaN` value could be emitted into generated G-code as a literal `Anan` axis word, and an `Infinity` geometry value crashed the planner with an uncaught `OverflowError` (HTTP 500 / CLI traceback).
