@@ -77,7 +77,7 @@ Reusable setup steps used across multiple workflows:
 Documentation is **published from the project hub repo**,
 [`fiberpath/fiberpath.github.io`](https://github.com/fiberpath/fiberpath.github.io), not from this
 repo. The hub owns all MkDocs config; it imports this repo's `docs/` (and the GUI docs) at build time,
-builds the unified site with MkDocs `--strict`, and serves it at <https://fiberpath.github.io/fiberpath>.
+builds the unified site with MkDocs `--strict`, and serves it at <https://fiberpath.org/fiberpath>.
 This repo contributes only Markdown; validation on PRs is delegated to the org's shared
 `docs-validate` reusable workflow (above).
 
