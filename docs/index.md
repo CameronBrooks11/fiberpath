@@ -22,7 +22,7 @@ hide:
 ### Modern filament winding planner, simulator, and tooling
 
 [Get Started](getting-started.md){ .md-button .md-button--primary }
-[View on GitHub :fontawesome-brands-github:](https://github.com/CameronBrooks11/fiberpath){ .md-button target=_blank }
+[View on GitHub :fontawesome-brands-github:](https://github.com/fiberpath/fiberpath){ .md-button target=_blank }
 
 </div>
 
@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.7.2](https://github.com/CameronBrooks11/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.7.2](https://github.com/fiberpath/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`

@@ -145,8 +145,8 @@ jobs:
             notes += `**Linux:**\n`;
             notes += `- \`fiberpath_${version}_amd64.deb\`\n`;
             notes += `- \`fiberpath_${version}_amd64.AppImage\`\n\n`;
-            notes += `📚 [Installation Guide](https://cameronbrooks11.github.io/fiberpath/getting-started/) | `;
-            notes += `🆘 [Troubleshooting](https://cameronbrooks11.github.io/fiberpath/troubleshooting/)\n\n`;
+            notes += `📚 [Installation Guide](https://fiberpath.github.io/fiberpath/getting-started/) | `;
+            notes += `🆘 [Troubleshooting](https://fiberpath.github.io/fiberpath/troubleshooting/)\n\n`;
 
             // Python package section
             notes += `## Python Package\n\n`;

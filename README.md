@@ -4,18 +4,18 @@
 
 **Plan, simulate, and manufacture composite parts with precision fiber winding.**
 
-[![Version](https://img.shields.io/badge/version-0.7.2-4c7284)](https://github.com/CameronBrooks11/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.7.2-4c7284)](https://github.com/fiberpath/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-00695C.svg)](LICENSE)
-[![Backend CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/backend-ci.yml)
-[![GUI CI](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/CameronBrooks11/fiberpath/actions/workflows/gui-ci.yml)
-[![Docs](https://img.shields.io/github/actions/workflow/status/CameronBrooks11/fiberpath/docs-deploy.yml?branch=main&label=Docs&logo=githubpages&logoColor=white)](https://cameronbrooks11.github.io/fiberpath)
+[![Backend CI](https://img.shields.io/github/actions/workflow/status/fiberpath/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/fiberpath/fiberpath/actions/workflows/backend-ci.yml)
+[![GUI CI](https://img.shields.io/github/actions/workflow/status/fiberpath/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/fiberpath/fiberpath/actions/workflows/gui-ci.yml)
+[![Docs](https://img.shields.io/github/actions/workflow/status/fiberpath/fiberpath/docs-deploy.yml?branch=main&label=Docs&logo=githubpages&logoColor=white)](https://fiberpath.github.io/fiberpath)
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-19+-61DAFB?logo=react&logoColor=black)
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-FFC131?logo=tauri&logoColor=white)
 
-[Download](https://github.com/CameronBrooks11/fiberpath/releases/latest) · [Documentation](https://cameronbrooks11.github.io/fiberpath) · [Examples](examples/)
+[Download](https://github.com/fiberpath/fiberpath/releases/latest) · [Documentation](https://fiberpath.github.io/fiberpath) · [Examples](examples/)
 
 </div>
 
@@ -44,7 +44,7 @@ Design multi-layer winding patterns in a visual interface, simulate the full man
 
 ### Option 1: Desktop GUI (Recommended)
 
-Download the installer for your platform from the [latest release](https://github.com/CameronBrooks11/fiberpath/releases/latest):
+Download the installer for your platform from the [latest release](https://github.com/fiberpath/fiberpath/releases/latest):
 
 - **Windows**: `.msi` or `.exe` installer
 - **macOS**: `.dmg` disk image
@@ -75,7 +75,7 @@ The `plot` command creates a 2D unwrapped visualization of the toolpath for quic
 
 ### Desktop Application (Recommended)
 
-📦 **Download:** [github.com/CameronBrooks11/fiberpath/releases/latest](https://github.com/CameronBrooks11/fiberpath/releases/latest)
+📦 **Download:** [github.com/fiberpath/fiberpath/releases/latest](https://github.com/fiberpath/fiberpath/releases/latest)
 
 **No Python installation required**—the GUI is a fully self-contained native application with the FiberPath backend bundled inside. Just download, install, and run.
 
@@ -102,7 +102,7 @@ pip install fiberpath[dev]  # Development tools
 **Development Install:**
 
 ```sh
-git clone https://github.com/CameronBrooks11/fiberpath.git
+git clone https://github.com/fiberpath/fiberpath.git
 cd fiberpath
 uv pip install -e .[dev,cli,api]
 pytest
@@ -221,7 +221,7 @@ FiberPath consists of four coordinated components:
 - **Core is deterministic** and thoroughly tested
 - **Modular architecture** allows using components independently
 
-See [Architecture Documentation](https://cameronbrooks11.github.io/fiberpath/architecture/overview/) for detailed design rationale.
+See [Architecture Documentation](https://fiberpath.github.io/fiberpath/architecture/overview/) for detailed design rationale.
 
 ## Axis Configuration
 
@@ -235,14 +235,14 @@ Legacy XYZ programs should be re-generated under current versions. Simulation an
 
 ## Documentation
 
-Comprehensive documentation is available at [cameronbrooks11.github.io/fiberpath](https://cameronbrooks11.github.io/fiberpath):
+Comprehensive documentation is available at [fiberpath.github.io/fiberpath](https://fiberpath.github.io/fiberpath):
 
-- **[Getting Started Guide](https://cameronbrooks11.github.io/fiberpath/getting-started/)** – Installation and first steps
-- **[Architecture Overview](https://cameronbrooks11.github.io/fiberpath/architecture/overview/)** – System design and components
-- **[Usage Guides](https://cameronbrooks11.github.io/fiberpath/guides/visualization/)** – Visualization, streaming, WIND format
-- **[API Reference](https://cameronbrooks11.github.io/fiberpath/reference/api/)** – Core functions and CLI commands
-- **[GUI Documentation](https://cameronbrooks11.github.io/fiberpath/gui/overview/)** – Desktop application architecture
-- **[Development Guide](https://cameronbrooks11.github.io/fiberpath/development/contributing/)** – Contributing, tooling, release process
+- **[Getting Started Guide](https://fiberpath.github.io/fiberpath/getting-started/)** – Installation and first steps
+- **[Architecture Overview](https://fiberpath.github.io/fiberpath/architecture/overview/)** – System design and components
+- **[Usage Guides](https://fiberpath.github.io/fiberpath/guides/visualization/)** – Visualization, streaming, WIND format
+- **[API Reference](https://fiberpath.github.io/fiberpath/reference/api/)** – Core functions and CLI commands
+- **[GUI Documentation](https://fiberpath.github.io/fiberpath/gui/overview/)** – Desktop application architecture
+- **[Development Guide](https://fiberpath.github.io/fiberpath/development/contributing/)** – Contributing, tooling, release process
 
 ## Contributing
 
@@ -250,14 +250,14 @@ Contributions are welcome! FiberPath is actively developed and maintained.
 
 **Before contributing:**
 
-1. Read the [Contributing Guide](https://cameronbrooks11.github.io/fiberpath/development/contributing/)
-2. Check existing [issues](https://github.com/CameronBrooks11/fiberpath/issues) and [pull requests](https://github.com/CameronBrooks11/fiberpath/pulls)
+1. Read the [Contributing Guide](https://fiberpath.github.io/fiberpath/development/contributing/)
+2. Check existing [issues](https://github.com/fiberpath/fiberpath/issues) and [pull requests](https://github.com/fiberpath/fiberpath/pulls)
 3. Open an issue to discuss major changes before implementing
 
 **Development setup:**
 
 ```sh
-git clone https://github.com/CameronBrooks11/fiberpath.git
+git clone https://github.com/fiberpath/fiberpath.git
 cd fiberpath
 uv pip install -e .[dev,cli,api]
 pytest
@@ -274,7 +274,7 @@ npm test
 - All new features require tests and documentation
 - Commit messages use conventional commits format
 
-See [Development Documentation](https://cameronbrooks11.github.io/fiberpath/development/) for tooling, CI/CD, and release process details.
+See [Development Documentation](https://fiberpath.github.io/fiberpath/development/) for tooling, CI/CD, and release process details.
 
 ## License
 
@@ -290,6 +290,6 @@ See [LICENSE](LICENSE) for full terms.
 
 ---
 
-**Questions?** Open an [issue](https://github.com/CameronBrooks11/fiberpath/issues) or check the [documentation](https://cameronbrooks11.github.io/fiberpath).
+**Questions?** Open an [issue](https://github.com/fiberpath/fiberpath/issues) or check the [documentation](https://fiberpath.github.io/fiberpath).
 
-**Found a bug?** Report it on [GitHub Issues](https://github.com/CameronBrooks11/fiberpath/issues/new) with steps to reproduce.
+**Found a bug?** Report it on [GitHub Issues](https://github.com/fiberpath/fiberpath/issues/new) with steps to reproduce.

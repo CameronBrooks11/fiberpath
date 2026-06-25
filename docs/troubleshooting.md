@@ -28,7 +28,7 @@ Common issues and solutions for FiberPath installation and usage.
 
 **Solution:**
 
-1. Verify download is from official [GitHub Releases](https://github.com/CameronBrooks11/fiberpath/releases)
+1. Verify download is from official [GitHub Releases](https://github.com/fiberpath/fiberpath/releases)
 2. Check file hash matches release notes (if provided)
 3. Add exception in Windows Defender:
    - Windows Security → Virus & threat protection → Manage settings
@@ -109,7 +109,7 @@ pip install -e .[dev,cli,api]
 1. **Verify installation:** Reinstall from fresh download
 2. **Check integrity:** On Windows, look for `resources\_up_\bundled-cli\fiberpath.exe`
 3. **Antivirus interference:** Some security software quarantines executables—check antivirus logs
-4. **Report bug:** [File an issue](https://github.com/CameronBrooks11/fiberpath/issues) with:
+4. **Report bug:** [File an issue](https://github.com/fiberpath/fiberpath/issues) with:
    - Platform (Windows/macOS/Linux)
    - Installer type (.msi/.exe/.dmg/.deb/.AppImage)
    - Installation directory
@@ -238,7 +238,7 @@ fiberpath plan input.wind -o test.gcode --verbose
 **Still stuck?**
 
 1. **Check documentation:** [Getting Started](getting-started.md), [Guides](guides/wind-format.md)
-2. **Search issues:** [GitHub Issues](https://github.com/CameronBrooks11/fiberpath/issues)
+2. **Search issues:** [GitHub Issues](https://github.com/fiberpath/fiberpath/issues)
 3. **File a bug report:** Include:
    - Platform and version (Windows 11, macOS 14, Ubuntu 22.04, etc.)
    - FiberPath version (Help → About in GUI, or `fiberpath --version`)

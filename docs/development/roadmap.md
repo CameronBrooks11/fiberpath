@@ -81,15 +81,15 @@ toolpath must be reproduced bit-for-bit (or coverage-equivalent) before and afte
 
 | Stage | Work | Horizon | Issue |
 |---|---|---|---|
-| 1 | **Motion IR** — typed machine-agnostic toolpath; planner emits it; simulate/plot/metrics/G-code consume it; adopt a single nominal time model (removes today's planner/simulator time divergence) | Near-term | [#136](https://github.com/CameronBrooks11/fiberpath/issues/136) |
-| 2 | **Unified pattern primitive** — express hoop/helical/skip as one parametric primitive on the developed cylinder, re-derived to bit-for-bit equality; validators become spec type-checkers | Near/medium | [#137](https://github.com/CameronBrooks11/fiberpath/issues/137) |
-| 3a | **Cones** — typed `Cone` profile segment; developable closed-form paths; first golden is a straight HPR reducer frustum | Medium | [#138](https://github.com/CameronBrooks11/fiberpath/issues/138) |
-| 3b | **Domes / general surfaces of revolution** — Clairaut + non-geodesic (λ) path solving with measured friction, 3-D delivery-eye kinematics | Longer-horizon (est. 2027+, hardware-gated) | [#139](https://github.com/CameronBrooks11/fiberpath/issues/139) |
+| 1 | **Motion IR** — typed machine-agnostic toolpath; planner emits it; simulate/plot/metrics/G-code consume it; adopt a single nominal time model (removes today's planner/simulator time divergence) | Near-term | [#136](https://github.com/fiberpath/fiberpath/issues/136) |
+| 2 | **Unified pattern primitive** — express hoop/helical/skip as one parametric primitive on the developed cylinder, re-derived to bit-for-bit equality; validators become spec type-checkers | Near/medium | [#137](https://github.com/fiberpath/fiberpath/issues/137) |
+| 3a | **Cones** — typed `Cone` profile segment; developable closed-form paths; first golden is a straight HPR reducer frustum | Medium | [#138](https://github.com/fiberpath/fiberpath/issues/138) |
+| 3b | **Domes / general surfaces of revolution** — Clairaut + non-geodesic (λ) path solving with measured friction, 3-D delivery-eye kinematics | Longer-horizon (est. 2027+, hardware-gated) | [#139](https://github.com/fiberpath/fiberpath/issues/139) |
 
 Notes:
 
 - **Time-model calibration** against the real machine is tracked separately and done when hardware time
-  allows ([#130](https://github.com/CameronBrooks11/fiberpath/issues/130)); the engine ships with a
+  allows ([#130](https://github.com/fiberpath/fiberpath/issues/130)); the engine ships with a
   documented nominal estimate until then.
 - Stage 3b is intentionally not broken into sub-issues yet — it starts only when there is real
   non-cylindrical demand and a machine to validate the friction model on. Straight cones (3a) cover the
@@ -106,9 +106,9 @@ as a cross-cutting deliverable:
   IR is documented as a secondary, separately-versioned format; emitted G-code is treated as a build
   artifact, not a standard.
 - Concrete groundwork: relax the schema version constraint so the format can evolve additively
-  ([#140](https://github.com/CameronBrooks11/fiberpath/issues/140)); promote the format guide to a
+  ([#140](https://github.com/fiberpath/fiberpath/issues/140)); promote the format guide to a
   normative versioned SPEC, add a versioned JSON-Schema `$id`, and build a conformance corpus
-  (`valid/` / `invalid/` / golden outputs) ([#141](https://github.com/CameronBrooks11/fiberpath/issues/141)).
+  (`valid/` / `invalid/` / golden outputs) ([#141](https://github.com/fiberpath/fiberpath/issues/141)).
 - Evolution policy: additive-only within a major version; tolerant readers ignore unknown fields; breaking
   changes bump the major. The existing `windAngle` convention (measured from the mandrel axis: 0° axial,
   90° hoop) is normative.
@@ -116,19 +116,19 @@ as a cross-cutting deliverable:
 ## Infrastructure
 
 Tracked under the org-migration epic
-([#142](https://github.com/CameronBrooks11/fiberpath/issues/142)), front-loaded because the documentation
+([#142](https://github.com/fiberpath/fiberpath/issues/142)), front-loaded because the documentation
 URL, schema `$id`, badges, and dependency tooling all depend on the project's home:
 
 - Migrate the repository to a dedicated `fiberpath` GitHub org, restoring the release pipeline — chiefly
   the PyPI trusted publisher, which is keyed on the repository owner/name
-  ([#131](https://github.com/CameronBrooks11/fiberpath/issues/131)).
+  ([#131](https://github.com/fiberpath/fiberpath/issues/131)).
 - Stand up an org-pages documentation site and point the owned `fiberpath.org` domain at it
-  ([#133](https://github.com/CameronBrooks11/fiberpath/issues/133)); update badges/links
-  ([#132](https://github.com/CameronBrooks11/fiberpath/issues/132)).
+  ([#133](https://github.com/fiberpath/fiberpath/issues/133)); update badges/links
+  ([#132](https://github.com/fiberpath/fiberpath/issues/132)).
 - Add an org `.github` community-health repository
-  ([#134](https://github.com/CameronBrooks11/fiberpath/issues/134)) and switch dependency updates from
+  ([#134](https://github.com/fiberpath/fiberpath/issues/134)) and switch dependency updates from
   Dependabot to org-level Renovate, keeping security alerts
-  ([#135](https://github.com/CameronBrooks11/fiberpath/issues/135)).
+  ([#135](https://github.com/fiberpath/fiberpath/issues/135)).
 
 The desktop GUI stays in the monorepo for now; splitting it into its own repository has been considered and
 deferred (the engine refactor benefits from atomic cross-cutting changes, and the bundled-CLI coupling is

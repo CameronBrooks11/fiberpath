@@ -6,7 +6,7 @@ This guide walks you through installing FiberPath and creating your first filame
 
 ### Desktop GUI (Recommended for New Users)
 
-**Download installers from the [latest release](https://github.com/CameronBrooks11/fiberpath/releases/latest):**
+**Download installers from the [latest release](https://github.com/fiberpath/fiberpath/releases/latest):**
 
 - **Windows:** `.msi` or `.exe` installer
 - **macOS:** `.dmg` installer
@@ -43,7 +43,7 @@ fiberpath --version
 Clone the repository and install with development dependencies:
 
 ```sh
-git clone https://github.com/CameronBrooks11/fiberpath.git
+git clone https://github.com/fiberpath/fiberpath.git
 cd fiberpath
 uv pip install -e .[dev,cli,api]
 ```
