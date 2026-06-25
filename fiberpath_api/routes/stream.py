@@ -35,6 +35,12 @@ def start_stream(payload: StreamRequest) -> StreamResponse:
         raise HTTPException(status_code=400, detail="port is required when dry_run is false")
 
     commands = payload.gcode.splitlines()
+    if not any(line.strip() for line in commands):
+        # Empty/whitespace-only input is a client error, not an upstream device
+        # failure — return 400 rather than letting the streamer raise a
+        # StreamError that maps to 502.
+        raise HTTPException(status_code=400, detail="gcode contained no commands")
+
     streamer = MarlinStreamer(port=payload.port, baud_rate=payload.baud_rate)
 
     try:
