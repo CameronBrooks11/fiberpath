@@ -117,14 +117,6 @@ jobs:
           name: sbom-artifacts
           path: sbom
 
-      - name: Get previous tag
-        id: previous-tag
-        run: |
-          # Get previous tag BEFORE creating new one
-          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          echo "previous=$PREV_TAG" >> $GITHUB_OUTPUT
-          echo "Previous tag: ${PREV_TAG:-none}"
-
       - name: Create release tag
         run: |
           git config user.name "github-actions[bot]"
@@ -137,7 +129,6 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            const prevTag = '${{ steps.previous-tag.outputs.previous }}';
             const newTag = '${{ needs.validate.outputs.tag }}';
             const version = '${{ inputs.version }}';
             const repo = context.repo;
@@ -165,52 +156,8 @@ jobs:
             notes += `[PyPI Package](https://pypi.org/project/fiberpath/${version}/) | `;
             notes += `[Source Code](https://github.com/${repo.owner}/${repo.repo}/tree/${newTag})\n\n`;
 
-            // Changelog section
-            notes += `## Changelog\n\n`;
-
-            if (prevTag) {
-              const { data: comparison } = await github.rest.repos.compareCommits({
-                owner: repo.owner,
-                repo: repo.repo,
-                base: prevTag,
-                head: newTag
-              });
-
-              // Categorize commits
-              const added = [];
-              const fixed = [];
-              const changed = [];
-
-              comparison.commits.forEach(commit => {
-                const msg = commit.commit.message.split('\n')[0];
-                const sha = commit.sha.substring(0, 7);
-                const entry = `- ${msg} (\`${sha}\`)`;
-
-                const lower = msg.toLowerCase();
-                if (lower.startsWith('add') || lower.startsWith('feat')) {
-                  added.push(entry);
-                } else if (lower.startsWith('fix')) {
-                  fixed.push(entry);
-                } else {
-                  changed.push(entry);
-                }
-              });
-
-              if (added.length > 0) {
-                notes += `### Added\n${added.join('\n')}\n\n`;
-              }
-              if (fixed.length > 0) {
-                notes += `### Fixed\n${fixed.join('\n')}\n\n`;
-              }
-              if (changed.length > 0) {
-                notes += `### Changed\n${changed.join('\n')}\n\n`;
-              }
-
-              notes += `**Full Changelog:** https://github.com/${repo.owner}/${repo.repo}/compare/${prevTag}...${newTag}\n`;
-            } else {
-              notes += `Initial release.\n`;
-            }
-
+            // The changelog (## What's Changed + Full Changelog compare link) is
+            // appended automatically by generate_release_notes on the release step.
             return notes;
           result-encoding: string
 
@@ -231,6 +178,7 @@ jobs:
           tag_name: ${{ needs.validate.outputs.tag }}
           name: Release ${{ inputs.version }}
           body: ${{ steps.notes.outputs.result }}
+          generate_release_notes: true
           draft: false
           prerelease: ${{ inputs.prerelease }}
           files: |
