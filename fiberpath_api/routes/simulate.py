@@ -16,7 +16,14 @@ def simulate_from_file(payload: FilePathRequest) -> SimulationResponse:
     target = enforce_input_path_policy(payload.path)
     if not target.exists():
         raise HTTPException(status_code=404, detail=f"No file found at {payload.path}")
-    commands = target.read_text(encoding="utf-8").splitlines()
+    if not target.is_file():
+        raise HTTPException(status_code=400, detail=f"Not a file: {payload.path}")
+    try:
+        commands = target.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        raise HTTPException(
+            status_code=400, detail=f"Could not read {payload.path}: {exc}"
+        ) from exc
     result = simulate_program(commands)
     return SimulationResponse(
         commands=result.commands_executed,

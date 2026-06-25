@@ -10,7 +10,7 @@ from fiberpath.simulation import SimulationError, simulate_program
 
 from .output import echo_json
 
-GCODE_ARGUMENT = typer.Argument(..., exists=True, readable=True)
+GCODE_ARGUMENT = typer.Argument(..., exists=True, readable=True, file_okay=True, dir_okay=False)
 JSON_OPTION = typer.Option(False, "--json", help="Emit machine-readable JSON summary")
 
 
