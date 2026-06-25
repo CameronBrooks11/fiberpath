@@ -262,9 +262,17 @@ impl ResponseRouter {
 pub struct MarlinSubprocess {
     stdin: Arc<Mutex<ChildStdin>>,
     response_router: ResponseRouter,
-    _child: Child,
+    child: Child,
     _stderr_thread: std::thread::JoinHandle<()>,
     _reader_thread: std::thread::JoinHandle<()>,
+}
+
+/// Returns true if the child process has already exited (or its status can no
+/// longer be queried). `try_wait()` is non-blocking: `Ok(None)` means still
+/// running, `Ok(Some(_))` means exited, `Err(_)` means we can't tell — treat
+/// the latter two as dead so the caller respawns.
+fn child_has_exited(child: &mut Child) -> bool {
+    matches!(child.try_wait(), Ok(Some(_)) | Err(_))
 }
 
 impl MarlinSubprocess {
@@ -315,10 +323,25 @@ impl MarlinSubprocess {
         Ok(Self {
             stdin: Arc::new(Mutex::new(stdin)),
             response_router,
-            _child: child,
+            child,
             _stderr_thread: stderr_thread,
             _reader_thread: reader_thread,
         })
+    }
+
+    /// True if the interactive subprocess has exited and should be respawned.
+    fn is_dead(&mut self) -> bool {
+        child_has_exited(&mut self.child)
+    }
+}
+
+impl Drop for MarlinSubprocess {
+    fn drop(&mut self) {
+        // Kill and reap the interactive subprocess so it does not linger as an
+        // orphan holding the serial port open after the app closes/reloads or
+        // when a dead instance is replaced.
+        let _ = self.child.kill();
+        let _ = self.child.wait();
     }
 }
 
@@ -333,6 +356,12 @@ fn acquire_io(
     app: Option<AppHandle>,
 ) -> Result<(Arc<Mutex<ChildStdin>>, ResponseRouter), String> {
     let mut guard = state.lock().map_err(|e| e.to_string())?;
+    // If a subprocess exists but has already exited, drop it (its Drop reaps
+    // the child) so the next block respawns a fresh one instead of handing back
+    // a dead process whose stdin writes would fail forever.
+    if guard.as_mut().is_some_and(MarlinSubprocess::is_dead) {
+        *guard = None;
+    }
     if guard.is_none() {
         let app = app.ok_or("Not connected")?;
         *guard = Some(MarlinSubprocess::spawn(app).map_err(|e| e.to_string())?);
@@ -603,5 +632,28 @@ mod tests {
             rx.try_recv(),
             Err(oneshot::error::TryRecvError::Closed)
         ));
+    }
+
+    // Regression: acquire_io used `guard.is_none()` and so handed back a dead
+    // subprocess forever. child_has_exited() is the predicate that now lets it
+    // detect the dead process and respawn.
+    #[test]
+    fn child_has_exited_true_for_finished_process() {
+        let mut child = std::process::Command::new("true")
+            .spawn()
+            .expect("spawn `true`");
+        child.wait().expect("wait for `true` to exit");
+        assert!(child_has_exited(&mut child));
+    }
+
+    #[test]
+    fn child_has_exited_false_for_running_process() {
+        let mut child = std::process::Command::new("sleep")
+            .arg("30")
+            .spawn()
+            .expect("spawn `sleep`");
+        assert!(!child_has_exited(&mut child));
+        let _ = child.kill();
+        let _ = child.wait();
     }
 }
