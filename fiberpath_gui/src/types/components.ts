@@ -81,11 +81,12 @@ export interface NumericRange {
  * These constants ensure consistency in validation across components.
  */
 export const NUMERIC_RANGES = {
-  /** Wind angle: 0° to 90° (exclusive) */
+  /** Wind angle: 1° to 89° (inclusive), matching the planner's enforced bounds
+   * (90° gives cos = 0; the engine clamps to [1, 89]). */
   WIND_ANGLE: {
-    min: 0,
-    max: 90,
-    inclusive: { min: false, max: false },
+    min: 1,
+    max: 89,
+    inclusive: { min: true, max: true },
   } as NumericRange,
 
   /** Feed rate: 1 to 10000 mm/min */

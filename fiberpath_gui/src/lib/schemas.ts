@@ -105,12 +105,15 @@ export const WindHoopLayerSchema = z.object({
  */
 export const WindHelicalLayerSchema = z.object({
   windType: z.literal("helical"),
-  windAngle: z.number().min(0).max(90),
+  // Bounds match the planner contract (PositiveFloat/PositiveInt; wind angle
+  // is enforced to [1, 89]). Keeping these in sync avoids the save gate
+  // accepting values the engine later rejects with a 422.
+  windAngle: z.number().min(1).max(89),
   patternNumber: z.number().int().positive(),
-  skipIndex: z.number().int().nonnegative(),
-  lockDegrees: z.number().nonnegative(),
-  leadInMM: z.number().nonnegative(),
-  leadOutDegrees: z.number().nonnegative(),
+  skipIndex: z.number().int().positive(),
+  lockDegrees: z.number().positive(),
+  leadInMM: z.number().positive(),
+  leadOutDegrees: z.number().positive(),
   skipInitialNearLock: z.boolean().optional(),
 });
 

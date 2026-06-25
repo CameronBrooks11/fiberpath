@@ -88,12 +88,14 @@ export function validateHelicalField(
 
     case "lock_degrees":
     case "lead_out_degrees":
-      return value < 0
-        ? `${field.replace("_", " ")} must be non-negative`
+      // The planner requires these to be strictly positive (PositiveFloat);
+      // accepting 0 here only defers a 422 from the backend.
+      return value <= 0
+        ? `${field.replace("_", " ")} must be positive`
         : undefined;
 
     case "lead_in_mm":
-      return value < 0 ? "Lead-in must be non-negative" : undefined;
+      return value <= 0 ? "Lead-in must be positive" : undefined;
   }
 }
 
