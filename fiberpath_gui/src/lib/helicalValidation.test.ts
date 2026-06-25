@@ -29,6 +29,14 @@ describe("helicalValidation", () => {
           validateHelicalField("wind_angle", 91, defaultHelical),
         ).toBeDefined();
       });
+
+      it("rejects 90 and sub-1 angles, accepts the [1, 89] bounds", () => {
+        // The planner enforces [1, 89] (90° -> cos = 0). The editor must match.
+        expect(validateHelicalField("wind_angle", 90, defaultHelical)).toBeDefined();
+        expect(validateHelicalField("wind_angle", 0.5, defaultHelical)).toBeDefined();
+        expect(validateHelicalField("wind_angle", 1, defaultHelical)).toBeUndefined();
+        expect(validateHelicalField("wind_angle", 89, defaultHelical)).toBeUndefined();
+      });
     });
 
     describe("pattern_number", () => {
@@ -114,10 +122,10 @@ describe("helicalValidation", () => {
     });
 
     describe("lock_degrees", () => {
-      it("accepts zero", () => {
+      it("rejects zero (planner requires a positive value)", () => {
         expect(
           validateHelicalField("lock_degrees", 0, defaultHelical),
-        ).toBeUndefined();
+        ).toBeDefined();
       });
 
       it("accepts positive value", () => {
@@ -134,9 +142,15 @@ describe("helicalValidation", () => {
     });
 
     describe("lead_out_degrees", () => {
-      it("accepts zero", () => {
+      it("rejects zero (planner requires a positive value)", () => {
         expect(
           validateHelicalField("lead_out_degrees", 0, defaultHelical),
+        ).toBeDefined();
+      });
+
+      it("accepts positive value", () => {
+        expect(
+          validateHelicalField("lead_out_degrees", 30, defaultHelical),
         ).toBeUndefined();
       });
 
@@ -148,9 +162,15 @@ describe("helicalValidation", () => {
     });
 
     describe("lead_in_mm", () => {
-      it("accepts zero", () => {
+      it("rejects zero (planner requires a positive value)", () => {
         expect(
           validateHelicalField("lead_in_mm", 0, defaultHelical),
+        ).toBeDefined();
+      });
+
+      it("accepts positive value", () => {
+        expect(
+          validateHelicalField("lead_in_mm", 10, defaultHelical),
         ).toBeUndefined();
       });
 
