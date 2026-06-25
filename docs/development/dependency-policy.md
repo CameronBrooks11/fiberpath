@@ -69,7 +69,7 @@ for these.**
 - Python: `uv`, `pip-audit`
 - Node: `npm audit`
 - Rust: `cargo audit`
-- Automation: Dependabot (`.github/dependabot.yml`) and scheduled dependency audit workflow (`.github/workflows/dependency-audit.yml`)
+- Automation: Renovate for version updates (org preset `github>fiberpath/renovate-config`, configured via `renovate.json`); Dependabot **security** alerts/updates remain enabled; scheduled dependency audit workflow (`.github/workflows/dependency-audit.yml`)
 
 ## CI and Artifact Requirements
 
