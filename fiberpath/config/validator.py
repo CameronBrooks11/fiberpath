@@ -21,8 +21,15 @@ def load_wind_definition(path: str | Path) -> WindDefinition:
     if not location.exists():
         raise WindFileError(f"No wind definition found at {location}")
     try:
-        payload = json.loads(location.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:  # pragma: no cover - extremely rare
+        raw = location.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
+        # Directory, unreadable file, or non-UTF-8/binary content. Surface as a
+        # WindFileError so callers map it to a 4xx / clean CLI error instead of
+        # leaking a raw IsADirectoryError / UnicodeDecodeError (HTTP 500).
+        raise WindFileError(f"Could not read wind definition at {location}: {exc}") from exc
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
         raise WindFileError(f"Invalid JSON in {location}: {exc}") from exc
 
     try:
