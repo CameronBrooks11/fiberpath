@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.7.2](https://github.com/fiberpath/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.7.3](https://github.com/fiberpath/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,18 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.7.2**
+-   :material-new-box:{ .lg .middle } **What's New in v0.7.3**
 
     ---
 
-    Code-quality, hardening, and dependency-refresh pass:
+    Project moved to the [`fiberpath` GitHub organization](https://github.com/fiberpath):
 
-    - API plan/simulate errors now return clear 4xx responses instead of 500s, and streaming diagnostics moved to the `logging` module
-    - Hardened Marlin streaming guards (`StreamError` instead of `assert`) and fixed temporary-file cleanup in the desktop backend
-    - Removed dead code (unused geometry module, redundant planner branches) and aligned docs with the cylindrical planning scope
-    - Security & dependency refresh: starlette BadHost CVE, js-yaml/undici/rand advisories, and Tauri 2.11
+    - Repository, issue tracker, and PyPI trusted publisher now live under `fiberpath/fiberpath` (`pip install fiberpath` is unchanged)
+    - Documentation moved to [fiberpath.org](https://fiberpath.org), built from the `fiberpath.github.io` hub; this repo is now docs-content-only
+    - Dependency automation switched from Dependabot to org-shared Renovate
+    - `CI Check` now runs on every PR so the required status never stalls
 
-    Builds on the v0.7 baseline with reliability and maintainability fixes.
+    Builds on the v0.7 baseline; no runtime API changes.
 
     [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
 

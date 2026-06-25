@@ -4,7 +4,7 @@
 
 **Plan, simulate, and manufacture composite parts with precision fiber winding.**
 
-[![Version](https://img.shields.io/badge/version-0.7.2-4c7284)](https://github.com/fiberpath/fiberpath/releases)
+[![Version](https://img.shields.io/badge/version-0.7.3-4c7284)](https://github.com/fiberpath/fiberpath/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-00695C.svg)](LICENSE)
 [![Backend CI](https://img.shields.io/github/actions/workflow/status/fiberpath/fiberpath/backend-ci.yml?branch=main&label=Backend%20CI&logo=python&logoColor=white)](https://github.com/fiberpath/fiberpath/actions/workflows/backend-ci.yml)
 [![GUI CI](https://img.shields.io/github/actions/workflow/status/fiberpath/fiberpath/gui-ci.yml?branch=main&label=GUI%20CI&logo=react&logoColor=white)](https://github.com/fiberpath/fiberpath/actions/workflows/gui-ci.yml)
