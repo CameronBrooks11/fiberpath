@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { useErrorNotification } from "../../contexts/ErrorNotificationContext";
+import { useToastStore } from "../../stores/toastStore";
 import type { DialogBaseProps } from "../../types/components";
 import { BaseDialog } from "./BaseDialog";
 import "../../styles/dialogs.css";
@@ -34,7 +34,7 @@ export function CliUnavailableDialog({
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [diagnostics, setDiagnostics] = useState<CliDiagnostics | null>(null);
   const [loadingDiagnostics, setLoadingDiagnostics] = useState(false);
-  const { showError, showInfo } = useErrorNotification();
+  const addToast = useToastStore((s) => s.addToast);
 
   const loadDiagnostics = async () => {
     setLoadingDiagnostics(true);
@@ -44,7 +44,7 @@ export function CliUnavailableDialog({
       setShowDiagnostics(true);
     } catch (error) {
       const message = `Failed to load diagnostics: ${String(error)}`;
-      showError(message);
+      addToast({ type: "error", message });
     } finally {
       setLoadingDiagnostics(false);
     }
@@ -57,9 +57,12 @@ export function CliUnavailableDialog({
 
     try {
       await navigator.clipboard.writeText(JSON.stringify(diagnostics, null, 2));
-      showInfo("Diagnostics copied to clipboard.");
+      addToast({ type: "info", message: "Diagnostics copied to clipboard." });
     } catch (error) {
-      showError(`Failed to copy diagnostics: ${String(error)}`);
+      addToast({
+        type: "error",
+        message: `Failed to copy diagnostics: ${String(error)}`,
+      });
     }
   };
 

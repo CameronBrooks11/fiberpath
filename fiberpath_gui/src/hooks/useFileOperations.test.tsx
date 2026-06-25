@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useFileOperations } from './useFileOperations';
 import { resetStores } from '../tests/storeUtils';
-import { ErrorNotificationProvider } from '../contexts/ErrorNotificationContext';
 import type { ReactNode } from 'react';
 
 // vi.hoisted ensures these exist when the vi.mock factory is evaluated
@@ -24,7 +23,7 @@ vi.mock('../lib/fileOperations', () => ({
 }));
 
 function wrapper({ children }: { children: ReactNode }) {
-  return <ErrorNotificationProvider>{children}</ErrorNotificationProvider>;
+  return <>{children}</>;
 }
 
 beforeEach(() => {

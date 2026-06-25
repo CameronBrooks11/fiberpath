@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Eye } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useProjectStore } from "../../stores/projectStore";
-import { useErrorNotification } from "../../contexts/ErrorNotificationContext";
+import { useToastStore } from "../../stores/toastStore";
 import { usePreviewGeneration } from "../../hooks/canvas/usePreviewGeneration";
 import { LayerScrubber } from "./LayerScrubber";
 import { CanvasControls } from "./CanvasControls";
@@ -125,14 +125,14 @@ export function VisualizationCanvas({
   onExport,
 }: VisualizationCanvasProps = {}) {
   const project = useProjectStore((state) => state.project);
-  const { showError } = useErrorNotification();
+  const addToast = useToastStore((s) => s.addToast);
   const [visibleLayerCount, setVisibleLayerCount] = useState(project.layers.length);
 
   const { previewImage, isGenerating, error, warnings, generatePreview } =
     usePreviewGeneration({
       project,
       visibleLayerCount,
-      onError: showError,
+      onError: (message: string) => addToast({ type: "error", message }),
     });
 
   const hasLayers = project.layers.length > 0;
