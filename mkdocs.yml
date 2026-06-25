@@ -1,8 +1,8 @@
 site_name: FiberPath
 site_description: "Modern filament winding planner, simulator, and tooling"
-site_url: https://cameronbrooks11.github.io/fiberpath
-repo_url: https://github.com/CameronBrooks11/fiberpath
-repo_name: CameronBrooks11/fiberpath
+site_url: https://fiberpath.github.io/fiberpath
+repo_url: https://github.com/fiberpath/fiberpath
+repo_name: fiberpath/fiberpath
 docs_dir: docs
 site_dir: site
 
@@ -77,5 +77,5 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/CameronBrooks11/fiberpath
+      link: https://github.com/fiberpath/fiberpath
       name: GitHub

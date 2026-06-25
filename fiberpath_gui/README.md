@@ -21,7 +21,7 @@ Cross-platform desktop application for FiberPath filament winding. Built with Ta
 
 ## Installation
 
-**End Users:** Download installers from [GitHub Releases](https://github.com/CameronBrooks11/fiberpath/releases). No setup required—the application includes everything needed.
+**End Users:** Download installers from [GitHub Releases](https://github.com/fiberpath/fiberpath/releases). No setup required—the application includes everything needed.
 
 **Developers:** See [Development Setup](#development-setup) below.
 

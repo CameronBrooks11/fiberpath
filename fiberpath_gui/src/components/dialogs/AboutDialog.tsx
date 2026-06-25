@@ -17,11 +17,11 @@ export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
   }, []);
 
   const handleDocsLink = () => {
-    void openExternal("https://cameronbrooks11.github.io/fiberpath");
+    void openExternal("https://fiberpath.github.io/fiberpath");
   };
 
   const handleGitHubLink = () => {
-    void openExternal("https://github.com/CameronBrooks11/fiberpath");
+    void openExternal("https://github.com/fiberpath/fiberpath");
   };
 
   return (
