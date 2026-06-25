@@ -44,6 +44,17 @@ def test_stream_route_dry_run_no_port_needed() -> None:
     assert data["commands_streamed"] == 2
 
 
+def test_stream_route_empty_gcode_returns_400() -> None:
+    """Empty/whitespace-only G-code is a client error (400), not an upstream
+    device failure (502)."""
+    app = create_app()
+    client = TestClient(app)
+
+    response = client.post("/stream/", json={"gcode": "   \n\n  ", "dry_run": True})
+
+    assert response.status_code == 400
+
+
 def test_stream_route_rejects_oversized_gcode() -> None:
     """G-code exceeding the max_length bound is rejected by request validation (422)."""
     app = create_app()
