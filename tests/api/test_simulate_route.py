@@ -60,6 +60,34 @@ G1 X20 A40 B60
     assert data["total_distance_mm"] > 0
 
 
+def test_simulate_from_file_on_directory_returns_4xx(tmp_path: Path) -> None:
+    """A directory path must return a 4xx, not crash with a 500 (IsADirectoryError)."""
+    import os
+
+    app = create_app()
+    client = TestClient(app)
+    os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
+    (tmp_path / "adir").mkdir()
+
+    response = client.post("/simulate/from-file", json={"path": "adir"})
+
+    assert 400 <= response.status_code < 500
+
+
+def test_simulate_from_file_on_binary_returns_4xx(tmp_path: Path) -> None:
+    """A non-UTF-8/binary file must return a 4xx, not crash with a 500."""
+    import os
+
+    app = create_app()
+    client = TestClient(app)
+    os.environ["FIBERPATH_API_ALLOWED_ROOTS"] = str(tmp_path)
+    (tmp_path / "binary.gcode").write_bytes(b"\xff\xfe\x00\x01\x80\x81")
+
+    response = client.post("/simulate/from-file", json={"path": "binary.gcode"})
+
+    assert 400 <= response.status_code < 500
+
+
 def test_simulate_from_file_rejects_absolute_path(tmp_path: Path) -> None:
     """Absolute paths are rejected with 400 regardless of root membership."""
     import os

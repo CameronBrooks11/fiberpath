@@ -9,7 +9,7 @@ from fiberpath.execution import MarlinStreamer, StreamError, StreamProgress
 
 from .output import echo_json
 
-GCODE_ARGUMENT = typer.Argument(..., exists=True, readable=True)
+GCODE_ARGUMENT = typer.Argument(..., exists=True, readable=True, file_okay=True, dir_okay=False)
 PROGRESS_INTERVAL = 25
 
 

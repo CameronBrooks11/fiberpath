@@ -43,6 +43,18 @@ def test_simulate_command_json(tmp_path: Path) -> None:
     assert payload["commands_executed"] == 5
 
 
+def test_simulate_command_rejects_directory(tmp_path: Path) -> None:
+    """Passing a directory must fail cleanly (typer usage error), not leak a
+    raw IsADirectoryError traceback."""
+    a_dir = tmp_path / "adir"
+    a_dir.mkdir()
+
+    runner = CliRunner()
+    result = runner.invoke(app, ["simulate", str(a_dir)])
+
+    assert result.exit_code == 2  # typer usage error, not an unhandled crash
+
+
 def test_validate_command_json() -> None:
     runner = CliRunner()
     result = runner.invoke(app, ["validate", str(SIMPLE_WIND), "--json"])
