@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { validateWindDefinition } from "../../lib/commands";
 import { projectToWindDefinition } from "../../types/converters";
-import { useErrorNotification } from "../../contexts/ErrorNotificationContext";
+import { useToastStore } from "../../stores/toastStore";
 import type { FiberPathProject } from "../../types/project";
 import type { OnCloseCallback } from "../../types/components";
 import { BaseDialog } from "./BaseDialog";
@@ -21,7 +21,7 @@ export function ExportConfirmationDialog({
     "checking" | "valid" | "invalid"
   >("checking");
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const { showError } = useErrorNotification();
+  const addToast = useToastStore((s) => s.addToast);
 
   useEffect(() => {
     const validate = async () => {
@@ -47,12 +47,12 @@ export function ExportConfirmationDialog({
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         setValidationErrors([`Validation error: ${errorMessage}`]);
-        showError(`Validation failed: ${errorMessage}`);
+        addToast({ type: "error", message: `Validation failed: ${errorMessage}` });
       }
     };
 
     void validate();
-  }, [project, showError]);
+  }, [project, addToast]);
 
   const layerCount = project.layers.length;
 

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useProjectStore } from "../stores/projectStore";
-import { useErrorNotification } from "../contexts/ErrorNotificationContext";
+import { useToastStore } from "../stores/toastStore";
 import { createFileOperations } from "../lib/fileOperations";
 
 interface UseFileOperationsOptions {
@@ -37,7 +37,7 @@ export function useFileOperations(options: UseFileOperationsOptions = {}) {
     })),
   );
 
-  const { showError, showInfo } = useErrorNotification();
+  const addToast = useToastStore((s) => s.addToast);
 
   return useMemo(
     () =>
@@ -51,8 +51,8 @@ export function useFileOperations(options: UseFileOperationsOptions = {}) {
         duplicateLayer,
         removeLayer,
         updateRecentFiles: onRecentFilesChanged,
-        showError,
-        showInfo,
+        showError: (message: string) => addToast({ type: "error", message }),
+        showInfo: (message: string) => addToast({ type: "info", message }),
         setValidationErrors,
         clearValidationErrors,
       }),
@@ -66,8 +66,7 @@ export function useFileOperations(options: UseFileOperationsOptions = {}) {
       setValidationErrors,
       clearValidationErrors,
       onRecentFilesChanged,
-      showError,
-      showInfo,
+      addToast,
     ],
   );
 }

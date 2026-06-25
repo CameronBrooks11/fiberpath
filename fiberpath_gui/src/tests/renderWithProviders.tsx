@@ -14,7 +14,6 @@ import {
   CliHealthContext,
   type CliHealthContextValue,
 } from '../contexts/CliHealthContext';
-import { ErrorNotificationProvider } from '../contexts/ErrorNotificationContext';
 import type { CliStatus } from '../hooks/useCliHealth';
 
 // ---------------------------------------------------------------------------
@@ -60,11 +59,9 @@ export function renderWithProviders(
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (
-      <ErrorNotificationProvider>
-        <CliHealthContext.Provider value={health}>
-          {children}
-        </CliHealthContext.Provider>
-      </ErrorNotificationProvider>
+      <CliHealthContext.Provider value={health}>
+        {children}
+      </CliHealthContext.Provider>
     );
   }
 
