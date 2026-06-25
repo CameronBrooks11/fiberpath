@@ -8,6 +8,33 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-06-25
+
+### Changed
+
+- **Project moved to the [`fiberpath` GitHub organization](https://github.com/fiberpath).** The repository, issue tracker, and PyPI trusted publisher now live under `fiberpath/fiberpath`. `pip install fiberpath` is unchanged.
+- Documentation now lives at **[fiberpath.org](https://fiberpath.org)** (FiberPath docs at `fiberpath.org/fiberpath`), built and published from the `fiberpath/fiberpath.github.io` hub. This repository now contains only docs content under `docs/`; the MkDocs configuration, site assembly, and publishing moved to the hub, and docs are validated on every PR via the org's shared `docs-validate` reusable workflow.
+- The required `CI Check` status now runs on every pull request (no path filter) so it always reports and never leaves a PR stuck pending; an inner change-detection job still gates the heavy backend/GUI/docs jobs by path.
+- Release notes are now produced by GitHub-native release-note generation instead of `git describe`, fixing the "Initial release." text that appeared on prior releases.
+
+### Fixed
+
+- Unified helical-layer defaults via a shared `HELICAL_DEFAULTS` constant so the CLI, API, and GUI agree on the same values.
+
+### Removed
+
+- Retired `TODO.md` in favor of tracked GitHub issues.
+
+### Documentation
+
+- Added a development roadmap and relocated the feature backlog under `docs/development/`.
+
+### Dependencies
+
+- Migrated dependency automation from Dependabot to org-shared **Renovate** (preset `github>fiberpath/renovate-config`); Dependabot security alerts/updates remain enabled.
+- GitHub Actions: `actions/setup-node` v6, `actions/cache` v6.
+- npm: `@types/node` 26.0.1, `stylelint` 17.14.0.
+
 ## [0.7.2] - 2026-06-24
 
 ### Security
