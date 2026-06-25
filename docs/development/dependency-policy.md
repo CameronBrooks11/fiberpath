@@ -47,6 +47,23 @@ When an update is deferred:
 3. Add temporary ignore rules only when they reduce noise and are documented.
 4. Remove ignore rules once the deferred item is re-scoped into active execution.
 
+## Currently deferred advisories
+
+These are known, accepted advisories that cannot be cleared yet because the vulnerable version is
+transitively pinned by the Tauri/GTK stack. They are tracked live by Dependabot and `cargo audit`; the
+entries below record the reasoning so they are not re-triaged from scratch. **Do not block a release solely
+for these.**
+
+- **`glib` 0.18.x — GHSA-wrw7-89jp-8q8g (moderate).** The Tauri GTK stack pins `glib` `^0.18` (via `gtk`),
+  so the patched `glib` 0.20.0 cannot be adopted yet. Re-check after the upstream Tauri/GTK dependency line
+  moves to a non-vulnerable `glib`.
+- **`rand` 0.7.3 — GHSA-cq8v-f236-94qc (low).** The `rand` 0.8.x instance was patched (0.8.5 → 0.8.6); a
+  residual `rand` 0.7.3 remains, pinned via `phf_generator` 0.8.0 (`^0.7`) in Tauri's `tauri-build` →
+  `kuchikiki` → `selectors`/`cssparser` chain. It is **build-time-only** (CSS-parser codegen), not in the
+  shipped runtime, and the advisory (runtime `rand::rng()` soundness) does not apply to it — effectively
+  zero risk. No 0.7.x fix exists; re-check after the Tauri `tauri-utils`/`kuchikiki` line moves off
+  `phf` 0.8.
+
 ## Required Tooling
 
 - Python: `uv`, `pip-audit`
