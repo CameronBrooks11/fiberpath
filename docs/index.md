@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.7.3](https://github.com/fiberpath/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.7.4](https://github.com/fiberpath/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,16 +44,16 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.7.3**
+-   :material-new-box:{ .lg .middle } **What's New in v0.7.4**
 
     ---
 
-    Project moved to the [`fiberpath` GitHub organization](https://github.com/fiberpath):
+    Bug-fix release hardening input validation and the desktop integration:
 
-    - Repository, issue tracker, and PyPI trusted publisher now live under `fiberpath/fiberpath` (`pip install fiberpath` is unchanged)
-    - Documentation moved to [fiberpath.org](https://fiberpath.org), built from the `fiberpath.github.io` hub; this repo is now docs-content-only
-    - Dependency automation switched from Dependabot to org-shared Renovate
-    - `CI Check` now runs on every PR so the required status never stalls
+    - Reject non-finite (`NaN`/`Infinity`) inputs and a lead-in longer than the mandrel (which produced unsafe negative-coordinate G-code)
+    - Cleaner errors (4xx, not 500/tracebacks) for directory/binary file inputs across the API and CLI
+    - Marlin desktop commands no longer hang if the helper process dies, and recover by respawning
+    - Helical editor validation now matches the planner's bounds; fixed a crash and a "(NaN)" hint while editing
 
     Builds on the v0.7 baseline; no runtime API changes.
 
