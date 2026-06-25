@@ -172,6 +172,14 @@ describe("helicalValidation", () => {
       expect(getHelicalGeometryHint(layer, 150, 12.7)).toMatch(/skip index/i);
     });
 
+    it("does not emit a '(NaN)' hint while pattern_number is mid-edit", () => {
+      // Emptying the Pattern Number input makes it NaN; circuitCount % NaN is
+      // NaN (!== 0), which previously rendered "not divisible by pattern
+      // number (NaN)". A non-integer pattern means the hint is undefined.
+      const layer: HelicalLayer = { ...defaultHelical, pattern_number: NaN };
+      expect(getHelicalGeometryHint(layer, 150, 50)).toBeUndefined();
+    });
+
     it("returns undefined when mandrel diameter is zero", () => {
       expect(
         getHelicalGeometryHint(defaultHelical, 0, 12.7),

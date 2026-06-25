@@ -106,6 +106,13 @@ export function getHelicalGeometryHint(
     return "Skip index should be less than pattern number to avoid invalid routing.";
   }
 
+  // While the field is mid-edit pattern_number can be NaN/0/non-integer; the
+  // divisibility check below would compute `% NaN` and render a "(NaN)" hint.
+  // The field surfaces its own validation error, so emit no geometry hint here.
+  if (!Number.isInteger(helical.pattern_number) || helical.pattern_number <= 0) {
+    return undefined;
+  }
+
   const circuitCount = computeCircuitCount(helical, mandrelDiameter, towWidth);
   if (!circuitCount) {
     return undefined;

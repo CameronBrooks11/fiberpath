@@ -10,6 +10,7 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ### Fixed
 
+- Helical layer geometry hint no longer renders "not divisible by pattern number (NaN)" while the Pattern Number field is mid-edit (emptied to `NaN`); no hint is shown until the field holds a valid positive integer.
 - The streaming API (`POST /stream/`) now returns 400 for empty/whitespace-only G-code instead of 502; an empty program is a client error, not an upstream device failure (502 is reserved for genuine transport errors).
 - Simulating a G-code path that is a directory or non-UTF-8/binary file now returns a 4xx (API `/simulate/from-file`) or a clean usage error (CLI `simulate`/`plot`/`stream` reject directories) instead of an HTTP 500 / raw `IsADirectoryError`/`UnicodeDecodeError` traceback.
 - Loading a wind definition that is a directory, an unreadable file, or non-UTF-8/binary content now reports a clean error instead of crashing. Previously these raised an unmapped `IsADirectoryError`/`UnicodeDecodeError`, surfacing as an HTTP 500 from the API (`/plan/from-file`, `/validate/from-file`) or a raw traceback from the CLI; they are now mapped to the standard `WindFileError` (4xx / clean CLI message).
