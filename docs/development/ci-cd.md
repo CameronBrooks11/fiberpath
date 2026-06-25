@@ -21,7 +21,7 @@ Reusable setup steps used across multiple workflows:
    - Creates virtual environment
    - Installs dependencies with caching
    - Configurable dependency groups
-   - Used by: backend-ci, backend-publish, docs-ci, docs-deploy
+   - Used by: backend-ci, backend-publish, docs-ci
 
 2. **setup-node/**
    - Sets up Node.js 24
@@ -74,14 +74,11 @@ Reusable setup steps used across multiple workflows:
 
 #### Deployment Workflows
 
-**docs-deploy.yml** - Documentation Deployment
-
-- Triggers: Push to main affecting docs/, manual dispatch
-- Jobs:
-  1. Build MkDocs site
-  2. Deploy to GitHub Pages
-- Permissions: contents:read, pages:write, id-token:write
-- Status: [![Docs Deploy](https://github.com/USER/fiberpath/actions/workflows/docs-deploy.yml/badge.svg)](https://github.com/USER/fiberpath/actions/workflows/docs-deploy.yml)
+Documentation is **published from the project hub repo**,
+[`fiberpath/fiberpath.github.io`](https://github.com/fiberpath/fiberpath.github.io), not from this
+repo. That repo checks out `fiberpath/fiberpath`, builds these docs with MkDocs `--strict`, and serves
+them at <https://fiberpath.github.io/fiberpath>. This repo only **validates** the docs build via
+`docs-ci.yml`.
 
 #### Packaging Workflows
 
@@ -140,7 +137,6 @@ Format: `{component}-{purpose}.yml`
 | gui-ci          | ✅          | ✅           | ❌     | ❌      |
 | docs-ci         | ✅          | ✅           | ❌     | ❌      |
 | dependency-audit| ✅          | ✅           | ✅     | ❌      |
-| docs-deploy     | ✅          | ❌           | ✅     | ❌      |
 | gui-packaging   | ✅          | ❌           | ✅     | ✅      |
 | backend-publish | ❌          | ❌           | ✅     | ✅      |
 | release         | ❌          | ❌           | ✅     | ❌      |
@@ -152,7 +148,6 @@ Workflows only run when relevant files change:
 - **backend-ci**: `fiberpath/**`, `fiberpath_api/**`, `fiberpath_cli/**`, `tests/**`, `pyproject.toml`
 - **gui-ci**: `fiberpath_gui/**`, workflow files, composite actions
 - **docs-ci**: `docs/**`, `mkdocs.yml`, `CONTRIBUTING.md`, `README.md`
-- **docs-deploy**: Same as docs-ci
 - **gui-packaging**: `fiberpath_gui/**`, workflow files, composite actions
 - **dependency-audit**: `.github/workflows/dependency-audit.yml`, dependency manifests and lockfiles
 
@@ -188,7 +183,7 @@ Previous workflows moved to `.github/workflows/archive/`:
 - **ci.yml** - Old monolithic Python CI (combined lint + test)
 - **gui.yml** - Old GUI checks + packaging (redundant with gui-tests.yml)
 - **gui-tests.yml** - Old GUI testing (redundant with gui.yml)
-- **docs-site.yml** - Old docs deployment (replaced by docs-ci + docs-deploy)
+- **docs-site.yml** - Old docs deployment (replaced by docs-ci; publishing now lives in the fiberpath.github.io hub repo)
 
 ## Improvements Over Previous System
 

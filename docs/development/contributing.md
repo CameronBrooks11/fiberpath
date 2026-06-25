@@ -49,7 +49,6 @@ FiberPath uses GitHub Actions with specialized workflows:
 - **gui-ci.yml** - GUI type/lint checks (tsc, stylelint, CSS var guard), testing (Vitest), building (Vite), Rust checks (fmt + clippy)
 - **docs-ci.yml** - Documentation validation (MkDocs --strict)
 - **dependency-audit.yml** - Scheduled and PR-gated dependency security audit (pip-audit, npm audit, cargo audit)
-- **docs-deploy.yml** - Documentation deployment to GitHub Pages (main branch only)
 - **gui-packaging.yml** - Tauri installer creation for Windows/macOS/Linux
 - **backend-publish.yml** - PyPI publishing with trusted publishing (releases only)
 - **release.yml** - Coordinated release orchestration (manual dispatch)
@@ -59,8 +58,9 @@ All workflows use reusable composite actions (`.github/actions/`) for setup step
 **Branch Triggers:**
 
 - CI workflows (backend-ci, gui-ci, docs-ci) run on `main`, `vX.Y.Z-dev`, and all PRs
-- Deployment (docs-deploy) runs only on `main` to prevent accidental deployments
 - Packaging and publishing run on releases or manual dispatch
+
+Documentation is **authored and validated here** (`docs-ci.yml`, MkDocs `--strict`) but **published by the project hub**, [`fiberpath/fiberpath.github.io`](https://github.com/fiberpath/fiberpath.github.io), which builds these docs and serves them at <https://fiberpath.github.io/fiberpath>.
 
 ## Issue Triage & Discussion
 
