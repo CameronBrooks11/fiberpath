@@ -83,7 +83,7 @@ Refresh dependency locks after version updates:
 - [ ] Verify PyPI listing: https://pypi.org/project/fiberpath/
 - [ ] Test installation from PyPI: `pip install fiberpath==X.Y.Z`
 - [ ] Download and test one GUI installer per platform
-- [ ] Verify documentation site updated with new version: https://fiberpath.github.io/fiberpath
+- [ ] Verify documentation site updated with new version: https://fiberpath.org/fiberpath
 - [ ] Update any external links or announcements referencing old version
 - [ ] Create PR to bump version to next development version (e.g., `0.7.1-dev`)
 

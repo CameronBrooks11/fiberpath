@@ -96,7 +96,7 @@ export function MenuBar({
     "view.toggleRightPanel": onToggleRightPanel,
     "tools.validateDefinition": fileOps.handleValidate,
     "help.documentation": () =>
-      openExternal("https://fiberpath.github.io/fiberpath"),
+      openExternal("https://fiberpath.org/fiberpath"),
     "help.about": () => setShowAboutDialog(true),
     "help.diagnostics": () => setShowDiagnosticsDialog(true),
   };

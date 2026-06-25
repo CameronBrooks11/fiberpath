@@ -63,7 +63,7 @@ All workflows use reusable composite actions (`.github/actions/`) for setup step
 - CI workflows (backend-ci, gui-ci) run on `main`, `vX.Y.Z-dev`, and all PRs
 - Packaging and publishing run on releases or manual dispatch
 
-Documentation is **authored here** (this repo holds only the `docs/` Markdown — no MkDocs config). On every PR touching docs, the `CI Check`'s docs job calls a shared reusable workflow in the org's `.github` repo that builds these docs against the site's real config (`--strict`). The site is **owned and published by** [`fiberpath/fiberpath.github.io`](https://github.com/fiberpath/fiberpath.github.io), which serves them at <https://fiberpath.github.io/fiberpath>.
+Documentation is **authored here** (this repo holds only the `docs/` Markdown — no MkDocs config). On every PR touching docs, the `CI Check`'s docs job calls a shared reusable workflow in the org's `.github` repo that builds these docs against the site's real config (`--strict`). The site is **owned and published by** [`fiberpath/fiberpath.github.io`](https://github.com/fiberpath/fiberpath.github.io), which serves them at <https://fiberpath.org/fiberpath>.
 
 ## Issue Triage & Discussion
 

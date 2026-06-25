@@ -17,7 +17,7 @@ export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
   }, []);
 
   const handleDocsLink = () => {
-    void openExternal("https://fiberpath.github.io/fiberpath");
+    void openExternal("https://fiberpath.org/fiberpath");
   };
 
   const handleGitHubLink = () => {
