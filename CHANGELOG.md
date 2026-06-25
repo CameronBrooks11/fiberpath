@@ -8,6 +8,8 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-06-25
+
 ### Fixed
 
 - Marlin desktop commands no longer hang forever if the underlying CLI subprocess dies or emits a non-JSON line: when the response reader stops, in-flight requests are failed (the command returns an error) instead of leaving the UI spinner stuck permanently.
