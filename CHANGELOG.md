@@ -8,6 +8,10 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+### Fixed
+
+- Helical layer editor no longer crashes the app ("Maximum call stack size exceeded") when the Pattern Number or Skip Index field is emptied. The emptied field became `NaN`, and the cross-field coprime check recursed forever in `gcd()`; the check now skips non-integer values and the field reports its own validation error instead.
+
 ## [0.7.3] - 2026-06-25
 
 ### Changed
