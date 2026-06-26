@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["svelte", "vite/client", "@testing-library/jest-dom"]
+  },
+  "include": [
+    "src/**/*.svelte",
+    "src/**/*.svelte.ts",
+    "src/**/*.svelte.test.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

@@ -17,5 +17,11 @@
     "strict": true
   },
   "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.svelte.ts",
+    "src/**/*.svelte.test.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

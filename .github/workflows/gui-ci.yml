@@ -24,6 +24,9 @@ jobs:
       - name: Run TypeScript type check
         run: npm run lint
 
+      - name: Run svelte-check (Svelte type check)
+        run: npm run check:svelte
+
       - name: Verify API client matches the committed OpenAPI spec
         run: |
           npm run api:generate:client
