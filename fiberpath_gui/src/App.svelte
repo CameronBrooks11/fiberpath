@@ -11,18 +11,64 @@
   import PrepareWorkspace from "./shell/PrepareWorkspace.svelte";
   import MachineWorkspace from "./shell/MachineWorkspace.svelte";
   import UtilityDrawer from "./shell/UtilityDrawer.svelte";
+  import Toasts from "./shell/Toasts.svelte";
   import { uiState } from "./state/ui-state.svelte";
   import { projectSession } from "./state/project-session.svelte";
+  import * as fileOps from "./services/file-operations.svelte";
+
+  function isTyping(target: EventTarget | null): boolean {
+    const el = target as HTMLElement | null;
+    if (!el) return false;
+    return (
+      el.tagName === "INPUT" ||
+      el.tagName === "TEXTAREA" ||
+      el.tagName === "SELECT" ||
+      el.isContentEditable === true
+    );
+  }
+
+  function ignore(p: Promise<unknown>) {
+    p.catch(() => {});
+  }
 
   function onKeydown(e: KeyboardEvent) {
-    if (e.altKey && !e.ctrlKey && !e.shiftKey) {
+    // Workspace switch works anywhere (Alt+1/2).
+    if (e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
       if (e.key === "1") {
         e.preventDefault();
         uiState.setWorkspace("prepare");
-      } else if (e.key === "2") {
+        return;
+      }
+      if (e.key === "2") {
         e.preventDefault();
         uiState.setWorkspace("machine");
+        return;
       }
+    }
+
+    // The rest are disabled while typing in a field (matches the React app).
+    if (isTyping(e.target)) return;
+
+    // Exclude Alt so Ctrl+Alt (AltGr on international layouts) can't fire shortcuts.
+    const mod = (e.metaKey || e.ctrlKey) && !e.altKey;
+    if (mod) {
+      switch (e.key.toLowerCase()) {
+        case "n": e.preventDefault(); ignore(fileOps.newProject()); break;
+        case "o": e.preventDefault(); ignore(fileOps.openProject()); break;
+        case "s":
+          e.preventDefault();
+          ignore(e.shiftKey ? fileOps.saveProjectAs() : fileOps.saveProject());
+          break;
+        case "e": e.preventDefault(); ignore(fileOps.exportGcode()); break;
+        case "d":
+          e.preventDefault();
+          if (projectSession.selectedLayerId) {
+            projectSession.duplicateLayer(projectSession.selectedLayerId);
+          }
+          break;
+      }
+    } else if (e.key === "Delete" && projectSession.selectedLayerId) {
+      projectSession.removeLayer(projectSession.selectedLayerId);
     }
   }
 
@@ -49,6 +95,8 @@
   <UtilityDrawer />
   <StatusBar />
 </div>
+
+<Toasts />
 
 <style>
   .app {

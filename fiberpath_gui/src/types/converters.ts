@@ -12,6 +12,7 @@ import type {
   HelicalLayer,
   SkipLayer,
 } from "./wind-schema";
+import type { ProjectDocument } from "./document";
 
 /**
  * Convert internal GUI layer format to .wind schema format
@@ -122,6 +123,25 @@ export function convertWindSchemaToLayer(
 
   // Should never reach here - TypeScript ensures all windTypes are handled
   throw new Error(`Unknown wind type: ${schemaLayer.windType}`);
+}
+
+/**
+ * Convert a .wind definition to the persisted ProjectDocument (no transient
+ * session fields). The Svelte session tracks filePath/selection separately.
+ */
+export function windDefinitionToDocument(windDef: WindDefinition): ProjectDocument {
+  return {
+    mandrel: {
+      diameter: windDef.mandrelParameters.diameter,
+      wind_length: windDef.mandrelParameters.windLength,
+    },
+    tow: {
+      width: windDef.towParameters.width,
+      thickness: windDef.towParameters.thickness,
+    },
+    layers: windDef.layers.map(convertWindSchemaToLayer),
+    defaultFeedRate: windDef.defaultFeedRate,
+  };
 }
 
 /**
