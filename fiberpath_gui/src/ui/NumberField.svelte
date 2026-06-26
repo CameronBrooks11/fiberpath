@@ -12,6 +12,8 @@
     min?: string | number;
     max?: string | number;
     error?: string;
+    /** Optional help text shown as a hoverable ⓘ next to the label. */
+    tooltip?: string;
     oninput: (raw: string) => void;
     onblur?: (raw: string) => void;
   }
@@ -25,13 +27,16 @@
     min,
     max,
     error,
+    tooltip,
     oninput,
     onblur,
   }: Props = $props();
 </script>
 
 <div class="param-form__group">
-  <label for={id} class="param-form__label">{label}</label>
+  <label for={id} class="param-form__label"
+    >{label}{#if tooltip}<span class="field-tooltip" title={tooltip}>ⓘ</span>{/if}</label
+  >
   <div class="param-form__input-wrapper">
     <input
       {id}
@@ -49,3 +54,12 @@
   </div>
   {#if error}<span class="param-form__error">{error}</span>{/if}
 </div>
+
+<style>
+  .field-tooltip {
+    margin-left: var(--spacing-xs);
+    color: var(--color-text-muted);
+    cursor: help;
+    font-size: var(--font-size-xs);
+  }
+</style>
