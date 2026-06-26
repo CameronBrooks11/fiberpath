@@ -27,6 +27,7 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ### Fixed
 
+- The bundled `fiberpath` CLI (and the new API sidecar) are now found on Linux/macOS desktop builds. Resources from the `../bundled-*/*` globs land under a `_up_/` subdirectory on **every** platform, but the lookup only checked it on Windows — so installed Linux/macOS apps reported "CLI Backend Unavailable" and the sidecar failed to start. The lookup now checks `_up_/` first on all platforms.
 - The `.wind` file `schemaVersion` is no longer pinned to the exact string `1.0`. It now accepts any `1.x` minor (additive evolution); an absent value is treated as the legacy `1.0`, and an incompatible major (`2.0`+) is rejected. `schemaVersion` is now a native field on the `WindDefinition` model (`pattern: ^1\.\d+$`) — the single source of truth — so the backend validates it on load and the schema generator no longer needs to inject a `const: "1.0"`. The GUI's `.wind` validator was relaxed from `z.literal("1.0")` to the same `1.x` pattern.
 
 ## [0.7.4] - 2026-06-25
