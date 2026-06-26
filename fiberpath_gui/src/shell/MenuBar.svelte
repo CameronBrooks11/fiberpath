@@ -1,6 +1,7 @@
 <script lang="ts">
   import { uiState } from "../state/ui-state.svelte";
   import { projectSession } from "../state/project-session.svelte";
+  import * as fileOps from "../services/file-operations.svelte";
 
   interface MenuItem {
     label: string;
@@ -9,33 +10,43 @@
     hint?: string;
     separatorBefore?: boolean;
   }
+
+  function duplicateSelected() {
+    if (projectSession.selectedLayerId) {
+      projectSession.duplicateLayer(projectSession.selectedLayerId);
+    }
+  }
+  function deleteSelected() {
+    if (projectSession.selectedLayerId) {
+      projectSession.removeLayer(projectSession.selectedLayerId);
+    }
+  }
   interface Menu {
     id: string;
     label: string;
     items: MenuItem[];
   }
 
-  // Items whose backing slice hasn't landed are present but disabled, so the menu
-  // structure is faithful without dead-ending. They get wired in #217 (files /
-  // layers) and #220 (dialogs / theme).
+  // Items whose backing slice hasn't landed are present but disabled (About →
+  // dialogs migrate in #220).
   const menus: Menu[] = [
     {
       id: "file",
       label: "File",
       items: [
-        { label: "New Project", action: () => projectSession.newDocument() },
-        { label: "Open…", disabled: true, hint: "File operations migrate in #217", separatorBefore: true },
-        { label: "Save", disabled: true, hint: "File operations migrate in #217" },
-        { label: "Save As…", disabled: true, hint: "File operations migrate in #217" },
-        { label: "Export G-code", disabled: true, hint: "File operations migrate in #217", separatorBefore: true },
+        { label: "New Project", action: () => fileOps.newProject() },
+        { label: "Open…", action: () => fileOps.openProject(), separatorBefore: true },
+        { label: "Save", action: () => fileOps.saveProject() },
+        { label: "Save As…", action: () => fileOps.saveProjectAs() },
+        { label: "Export G-code", action: () => fileOps.exportGcode(), separatorBefore: true },
       ],
     },
     {
       id: "edit",
       label: "Edit",
       items: [
-        { label: "Duplicate Layer", disabled: true, hint: "Layer editing migrates in #217" },
-        { label: "Delete Layer", disabled: true, hint: "Layer editing migrates in #217" },
+        { label: "Duplicate Layer", action: duplicateSelected },
+        { label: "Delete Layer", action: deleteSelected },
       ],
     },
     {
@@ -65,8 +76,11 @@
 
   function run(item: MenuItem) {
     if (item.disabled) return;
-    item.action?.();
     openMenu = null;
+    // File ops are async and self-report errors via toasts; swallow any rejection
+    // (e.g. a dialog cancelled at the OS level) so it never bubbles as unhandled.
+    const result = item.action?.() as unknown;
+    if (result instanceof Promise) result.catch(() => {});
   }
 
   function onWindowPointerDown(e: PointerEvent) {

@@ -1,30 +1,12 @@
 import { createLayer } from "../types/project";
 import type { Layer, LayerType, Mandrel, Tow } from "../types/project";
+import { createEmptyDocument, type ProjectDocument } from "../types/document";
 import type {
   UiValidationErrors,
   UiValidationField,
 } from "../lib/validationErrors";
 
-/**
- * The persisted part of a project — exactly what round-trips to a `.wind` file.
- * Transient UI state (file path, selection, dirty flag, validation) lives on the
- * session, NOT in here, so it can never leak into a saved document.
- */
-export interface ProjectDocument {
-  mandrel: Mandrel;
-  tow: Tow;
-  layers: Layer[];
-  defaultFeedRate: number;
-}
-
-export function createEmptyDocument(): ProjectDocument {
-  return {
-    mandrel: { diameter: 150, wind_length: 750 },
-    tow: { width: 12.7, thickness: 0.25 },
-    layers: [],
-    defaultFeedRate: 400,
-  };
-}
+export { createEmptyDocument, type ProjectDocument };
 
 /**
  * Reactive session around a single project. Replaces the Zustand `projectStore`:
