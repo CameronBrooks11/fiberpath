@@ -289,6 +289,32 @@ describe("schemas", () => {
         const result = WindDefinitionSchema.safeParse(data);
         expect(result.success).toBe(false);
       });
+
+      it("should accept a future 1.x schemaVersion", () => {
+        const data = {
+          schemaVersion: "1.7",
+          mandrelParameters: { diameter: 100, windLength: 200 },
+          towParameters: { width: 3, thickness: 0.25 },
+          defaultFeedRate: 1000,
+          layers: [{ windType: "hoop" as const, terminal: false }],
+        };
+
+        const result = WindDefinitionSchema.safeParse(data);
+        expect(result.success).toBe(true);
+      });
+
+      it("should reject an incompatible major schemaVersion", () => {
+        const data = {
+          schemaVersion: "2.0",
+          mandrelParameters: { diameter: 100, windLength: 200 },
+          towParameters: { width: 3, thickness: 0.25 },
+          defaultFeedRate: 1000,
+          layers: [{ windType: "hoop" as const, terminal: false }],
+        };
+
+        const result = WindDefinitionSchema.safeParse(data);
+        expect(result.success).toBe(false);
+      });
     });
   });
 
