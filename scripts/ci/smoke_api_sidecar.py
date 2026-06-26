@@ -89,7 +89,7 @@ def main() -> None:
         except subprocess.TimeoutExpired:
             proc.kill()
 
-    print("✓ sidecar smoke test passed")
+    print("OK: sidecar smoke test passed")
 
 
 if __name__ == "__main__":
