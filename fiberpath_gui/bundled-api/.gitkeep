@@ -1,0 +1,2 @@
+# This directory is populated by CI with the frozen fiberpath-api sidecar
+# During development, the system PATH fiberpath-api is used as fallback

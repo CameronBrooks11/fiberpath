@@ -44,6 +44,7 @@ plot = ["matplotlib>=3.8", "plotly>=5.22"]
 
 [project.scripts]
 fiberpath = "fiberpath_cli.main:app"
+fiberpath-api = "fiberpath_api.__main__:main"
 
 [tool.hatch.build.targets.wheel]
 packages = [
