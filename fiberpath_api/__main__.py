@@ -36,8 +36,20 @@ def main() -> None:
     # the URL. uvicorn's own logs go to stderr, so stdout stays clean.
     sys.stdout.write(json.dumps({"event": "listening", "host": _HOST, "port": port}) + "\n")
     sys.stdout.flush()
-    server = uvicorn.Server(uvicorn.Config(app, log_config=None, access_log=False))
-    server.run(sockets=[sock])
+    # Pin uvicorn to its pure-Python stack (asyncio + h11, no websockets or
+    # lifespan). The sidecar serves a trickle of local requests, so uvloop /
+    # httptools / websockets add nothing — and dropping their dynamic auto-imports
+    # makes the PyInstaller freeze deterministic.
+    config = uvicorn.Config(
+        app,
+        loop="asyncio",
+        http="h11",
+        ws="none",
+        lifespan="off",
+        log_config=None,
+        access_log=False,
+    )
+    uvicorn.Server(config).run(sockets=[sock])
 
 
 if __name__ == "__main__":
