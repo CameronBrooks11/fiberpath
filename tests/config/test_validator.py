@@ -101,6 +101,45 @@ def test_load_wind_definition_rejects_nan_mandrel_rotation(tmp_path: Path) -> No
         load_wind_definition(bad)
 
 
+def _wind_with_version(version: str | None) -> str:
+    version_line = f'"schemaVersion": "{version}",\n  ' if version is not None else ""
+    return f"""
+{{
+  {version_line}"mandrelParameters": {{"diameter": 100.0, "windLength": 500.0}},
+  "towParameters": {{"width": 3.0, "thickness": 0.2}},
+  "defaultFeedRate": 1000.0,
+  "layers": [{{"windType": "hoop", "terminal": false}}]
+}}
+"""
+
+
+def test_load_wind_definition_absent_schema_version_defaults_to_1_0(tmp_path: Path) -> None:
+    """A legacy file with no schemaVersion is treated as 1.0."""
+    wind = tmp_path / "legacy.wind"
+    wind.write_text(_wind_with_version(None), encoding="utf-8")
+
+    definition = load_wind_definition(wind)
+    assert definition.schema_version == "1.0"
+
+
+def test_load_wind_definition_accepts_future_minor(tmp_path: Path) -> None:
+    """A future 1.x minor must be accepted (additive evolution), not rejected."""
+    wind = tmp_path / "minor.wind"
+    wind.write_text(_wind_with_version("1.7"), encoding="utf-8")
+
+    definition = load_wind_definition(wind)
+    assert definition.schema_version == "1.7"
+
+
+def test_load_wind_definition_rejects_incompatible_major(tmp_path: Path) -> None:
+    """A different major version is incompatible and must be rejected at load."""
+    wind = tmp_path / "major.wind"
+    wind.write_text(_wind_with_version("2.0"), encoding="utf-8")
+
+    with pytest.raises(WindFileError, match="failed validation"):
+        load_wind_definition(wind)
+
+
 def test_load_wind_definition_valid_file(tmp_path: Path) -> None:
     """Verify that a valid .wind file loads successfully."""
     valid_wind = tmp_path / "valid.wind"

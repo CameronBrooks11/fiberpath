@@ -60,6 +60,17 @@ LayerModel = Annotated[
 
 
 class WindDefinition(BaseFiberPathModel):
+    # The .wind format version. Absent is treated as the legacy 1.0 (default);
+    # any 1.x minor is accepted (additive evolution), while an incompatible
+    # major (2.0+) is rejected by the pattern. Bump the minor for additive
+    # changes; a major bump is a breaking format change handled separately.
+    schema_version: str = Field(
+        default="1.0",
+        alias="schemaVersion",
+        pattern=r"^1\.\d+$",
+        title="Schema Version",
+        description="Version of the .wind file format schema (1.x).",
+    )
     layers: list[LayerModel]
     mandrel_parameters: Annotated[MandrelParameters, Field(alias="mandrelParameters")]
     tow_parameters: Annotated[TowParameters, Field(alias="towParameters")]

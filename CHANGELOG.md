@@ -21,6 +21,10 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 - The API streaming route (`POST /stream/`) has been removed; driving a Marlin controller is being reworked into a dedicated REST surface (see issues #190 and #199).
 
+### Fixed
+
+- The `.wind` file `schemaVersion` is no longer pinned to the exact string `1.0`. It now accepts any `1.x` minor (additive evolution); an absent value is treated as the legacy `1.0`, and an incompatible major (`2.0`+) is rejected. `schemaVersion` is now a native field on the `WindDefinition` model (`pattern: ^1\.\d+$`) — the single source of truth — so the backend validates it on load and the schema generator no longer needs to inject a `const: "1.0"`. The GUI's `.wind` validator was relaxed from `z.literal("1.0")` to the same `1.x` pattern.
+
 ## [0.7.4] - 2026-06-25
 
 ### Fixed

@@ -139,7 +139,12 @@ export const WindLayerSchema = z.discriminatedUnion("windType", [
  * This matches the format saved by projectToWindDefinition() and expected by the Python CLI
  */
 export const WindDefinitionSchema = z.object({
-  schemaVersion: z.literal("1.0").optional(),
+  // Any 1.x minor is accepted (additive evolution); absent is treated as 1.0
+  // by the backend. An incompatible major (2.0+) is rejected.
+  schemaVersion: z
+    .string()
+    .regex(/^1\.\d+$/)
+    .optional(),
   mandrelParameters: MandrelParametersSchema,
   towParameters: TowParametersSchema,
   defaultFeedRate: z.number().positive(),
