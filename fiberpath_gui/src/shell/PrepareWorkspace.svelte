@@ -5,8 +5,12 @@
   import MandrelForm from "../components/forms/MandrelForm.svelte";
   import TowForm from "../components/forms/TowForm.svelte";
   import MachineSettingsForm from "../components/forms/MachineSettingsForm.svelte";
+  import LayerList from "../components/layers/LayerList.svelte";
+  import HoopLayerEditor from "../components/editors/HoopLayerEditor.svelte";
+  import HelicalLayerEditor from "../components/editors/HelicalLayerEditor.svelte";
+  import SkipLayerEditor from "../components/editors/SkipLayerEditor.svelte";
 
-  const layerCount = $derived(projectSession.document.layers.length);
+  const selected = $derived(projectSession.selectedLayer);
 </script>
 
 <div
@@ -24,14 +28,7 @@
       <div class="form-block"><MachineSettingsForm /></div>
 
       <InspectorSection title="Layers">
-        {#snippet action()}
-          <button class="ghost-btn" disabled title="Layer editing lands in #217">+ Add</button>
-        {/snippet}
-        {#if layerCount === 0}
-          <p class="placeholder">No layers yet.</p>
-        {:else}
-          <p class="placeholder">{layerCount} layer(s)</p>
-        {/if}
+        <LayerList />
       </InspectorSection>
     </aside>
   {/if}
@@ -46,7 +43,15 @@
   {#if !uiState.rightCollapsed}
     <aside class="prepare__inspector prepare__inspector--right" aria-label="Layer inspector">
       <InspectorSection title="Layer Properties">
-        <p class="placeholder">Select a layer to edit its properties.</p>
+        {#if selected?.type === "hoop"}
+          <HoopLayerEditor layerId={selected.id} />
+        {:else if selected?.type === "helical"}
+          <HelicalLayerEditor layerId={selected.id} />
+        {:else if selected?.type === "skip"}
+          <SkipLayerEditor layerId={selected.id} />
+        {:else}
+          <p class="placeholder">Select a layer to edit its properties.</p>
+        {/if}
       </InspectorSection>
     </aside>
   {/if}
@@ -100,15 +105,5 @@
   .placeholder__sub {
     margin: var(--spacing-xs) 0 0;
     font-size: var(--font-size-xs);
-  }
-  .ghost-btn {
-    appearance: none;
-    border: 1px solid var(--color-border);
-    background: transparent;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
-    padding: 2px var(--spacing-sm);
-    border-radius: var(--border-radius-sm);
-    cursor: not-allowed;
   }
 </style>
