@@ -9,6 +9,8 @@ on:
       - "fiberpath_gui/**"
       - "!fiberpath_gui/docs/**"
       - "scripts/freeze_cli.py"
+      - "scripts/freeze_api.py"
+      - "fiberpath_api/**"
       - ".github/workflows/gui-packaging.yml"
       - ".github/actions/setup-node/**"
       - ".github/actions/setup-rust/**"
@@ -21,6 +23,8 @@ on:
       - "fiberpath_gui/**"
       - "!fiberpath_gui/docs/**"
       - "scripts/freeze_cli.py"
+      - "scripts/freeze_api.py"
+      - "fiberpath_api/**"
       - "scripts/ci/**"
       - ".github/workflows/gui-packaging.yml"
       - ".github/workflows/gui-e2e-smoke.yml"
@@ -114,9 +118,66 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  freeze-api:
+    name: Freeze API (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python (no cache for freeze)
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies directly
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install '.[api]'
+          pip install pyinstaller
+
+      - name: Verify dependencies before freeze
+        shell: bash
+        run: |
+          python -c "import fastapi, starlette, uvicorn, h11; print('[OK] server stack imports')"
+          python -c "from fiberpath_api.__main__ import main; print('[OK] fiberpath_api serve-entry imports')"
+
+      - name: Freeze API with PyInstaller
+        run: python scripts/freeze_api.py
+
+      - name: Verify frozen executable
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then BIN=dist/fiberpath-api.exe; else BIN=dist/fiberpath-api; chmod +x "$BIN"; fi
+          ls -lh "$BIN"
+          SIZE=$(stat -c%s "$BIN" 2>/dev/null || stat -f%z "$BIN" 2>/dev/null)
+          echo "Executable size: $SIZE bytes ($((SIZE / 1024 / 1024)) MB)"
+          if [ "$SIZE" -lt 20000000 ]; then
+            echo "ERROR: Executable too small ($SIZE bytes)! PyInstaller likely missed dependencies"
+            exit 1
+          fi
+
+      - name: Smoke-test the frozen sidecar
+        shell: bash
+        run: python scripts/ci/smoke_api_sidecar.py
+
+      - name: Upload frozen API artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: fiberpath-api-${{ matrix.os }}
+          path: dist/fiberpath-api*
+          if-no-files-found: error
+          retention-days: 7
+
   package:
     name: Build Installers (${{ matrix.os }})
-    needs: freeze-cli
+    needs: [freeze-cli, freeze-api]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     permissions:
@@ -154,6 +215,27 @@ jobs:
             test -x bundled-cli/fiberpath || { echo "ERROR: fiberpath not executable!"; exit 1; }
           fi
           echo "✓ Bundled CLI verified"
+
+      - name: Download frozen API artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: fiberpath-api-${{ matrix.os }}
+          path: fiberpath_gui/bundled-api
+
+      - name: Make API sidecar executable (Unix)
+        if: runner.os != 'Windows'
+        run: chmod +x bundled-api/fiberpath-api
+
+      - name: Verify bundled API sidecar
+        shell: bash
+        run: |
+          ls -lah bundled-api/
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            test -f bundled-api/fiberpath-api.exe || { echo "ERROR: fiberpath-api.exe not found!"; exit 1; }
+          else
+            test -x bundled-api/fiberpath-api || { echo "ERROR: fiberpath-api not executable!"; exit 1; }
+          fi
+          echo "✓ Bundled API sidecar verified"
 
       - name: Setup Node.js environment
         uses: ./.github/actions/setup-node

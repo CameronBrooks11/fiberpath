@@ -1,5 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod api_path;
+mod api_sidecar;
 mod cli_path;
 mod cli_process;
 mod marlin;
@@ -498,11 +500,26 @@ async fn check_cli_health(app: AppHandle) -> Result<CliHealthResponse, String> {
 
 fn main() {
     let marlin_state: MarlinState = Arc::new(Mutex::new(None));
+    let api_sidecar_state: api_sidecar::ApiSidecarState = Arc::new(Mutex::new(None));
 
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .manage(marlin_state)
+        .manage(api_sidecar_state)
+        .setup(|app| {
+            // Warm the sidecar in the background so the first frontend call is
+            // fast. Failures (e.g. dev without a bundled binary) are non-fatal:
+            // api_base_url spawns lazily on demand.
+            let handle = app.handle().clone();
+            let state = app.state::<api_sidecar::ApiSidecarState>().inner().clone();
+            std::thread::spawn(move || {
+                if let Err(e) = api_sidecar::base_url(&state, &handle) {
+                    log::warn!("API sidecar eager start failed (retries on demand): {}", e);
+                }
+            });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             plan_wind,
             simulate_program,
@@ -524,6 +541,7 @@ fn main() {
             marlin::marlin_resume,
             marlin::marlin_stop,
             marlin::marlin_cancel,
+            api_sidecar::api_base_url,
         ])
         .run(tauri::generate_context!())
         .expect("error while running FiberPath GUI");
