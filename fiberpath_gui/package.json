@@ -27,7 +27,9 @@
     "test:watch": "vitest watch",
     "tauri": "tauri",
     "package": "tauri build --ci",
-    "schema:generate": "python ../scripts/generate_schema.py && npx json-schema-to-typescript schemas/wind-schema.json > src/types/wind-schema.ts",
+    "schema:generate:spec": "python ../scripts/generate_schema.py",
+    "schema:generate:client": "npx json-schema-to-typescript schemas/wind-schema.json > src/types/wind-schema.ts",
+    "schema:generate": "npm run schema:generate:spec && npm run schema:generate:client",
     "api:generate:spec": "python ../scripts/export_openapi.py",
     "api:generate:client": "npx -y openapi-typescript@7.13.0 openapi.json -o src/api/schema.ts",
     "api:generate": "npm run api:generate:spec && npm run api:generate:client"

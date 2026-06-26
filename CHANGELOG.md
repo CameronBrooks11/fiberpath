@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 - The API compute routes are now **body-only**: `POST /plan` and `POST /validate` take a wind definition in the request body (the same JSON as a `.wind` file), and `POST /simulate` takes a G-code program (`{"gcode": "..."}`). They no longer accept filesystem paths, so the path-allow-list policy and its `FIBERPATH_API_ALLOWED_ROOTS` setting are gone. `POST /plan` now returns the generated program directly in the `gcode` field instead of writing a `.gcode` file and returning its path. This makes the service stateless and safe to run as a local sidecar.
 - Compute results (`/plan`, `/simulate`) now share **one versioned wire schema** (`fiberpath/wire.py`): every response carries a `schemaVersion` and all fields are camelCase (e.g. `commandCount`, `cumulativeTimeSeconds`, `estimatedTimeSeconds`). The wire format is decoupled from the internal engine dataclasses so it is no longer hostage to engine refactors, and the per-route hand-rename DTOs are gone.
+- The generated `.wind` JSON Schema now carries a canonical versioned `$id` (`https://fiberpath.org/schemas/wind/1.0/wind.schema.json`) and is produced deterministically from the `WindDefinition` model. The orphaned second generator (`scripts/export_schema.py`) is removed, leaving `scripts/generate_schema.py` as the single source, and a CI drift gate now fails if the committed `wind-schema.json` or its generated TypeScript types drift from the model.
 
 ### Added
 
