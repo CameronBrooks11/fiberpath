@@ -2,15 +2,19 @@
   "$defs": {
     "HelicalLayer": {
       "properties": {
-        "windType": {
-          "const": "helical",
-          "default": "helical",
-          "title": "Windtype",
-          "type": "string"
-        },
-        "windAngle": {
+        "leadInMM": {
           "exclusiveMinimum": 0,
-          "title": "Windangle",
+          "title": "Leadinmm",
+          "type": "number"
+        },
+        "leadOutDegrees": {
+          "exclusiveMinimum": 0,
+          "title": "Leadoutdegrees",
+          "type": "number"
+        },
+        "lockDegrees": {
+          "exclusiveMinimum": 0,
+          "title": "Lockdegrees",
           "type": "number"
         },
         "patternNumber": {
@@ -23,25 +27,21 @@
           "title": "Skipindex",
           "type": "integer"
         },
-        "lockDegrees": {
-          "exclusiveMinimum": 0,
-          "title": "Lockdegrees",
-          "type": "number"
-        },
-        "leadInMM": {
-          "exclusiveMinimum": 0,
-          "title": "Leadinmm",
-          "type": "number"
-        },
-        "leadOutDegrees": {
-          "exclusiveMinimum": 0,
-          "title": "Leadoutdegrees",
-          "type": "number"
-        },
         "skipInitialNearLock": {
           "default": false,
           "title": "Skipinitialnearlock",
           "type": "boolean"
+        },
+        "windAngle": {
+          "exclusiveMinimum": 0,
+          "title": "Windangle",
+          "type": "number"
+        },
+        "windType": {
+          "const": "helical",
+          "default": "helical",
+          "title": "Windtype",
+          "type": "string"
         }
       },
       "required": [
@@ -57,16 +57,16 @@
     },
     "HoopLayer": {
       "properties": {
+        "terminal": {
+          "default": false,
+          "title": "Terminal",
+          "type": "boolean"
+        },
         "windType": {
           "const": "hoop",
           "default": "hoop",
           "title": "Windtype",
           "type": "string"
-        },
-        "terminal": {
-          "default": false,
-          "title": "Terminal",
-          "type": "boolean"
         }
       },
       "title": "HoopLayer",
@@ -94,15 +94,15 @@
     },
     "SkipLayer": {
       "properties": {
+        "mandrelRotation": {
+          "title": "Mandrelrotation",
+          "type": "number"
+        },
         "windType": {
           "const": "skip",
           "default": "skip",
           "title": "Windtype",
           "type": "string"
-        },
-        "mandrelRotation": {
-          "title": "Mandrelrotation",
-          "type": "number"
         }
       },
       "required": [
@@ -113,14 +113,14 @@
     },
     "TowParameters": {
       "properties": {
-        "width": {
-          "exclusiveMinimum": 0,
-          "title": "Width",
-          "type": "number"
-        },
         "thickness": {
           "exclusiveMinimum": 0,
           "title": "Thickness",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
           "type": "number"
         }
       },
@@ -132,7 +132,15 @@
       "type": "object"
     }
   },
+  "$id": "https://fiberpath.org/schemas/wind/1.0/wind.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Schema for FiberPath filament winding pattern definitions",
   "properties": {
+    "defaultFeedRate": {
+      "exclusiveMinimum": 0,
+      "title": "Defaultfeedrate",
+      "type": "number"
+    },
     "layers": {
       "items": {
         "discriminator": {
@@ -161,13 +169,15 @@
     "mandrelParameters": {
       "$ref": "#/$defs/MandrelParameters"
     },
+    "schemaVersion": {
+      "default": "1.0",
+      "description": "Version of the .wind file format schema (1.x).",
+      "pattern": "^1\\.\\d+$",
+      "title": "Schema Version",
+      "type": "string"
+    },
     "towParameters": {
       "$ref": "#/$defs/TowParameters"
-    },
-    "defaultFeedRate": {
-      "exclusiveMinimum": 0,
-      "title": "Defaultfeedrate",
-      "type": "number"
     }
   },
   "required": [
@@ -177,7 +187,5 @@
     "defaultFeedRate"
   ],
   "title": "WindDefinition",
-  "type": "object",
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/CameronBrooks11/fiberpath/schemas/wind-definition.json"
+  "type": "object"
 }

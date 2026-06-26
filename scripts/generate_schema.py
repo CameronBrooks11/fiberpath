@@ -14,9 +14,13 @@ def main() -> None:
     # Generate schema
     schema = WindDefinition.model_json_schema(mode="serialization")
 
-    # Add metadata
+    # Add metadata. The $id is the canonical, versioned identifier for the open
+    # .wind format (see #141). Additive 1.x revisions validate against this 1.0
+    # schema; bump the path only on a breaking (major) format change.
+    # Keep pydantic's title ("WindDefinition") so the generated TS root type name
+    # stays stable for the GUI consumers; the $id carries the format identity.
     schema["$schema"] = "http://json-schema.org/draft-07/schema#"
-    schema["title"] = "FiberPath Wind Definition"
+    schema["$id"] = "https://fiberpath.org/schemas/wind/1.0/wind.schema.json"
     schema["description"] = "Schema for FiberPath filament winding pattern definitions"
 
     # schemaVersion is a native field on WindDefinition (default "1.0", pattern
@@ -28,9 +32,9 @@ def main() -> None:
     output_path = Path(__file__).parent.parent / "fiberpath_gui" / "schemas" / "wind-schema.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Write schema
-    with open(output_path, "w") as f:
-        json.dump(schema, f, indent=2)
+    # Write deterministically (sorted keys + trailing newline) so the committed
+    # artifact only changes on real schema changes and a CI drift gate is stable.
+    output_path.write_text(json.dumps(schema, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     schema_version = WindDefinition.model_fields["schema_version"].default
     print(f"✓ Generated schema: {output_path}")

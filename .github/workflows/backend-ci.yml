@@ -35,6 +35,12 @@ jobs:
           git diff --exit-code -- fiberpath_gui/openapi.json \
             || { echo "::error::fiberpath_gui/openapi.json is stale. Run 'npm run api:generate' in fiberpath_gui and commit."; exit 1; }
 
+      - name: Verify committed .wind JSON Schema matches the model
+        run: |
+          uv run python scripts/generate_schema.py
+          git diff --exit-code -- fiberpath_gui/schemas/wind-schema.json \
+            || { echo "::error::fiberpath_gui/schemas/wind-schema.json is stale. Run 'npm run schema:generate' in fiberpath_gui and commit."; exit 1; }
+
   test:
     name: Test (${{ matrix.os }})
     needs: lint-and-type-check

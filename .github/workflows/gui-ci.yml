@@ -30,6 +30,12 @@ jobs:
           git diff --exit-code -- src/api/schema.ts \
             || { echo "::error::src/api/schema.ts is stale. Run 'npm run api:generate' and commit."; exit 1; }
 
+      - name: Verify .wind types match the committed JSON Schema
+        run: |
+          npm run schema:generate:client
+          git diff --exit-code -- src/types/wind-schema.ts \
+            || { echo "::error::src/types/wind-schema.ts is stale. Run 'npm run schema:generate' and commit."; exit 1; }
+
       - name: Run Stylelint (CSS)
         run: npm run lint:css
 
