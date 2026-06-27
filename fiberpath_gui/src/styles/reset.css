@@ -10,6 +10,25 @@
   box-sizing: border-box;
 }
 
+/* Reduced motion: flatten ALL CSS animations, transitions, and smooth scrolling
+   to near-instant — including keyframe loops (e.g. spinners) and non-token
+   transitions that the design-token zeroing alone could not reach. JS-driven
+   motion (Svelte transitions, scrollIntoView) is gated separately in the
+   components via `prefersReducedMotion`. The universal selector needs
+   !important to override element/class-level animation declarations. */
+@media (prefers-reduced-motion: reduce) {
+  /* stylelint-disable declaration-no-important */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* stylelint-enable declaration-no-important */
+}
+
 /* Root & Body Setup */
 html,
 body,

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { prefersReducedMotion } from "svelte/motion";
   import { machineSession as m } from "../../state/machine-session.svelte";
   import type { LogEntry } from "../../state/machine-session.svelte";
   import EmptyState from "../../ui/EmptyState.svelte";
@@ -8,7 +9,9 @@
   $effect(() => {
     // Re-run when entries are appended; scroll to the latest if auto-scroll is on.
     m.log.length;
-    if (m.autoScroll) endEl?.scrollIntoView({ behavior: "smooth" });
+    if (m.autoScroll) {
+      endEl?.scrollIntoView({ behavior: prefersReducedMotion.current ? "auto" : "smooth" });
+    }
   });
 
   const prefix = (t: LogEntry["type"]) =>
