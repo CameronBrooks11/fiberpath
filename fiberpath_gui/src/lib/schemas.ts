@@ -6,7 +6,7 @@ import { z } from "zod";
 
 // Compute responses (plan/simulate/plot/validate) are typed by the generated
 // OpenAPI client (src/api) now, not hand-maintained here. Only the schemas for
-// responses still served over the Tauri bridge (stream, CLI health) remain.
+// responses still served over the Tauri bridge (stream, backend health) remain.
 
 /**
  * Schema for StreamSummary response from stream_program command
@@ -20,9 +20,9 @@ export const StreamSummarySchema = z.object({
 });
 
 /**
- * Schema for CliHealthResponse from check_cli_health command
+ * Schema for BackendHealthResponse from check_backend_health command
  */
-export const CliHealthResponseSchema = z.object({
+export const BackendHealthResponseSchema = z.object({
   healthy: z.boolean(),
   version: z.string().nullable(),
   errorMessage: z.string().nullable(),

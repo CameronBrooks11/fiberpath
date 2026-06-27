@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Dialog from "../../ui/Dialog.svelte";
-  import { cliHealth } from "../../state/cli-health.svelte";
+  import { backendHealth } from "../../state/backend-health.svelte";
   import { projectSession } from "../../state/project-session.svelte";
   import { getRecentFiles } from "../../lib/recentFiles";
 
@@ -10,7 +10,7 @@
   const recentCount = getRecentFiles().length;
   const doc = $derived(projectSession.document);
 
-  onMount(() => void cliHealth.refresh());
+  onMount(() => void backendHealth.refresh());
 </script>
 
 <Dialog title="Diagnostics" {onclose}>
@@ -23,28 +23,28 @@
     <div class="diagnostics-grid">
       <div class="diagnostics-item">
         <span class="diagnostics-label">Health:</span>
-        <span class="diagnostics-value" class:status-healthy={cliHealth.isHealthy} class:status-error={!cliHealth.isHealthy}>
-          {cliHealth.isHealthy ? "✓ Healthy" : "✗ Unavailable"}
+        <span class="diagnostics-value" class:status-healthy={backendHealth.isHealthy} class:status-error={!backendHealth.isHealthy}>
+          {backendHealth.isHealthy ? "✓ Healthy" : "✗ Unavailable"}
         </span>
       </div>
       <div class="diagnostics-item">
         <span class="diagnostics-label">Version:</span>
-        <span class="diagnostics-value">{cliHealth.version || "Unknown"}</span>
+        <span class="diagnostics-value">{backendHealth.version || "Unknown"}</span>
       </div>
-      {#if !cliHealth.isHealthy && cliHealth.errorMessage}
+      {#if !backendHealth.isHealthy && backendHealth.errorMessage}
         <div class="diagnostics-item diagnostics-item--full-width">
           <span class="diagnostics-label">Error:</span>
-          <span class="diagnostics-value diagnostics-value--error">{cliHealth.errorMessage}</span>
+          <span class="diagnostics-value diagnostics-value--error">{backendHealth.errorMessage}</span>
         </div>
       {/if}
-      {#if cliHealth.lastChecked}
+      {#if backendHealth.lastChecked}
         <div class="diagnostics-item">
           <span class="diagnostics-label">Last Checked:</span>
-          <span class="diagnostics-value">{cliHealth.lastChecked.toLocaleTimeString()}</span>
+          <span class="diagnostics-value">{backendHealth.lastChecked.toLocaleTimeString()}</span>
         </div>
       {/if}
     </div>
-    <button class="btn btn--secondary diagnostics-refresh-btn" onclick={() => cliHealth.refresh()}>
+    <button class="btn btn--secondary diagnostics-refresh-btn" onclick={() => backendHealth.refresh()}>
       Refresh CLI Status
     </button>
   </div>

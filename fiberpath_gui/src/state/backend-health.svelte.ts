@@ -1,19 +1,19 @@
 import { invoke } from "@tauri-apps/api/core";
-import { CliHealthResponseSchema } from "../lib/schemas";
+import { BackendHealthResponseSchema } from "../lib/schemas";
 import { isTauri } from "../lib/tauri";
 
-export type CliStatus = "ready" | "checking" | "unavailable" | "unknown";
+export type BackendStatus = "ready" | "checking" | "unavailable" | "unknown";
 
 /** Shown when there is no Tauri backend to detect (browser dev preview). */
 const BROWSER_PREVIEW_MESSAGE =
   "Browser preview — no backend. Run `npm run tauri dev` for the full app.";
 
 /**
- * CLI/sidecar backend health (replaces useCliHealth + CliHealthContext).
- * Invokes the `check_cli_health` Tauri command and validates the response.
+ * Backend health: probes the bundled CLI/sidecar via the `check_backend_health`
+ * Tauri command and validates the response.
  */
-export class CliHealth {
-  status = $state<CliStatus>("unknown");
+export class BackendHealth {
+  status = $state<BackendStatus>("unknown");
   version = $state<string | null>(null);
   errorMessage = $state<string | null>(null);
   lastChecked = $state<Date | null>(null);
@@ -38,8 +38,8 @@ export class CliHealth {
     this.isBrowserPreview = false;
     this.status = "checking";
     try {
-      const response = await invoke<unknown>("check_cli_health");
-      const parsed = CliHealthResponseSchema.safeParse(response);
+      const response = await invoke<unknown>("check_backend_health");
+      const parsed = BackendHealthResponseSchema.safeParse(response);
       if (!parsed.success) {
         throw new Error(`Invalid response schema: ${parsed.error.message}`);
       }
@@ -75,4 +75,4 @@ export class CliHealth {
   }
 }
 
-export const cliHealth = new CliHealth();
+export const backendHealth = new BackendHealth();

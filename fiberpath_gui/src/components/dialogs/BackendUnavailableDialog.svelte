@@ -10,7 +10,7 @@
   let { version, errorMessage, onretry, onclose }: Props = $props();
 </script>
 
-<Dialog title="CLI Backend Unavailable" {onclose}>
+<Dialog title="Backend Unavailable" {onclose}>
   {#snippet footer()}
     <button class="btn btn--secondary" onclick={() => onretry()}>Retry</button>
     <button class="btn btn--ghost" onclick={onclose}>Close</button>
@@ -24,7 +24,7 @@
   {#if errorMessage}
     <div class="diagnostics-section">
       <h3>Details</h3>
-      <pre class="cli-unavailable__error">{errorMessage}</pre>
+      <pre class="backend-unavailable__error">{errorMessage}</pre>
     </div>
   {/if}
 
@@ -40,7 +40,7 @@
 </Dialog>
 
 <style>
-  .cli-unavailable__error {
+  .backend-unavailable__error {
     white-space: pre-wrap;
     word-break: break-word;
     font-family: var(--font-family-mono);

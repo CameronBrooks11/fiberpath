@@ -1,6 +1,6 @@
 <script lang="ts">
   import { projectSession } from "../state/project-session.svelte";
-  import { cliHealth } from "../state/cli-health.svelte";
+  import { backendHealth } from "../state/backend-health.svelte";
 
   const projectName = $derived(
     projectSession.filePath
@@ -10,15 +10,15 @@
   const layerCount = $derived(projectSession.document.layers.length);
 
   const cliText = $derived(
-    cliHealth.isBrowserPreview
+    backendHealth.isBrowserPreview
       ? "Browser preview"
-      : cliHealth.status === "ready"
-        ? "CLI: Ready"
-        : cliHealth.status === "checking"
-          ? "CLI: Checking…"
-          : cliHealth.status === "unavailable"
-            ? "CLI: Unavailable"
-            : "CLI: Unknown",
+      : backendHealth.status === "ready"
+        ? "Backend: Ready"
+        : backendHealth.status === "checking"
+          ? "Backend: Checking…"
+          : backendHealth.status === "unavailable"
+            ? "Backend: Unavailable"
+            : "Backend: Unknown",
   );
 </script>
 
@@ -38,7 +38,7 @@
   {/if}
 
   <div class="statusbar__item statusbar__item--meta">
-    <span class="statusbar__dot" data-status={cliHealth.status} aria-hidden="true"></span>
+    <span class="statusbar__dot" data-status={backendHealth.status} aria-hidden="true"></span>
     <span class="statusbar__value">{cliText}</span>
   </div>
 </footer>

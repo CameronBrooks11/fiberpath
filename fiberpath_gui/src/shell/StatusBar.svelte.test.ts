@@ -10,7 +10,7 @@ describe("StatusBar.svelte", () => {
     render(StatusBar);
     expect(screen.getByText("Untitled")).toBeInTheDocument();
     expect(screen.queryByText("Layers:")).toBeNull();
-    expect(screen.getByText("CLI: Unknown")).toBeInTheDocument();
+    expect(screen.getByText("Backend: Unknown")).toBeInTheDocument();
   });
 
   it("derives the project name from the file path", () => {

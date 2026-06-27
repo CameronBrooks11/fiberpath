@@ -186,7 +186,7 @@ async fn get_cli_diagnostics(app: AppHandle) -> Result<Value, String> {
 }
 
 #[derive(serde::Serialize)]
-struct CliHealthResponse {
+struct BackendHealthResponse {
     healthy: bool,
     version: Option<String>,
     #[serde(rename = "errorMessage")]
@@ -194,12 +194,12 @@ struct CliHealthResponse {
 }
 
 #[tauri::command]
-async fn check_cli_health(app: AppHandle) -> Result<CliHealthResponse, String> {
+async fn check_backend_health(app: AppHandle) -> Result<BackendHealthResponse, String> {
     // Get the fiberpath CLI executable path (bundled or system)
     let cli_path = match cli_path::get_fiberpath_executable(&app) {
         Ok(path) => path,
         Err(err) => {
-            return Ok(CliHealthResponse {
+            return Ok(BackendHealthResponse {
                 healthy: false,
                 version: None,
                 error_message: Some(err),
@@ -210,7 +210,7 @@ async fn check_cli_health(app: AppHandle) -> Result<CliHealthResponse, String> {
     let cli_str = match cli_path::path_to_string(&cli_path) {
         Ok(s) => s,
         Err(err) => {
-            return Ok(CliHealthResponse {
+            return Ok(BackendHealthResponse {
                 healthy: false,
                 version: None,
                 error_message: Some(err),
@@ -243,7 +243,7 @@ async fn check_cli_health(app: AppHandle) -> Result<CliHealthResponse, String> {
                 })
                 .or_else(|| Some("available".to_string()));
 
-            Ok(CliHealthResponse {
+            Ok(BackendHealthResponse {
                 healthy: true,
                 version,
                 error_message: None,
@@ -251,16 +251,16 @@ async fn check_cli_health(app: AppHandle) -> Result<CliHealthResponse, String> {
         }
         Ok(out) => {
             let stderr = String::from_utf8_lossy(&out.stderr);
-            Ok(CliHealthResponse {
+            Ok(BackendHealthResponse {
                 healthy: false,
                 version: None,
-                error_message: Some(format!("CLI returned error: {}", stderr.trim())),
+                error_message: Some(format!("Backend returned error: {}", stderr.trim())),
             })
         }
-        Err(err) => Ok(CliHealthResponse {
+        Err(err) => Ok(BackendHealthResponse {
             healthy: false,
             version: None,
-            error_message: Some(format!("CLI not found or not executable: {err}")),
+            error_message: Some(format!("Backend not found or not executable: {err}")),
         }),
     }
 }
@@ -291,7 +291,7 @@ fn main() {
             stream_program,
             save_wind_file,
             load_wind_file,
-            check_cli_health,
+            check_backend_health,
             get_cli_diagnostics,
             marlin::marlin_list_ports,
             marlin::marlin_start_interactive,
