@@ -1,10 +1,15 @@
 <script lang="ts">
   import { fly, fade } from "svelte/transition";
   import { flip } from "svelte/animate";
+  import { prefersReducedMotion } from "svelte/motion";
   import { notifications, type ToastType } from "../state/notifications.svelte";
 
   const symbol = (t: ToastType) =>
     t === "success" ? "✓" : t === "error" ? "✕" : t === "warning" ? "⚠" : "ⓘ";
+
+  // Collapse the JS transitions to instant under reduced motion (the CSS
+  // @media reset cannot reach Svelte's rAF-driven transitions).
+  const motionDuration = $derived(prefersReducedMotion.current ? 0 : 150);
 </script>
 
 {#if notifications.toasts.length > 0}
@@ -18,9 +23,9 @@
         onmouseleave={() => notifications.resume(toast.id)}
         onfocusin={() => notifications.pause(toast.id)}
         onfocusout={() => notifications.resume(toast.id)}
-        in:fly={{ x: 16, duration: 150 }}
-        out:fade={{ duration: 150 }}
-        animate:flip={{ duration: 150 }}
+        in:fly={{ x: prefersReducedMotion.current ? 0 : 16, duration: motionDuration }}
+        out:fade={{ duration: motionDuration }}
+        animate:flip={{ duration: motionDuration }}
       >
         <span class="toast__icon" aria-hidden="true">{symbol(toast.type)}</span>
         <span class="toast__message">{toast.message}</span>

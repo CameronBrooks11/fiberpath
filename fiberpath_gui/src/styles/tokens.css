@@ -214,12 +214,5 @@
   }
 }
 
-/* Reduced motion: collapse the transition tokens. --transition-colors resolves
-   --transition-fast at use-time, so zeroing these flattens all token-based
-   transitions without needing !important (which stylelint forbids). */
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --transition-fast: 0ms;
-    --transition-base: 0ms;
-  }
-}
+/* Reduced motion is handled globally in reset.css (a single universal block
+   that flattens token transitions, keyframe animations, and smooth scroll). */
