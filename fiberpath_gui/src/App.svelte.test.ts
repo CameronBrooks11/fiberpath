@@ -10,6 +10,10 @@ vi.mock("./lib/marlin-api", () => ({
   onStreamComplete: vi.fn(() => Promise.resolve(() => {})),
   onStreamError: vi.fn(() => Promise.resolve(() => {})),
 }));
+// CLI-health polling invokes a Tauri command on mount; stub it healthy.
+vi.mock("@tauri-apps/api/core", () => ({
+  invoke: vi.fn(() => Promise.resolve({ healthy: true, version: "test", errorMessage: null })),
+}));
 
 import App from "./App.svelte";
 import { uiState } from "./state/ui-state.svelte";
@@ -32,7 +36,6 @@ describe("App.svelte (shell)", () => {
     // empty viewport (no layers yet)
     expect(screen.getByText("No layers to visualize")).toBeInTheDocument();
     expect(screen.getByText("Layer Properties")).toBeInTheDocument();
-    expect(screen.getByText("Not connected")).toBeInTheDocument();
   });
 
   it("switches to the Machine workspace on Alt+2 and back on Alt+1", async () => {

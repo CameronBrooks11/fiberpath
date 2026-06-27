@@ -1,6 +1,7 @@
 <script lang="ts">
   import { uiState } from "../state/ui-state.svelte";
   import { projectSession } from "../state/project-session.svelte";
+  import { theme } from "../state/theme.svelte";
   import * as fileOps from "../services/file-operations.svelte";
 
   interface MenuItem {
@@ -58,12 +59,16 @@
         { label: "Toggle Left Inspector", action: () => uiState.toggleLeft(), separatorBefore: true },
         { label: "Toggle Right Inspector", action: () => uiState.toggleRight() },
         { label: "Toggle Bottom Drawer", action: () => uiState.toggleDrawer() },
+        { label: "Cycle Theme (dark / light / system)", action: () => theme.cycle(), separatorBefore: true },
       ],
     },
     {
       id: "help",
       label: "Help",
-      items: [{ label: "About FiberPath", disabled: true, hint: "Dialogs migrate in #220" }],
+      items: [
+        { label: "Diagnostics", action: () => uiState.openDialog("diagnostics") },
+        { label: "About FiberPath", action: () => uiState.openDialog("about") },
+      ],
     },
   ];
 
