@@ -67,28 +67,28 @@
     line-height: var(--line-height-normal);
   }
   .toast[data-type="success"] {
-    border-color: var(--status-success);
+    border-color: var(--status-success-fg);
   }
   .toast[data-type="success"] .toast__icon {
-    color: var(--status-success);
+    color: var(--status-success-fg);
   }
   .toast[data-type="error"] {
-    border-color: var(--status-error);
+    border-color: var(--status-error-fg);
   }
   .toast[data-type="error"] .toast__icon {
-    color: var(--status-error);
+    color: var(--status-error-fg);
   }
   .toast[data-type="warning"] {
-    border-color: var(--status-warning);
+    border-color: var(--status-warning-fg);
   }
   .toast[data-type="warning"] .toast__icon {
-    color: var(--status-warning);
+    color: var(--status-warning-fg);
   }
   .toast[data-type="info"] {
-    border-color: var(--status-info);
+    border-color: var(--status-info-fg);
   }
   .toast[data-type="info"] .toast__icon {
-    color: var(--status-info);
+    color: var(--status-info-fg);
   }
   .toast__close {
     flex-shrink: 0;

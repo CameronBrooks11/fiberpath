@@ -36,7 +36,7 @@
 select {
   width: 100%;
   min-height: var(--input-height);
-  border: var(--border-width-thin) solid var(--color-border);
+  border: var(--border-width-thin) solid var(--color-border-control);
   border-radius: var(--border-radius-md);
   background: var(--color-bg-panel-alt);
   color: var(--color-text);
@@ -83,11 +83,11 @@ select:focus {
 
 /* Validation states */
 .param-form__input--error {
-  border-color: var(--color-error);
+  border-color: var(--status-error-fg);
 }
 
 .param-form__input--error:focus {
-  border-color: var(--color-error);
+  border-color: var(--status-error-fg);
   box-shadow:
     0 0 0 var(--border-width-medium) var(--color-border-focus);
 }
@@ -106,7 +106,7 @@ select:focus {
 .param-form__error {
   display: block;
   margin-top: var(--spacing-xs);
-  color: var(--color-error);
+  color: var(--status-error-fg);
   font-size: var(--font-size-sm);
 }
 
@@ -138,7 +138,7 @@ input[type="checkbox"]:focus-visible {
 fieldset {
   margin: 0 0 var(--spacing-lg);
   padding: var(--spacing-lg);
-  border: var(--border-width-thin) solid var(--color-border);
+  border: var(--border-width-thin) solid var(--color-border-control);
   border-radius: var(--border-radius-md);
 }
 

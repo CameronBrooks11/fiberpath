@@ -96,7 +96,7 @@
     color: var(--color-slate-400);
   }
   .entry[data-type="error"] {
-    color: var(--status-error);
+    color: var(--status-error-fg);
   }
   .entry[data-type="stream"] {
     color: var(--color-text-muted);

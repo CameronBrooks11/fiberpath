@@ -9,19 +9,19 @@
   gap: 1rem;
   padding: 0.75rem 1rem;
   background: var(--status-warning-bg);
-  border-bottom: 1px solid var(--status-warning);
-  border-left: 4px solid var(--status-warning);
+  border-bottom: 1px solid var(--status-warning-fg);
+  border-left: 4px solid var(--status-warning-fg);
   animation: slideDown var(--transition-base);
 }
 
 .backend-warning-banner--info {
   background: var(--status-info-bg);
-  border-bottom-color: var(--status-info);
-  border-left-color: var(--status-info);
+  border-bottom-color: var(--status-info-fg);
+  border-left-color: var(--status-info-fg);
 }
 
 .backend-warning-banner--info .backend-warning-banner__text strong {
-  color: var(--status-info);
+  color: var(--status-info-fg);
 }
 
 .backend-warning-banner__content {
@@ -45,7 +45,7 @@
 .backend-warning-banner__text strong {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--status-warning);
+  color: var(--status-warning-fg);
 }
 
 .backend-warning-banner__text span {

@@ -95,7 +95,7 @@
     width: 100%;
     height: 6px;
     margin: var(--spacing-xs) 0;
-    accent-color: var(--status-success);
+    accent-color: var(--status-success-fg);
   }
   .mono {
     font-family: var(--font-family-mono);

@@ -254,9 +254,9 @@
     user-select: none;
   }
   .row__handle:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-border-focus);
   }
   .row__act--danger:hover {
-    color: var(--status-error);
+    color: var(--status-error-fg);
   }
 </style>

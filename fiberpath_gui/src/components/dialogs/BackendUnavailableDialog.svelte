@@ -45,7 +45,7 @@
     word-break: break-word;
     font-family: var(--font-family-mono);
     font-size: var(--font-size-xs);
-    color: var(--status-error);
+    color: var(--status-error-fg);
     margin: 0;
   }
 </style>

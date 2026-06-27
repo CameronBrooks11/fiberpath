@@ -101,12 +101,12 @@
     background: var(--color-text-muted);
   }
   .status[data-tone="connected"] .status__dot {
-    background: var(--status-success);
+    background: var(--status-success-fg);
   }
   .status[data-tone="connecting"] .status__dot {
-    background: var(--status-warning);
+    background: var(--status-warning-fg);
   }
   .status[data-tone="paused"] .status__dot {
-    background: var(--status-caution);
+    background: var(--status-caution-fg);
   }
 </style>

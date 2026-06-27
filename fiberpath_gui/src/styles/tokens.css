@@ -50,7 +50,8 @@
   /* ========================================
      BORDER / SEPARATOR
      ======================================== */
-  --color-border: #3a3a40; /* ~3:1 on panel — meets WCAG 1.4.11 */
+  --color-border: #3a3a40; /* hairline separator — decorative, exempt from 1.4.11 */
+  --color-border-control: #707079; /* input/select/fieldset boundary — >=3:1 on panel-alt (WCAG 1.4.11) */
   --color-border-soft: rgb(255, 255, 255, 0.09);
   --color-border-focus: var(--color-primary);
   --border-width-thin: 1px;
@@ -89,7 +90,10 @@
   --color-info: #64b5f6;
   --color-info-bg: rgb(100, 181, 246, 0.1);
 
-  /* Canonical status aliases for semantic UI states */
+  /* Canonical status aliases for semantic UI states.
+     --status-* = saturated fill/intent (button bg, paired with --color-text-inverse).
+     --status-*-fg = foreground for text/icons/dots/borders on neutral surfaces;
+     bright on dark panels here, darkened per-theme in the light blocks for AA. */
   --status-success: var(--color-success-green);
   --status-warning: var(--color-warning-orange);
   --status-warning-bg: var(--color-warning-bg);
@@ -98,6 +102,11 @@
   --status-error-bg: var(--color-error-bg);
   --status-info: var(--color-info);
   --status-info-bg: var(--color-info-bg);
+  --status-error-fg: var(--color-error-red-light); /* #f87171 — clears 4.5:1 on dark panels */
+  --status-warning-fg: var(--status-warning);
+  --status-success-fg: var(--status-success);
+  --status-info-fg: var(--status-info);
+  --status-caution-fg: var(--status-caution);
 
   /* Stream/console utility palette */
   --color-slate-400: #94a3b8;
@@ -166,13 +175,21 @@
   --color-text-muted: #5d6470;
   --color-text-label: #3a4150;
   --color-text-inverse: #08201e; /* dark text on teal fill — white was 2.9:1 AA fail */
-  --color-border: #c3c9d4; /* stronger boundary */
+  --color-border: #c3c9d4; /* hairline separator */
+  --color-border-control: #7b8699; /* >=3:1 on white/panel-alt (WCAG 1.4.11) */
   --color-border-soft: rgb(20, 22, 26, 0.08);
-  --color-border-focus: var(--color-primary);
-  --color-primary-soft: #0f8f82;
+  --color-border-focus: #0b766b; /* darkened teal — focus ring >=3:1 on white */
+  --color-primary-soft: #0b766b; /* darkened teal — link/accent text >=4.5:1 on white */
   --color-slate-400: #64748b;
   --color-slate-500: #475569;
   --color-blue-500: #1d4ed8;
+
+  /* Darkened status foregrounds for AA on near-white surfaces. */
+  --status-error-fg: #c62828;
+  --status-warning-fg: #b45309;
+  --status-success-fg: #15803d;
+  --status-info-fg: #1d4ed8;
+  --status-caution-fg: #a16207;
 }
 
 /* System preference fallback when no manual theme override is stored */
@@ -191,12 +208,18 @@
     --color-text-label: #3a4150;
     --color-text-inverse: #08201e;
     --color-border: #c3c9d4;
+    --color-border-control: #7b8699;
     --color-border-soft: rgb(20, 22, 26, 0.08);
-    --color-border-focus: var(--color-primary);
-    --color-primary-soft: #0f8f82;
+    --color-border-focus: #0b766b;
+    --color-primary-soft: #0b766b;
     --color-slate-400: #64748b;
     --color-slate-500: #475569;
     --color-blue-500: #1d4ed8;
+    --status-error-fg: #c62828;
+    --status-warning-fg: #b45309;
+    --status-success-fg: #15803d;
+    --status-info-fg: #1d4ed8;
+    --status-caution-fg: #a16207;
   }
 }
 
