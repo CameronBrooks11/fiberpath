@@ -1,5 +1,6 @@
 <script lang="ts">
   import { projectSession } from "../state/project-session.svelte";
+  import { cliHealth } from "../state/cli-health.svelte";
 
   const projectName = $derived(
     projectSession.filePath
@@ -7,6 +8,16 @@
       : "Untitled",
   );
   const layerCount = $derived(projectSession.document.layers.length);
+
+  const cliText = $derived(
+    cliHealth.status === "ready"
+      ? "CLI: Ready"
+      : cliHealth.status === "checking"
+        ? "CLI: Checking…"
+        : cliHealth.status === "unavailable"
+          ? "CLI: Unavailable"
+          : "CLI: Unknown",
+  );
 </script>
 
 <footer class="statusbar">
@@ -24,11 +35,9 @@
     </div>
   {/if}
 
-  <!-- minimal: machine/CLI health is a static placeholder until the health
-       hook migrates (#220) and the Machine workspace lands (#219). -->
   <div class="statusbar__item statusbar__item--meta">
-    <span class="statusbar__dot" aria-hidden="true"></span>
-    <span class="statusbar__value">Not connected</span>
+    <span class="statusbar__dot" data-status={cliHealth.status} aria-hidden="true"></span>
+    <span class="statusbar__value">{cliText}</span>
   </div>
 </footer>
 
@@ -67,5 +76,14 @@
     height: 7px;
     border-radius: var(--border-radius-round);
     background: var(--color-text-muted);
+  }
+  .statusbar__dot[data-status="ready"] {
+    background: var(--status-success);
+  }
+  .statusbar__dot[data-status="checking"] {
+    background: var(--status-warning);
+  }
+  .statusbar__dot[data-status="unavailable"] {
+    background: var(--status-error);
   }
 </style>

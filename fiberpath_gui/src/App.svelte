@@ -12,9 +12,31 @@
   import MachineWorkspace from "./shell/MachineWorkspace.svelte";
   import UtilityDrawer from "./shell/UtilityDrawer.svelte";
   import Toasts from "./shell/Toasts.svelte";
+  import CliHealthWarning from "./components/machine/CliHealthWarning.svelte";
+  import AboutDialog from "./components/dialogs/AboutDialog.svelte";
+  import DiagnosticsDialog from "./components/dialogs/DiagnosticsDialog.svelte";
+  import { onMount } from "svelte";
   import { uiState } from "./state/ui-state.svelte";
   import { projectSession } from "./state/project-session.svelte";
+  import { theme } from "./state/theme.svelte";
+  import { cliHealth } from "./state/cli-health.svelte";
   import * as fileOps from "./services/file-operations.svelte";
+
+  // Apply the theme preference to the document root.
+  $effect(() => {
+    const root = document.documentElement;
+    if (theme.preference === null) root.removeAttribute("data-theme");
+    else root.setAttribute("data-theme", theme.preference);
+  });
+
+  onMount(() => {
+    const stopWatch = theme.watchSystem();
+    const stopPoll = cliHealth.startPolling();
+    return () => {
+      stopWatch();
+      stopPoll();
+    };
+  });
 
   function isTyping(target: EventTarget | null): boolean {
     const el = target as HTMLElement | null;
@@ -82,26 +104,50 @@
 
 <svelte:window onkeydown={onKeydown} onbeforeunload={onBeforeUnload} />
 
-<div class="app">
-  <MenuBar />
-  <WorkspaceTabs />
-  <main class="app__workspace">
-    {#if uiState.workspace === "prepare"}
-      <PrepareWorkspace />
-    {:else}
-      <MachineWorkspace />
-    {/if}
-  </main>
-  <UtilityDrawer />
-  <StatusBar />
-</div>
+<svelte:boundary>
+  <div class="app">
+    <CliHealthWarning />
+    <MenuBar />
+    <WorkspaceTabs />
+    <main class="app__workspace">
+      {#if uiState.workspace === "prepare"}
+        <PrepareWorkspace />
+      {:else}
+        <MachineWorkspace />
+      {/if}
+    </main>
+    <UtilityDrawer />
+    <StatusBar />
+  </div>
 
-<Toasts />
+  <Toasts />
+
+  {#if uiState.activeDialog === "about"}
+    <AboutDialog onclose={() => uiState.closeDialog()} />
+  {:else if uiState.activeDialog === "diagnostics"}
+    <DiagnosticsDialog onclose={() => uiState.closeDialog()} />
+  {/if}
+
+  {#snippet failed(error)}
+    <div class="error-boundary">
+      <h1 class="error-boundary__title">Something went wrong</h1>
+      <p class="error-boundary__message">An unexpected error occurred. Please reload the app.</p>
+      <details class="error-boundary__details">
+        <summary class="error-boundary__summary">Error details</summary>
+        <pre class="error-boundary__stack">{String(error)}</pre>
+      </details>
+      <button class="btn btn--primary error-boundary__reload" onclick={() => location.reload()}>
+        Reload Application
+      </button>
+    </div>
+  {/snippet}
+</svelte:boundary>
 
 <style>
   .app {
     display: grid;
-    grid-template-rows: auto auto 1fr auto auto;
+    /* banner (0 when healthy) · menubar · tabs · workspace · drawer · statusbar */
+    grid-template-rows: auto auto auto 1fr auto auto;
     height: 100vh;
     overflow: hidden;
     background: var(--color-bg);
