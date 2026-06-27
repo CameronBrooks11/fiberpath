@@ -27,9 +27,10 @@
         class:icon-btn--active={m.autoScroll}
         title={m.autoScroll ? "Auto-scroll on (click to disable)" : "Auto-scroll off (click to enable)"}
         aria-label="Toggle auto-scroll"
+        aria-pressed={m.autoScroll}
         onclick={() => m.toggleAutoScroll()}>⤓</button
       >
-      <button class="icon-btn" title="Clear log" disabled={m.log.length === 0} onclick={() => m.clearLog()}>🗑</button>
+      <button class="icon-btn" title="Clear log" aria-label="Clear log" disabled={m.log.length === 0} onclick={() => m.clearLog()}>🗑</button>
     </div>
   </header>
   <div class="log__body">

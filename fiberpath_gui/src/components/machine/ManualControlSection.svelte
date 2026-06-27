@@ -62,13 +62,23 @@
   .input {
     flex: 1;
     height: var(--input-height-sm);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-control);
     border-radius: var(--border-radius-sm);
     background: var(--color-bg-panel-alt);
     color: var(--color-text);
     font-family: var(--font-family-mono);
     font-size: var(--font-size-sm);
     padding: 0 var(--spacing-sm);
+    transition:
+      var(--transition-colors),
+      box-shadow var(--transition-fast);
+  }
+  .input:focus-visible {
+    /* Transparent outline so forced-colors / high-contrast modes still show a ring. */
+    outline: var(--border-width-medium) solid transparent;
+    outline-offset: 2px;
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 var(--border-width-medium) var(--color-border-focus);
   }
   .input:disabled {
     opacity: 0.5;
