@@ -14,16 +14,16 @@ function renderHelical() {
 describe("HelicalLayerEditor.svelte", () => {
   it("renders all six helical fields with defaults", () => {
     renderHelical();
-    expect((screen.getByLabelText(/Wind Angle/) as HTMLInputElement).value).toBe("45");
-    expect((screen.getByLabelText(/Pattern Number/) as HTMLInputElement).value).toBe("3");
-    expect((screen.getByLabelText(/Skip Index/) as HTMLInputElement).value).toBe("2");
-    expect((screen.getByLabelText(/Lock Degrees/) as HTMLInputElement).value).toBe("540");
+    expect((screen.getByLabelText(/Wind Angle/, { selector: "input" }) as HTMLInputElement).value).toBe("45");
+    expect((screen.getByLabelText(/Pattern Number/, { selector: "input" }) as HTMLInputElement).value).toBe("3");
+    expect((screen.getByLabelText(/Skip Index/, { selector: "input" }) as HTMLInputElement).value).toBe("2");
+    expect((screen.getByLabelText(/Lock Degrees/, { selector: "input" }) as HTMLInputElement).value).toBe("540");
   });
 
   it("updates a field and parses integers for pattern/skip", async () => {
     renderHelical();
-    await fireEvent.input(screen.getByLabelText(/Wind Angle/), { target: { value: "60" } });
-    await fireEvent.input(screen.getByLabelText(/Pattern Number/), { target: { value: "5" } });
+    await fireEvent.input(screen.getByLabelText(/Wind Angle/, { selector: "input" }), { target: { value: "60" } });
+    await fireEvent.input(screen.getByLabelText(/Pattern Number/, { selector: "input" }), { target: { value: "5" } });
     const helical = projectSession.document.layers[0].helical!;
     expect(helical.wind_angle).toBe(60);
     expect(helical.pattern_number).toBe(5);
@@ -32,7 +32,7 @@ describe("HelicalLayerEditor.svelte", () => {
   it("flags a non-coprime pair on BOTH fields and clears when fixed", async () => {
     renderHelical();
     // pattern 3, skip 6 -> gcd 3 -> not coprime (both fields); skip >= pattern -> hint
-    await fireEvent.input(screen.getByLabelText(/Skip Index/), { target: { value: "6" } });
+    await fireEvent.input(screen.getByLabelText(/Skip Index/, { selector: "input" }), { target: { value: "6" } });
     await waitFor(() => {
       expect(
         screen.getAllByText("Pattern and skip must be coprime (GCD = 1)"),
@@ -43,7 +43,7 @@ describe("HelicalLayerEditor.svelte", () => {
     ).toBeInTheDocument();
 
     // fix: skip 2 is coprime with 3 and < pattern -> both errors and the hint clear
-    await fireEvent.input(screen.getByLabelText(/Skip Index/), { target: { value: "2" } });
+    await fireEvent.input(screen.getByLabelText(/Skip Index/, { selector: "input" }), { target: { value: "2" } });
     await waitFor(() => {
       expect(
         screen.queryByText("Pattern and skip must be coprime (GCD = 1)"),

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { machineSession as m } from "../../state/machine-session.svelte";
   import type { LogEntry } from "../../state/machine-session.svelte";
+  import EmptyState from "../../ui/EmptyState.svelte";
 
   let endEl = $state<HTMLDivElement>();
 
@@ -30,7 +31,7 @@
   </header>
   <div class="log__body">
     {#if m.log.length === 0}
-      <p class="log__empty">No log entries yet. Connect to a device to get started.</p>
+      <EmptyState title="No log entries yet" hint="Connect to a device to get started." />
     {:else}
       {#each m.log as e (e.id)}
         <div class="entry" data-type={e.type}>
@@ -79,10 +80,6 @@
     font-family: var(--font-family-mono);
     font-size: var(--font-size-xs);
     line-height: var(--line-height-normal);
-  }
-  .log__empty {
-    margin: 0;
-    color: var(--color-text-muted);
   }
   .entry {
     display: flex;
