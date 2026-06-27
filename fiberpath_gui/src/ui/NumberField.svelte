@@ -31,6 +31,13 @@
     oninput,
     onblur,
   }: Props = $props();
+
+  // Associate help text and the validation error with the input so screen
+  // readers announce them (title alone is not reliably exposed).
+  const describedBy = $derived(
+    [tooltip ? `${id}-help` : null, error ? `${id}-error` : null].filter(Boolean).join(" ") ||
+      undefined,
+  );
 </script>
 
 <div class="param-form__group">
@@ -51,12 +58,15 @@
       class="param-form__input"
       class:param-form__input--with-unit={!!unit}
       class:param-form__input--error={!!error}
+      aria-invalid={error ? "true" : undefined}
+      aria-describedby={describedBy}
       oninput={(e) => oninput(e.currentTarget.value)}
       onblur={(e) => onblur?.(e.currentTarget.value)}
     />
     {#if unit}<span class="param-form__unit">{unit}</span>{/if}
   </div>
-  {#if error}<span class="param-form__error">{error}</span>{/if}
+  {#if tooltip}<span id={`${id}-help`} class="field-sr-only">{tooltip}</span>{/if}
+  {#if error}<span id={`${id}-error`} class="param-form__error">{error}</span>{/if}
 </div>
 
 <style>
@@ -85,5 +95,17 @@
   }
   .field-help:hover {
     color: var(--color-text);
+  }
+  /* Visually hidden but exposed to assistive tech (linked via aria-describedby). */
+  .field-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 </style>

@@ -18,7 +18,7 @@
       <div
         class="toast"
         data-type={toast.type}
-        role="status"
+        role={toast.type === "error" || toast.type === "warning" ? "alert" : "status"}
         onmouseenter={() => notifications.pause(toast.id)}
         onmouseleave={() => notifications.resume(toast.id)}
         onfocusin={() => notifications.pause(toast.id)}
