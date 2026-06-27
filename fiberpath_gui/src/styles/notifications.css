@@ -2,7 +2,7 @@
    CLI Health Warning Banner
    ======================================================================== */
 
-.cli-warning-banner {
+.backend-warning-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -14,46 +14,46 @@
   animation: slideDown var(--transition-base);
 }
 
-.cli-warning-banner--info {
+.backend-warning-banner--info {
   background: var(--status-info-bg);
   border-bottom-color: var(--status-info);
   border-left-color: var(--status-info);
 }
 
-.cli-warning-banner--info .cli-warning-banner__text strong {
+.backend-warning-banner--info .backend-warning-banner__text strong {
   color: var(--status-info);
 }
 
-.cli-warning-banner__content {
+.backend-warning-banner__content {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   flex: 1;
 }
 
-.cli-warning-banner__icon {
+.backend-warning-banner__icon {
   font-size: 1.25rem;
   flex-shrink: 0;
 }
 
-.cli-warning-banner__text {
+.backend-warning-banner__text {
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
 }
 
-.cli-warning-banner__text strong {
+.backend-warning-banner__text strong {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--status-warning);
 }
 
-.cli-warning-banner__text span {
+.backend-warning-banner__text span {
   font-size: 0.8125rem;
   color: var(--color-text-muted);
 }
 
-.cli-warning-banner__actions {
+.backend-warning-banner__actions {
   display: flex;
   gap: 0.5rem;
   align-items: center;

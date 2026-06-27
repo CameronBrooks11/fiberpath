@@ -9,14 +9,14 @@
   import MachineWorkspace from "./shell/MachineWorkspace.svelte";
   import UtilityDrawer from "./shell/UtilityDrawer.svelte";
   import Toasts from "./shell/Toasts.svelte";
-  import CliHealthWarning from "./components/machine/CliHealthWarning.svelte";
+  import BackendHealthWarning from "./components/machine/BackendHealthWarning.svelte";
   import AboutDialog from "./components/dialogs/AboutDialog.svelte";
   import DiagnosticsDialog from "./components/dialogs/DiagnosticsDialog.svelte";
   import { onMount } from "svelte";
   import { uiState } from "./state/ui-state.svelte";
   import { projectSession } from "./state/project-session.svelte";
   import { theme } from "./state/theme.svelte";
-  import { cliHealth } from "./state/cli-health.svelte";
+  import { backendHealth } from "./state/backend-health.svelte";
   import * as fileOps from "./services/file-operations.svelte";
 
   // Apply the theme preference to the document root.
@@ -28,7 +28,7 @@
 
   onMount(() => {
     const stopWatch = theme.watchSystem();
-    const stopPoll = cliHealth.startPolling();
+    const stopPoll = backendHealth.startPolling();
     return () => {
       stopWatch();
       stopPoll();
@@ -103,7 +103,7 @@
 
 <svelte:boundary>
   <div class="app">
-    <CliHealthWarning />
+    <BackendHealthWarning />
     <MenuBar />
     <WorkspaceTabs />
     <main class="app__workspace">
