@@ -81,7 +81,7 @@
 
 .error-boundary__title {
   margin: 0 0 var(--spacing-xl);
-  color: var(--color-error);
+  color: var(--status-error-fg);
 }
 
 .error-boundary__message {

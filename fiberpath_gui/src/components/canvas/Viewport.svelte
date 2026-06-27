@@ -255,7 +255,7 @@
     right: var(--spacing-sm);
     padding: var(--spacing-sm);
     background: var(--status-warning-bg);
-    border: 1px solid var(--status-warning);
+    border: 1px solid var(--status-warning-fg);
     border-radius: var(--border-radius-sm);
     font-size: var(--font-size-xs);
     color: var(--color-text);

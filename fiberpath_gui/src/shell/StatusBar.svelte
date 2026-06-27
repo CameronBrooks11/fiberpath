@@ -93,12 +93,12 @@
     background: var(--color-text-muted);
   }
   .statusbar__dot[data-status="ready"] {
-    background: var(--status-success);
+    background: var(--status-success-fg);
   }
   .statusbar__dot[data-status="checking"] {
-    background: var(--status-warning);
+    background: var(--status-warning-fg);
   }
   .statusbar__dot[data-status="unavailable"] {
-    background: var(--status-error);
+    background: var(--status-error-fg);
   }
 </style>

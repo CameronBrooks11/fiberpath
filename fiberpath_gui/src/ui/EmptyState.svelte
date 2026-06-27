@@ -35,7 +35,7 @@
     color: var(--color-text);
   }
   .empty[data-tone="error"] .empty__title {
-    color: var(--status-error);
+    color: var(--status-error-fg);
   }
   .empty__hint {
     margin: 0;

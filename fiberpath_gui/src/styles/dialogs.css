@@ -243,7 +243,7 @@
 }
 
 .diagnostics-value--error {
-  color: var(--color-error);
+  color: var(--status-error-fg);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
 }
@@ -253,14 +253,14 @@
 }
 
 .status-healthy {
-  color: var(--color-success);
+  color: var(--status-success-fg);
 }
 
 .status-warning {
-  color: var(--color-warning);
+  color: var(--status-warning-fg);
 }
 
 .status-error {
-  color: var(--color-error);
+  color: var(--status-error-fg);
 }
 

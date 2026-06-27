@@ -165,6 +165,6 @@
     line-height: var(--line-height-normal);
   }
   .editor__hint--warning {
-    color: var(--color-warning);
+    color: var(--status-warning-fg);
   }
 </style>
