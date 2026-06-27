@@ -31,7 +31,7 @@
     justify-content: space-between;
     height: 1.75rem;
     padding: 0 var(--spacing-md);
-    background: var(--color-bg-panel-alt);
+    border-bottom: 1px solid var(--color-border-soft);
   }
   .section__title {
     margin: 0;
@@ -39,7 +39,7 @@
     font-weight: var(--font-weight-semibold);
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--color-text-muted);
+    color: var(--color-text);
   }
   .section__body {
     padding: var(--spacing-md);

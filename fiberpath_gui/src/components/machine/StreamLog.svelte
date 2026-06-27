@@ -19,13 +19,13 @@
     <h3 class="log__title">Output Log</h3>
     <div class="log__actions">
       <button
-        class="log__btn"
-        class:log__btn--active={m.autoScroll}
+        class="icon-btn"
+        class:icon-btn--active={m.autoScroll}
         title={m.autoScroll ? "Auto-scroll on (click to disable)" : "Auto-scroll off (click to enable)"}
         aria-label="Toggle auto-scroll"
         onclick={() => m.toggleAutoScroll()}>⤓</button
       >
-      <button class="log__btn" title="Clear log" disabled={m.log.length === 0} onclick={() => m.clearLog()}>🗑</button>
+      <button class="icon-btn" title="Clear log" disabled={m.log.length === 0} onclick={() => m.clearLog()}>🗑</button>
     </div>
   </header>
   <div class="log__body">
@@ -70,22 +70,6 @@
   .log__actions {
     display: flex;
     gap: var(--spacing-xs);
-  }
-  .log__btn {
-    appearance: none;
-    border: none;
-    background: transparent;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    font-size: var(--font-size-sm);
-    transition: var(--transition-colors);
-  }
-  .log__btn--active {
-    color: var(--color-primary);
-  }
-  .log__btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
   }
   .log__body {
     flex: 1;

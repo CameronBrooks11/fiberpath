@@ -95,21 +95,21 @@
       {:else if previewSession.error}
         <div class="vp__state vp__state--error">
           <p>{previewSession.error}</p>
-          <button class="vp__btn" onclick={() => previewSession.generate()}>Retry</button>
+          <button class="btn btn--primary btn--small" onclick={() => previewSession.generate()}>Retry</button>
         </div>
       {:else if !previewSession.image}
         <div class="vp__state">
-          <button class="vp__btn" onclick={() => previewSession.generate()}>Generate preview</button>
+          <button class="btn btn--primary" onclick={() => previewSession.generate()}>Generate preview</button>
         </div>
       {:else}
         <div class="vp__controls">
-          <button class="vp__btn" title="Regenerate preview" onclick={() => previewSession.generate()}>↻</button>
+          <button class="icon-btn" title="Regenerate preview" onclick={() => previewSession.generate()}>↻</button>
           <span class="vp__sep"></span>
-          <button class="vp__btn" title="Zoom in" onclick={() => zoomButton(1.2)}>+</button>
-          <button class="vp__btn" title="Reset zoom" onclick={fit}>⟲</button>
-          <button class="vp__btn" title="Zoom out" onclick={() => zoomButton(1 / 1.2)}>−</button>
+          <button class="icon-btn" title="Zoom in" onclick={() => zoomButton(1.2)}>+</button>
+          <button class="icon-btn" title="Reset zoom" onclick={fit}>⟲</button>
+          <button class="icon-btn" title="Zoom out" onclick={() => zoomButton(1 / 1.2)}>−</button>
           <span class="vp__sep"></span>
-          <button class="vp__btn" title="Export G-code" onclick={() => fileOps.exportGcode()}>⭳</button>
+          <button class="icon-btn" title="Export G-code" onclick={() => fileOps.exportGcode()}>⭳</button>
         </div>
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
@@ -195,21 +195,6 @@
   }
   .vp__state--error {
     color: var(--status-error);
-  }
-  .vp__btn {
-    appearance: none;
-    border: 1px solid var(--color-border);
-    background: var(--color-bg-panel-alt);
-    color: var(--color-text);
-    font-size: var(--font-size-sm);
-    min-width: 1.75rem;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    transition: var(--transition-colors);
-  }
-  .vp__btn:hover {
-    background: var(--color-bg-hover);
   }
   .vp__controls {
     position: absolute;

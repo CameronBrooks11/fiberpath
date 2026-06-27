@@ -7,6 +7,17 @@
 
   let showPicker = $state(false);
   let dragIndex = $state<number | null>(null);
+  let menuEl = $state<HTMLDivElement | null>(null);
+
+  // Close the Add-Layer popover on outside pointerdown while it is open.
+  $effect(() => {
+    if (!showPicker) return;
+    const onPointer = (e: PointerEvent) => {
+      if (menuEl && !menuEl.contains(e.target as Node)) showPicker = false;
+    };
+    document.addEventListener("pointerdown", onPointer);
+    return () => document.removeEventListener("pointerdown", onPointer);
+  });
 
   const TYPES: { type: LayerType; icon: string; label: string }[] = [
     { type: "hoop", icon: "○", label: "Hoop Layer" },
@@ -51,20 +62,24 @@
   }
 </script>
 
-<div class="layers">
-  <div class="layers__bar">
-    <button class="layers__add" onclick={() => (showPicker = !showPicker)}>+ Add Layer</button>
-  </div>
+<svelte:window onkeydown={(e) => { if (e.key === "Escape") showPicker = false; }} />
 
-  {#if showPicker}
-    <div class="picker" role="menu">
-      {#each TYPES as t (t.type)}
-        <button class="picker__opt" role="menuitem" onclick={() => addLayer(t.type)}>
-          <span class="picker__icon">{t.icon}</span>{t.label}
-        </button>
-      {/each}
+<div class="layers">
+  <div class="layers__menu" bind:this={menuEl}>
+    <div class="layers__bar">
+      <button class="btn btn--ghost btn--small" aria-haspopup="menu" aria-expanded={showPicker} onclick={() => (showPicker = !showPicker)}>+ Add Layer</button>
     </div>
-  {/if}
+
+    {#if showPicker}
+      <div class="picker" role="menu">
+        {#each TYPES as t (t.type)}
+          <button class="picker__opt" role="menuitem" onclick={() => addLayer(t.type)}>
+            <span class="picker__icon">{t.icon}</span>{t.label}
+          </button>
+        {/each}
+      </div>
+    {/if}
+  </div>
 
   {#if layers.length === 0}
     <p class="layers__empty">No layers yet. Click “Add Layer” to get started.</p>
@@ -104,7 +119,7 @@
             onkeydown={(e) => onHandleKey(e, index)}>⋮⋮</span
           >
           <button
-            class="row__act"
+            class="icon-btn"
             title="Duplicate layer"
             onclick={(e) => {
               e.stopPropagation();
@@ -112,7 +127,7 @@
             }}>⧉</button
           >
           <button
-            class="row__act row__act--danger"
+            class="icon-btn row__act--danger"
             title="Remove layer"
             onclick={(e) => {
               e.stopPropagation();
@@ -131,37 +146,36 @@
     justify-content: flex-end;
     margin-bottom: var(--spacing-sm);
   }
-  .layers__add {
-    appearance: none;
-    border: 1px solid var(--color-border);
-    background: transparent;
-    color: var(--color-text);
-    font-size: var(--font-size-xs);
-    padding: 2px var(--spacing-sm);
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-  }
-  .layers__add:hover {
-    background: var(--color-bg-hover);
+  .layers__menu {
+    position: relative;
   }
   .picker {
+    position: absolute;
+    top: calc(100% + var(--spacing-xs));
+    right: 0;
+    z-index: var(--z-index-dropdown);
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    margin-bottom: var(--spacing-sm);
+    min-width: 11rem;
+    padding: var(--spacing-xs);
+    background: var(--color-bg-panel);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-lg);
   }
   .picker__opt {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
     appearance: none;
-    border: 1px solid var(--color-border);
-    background: var(--color-bg-panel-alt);
+    border: none;
+    background: transparent;
     color: var(--color-text);
     font-size: var(--font-size-sm);
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--border-radius-sm);
     cursor: pointer;
+    text-align: left;
   }
   .picker__opt:hover {
     background: var(--color-bg-hover);
@@ -182,7 +196,7 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--spacing-xs);
   }
   .row {
     display: flex;
@@ -236,23 +250,11 @@
   .row__handle {
     color: var(--color-text-muted);
     cursor: grab;
-    padding: 0 2px;
+    padding: 0 var(--spacing-xs);
     user-select: none;
   }
   .row__handle:focus-visible {
     outline: 2px solid var(--color-primary);
-  }
-  .row__act {
-    appearance: none;
-    border: none;
-    background: transparent;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-base);
-    padding: 0 var(--spacing-xs);
-    cursor: pointer;
-  }
-  .row__act:hover {
-    color: var(--color-text);
   }
   .row__act--danger:hover {
     color: var(--status-error);

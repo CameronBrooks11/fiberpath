@@ -1,4 +1,4 @@
-import { TOAST_DURATION_DEFAULT_MS } from "../lib/constants";
+import { TOAST_DURATION_DEFAULT_MS, TOAST_DURATION_ERROR_MS } from "../lib/constants";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
@@ -27,7 +27,7 @@ export class Notifications {
     return this.push("success", message);
   }
   error(message: string) {
-    return this.push("error", message);
+    return this.push("error", message, TOAST_DURATION_ERROR_MS);
   }
   warning(message: string) {
     return this.push("warning", message);

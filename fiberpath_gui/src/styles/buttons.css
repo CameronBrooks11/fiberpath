@@ -55,6 +55,12 @@ button:focus-visible {
   font-size: var(--font-size-sm);
 }
 
+/* Full-width block button (panel CTAs: Connect, Start Stream, Select File). */
+.btn--block {
+  display: flex;
+  width: 100%;
+}
+
 /* Primary Button */
 .btn--primary {
   background: var(--color-primary);
@@ -103,4 +109,62 @@ button:focus-visible {
 
 .btn--ghost:active:not(:disabled) {
   background: var(--color-bg-active);
+}
+
+/* Danger / Warn — solid status-intent actions (E-Stop, Stop, Pause). */
+.btn--danger {
+  background: var(--status-error);
+  border-color: var(--status-error);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: var(--color-error-red-light);
+  border-color: var(--color-error-red-light);
+}
+
+.btn--warn {
+  background: var(--status-warning);
+  border-color: var(--status-warning);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+}
+
+.btn--warn:hover:not(:disabled) {
+  background: var(--color-warning-orange-hover);
+  border-color: var(--color-warning-orange-hover);
+}
+
+/* Icon button — square, transparent, for toolbar/row glyph controls.
+   Sized at --input-height-sm (28px) to meet the 24px min target. The global
+   `button:focus-visible` rule supplies the focus ring. */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--input-height-sm);
+  height: var(--input-height-sm);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1;
+  transition: var(--transition-colors);
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+
+.icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.icon-btn--active {
+  color: var(--color-primary);
 }

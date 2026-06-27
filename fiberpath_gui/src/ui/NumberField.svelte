@@ -46,6 +46,7 @@
       {max}
       {value}
       class="param-form__input"
+      class:param-form__input--with-unit={!!unit}
       class:param-form__input--error={!!error}
       oninput={(e) => oninput(e.currentTarget.value)}
       onblur={(e) => onblur?.(e.currentTarget.value)}
