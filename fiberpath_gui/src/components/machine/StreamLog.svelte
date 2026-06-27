@@ -78,6 +78,7 @@
     color: var(--color-text-muted);
     cursor: pointer;
     font-size: var(--font-size-sm);
+    transition: var(--transition-colors);
   }
   .log__btn--active {
     color: var(--color-primary);
