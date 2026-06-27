@@ -3,6 +3,7 @@
   import { previewSession } from "../../state/preview-session.svelte";
   import { zoomAt, pan, centered, type Transform } from "../../lib/panzoom";
   import * as fileOps from "../../services/file-operations.svelte";
+  import EmptyState from "../../ui/EmptyState.svelte";
 
   const layerCount = $derived(projectSession.document.layers.length);
   const hasLayers = $derived(layerCount > 0);
@@ -71,8 +72,7 @@
 
 {#if !hasLayers}
   <div class="vp__empty">
-    <p class="vp__empty-title">No layers to visualize</p>
-    <p class="vp__empty-hint">Add layers to see the toolpath preview</p>
+    <EmptyState title="No layers to visualize" hint="Add layers to see the toolpath preview." />
   </div>
 {:else}
   <div class="vp">
@@ -126,14 +126,17 @@
       {:else if previewSession.isGenerating}
         <div class="vp__state"><span class="vp__spinner"></span> Generating preview…</div>
       {:else if previewSession.error}
-        <div class="vp__state vp__state--error">
-          <p>{previewSession.error}</p>
-          <button class="btn btn--primary btn--small" onclick={() => previewSession.generate()}>Retry</button>
-        </div>
+        <EmptyState title="Preview failed" hint={previewSession.error} tone="error">
+          {#snippet action()}
+            <button class="btn btn--primary btn--small" onclick={() => previewSession.generate()}>Retry</button>
+          {/snippet}
+        </EmptyState>
       {:else}
-        <div class="vp__state">
-          <button class="btn btn--primary" onclick={() => previewSession.generate()}>Generate preview</button>
-        </div>
+        <EmptyState title="No preview yet" hint="Generate a toolpath preview to see it here.">
+          {#snippet action()}
+            <button class="btn btn--primary" onclick={() => previewSession.generate()}>Generate preview</button>
+          {/snippet}
+        </EmptyState>
       {/if}
 
       {#if previewSession.warnings.length > 0 && !previewSession.isGenerating}
@@ -160,14 +163,6 @@
     justify-content: center;
     color: var(--color-text-muted);
     text-align: center;
-  }
-  .vp__empty-title {
-    margin: 0;
-    font-size: var(--font-size-sm);
-  }
-  .vp__empty-hint {
-    margin: var(--spacing-xs) 0 0;
-    font-size: var(--font-size-xs);
   }
   .vp__header {
     display: flex;
@@ -198,9 +193,6 @@
     gap: var(--spacing-sm);
     color: var(--color-text-muted);
     font-size: var(--font-size-sm);
-  }
-  .vp__state--error {
-    color: var(--status-error);
   }
   .vp__controls {
     position: absolute;

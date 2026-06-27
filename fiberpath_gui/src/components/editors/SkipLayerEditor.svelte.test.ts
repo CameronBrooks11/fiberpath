@@ -10,7 +10,7 @@ describe("SkipLayerEditor.svelte", () => {
     const id = projectSession.addLayer("skip");
     render(SkipLayerEditor, { props: { layerId: id } });
 
-    const input = screen.getByLabelText(/Mandrel Rotation/);
+    const input = screen.getByLabelText(/Mandrel Rotation/, { selector: "input" });
     await fireEvent.input(input, { target: { value: "120" } });
     expect(projectSession.document.layers[0].skip?.mandrel_rotation).toBe(120);
   });
@@ -19,7 +19,7 @@ describe("SkipLayerEditor.svelte", () => {
     const id = projectSession.addLayer("skip");
     render(SkipLayerEditor, { props: { layerId: id } });
 
-    await fireEvent.input(screen.getByLabelText(/Mandrel Rotation/), {
+    await fireEvent.input(screen.getByLabelText(/Mandrel Rotation/, { selector: "input" }), {
       target: { value: "" },
     });
     await waitFor(() =>

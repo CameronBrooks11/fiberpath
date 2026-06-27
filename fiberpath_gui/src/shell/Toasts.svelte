@@ -14,6 +14,10 @@
         class="toast"
         data-type={toast.type}
         role="status"
+        onmouseenter={() => notifications.pause(toast.id)}
+        onmouseleave={() => notifications.resume(toast.id)}
+        onfocusin={() => notifications.pause(toast.id)}
+        onfocusout={() => notifications.resume(toast.id)}
         in:fly={{ x: 16, duration: 150 }}
         out:fade={{ duration: 150 }}
         animate:flip={{ duration: 150 }}

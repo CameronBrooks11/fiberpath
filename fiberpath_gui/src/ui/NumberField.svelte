@@ -34,9 +34,12 @@
 </script>
 
 <div class="param-form__group">
-  <label for={id} class="param-form__label"
-    >{label}{#if tooltip}<span class="field-tooltip" title={tooltip}>ⓘ</span>{/if}</label
-  >
+  <div class="label-row">
+    <label for={id} class="param-form__label">{label}</label>
+    {#if tooltip}
+      <button type="button" class="field-help" aria-label={`Help: ${label}`} title={tooltip}>ⓘ</button>
+    {/if}
+  </div>
   <div class="param-form__input-wrapper">
     <input
       {id}
@@ -57,10 +60,30 @@
 </div>
 
 <style>
-  .field-tooltip {
-    margin-left: var(--spacing-xs);
+  .label-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+  }
+  .label-row .param-form__label {
+    margin-bottom: 0;
+  }
+  /* Keyboard-accessible help: a real button (was a title-only span). */
+  .field-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    border: none;
+    background: transparent;
     color: var(--color-text-muted);
     cursor: help;
     font-size: var(--font-size-xs);
+  }
+  .field-help:hover {
+    color: var(--color-text);
   }
 </style>
