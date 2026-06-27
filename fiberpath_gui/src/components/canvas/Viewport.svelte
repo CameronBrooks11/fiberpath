@@ -147,6 +147,7 @@
     flex-direction: column;
     height: 100%;
     min-height: 0;
+    background: var(--color-bg-canvas);
   }
   .vp__empty {
     align-items: center;
@@ -205,6 +206,7 @@
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--border-radius-sm);
     cursor: pointer;
+    transition: var(--transition-colors);
   }
   .vp__btn:hover {
     background: var(--color-bg-hover);

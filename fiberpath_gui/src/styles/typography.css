@@ -49,7 +49,7 @@ h3 {
 h4,
 h5,
 h6 {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-base);
 }
 
 /* Paragraphs */

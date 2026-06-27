@@ -87,6 +87,7 @@
     font-size: var(--font-size-lg);
     line-height: 1;
     padding: 0 var(--spacing-xs);
+    transition: var(--transition-colors);
   }
   .toast__close:hover {
     color: var(--color-text);
