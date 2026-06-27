@@ -17,7 +17,7 @@
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-text-muted);
+  color: var(--color-text);
 }
 
 .param-form__group {
@@ -31,9 +31,9 @@
 .param-form__label {
   display: block;
   margin-bottom: var(--spacing-xs);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-text-label);
 }
 
 .param-form__input-wrapper {
@@ -59,9 +59,14 @@ select {
 .param-form__input {
   flex: 1;
   height: var(--input-height);
-  padding: var(--spacing-sm) 3rem var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-base);
   font-family: var(--font-family-mono);
+}
+
+/* Reserve right gutter only when a unit suffix is present. */
+.param-form__input--with-unit {
+  padding-right: 3rem;
 }
 
 select {
@@ -79,7 +84,9 @@ select:hover {
 
 .param-form__input:focus,
 select:focus {
-  outline: none;
+  /* Transparent outline so forced-colors / high-contrast modes still show a ring. */
+  outline: var(--border-width-medium) solid transparent;
+  outline-offset: 2px;
   border-color: var(--color-border-focus);
   box-shadow:
     0 0 0 var(--border-width-medium) var(--color-border-focus);

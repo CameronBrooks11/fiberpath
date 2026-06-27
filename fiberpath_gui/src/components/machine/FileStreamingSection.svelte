@@ -8,10 +8,10 @@
     <span class="file__label">File</span>
     <span class="file__name">{m.selectedFile ?? "No file selected"}</span>
     {#if m.selectedFile && !m.isStreaming}
-      <button class="file__clear" title="Clear file selection" aria-label="Clear file selection" onclick={() => m.clearFile()}>×</button>
+      <button class="icon-btn" title="Clear file selection" aria-label="Clear file selection" onclick={() => m.clearFile()}>×</button>
     {/if}
   </div>
-  <button class="action" disabled={m.isStreaming} onclick={() => m.selectFile()}>Select File</button>
+  <button class="btn btn--secondary btn--block" disabled={m.isStreaming} onclick={() => m.selectFile()}>Select File</button>
 
   {#if m.progress}
     <div class="progress">
@@ -25,23 +25,23 @@
 
   <div class="controls">
     {#if !m.isStreaming}
-      <button class="action action--start" disabled={!m.canStartStream} onclick={() => m.startStream()}>
+      <button class="btn btn--primary btn--block" disabled={!m.canStartStream} onclick={() => m.startStream()}>
         Start Stream
       </button>
     {:else}
       <div class="grid">
         {#if !m.isPaused}
-          <button class="action action--warn" disabled={m.streamControlLoading} onclick={() => m.pause()}>Pause</button>
+          <button class="btn btn--warn" disabled={m.streamControlLoading} onclick={() => m.pause()}>Pause</button>
         {:else}
-          <button class="action action--start" disabled={m.streamControlLoading} onclick={() => m.resume()}>Resume</button>
+          <button class="btn btn--primary" disabled={m.streamControlLoading} onclick={() => m.resume()}>Resume</button>
         {/if}
         {#if m.isPaused}
-          <button class="action" disabled={m.streamControlLoading} onclick={() => m.cancel()} title="Cancel job (stays connected)">
+          <button class="btn btn--secondary" disabled={m.streamControlLoading} onclick={() => m.cancel()} title="Cancel job (stays connected)">
             Cancel Job
           </button>
         {:else}
           <button
-            class="action action--stop"
+            class="btn btn--danger"
             disabled={m.streamControlLoading}
             onclick={() => m.stop()}
             title="Emergency stop (M112) — WARNING: disconnects the controller">Stop</button
@@ -72,44 +72,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .file__clear {
-    appearance: none;
-    border: none;
-    background: transparent;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    font-size: var(--font-size-base);
-  }
-  .action {
-    appearance: none;
-    width: 100%;
-    height: var(--input-height-sm);
-    border: 1px solid var(--color-border);
-    background: var(--color-bg-panel-alt);
-    color: var(--color-text);
-    border-radius: var(--border-radius-sm);
-    font-size: var(--font-size-sm);
-    cursor: pointer;
-  }
-  .action:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  .action--start {
-    background: var(--status-success);
-    border-color: var(--status-success);
-    color: var(--color-text-inverse);
-  }
-  .action--warn {
-    background: var(--status-warning);
-    border-color: var(--status-warning);
-    color: var(--color-text-inverse);
-  }
-  .action--stop {
-    background: var(--status-error);
-    border-color: var(--status-error);
-    color: var(--color-text-inverse);
-  }
   .controls {
     margin-top: var(--spacing-sm);
   }
@@ -132,7 +94,8 @@
   .progress progress {
     width: 100%;
     height: 6px;
-    margin: 2px 0;
+    margin: var(--spacing-xs) 0;
+    accent-color: var(--status-success);
   }
   .mono {
     font-family: var(--font-family-mono);

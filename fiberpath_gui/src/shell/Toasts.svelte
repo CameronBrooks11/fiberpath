@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fly, fade } from "svelte/transition";
+  import { flip } from "svelte/animate";
   import { notifications, type ToastType } from "../state/notifications.svelte";
 
   const symbol = (t: ToastType) =>
@@ -8,7 +10,14 @@
 {#if notifications.toasts.length > 0}
   <div class="toast-container">
     {#each notifications.toasts as toast (toast.id)}
-      <div class="toast" data-type={toast.type} role="status">
+      <div
+        class="toast"
+        data-type={toast.type}
+        role="status"
+        in:fly={{ x: 16, duration: 150 }}
+        out:fade={{ duration: 150 }}
+        animate:flip={{ duration: 150 }}
+      >
         <span class="toast__icon" aria-hidden="true">{symbol(toast.type)}</span>
         <span class="toast__message">{toast.message}</span>
         <button

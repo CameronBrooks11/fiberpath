@@ -52,12 +52,12 @@
 
   {#if m.status === "disconnected"}
     <button
-      class="action action--primary"
+      class="btn btn--primary btn--block"
       disabled={!m.selectedPort || m.ports.length === 0}
       onclick={() => m.connect()}>Connect</button
     >
   {:else}
-    <button class="action" disabled={m.status === "connecting"} onclick={() => m.disconnect()}>
+    <button class="btn btn--secondary btn--block" disabled={m.status === "connecting"} onclick={() => m.disconnect()}>
       Disconnect
     </button>
   {/if}
@@ -86,34 +86,6 @@
     border-radius: var(--border-radius-sm);
     font-size: var(--font-size-sm);
     padding: 0 var(--spacing-xs);
-  }
-  .icon-btn,
-  .action {
-    appearance: none;
-    border: 1px solid var(--color-border);
-    background: var(--color-bg-panel-alt);
-    color: var(--color-text);
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    font-size: var(--font-size-sm);
-  }
-  .icon-btn {
-    width: var(--input-height-sm);
-  }
-  .icon-btn:disabled,
-  .action:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  .action {
-    width: 100%;
-    height: var(--input-height-sm);
-    margin-top: var(--spacing-xs);
-  }
-  .action--primary {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: var(--color-text-inverse);
   }
   .status {
     display: flex;
