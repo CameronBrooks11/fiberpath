@@ -2,7 +2,7 @@
 
 ## Overview
 
-FiberPath v0.5.0 introduces enhanced Marlin G-code streaming with refined state management and control workflows. The Stream tab provides a complete interface for connecting to Marlin-compatible hardware, sending manual commands, and streaming G-code files with real-time progress monitoring.
+FiberPath streams G-code to Marlin-compatible hardware through a bundled local API sidecar that owns the serial port. The Stream tab provides a complete interface for connecting to hardware, sending manual commands, and streaming G-code files with real-time progress monitoring.
 
 ## Features
 
@@ -23,7 +23,7 @@ FiberPath v0.5.0 introduces enhanced Marlin G-code streaming with refined state 
 
 - Marlin-compatible hardware (3D printer, CNC, filament winder, etc.)
 - USB serial connection
-- FiberPath Desktop GUI v0.5.0 or later
+- FiberPath Desktop GUI v0.9.0 or later
 
 ### Connection Setup
 
@@ -108,11 +108,11 @@ Stream complete G-code files to hardware with zero-lag progress monitoring and r
    The streaming interface provides sophisticated control options:
 
    **While Streaming:**
-   - **Pause Button (Yellow)** – Sends M0 to Marlin, blocks Python streaming loop
+   - **Pause Button (Yellow)** – Asks the sidecar to pause the job; the host stops before sending the next line (no board-side buffer command)
    - **Stop Button (Red)** – Emergency M112, disconnects hardware (use with caution)
 
    **While Paused:**
-   - **Resume Button (Green)** – Sends M108 to Marlin, continues streaming
+   - **Resume Button (Green)** – Clears the host-side pause flag and continues streaming from the next line
    - **Cancel Job Button (Orange)** – Graceful exit, stays connected, ready for new file
 
 ### Control Button Behavior
@@ -137,7 +137,7 @@ The Stream tab provides zero-lag progress indicators:
 - **Current Command** – Shows the last command sent to hardware (no queue lag)
 - **Log Panel** – Complete command/response history with timestamps
 
-**v0.5.0 Enhancement**: Progress monitoring uses direct state polling instead of event queues, eliminating the lag where hundreds of commands would appear during pause. Progress now reflects reality instantly.
+**How it stays current**: the sidecar records streaming progress into a monotonic event log as each line is acknowledged, and the GUI polls the job resource (`GET /machine/jobs/{id}?since=…`) for new entries. There is no event queue to drain, so the counter reflects the line the host is actually on.
 
 ### Stream Log Features
 
@@ -252,52 +252,52 @@ confusing error.
 
 ### Communication Protocol
 
-FiberPath uses a Python subprocess (`fiberpath_cli/interactive.py`) to communicate with Marlin over serial:
+Since v0.9.0 the desktop GUI no longer spawns a bespoke Python subprocess. Instead, a **bundled local API sidecar** (FastAPI) owns the serial port and exposes machine control under `/machine/*`; the GUI is a typed HTTP client. The serial protocol itself — handshake, line-numbered/checksummed framing, and `ok`/`error` parsing — lives in the standalone [`marlin-host`](https://github.com/fiberpath/marlin-host) library, which the sidecar imports.
 
-1. **Connection** – Opens serial port at specified baud rate with 10-second timeout
-2. **Command Sending** – Sends G-code line-by-line, waits for `ok` response
-3. **Response Reading** – Reads serial responses, filters for `ok`, `error`, or status messages
-4. **Error Handling** – Detects `error:` responses and halts streaming
-5. **Pause Control** – Sends M0 to Marlin, blocks Python streaming loop until resumed
+1. **Connection** (`POST /machine/connection`) – Opens the serial port at the requested baud rate and idle timeout, waits for Marlin's startup banner, and negotiates capabilities; returns the connection banner.
+2. **Manual command** (`POST /machine/commands`) – Sends one G-code line and returns the host responses. Rejected with `409` while a job is actively streaming, so two senders never drive the transport at once.
+3. **Streaming job** (`POST /machine/jobs`) – Streams a program line-by-line on a background worker thread; each acknowledged line is recorded into a monotonic event log.
+4. **Progress** (`GET /machine/jobs/{id}?since=N`) – The GUI polls for status plus event-log entries with `seq > N` (the protocol is send-line → `ok`, so there is nothing to push).
+5. **Pause / resume / cancel** (`POST /machine/jobs/{id}/{action}`) – Set host-side flags on the `MarlinHost`; the worker stops before the next line, with no board-side buffer command.
 
 ### Streaming Architecture
 
 ```text
-Frontend (React)          Tauri Rust Backend          Python Subprocess
-     │                           │                            │
-     ├─ marlin_connect() ────────>├─ spawn interactive.py ───>│
-     │                           │                            │
-     ├─ marlin_send_command() ──>├─ write JSON to stdin ────>├─ send G-code
-     │                           │                            │  to serial
-     │                           │<─ read JSON from stdout ──<│
-     │<─ return response ────────<│                            │
-     │                           │                            │
-     ├─ marlin_stream_file() ───>├─ send commands + poll ───>├─ stream G-code
-     │                           │   progress state           │  line-by-line
-     │<─ stream-progress ────────<│   (every 0.1s)            │  (blocking when paused)
-     │<─ stream-complete ─────────<│                            │
-     │                           │                            │
-     ├─ marlin_cancel() ─────────>├─ graceful shutdown ─────>├─ stop worker thread
-     │                           │   (stay connected)         │  (no M112)
+Desktop GUI (Svelte)        Local API sidecar (FastAPI)        marlin-host + serial
+     │                              │                                  │
+     ├─ POST /machine/connection ──>├─ MarlinHost(SerialTransport) ───>│ open + handshake
+     │<─ connection banner ────────<│                                  │
+     │                              │                                  │
+     ├─ POST /machine/commands ────>├─ host.send() (lock held) ───────>│ one line, await ok
+     │<─ responses ────────────────<│                                  │
+     │                              │                                  │
+     ├─ POST /machine/jobs ────────>├─ spawn worker thread ───────────>│ stream line-by-line
+     │                              │   record events into a log        │  (await ok each line)
+     │   ── GET /jobs/{id}?since=N ─>│                                  │
+     │<─ status + new events ──────<│   (GUI polls)                     │
+     │                              │                                  │
+     ├─ POST /jobs/{id}/pause ─────>├─ host.pause() flag ─────────────>│ stop before next line
+     ├─ POST /jobs/{id}/cancel ────>├─ host.stop(); stay connected ───>│ end worker (no M112)
+     ├─ POST /machine/estop ───────>├─ host.emergency_stop() ─────────>│ M112 out-of-band
 ```
 
-**v0.5.0 Architecture Change**: Progress now uses shared state polling (0.1s intervals) instead of event queues. The main loop reads `streamer.commands_sent` directly from the MarlinStreamer instance, providing zero-lag progress updates. When paused, the streaming worker blocks in `iter_stream()` until resumed.
+A single `MachineService` singleton holds all serial state. An `RLock` serialises state mutations and guards the event log; the worker thread takes it only to record progress. Pause/resume/cancel and the emergency stop are deliberately lock-free on the request side so they remain responsive while the worker streams. Because the sidecar — not the GUI — owns the connection, a streaming job survives a GUI reload: the GUI reattaches by polling the same job id.
 
 ### Timeout Configuration
 
-- **Connection Timeout:** 10 seconds (configurable in Python subprocess)
-- **Command Timeout:** 5 seconds per command
-- **Read Timeout:** 1 second for serial reads
-- **Startup Buffer:** 3 seconds to consume Marlin startup messages
+- **Connection / idle timeout:** supplied per connection request (`ConnectRequest.timeout`) and applied to the serial transport's reads.
+- **Handshake:** `marlin-host` waits for the controller's startup banner before reporting the port connected.
+- **Cancel join:** disconnect/cancel unblocks a paused stream and waits up to 10 seconds for the worker thread to finish.
+- **Recovery snapshot:** while streaming, the active-job state is persisted to a temp-dir snapshot at most once per second for crash/restart recovery.
 
 ### Safety Features
 
-- **Emergency Stop:** `M112` immediately halts all motion and disconnects (use only in emergencies)
-- **Pause/Resume:** Python blocks streaming loop when paused; M0/M108 control Marlin buffer
-- **Cancel Job:** Graceful exit from paused state without sending M112, connection maintained
-- **Error Detection:** Monitors for `error:` responses and stops streaming
-- **Connection State:** Prevents commands when disconnected
-- **State Cleanup:** Automatically clears file/progress on reconnect after emergency stop
+- **Emergency Stop:** `POST /machine/estop` writes `M112` out-of-band via `MarlinHost.emergency_stop` (issue #196), bypassing the service lock so it works even mid-stream; requires a reconnect afterward.
+- **Pause/Resume:** host-side flags stop the worker before the next line and resume from it — no board-side `M0`/`M108` buffer juggling.
+- **Cancel Job:** graceful stop from streaming or paused state with no `M112`; the connection stays open and is ready for the next file.
+- **Single transport owner:** manual commands are rejected (`409`) while a job actively streams, so only one writer ever drives the serial port.
+- **Error detection:** `marlin-host` raises on `error:`/halt responses and the worker records the job as `error`.
+- **Orphaned-job recovery:** on startup the sidecar reconciles the on-disk snapshot; a job whose worker died (e.g. a sidecar restart) is surfaced as `orphaned` rather than lost, so the GUI can recover instead of silently hanging.
 
 ---
 
@@ -336,6 +336,14 @@ Before production winding, verify all functionality:
 ---
 
 ## Version History
+
+**v0.9.0** (2026) – Sidecar machine-control architecture
+
+- Retired the stdio Python subprocess; the desktop GUI now drives a bundled local API sidecar over HTTP
+- Serial protocol (handshake, line-numbered/checksummed framing, `ok`/`error` parsing) moved to the standalone [`marlin-host`](https://github.com/fiberpath/marlin-host) library
+- Streaming runs as a background job on the sidecar; the GUI polls a job resource for progress and reattaches after a reload
+- Host-side pause/resume replaced board-side `M0`/`M108`; emergency stop writes `M112` out-of-band
+- Orphaned-job recovery after a sidecar restart (#200)
 
 **v0.5.0** (2026-01-11) – Streaming State & Control Refinements
 
