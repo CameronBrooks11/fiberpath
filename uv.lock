@@ -306,6 +306,7 @@ name = "fiberpath"
 version = "0.8.0"
 source = { editable = "." }
 dependencies = [
+    { name = "marlin-host", extra = ["serial"] },
     { name = "numpy" },
     { name = "pillow" },
     { name = "pydantic" },
@@ -348,6 +349,7 @@ dev = [
 requires-dist = [
     { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.110" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27" },
+    { name = "marlin-host", extras = ["serial"], specifier = ">=0.2.1" },
     { name = "matplotlib", marker = "extra == 'plot'", specifier = ">=3.8" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10" },
     { name = "numpy", specifier = ">=1.26" },
@@ -732,6 +734,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5b/f5/4ec618ed16cc4f8fb3b701563655a69816155e79e24a17b651541804721d/markdown_it_py-4.0.0.tar.gz", hash = "sha256:cb0a2b4aa34f932c007117b194e945bd74e0ec24133ceb5bac59009cda1cb9f3", size = 73070, upload-time = "2025-08-11T12:57:52.854Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/94/54/e7d793b573f298e1c9013b8c4dade17d481164aa517d1d7148619c2cedbf/markdown_it_py-4.0.0-py3-none-any.whl", hash = "sha256:87327c59b172c5011896038353a81343b6754500a08cd7a4973bb48c6d578147", size = 87321, upload-time = "2025-08-11T12:57:51.923Z" },
+]
+
+[[package]]
+name = "marlin-host"
+version = "0.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/76/a9/566312b72260f281c426ff36865b133f967519edfe5650117aef058598db/marlin_host-0.2.1.tar.gz", hash = "sha256:6361bfc2e644dfbf53fcad2681dcced6f24c3e5760515e58f01540043a842952", size = 46486, upload-time = "2026-06-28T01:36:00.138Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d8/a2/59e396685118c4563f24b9c68a4dd1ed9bfd5ceb5e285cf257fc5609c50f/marlin_host-0.2.1-py3-none-any.whl", hash = "sha256:f11c26843c7376a2c0ab02f730487656639088dd806b1f8d174ad022a0bc1b22", size = 23858, upload-time = "2026-06-28T01:35:58.868Z" },
+]
+
+[package.optional-dependencies]
+serial = [
+    { name = "pyserial" },
 ]
 
 [[package]]

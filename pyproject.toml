@@ -25,6 +25,7 @@ dependencies = [
     "rich>=13.7",
     "Pillow>=10.3",
     "pyserial>=3.5",
+    "marlin-host[serial]>=0.2.1",
 ]
 
 [project.optional-dependencies]
