@@ -13,13 +13,17 @@ from pathlib import Path
 
 import pytest
 
-PKG = Path(__file__).resolve().parents[1] / "fiberpath"
+ROOT = Path(__file__).resolve().parents[1]
+# Scan every shipped package, not just the engine — a duplicate reintroduced at
+# the CLI/API boundary must be caught too.
+PACKAGES = ("fiberpath", "fiberpath_cli", "fiberpath_api")
 
 
 def _files_containing(needle: str) -> set[str]:
     return {
-        path.relative_to(PKG).as_posix()
-        for path in PKG.rglob("*.py")
+        path.relative_to(ROOT).as_posix()
+        for package in PACKAGES
+        for path in (ROOT / package).rglob("*.py")
         if needle in path.read_text(encoding="utf-8")
     }
 
@@ -28,11 +32,11 @@ def _files_containing(needle: str) -> set[str]:
     ("needle", "home"),
     [
         # The O1 surface-arc distance — the one motion-math implementation.
-        ("math.sqrt(", "planning/metrics.py"),
+        ("math.sqrt(", "fiberpath/planning/metrics.py"),
         # G-code dialect sniffing lives only in the boundary reader.
-        ("_detect_dialect", "gcode/reader.py"),
+        ("_detect_dialect", "fiberpath/gcode/reader.py"),
         # The `; Parameters` header is recognized/parsed only in the reader.
-        ('"; Parameters "', "gcode/reader.py"),
+        ('"; Parameters "', "fiberpath/gcode/reader.py"),
     ],
 )
 def test_single_implementation(needle: str, home: str) -> None:
