@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from fiberpath.gcode import ProgramReadError, read_program
 from fiberpath.simulation import SimulationError, simulate_program
 from fiberpath_cli.main import app
 from typer.testing import CliRunner
@@ -20,7 +21,7 @@ PROGRAM = [
 
 
 def test_simulate_program_produces_time_and_tow_metrics() -> None:
-    result = simulate_program(PROGRAM)
+    result = simulate_program(read_program(PROGRAM))
     assert result.commands_executed == len(PROGRAM)
     assert result.moves == 3
     assert pytest.approx(result.estimated_time_s, rel=1e-3) == 1.6708
@@ -29,8 +30,14 @@ def test_simulate_program_produces_time_and_tow_metrics() -> None:
 
 
 def test_simulate_program_requires_header() -> None:
+    with pytest.raises(ProgramReadError):
+        read_program(["G0 X1"])
+
+
+def test_simulate_program_rejects_empty_program() -> None:
+    empty = read_program([HEADER])
     with pytest.raises(SimulationError):
-        simulate_program(["G0 X1"])
+        simulate_program(empty)
 
 
 def test_simulate_cli_outputs_summary(tmp_path: Path) -> None:

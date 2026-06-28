@@ -1,0 +1,149 @@
+"""Parse G-code text back into the Motion IR — the single boundary adapter.
+
+This is the **one** place that turns G-code *text* into a typed
+:class:`~fiberpath.planning.ir.Program`. The CLI and API accept G-code
+(file paths or request bodies, including externally authored programs) and call
+:func:`read_program` once at the edge; the simulator and plotter then consume the
+IR and never parse text themselves.
+
+``read_program`` is the inverse of ``serialize`` and is gated to round-trip the
+frozen goldens byte-for-byte (``tests/gcode/test_reader_roundtrip.py``): for every
+committed ``.gcode``, ``serialize(read_program(g), dialect)`` reproduces ``g``.
+"""
+
+from __future__ import annotations
+
+import json
+from typing import TYPE_CHECKING
+
+from fiberpath.planning.helpers import Axis
+from fiberpath.planning.ir import Move, MoveKind, Program, ProgramMeta
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
+    from fiberpath.gcode.dialects import AxisMapping, MarlinDialect
+
+HEADER_PREFIX = "; Parameters "
+
+
+class ProgramReadError(ValueError):
+    """Raised when G-code text cannot be parsed into a Program."""
+
+
+def read_program(lines: Iterable[str], *, dialect: MarlinDialect | None = None) -> Program:
+    """Parse G-code lines into a :class:`Program` (header metadata + Moves)."""
+    program_lines = list(lines)
+    if dialect is None:
+        dialect = _detect_dialect(program_lines)
+
+    meta = _read_meta(program_lines)
+    letter_to_axis = _invert_mapping(dialect.axis_mapping)
+
+    moves: list[Move] = []
+    for raw_line in program_lines:
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith(";"):
+            if line.startswith(HEADER_PREFIX):
+                continue  # the header travels structurally in `meta`, not as a Move
+            moves.append(_read_comment(line))
+            continue
+        moves.extend(_read_motion(line, letter_to_axis))
+
+    return Program(meta=meta, moves=moves)
+
+
+def _read_meta(lines: Sequence[str]) -> ProgramMeta:
+    for raw_line in lines:
+        line = raw_line.strip()
+        if line.startswith(HEADER_PREFIX):
+            data = json.loads(line[len(HEADER_PREFIX) :])
+            mandrel = data["mandrel"]
+            tow = data["tow"]
+            # float() coercion so the serializer's `_normalize` re-renders integral
+            # values as ints (e.g. 50, not 50.0), preserving byte-equality.
+            return ProgramMeta(
+                mandrel_diameter=float(mandrel["diameter"]),
+                wind_length=float(mandrel["windLength"]),
+                tow_width=float(tow["width"]),
+                tow_thickness=float(tow["thickness"]),
+            )
+    raise ProgramReadError("Unable to locate Parameters header in program")
+
+
+def _read_comment(line: str) -> Move:
+    body = line[1:]  # drop the leading ';'
+    if body.startswith(" "):
+        body = body[1:]  # and the single separator space `render_move` adds back
+    return Move(MoveKind.COMMENT, text=body)
+
+
+def _read_motion(line: str, letter_to_axis: dict[str, Axis]) -> list[Move]:
+    parts = line.split()
+    opcode = parts[0]
+    operands = parts[1:]
+
+    if opcode == "G92":
+        return [Move(MoveKind.SET_POSITION, targets=_read_targets(operands, letter_to_axis))]
+    if opcode in {"G0", "G1"}:
+        feed = _find_feed(operands)
+        targets = _read_targets(operands, letter_to_axis)
+        moves: list[Move] = []
+        if feed is not None:
+            # minimal: generated G-code never mixes feed with motion (feed is its own
+            # `G0 F` line); for external programs that do, emit the feed change first.
+            moves.append(Move(MoveKind.SET_FEED, feed=feed))
+        if targets or not moves:
+            moves.append(Move(MoveKind.RAPID, targets=targets))
+        return moves
+    raise ProgramReadError(f"Unsupported G-code opcode: {opcode!r}")
+
+
+def _read_targets(operands: list[str], letter_to_axis: dict[str, Axis]) -> dict[Axis, float]:
+    targets: dict[Axis, float] = {}
+    for token in operands:
+        letter = token[0]
+        if letter == "F":
+            continue
+        axis = letter_to_axis.get(letter)
+        if axis is None:
+            raise ProgramReadError(f"Unknown axis letter {letter!r} in token {token!r}")
+        targets[axis] = float(token[1:])
+    return targets
+
+
+def _find_feed(operands: list[str]) -> float | None:
+    for token in operands:
+        if token.startswith("F"):
+            return float(token[1:])
+    return None
+
+
+def _invert_mapping(mapping: AxisMapping) -> dict[str, Axis]:
+    return {
+        mapping.carriage: Axis.CARRIAGE,
+        mapping.mandrel: Axis.MANDREL,
+        mapping.delivery_head: Axis.DELIVERY_HEAD,
+    }
+
+
+def _detect_dialect(lines: Sequence[str]) -> MarlinDialect:
+    """Resolve the dialect from axis letters in the first motion command."""
+    from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
+
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line or line.startswith(";"):
+            continue
+        parts = line.split()
+        if parts[0] in {"G0", "G1", "G92"}:
+            axes_found = {t[0] for t in parts[1:] if t[0].isalpha() and t[0] != "F"}
+            # XAB is the only supported builtin format in v0.7.0+.
+            if "Y" in axes_found or "Z" in axes_found:
+                raise ProgramReadError(
+                    "Detected unsupported XYZ axis program; re-generate using XAB format."
+                )
+            return MARLIN_XAB_STANDARD
+    return MARLIN_XAB_STANDARD

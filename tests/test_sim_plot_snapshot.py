@@ -29,6 +29,7 @@ import os
 from pathlib import Path
 
 import pytest
+from fiberpath.gcode import read_program
 from fiberpath.simulation import simulate_program
 from fiberpath.visualization.plotter import compute_plot_signature
 
@@ -45,7 +46,8 @@ SNAPSHOT_INPUTS: list[str] = [
 
 
 def _snapshot(gcode_rel: str) -> dict[str, object]:
-    program = (REPO_ROOT / gcode_rel).read_text(encoding="utf-8").splitlines()
+    lines = (REPO_ROOT / gcode_rel).read_text(encoding="utf-8").splitlines()
+    program = read_program(lines)
     sim = simulate_program(program)
     sig = compute_plot_signature(program)
     return {

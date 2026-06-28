@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fiberpath.config import load_wind_definition
+from fiberpath.gcode import read_program
 from fiberpath.planning import plan_wind
 from fiberpath.simulation import simulate_program
 from fiberpath.wire import (
@@ -50,7 +51,7 @@ def test_plan_result_out_maps_engine_dataclass_faithfully() -> None:
 
 def test_simulation_result_out_maps_engine_dataclass_faithfully() -> None:
     result = plan_wind(load_wind_definition(EXAMPLE))
-    sim = simulate_program(result.commands)
+    sim = simulate_program(read_program(result.commands))
     wire = SimulationResultOut.from_result(sim)
 
     assert wire.schemaVersion == OUTPUT_SCHEMA_VERSION
