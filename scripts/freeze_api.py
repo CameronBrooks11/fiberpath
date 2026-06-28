@@ -73,6 +73,13 @@ def get_hidden_imports() -> list[str]:
         "fiberpath_api.routes.simulate",
         "fiberpath_api.routes.validate",
         "fiberpath_api.routes.plot",
+        "fiberpath_api.machine",
+        "fiberpath_api.routes.machine",
+        # Marlin machine control: the host library + pyserial's dynamically
+        # imported platform backend (serialposix/serialwin32 + list_ports).
+        "marlin_host",
+        "serial",
+        "serial.tools.list_ports",
         # Server stack (pinned pure-Python implementations)
         "uvicorn",
         "uvicorn.loops.asyncio",
@@ -109,6 +116,10 @@ def build_executable() -> None:
         "fiberpath",
         "--collect-all",
         "fiberpath_api",
+        "--collect-all",
+        "marlin_host",
+        "--collect-all",
+        "serial",
         "--collect-all",
         "uvicorn",
         "--collect-all",

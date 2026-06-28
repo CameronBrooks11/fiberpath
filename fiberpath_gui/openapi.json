@@ -15,6 +15,96 @@
         "title": "ApiError",
         "type": "object"
       },
+      "CommandRequest": {
+        "properties": {
+          "gcode": {
+            "description": "A single G-code command to run manually.",
+            "title": "Gcode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gcode"
+        ],
+        "title": "CommandRequest",
+        "type": "object"
+      },
+      "CommandResponse": {
+        "properties": {
+          "responses": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Responses",
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses"
+        ],
+        "title": "CommandResponse",
+        "type": "object"
+      },
+      "ConnectRequest": {
+        "properties": {
+          "baud_rate": {
+            "default": 250000,
+            "title": "Baud Rate",
+            "type": "integer"
+          },
+          "port": {
+            "title": "Port",
+            "type": "string"
+          },
+          "timeout": {
+            "default": 10.0,
+            "title": "Timeout",
+            "type": "number"
+          }
+        },
+        "required": [
+          "port"
+        ],
+        "title": "ConnectRequest",
+        "type": "object"
+      },
+      "ConnectionInfoOut": {
+        "description": "Connection banner for the #146 connection-info panel.",
+        "properties": {
+          "baud_rate": {
+            "title": "Baud Rate",
+            "type": "integer"
+          },
+          "capabilities": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "title": "Capabilities",
+            "type": "object"
+          },
+          "firmware": {
+            "title": "Firmware",
+            "type": "string"
+          },
+          "port": {
+            "title": "Port",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "port",
+          "baud_rate",
+          "firmware",
+          "capabilities"
+        ],
+        "title": "ConnectionInfoOut",
+        "type": "object"
+      },
       "GcodeRequest": {
         "properties": {
           "gcode": {
@@ -113,6 +203,132 @@
           }
         },
         "title": "HoopLayer",
+        "type": "object"
+      },
+      "JobEventOut": {
+        "description": "One entry from a job's monotonic event log.",
+        "properties": {
+          "action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "command": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Command"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "sent": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent"
+          },
+          "seq": {
+            "title": "Seq",
+            "type": "integer"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "seq",
+          "type"
+        ],
+        "title": "JobEventOut",
+        "type": "object"
+      },
+      "JobStatusOut": {
+        "properties": {
+          "cursor": {
+            "title": "Cursor",
+            "type": "integer"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/JobEventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "sent": {
+            "title": "Sent",
+            "type": "integer"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "sent",
+          "total",
+          "cursor",
+          "events"
+        ],
+        "title": "JobStatusOut",
         "type": "object"
       },
       "MandrelParameters": {
@@ -225,6 +441,30 @@
         "title": "PlanResultOut",
         "type": "object"
       },
+      "PortInfoOut": {
+        "description": "One serial port discovered on the host.",
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "hwid": {
+            "title": "Hwid",
+            "type": "string"
+          },
+          "port": {
+            "title": "Port",
+            "type": "string"
+          }
+        },
+        "required": [
+          "port",
+          "description",
+          "hwid"
+        ],
+        "title": "PortInfoOut",
+        "type": "object"
+      },
       "SimulationResultOut": {
         "properties": {
           "averageFeedRateMmpm": {
@@ -286,6 +526,39 @@
           "mandrelRotation"
         ],
         "title": "SkipLayer",
+        "type": "object"
+      },
+      "StartJobRequest": {
+        "properties": {
+          "gcode": {
+            "description": "G-code program to stream, newline separated.",
+            "maxLength": 10000000,
+            "title": "Gcode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gcode"
+        ],
+        "title": "StartJobRequest",
+        "type": "object"
+      },
+      "StartJobResponse": {
+        "properties": {
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "job_id",
+          "total"
+        ],
+        "title": "StartJobResponse",
         "type": "object"
       },
       "TowParameters": {
@@ -447,6 +720,438 @@
         "summary": "Health",
         "tags": [
           "meta"
+        ]
+      }
+    },
+    "/machine/commands": {
+      "post": {
+        "description": "Run a single manual G-code command (rejected 409 while a job streams).",
+        "operationId": "send_command_machine_commands_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Input rejected by the compute engine."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send Command",
+        "tags": [
+          "machine"
+        ]
+      }
+    },
+    "/machine/connection": {
+      "delete": {
+        "description": "Cancel any active job and close the serial port.",
+        "operationId": "disconnect_machine_connection_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Disconnect",
+        "tags": [
+          "machine"
+        ]
+      },
+      "post": {
+        "description": "Open the serial port and return the controller's connection banner.",
+        "operationId": "connect_machine_connection_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionInfoOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Input rejected by the compute engine."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Connect",
+        "tags": [
+          "machine"
+        ]
+      }
+    },
+    "/machine/estop": {
+      "post": {
+        "description": "Issue #196 safety stop: write M112 out-of-band, bypassing the lock.",
+        "operationId": "emergency_stop_machine_estop_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Emergency Stop",
+        "tags": [
+          "machine"
+        ]
+      }
+    },
+    "/machine/jobs": {
+      "post": {
+        "description": "Start streaming a G-code program on a background worker.",
+        "operationId": "start_job_machine_jobs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartJobResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Input rejected by the compute engine."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Job",
+        "tags": [
+          "machine"
+        ]
+      }
+    },
+    "/machine/jobs/{job_id}": {
+      "get": {
+        "description": "Poll a job's status and the event log entries with ``seq > since``.",
+        "operationId": "get_job_machine_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Since",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Input rejected by the compute engine."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Job",
+        "tags": [
+          "machine"
+        ]
+      }
+    },
+    "/machine/jobs/{job_id}/cancel": {
+      "post": {
+        "description": "Stop a job gracefully; the connection stays open.",
+        "operationId": "cancel_job_machine_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Input rejected by the compute engine."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Job",
+        "tags": [
+          "machine"
+        ]
+      }
+    },
+    "/machine/jobs/{job_id}/pause": {
+      "post": {
+        "description": "Pause a streaming job before its next line (host-side).",
+        "operationId": "pause_job_machine_jobs__job_id__pause_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Input rejected by the compute engine."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pause Job",
+        "tags": [
+          "machine"
+        ]
+      }
+    },
+    "/machine/jobs/{job_id}/resume": {
+      "post": {
+        "description": "Resume a paused job.",
+        "operationId": "resume_job_machine_jobs__job_id__resume_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Input rejected by the compute engine."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resume Job",
+        "tags": [
+          "machine"
+        ]
+      }
+    },
+    "/machine/ports": {
+      "get": {
+        "description": "Enumerate the serial ports available on the host.",
+        "operationId": "list_ports_machine_ports_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PortInfoOut"
+                  },
+                  "title": "Response List Ports Machine Ports Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Ports",
+        "tags": [
+          "machine"
         ]
       }
     },

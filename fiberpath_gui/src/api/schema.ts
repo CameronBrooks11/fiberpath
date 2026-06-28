@@ -24,6 +24,190 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/machine/commands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send Command
+         * @description Run a single manual G-code command (rejected 409 while a job streams).
+         */
+        post: operations["send_command_machine_commands_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/machine/connection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Connect
+         * @description Open the serial port and return the controller's connection banner.
+         */
+        post: operations["connect_machine_connection_post"];
+        /**
+         * Disconnect
+         * @description Cancel any active job and close the serial port.
+         */
+        delete: operations["disconnect_machine_connection_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/machine/estop": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Emergency Stop
+         * @description Issue #196 safety stop: write M112 out-of-band, bypassing the lock.
+         */
+        post: operations["emergency_stop_machine_estop_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/machine/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start Job
+         * @description Start streaming a G-code program on a background worker.
+         */
+        post: operations["start_job_machine_jobs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/machine/jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Job
+         * @description Poll a job's status and the event log entries with ``seq > since``.
+         */
+        get: operations["get_job_machine_jobs__job_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/machine/jobs/{job_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Job
+         * @description Stop a job gracefully; the connection stays open.
+         */
+        post: operations["cancel_job_machine_jobs__job_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/machine/jobs/{job_id}/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Pause Job
+         * @description Pause a streaming job before its next line (host-side).
+         */
+        post: operations["pause_job_machine_jobs__job_id__pause_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/machine/jobs/{job_id}/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resume Job
+         * @description Resume a paused job.
+         */
+        post: operations["resume_job_machine_jobs__job_id__resume_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/machine/ports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Ports
+         * @description Enumerate the serial ports available on the host.
+         */
+        get: operations["list_ports_machine_ports_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/plan": {
         parameters: {
             query?: never;
@@ -117,6 +301,52 @@ export interface components {
             /** Detail */
             detail: string;
         };
+        /** CommandRequest */
+        CommandRequest: {
+            /**
+             * Gcode
+             * @description A single G-code command to run manually.
+             */
+            gcode: string;
+        };
+        /** CommandResponse */
+        CommandResponse: {
+            /** Responses */
+            responses: string[];
+        };
+        /** ConnectRequest */
+        ConnectRequest: {
+            /**
+             * Baud Rate
+             * @default 250000
+             */
+            baud_rate: number;
+            /** Port */
+            port: string;
+            /**
+             * Timeout
+             * @default 10
+             */
+            timeout: number;
+        };
+        /**
+         * ConnectionInfoOut
+         * @description Connection banner for the #146 connection-info panel.
+         */
+        ConnectionInfoOut: {
+            /** Baud Rate */
+            baud_rate: number;
+            /** Capabilities */
+            capabilities: {
+                [key: string]: boolean;
+            };
+            /** Firmware */
+            firmware: string;
+            /** Port */
+            port: string;
+            /** State */
+            state: string;
+        };
         /** GcodeRequest */
         GcodeRequest: {
             /**
@@ -168,6 +398,43 @@ export interface components {
              */
             windType: "hoop";
         };
+        /**
+         * JobEventOut
+         * @description One entry from a job's monotonic event log.
+         */
+        JobEventOut: {
+            /** Action */
+            action?: string | null;
+            /** Command */
+            command?: string | null;
+            /** Message */
+            message?: string | null;
+            /** Sent */
+            sent?: number | null;
+            /** Seq */
+            seq: number;
+            /** Total */
+            total?: number | null;
+            /** Type */
+            type: string;
+        };
+        /** JobStatusOut */
+        JobStatusOut: {
+            /** Cursor */
+            cursor: number;
+            /** Error */
+            error?: string | null;
+            /** Events */
+            events: components["schemas"]["JobEventOut"][];
+            /** Id */
+            id: string;
+            /** Sent */
+            sent: number;
+            /** State */
+            state: string;
+            /** Total */
+            total: number;
+        };
         /** MandrelParameters */
         MandrelParameters: {
             /** Diameter */
@@ -212,6 +479,18 @@ export interface components {
             /** Towmeters */
             towMeters: number;
         };
+        /**
+         * PortInfoOut
+         * @description One serial port discovered on the host.
+         */
+        PortInfoOut: {
+            /** Description */
+            description: string;
+            /** Hwid */
+            hwid: string;
+            /** Port */
+            port: string;
+        };
         /** SimulationResultOut */
         SimulationResultOut: {
             /** Averagefeedratemmpm */
@@ -241,6 +520,21 @@ export interface components {
              * @enum {string}
              */
             windType: "skip";
+        };
+        /** StartJobRequest */
+        StartJobRequest: {
+            /**
+             * Gcode
+             * @description G-code program to stream, newline separated.
+             */
+            gcode: string;
+        };
+        /** StartJobResponse */
+        StartJobResponse: {
+            /** Job Id */
+            job_id: string;
+            /** Total */
+            total: number;
         };
         /** TowParameters */
         TowParameters: {
@@ -309,6 +603,350 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
+                };
+            };
+        };
+    };
+    send_command_machine_commands_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommandRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommandResponse"];
+                };
+            };
+            /** @description Input rejected by the compute engine. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    connect_machine_connection_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConnectRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionInfoOut"];
+                };
+            };
+            /** @description Input rejected by the compute engine. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    disconnect_machine_connection_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    emergency_stop_machine_estop_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    start_job_machine_jobs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartJobRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StartJobResponse"];
+                };
+            };
+            /** @description Input rejected by the compute engine. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_job_machine_jobs__job_id__get: {
+        parameters: {
+            query?: {
+                since?: number;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobStatusOut"];
+                };
+            };
+            /** @description Input rejected by the compute engine. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_job_machine_jobs__job_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobStatusOut"];
+                };
+            };
+            /** @description Input rejected by the compute engine. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    pause_job_machine_jobs__job_id__pause_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobStatusOut"];
+                };
+            };
+            /** @description Input rejected by the compute engine. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resume_job_machine_jobs__job_id__resume_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobStatusOut"];
+                };
+            };
+            /** @description Input rejected by the compute engine. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_ports_machine_ports_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortInfoOut"][];
                 };
             };
         };

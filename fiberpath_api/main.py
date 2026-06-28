@@ -10,8 +10,10 @@ from fastapi.responses import JSONResponse
 from fiberpath.planning import PlanningError
 from fiberpath.simulation import SimulationError
 from fiberpath.visualization import PlotError
+from marlin_host import HostError
 
-from .routes import plan, plot, simulate, validate
+from .machine import MachineError
+from .routes import machine, plan, plot, simulate, validate
 
 
 def _bad_request(request: Request, exc: Exception) -> JSONResponse:
@@ -43,12 +45,19 @@ def create_app() -> FastAPI:
     application.include_router(simulate.router, prefix="/simulate", tags=["simulation"])
     application.include_router(validate.router, prefix="/validate", tags=["validation"])
     application.include_router(plot.router, prefix="/plot", tags=["plot"])
+    application.include_router(machine.router, prefix="/machine", tags=["machine"])
 
     # Map core-engine input errors to 4xx instead of letting them surface as 500s.
     # PlanningError covers its subclass LayerValidationError via isinstance dispatch.
     application.add_exception_handler(PlanningError, _bad_request)
     application.add_exception_handler(SimulationError, _bad_request)
     application.add_exception_handler(PlotError, _bad_request)
+    # Machine-control errors that escape a route handler fall back to 400. The
+    # 404/409 cases (MachineNotFoundError/MachineBusyError/MachineConflictError)
+    # are mapped to their own status codes in the route handlers, before they
+    # could reach this app-level handler.
+    application.add_exception_handler(MachineError, _bad_request)
+    application.add_exception_handler(HostError, _bad_request)
     return application
 
 

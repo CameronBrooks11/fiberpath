@@ -8,6 +8,16 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+### Added
+
+- Machine-control REST surface on the local API sidecar, backed by the
+  published `marlin-host` library (the sidecar now owns the serial port):
+  `GET /machine/ports`, `POST/DELETE /machine/connection`,
+  `POST /machine/commands`, `POST /machine/jobs`,
+  `GET /machine/jobs/{id}?since=` (polled cursor), `pause`/`resume`/`cancel`,
+  and `POST /machine/estop` (out-of-band M112). A background job runner streams
+  to the board with a lock serializing manual commands against the job.
+
 ## [0.8.0] - 2026-06-26
 
 ### Changed
