@@ -29,12 +29,20 @@ export interface StreamProgress {
 /** How often the streaming poll loop fetches job status. */
 const POLL_INTERVAL_MS = 250;
 
+/**
+ * Consecutive failed polls to tolerate before giving up on a job. A failed poll
+ * usually means the sidecar crashed; retrying rides through its respawn long
+ * enough to read whether the job comes back as `orphaned`.
+ */
+const MAX_POLL_RETRIES = 3;
+
 /** Job states that end the poll loop (terminal). */
 function isTerminalJobState(state: string): boolean {
   return (
     state === "completed" ||
     state === "cancelled" ||
     state === "error" ||
+    state === "orphaned" ||
     state === "disconnected"
   );
 }
@@ -82,6 +90,7 @@ export class MachineSession {
   #jobId: string | null = null;
   #since = 0;
   #pollTimer: ReturnType<typeof setTimeout> | null = null;
+  #pollRetries = 0;
 
   readonly isConnected = $derived(this.status === "connected" || this.status === "paused");
   readonly isPaused = $derived(this.status === "paused");
@@ -112,6 +121,7 @@ export class MachineSession {
     }
     this.#jobId = null;
     this.#since = 0;
+    this.#pollRetries = 0;
     this.isStreaming = false;
     this.progress = null;
     this.status = opts?.disconnected ? "disconnected" : "connected";
@@ -265,12 +275,36 @@ export class MachineSession {
       status = await marlin.getJob(jobId, this.#since);
     } catch (e) {
       if (this.#jobId !== jobId) return; // job already ended elsewhere
+      // A failed poll usually means the sidecar crashed. `getApiClient` drops
+      // its memo on the fetch error, so the next attempt re-resolves the
+      // respawned sidecar; retry a few times to ride through that and read
+      // whether the job comes back as `orphaned` before giving up.
+      if (++this.#pollRetries <= MAX_POLL_RETRIES) {
+        if (this.#pollRetries === 1) {
+          this.#addLog("info", "Streaming backend unreachable — attempting to recover…");
+        }
+        this.#schedulePoll();
+        return;
+      }
       this.#feedback.streaming.error(String(e));
       this.#endJob();
       return;
     }
     if (this.#jobId !== jobId) return; // ended while the request was in flight
+    this.#pollRetries = 0;
     this.#since = status.cursor;
+
+    if (status.state === "orphaned") {
+      // A prior sidecar died mid-job and the controller was reset. Surface it
+      // and drop to disconnected so recovery is an explicit reconnect (which
+      // DTR-resets the board to a known state) rather than a blind resume.
+      this.#feedback.streaming.interrupted();
+      this.#endJob({ disconnected: true });
+      this.firmware = null;
+      this.capabilities = {};
+      return;
+    }
+
     this.#applyJobEvents(status);
 
     if (isTerminalJobState(status.state)) {

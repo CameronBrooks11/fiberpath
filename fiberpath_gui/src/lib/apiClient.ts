@@ -30,7 +30,18 @@ async function waitForHealth(baseUrl: string, timeoutMs = 30_000): Promise<void>
 async function start(): Promise<ApiClient> {
   const baseUrl = await invokeBackend<string>("api_base_url");
   await waitForHealth(baseUrl);
-  return createApiClient(baseUrl);
+  const client = createApiClient(baseUrl);
+  // A fetch that throws means the sidecar at `baseUrl` is unreachable — almost
+  // always because it crashed. Drop the memo so the next call re-resolves
+  // `api_base_url`, which makes the Rust shell respawn it on a fresh ephemeral
+  // port. Without this the client would point at the dead port forever. The
+  // error still propagates (we return nothing), so callers see the failure.
+  client.use({
+    onError() {
+      if (clientPromise) clientPromise = null;
+    },
+  });
+  return client;
 }
 
 /** Get the typed API client, starting + health-checking the sidecar on first use. */

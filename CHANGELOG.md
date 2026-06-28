@@ -8,6 +8,24 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+### Added
+
+- Sidecar crash / orphaned-job recovery (#200). The machine service now writes a
+  small recovery snapshot for the active streaming job; if the sidecar dies
+  mid-stream, a freshly started sidecar reconstructs that job as `orphaned` so a
+  re-attaching client polling `GET /machine/jobs/{id}` gets `orphaned` instead of
+  a 404. The port is **not** blindly re-opened (which would DTR-reset a possibly
+  moving controller) — recovery is an explicit reconnect.
+
+### Fixed
+
+- The GUI API client memoised the sidecar base URL for the app's lifetime, so
+  after a sidecar crash + respawn (on a new ephemeral port) every later call hit
+  the dead port forever. The client now drops its memo on a fetch error, letting
+  the next call re-resolve the respawned sidecar. The streaming poll loop rides
+  through the respawn and surfaces an interrupted-job notice with a reconnect
+  prompt instead of a generic error.
+
 ## [0.9.0] - 2026-06-28
 
 ### Added

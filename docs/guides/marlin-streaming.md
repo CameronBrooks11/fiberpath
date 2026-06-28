@@ -220,6 +220,32 @@ Press `?` or click the help button in the Stream tab header to view all keyboard
 - Brief warnings are normal during streaming
 - Persistent warnings may indicate communication issues (check cable, baud rate)
 
+### Interrupted Job / Backend Restart
+
+**Symptoms:** A toast reports that "the streaming backend restarted; the job was
+interrupted and the controller reset," and the app drops to disconnected during
+a stream.
+
+**What happened:** Machine control runs in a local API sidecar that owns the
+serial port. If that sidecar process crashes mid-stream, the operating system
+releases the port — which toggles DTR and **resets the Marlin controller** — and
+the in-progress job is lost. The app detects this, marks the job `orphaned`, and
+disconnects rather than silently re-opening the port (a blind re-open could reset
+a controller that is still moving).
+
+**Recovery:**
+
+1. Make sure the machine is mechanically safe to re-home (the controller has
+   already reset, so it is idle).
+2. Click **Connect** again. Reconnecting performs a clean DTR reset and brings
+   the controller back to a known state.
+3. Re-stream the file from the beginning. FiberPath does not resume a partially
+   streamed job — the controller's position after a reset is not trustworthy.
+
+The backend reports the lost job as `orphaned` (not "not found") so any client
+re-attaching to the old job id learns it was interrupted instead of getting a
+confusing error.
+
 ---
 
 ## Technical Details
