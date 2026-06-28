@@ -441,9 +441,8 @@ class MachineService:
             state="orphaned",
         )
         port = snap.get("port")
-        job.error = (
-            "The streaming backend restarted mid-job; the controller was reset. "
-            + (f"Reconnect to {port} to continue." if port else "Reconnect to continue.")
+        job.error = "The streaming backend restarted mid-job; the controller was reset. " + (
+            f"Reconnect to {port} to continue." if port else "Reconnect to continue."
         )
         job.append("error", message=job.error)
         self._job = job
