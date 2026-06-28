@@ -2,10 +2,10 @@
   "examples/simple_cylinder/expected.gcode": {
     "sim": {
       "commands_executed": 1014,
-      "moves": 1006,
-      "estimated_time_s": 421.91725,
-      "total_distance_mm": 63287.587509,
-      "tow_length_mm": 63287.587509,
+      "moves": 1004,
+      "estimated_time_s": 212.687179,
+      "total_distance_mm": 31903.076899,
+      "tow_length_mm": 31903.076899,
       "average_feed_rate_mmpm": 9000.0
     },
     "plot": {
@@ -18,10 +18,10 @@
   "examples/sized_simple_cylinder/expected.gcode": {
     "sim": {
       "commands_executed": 1640,
-      "moves": 1632,
-      "estimated_time_s": 1095.979084,
-      "total_distance_mm": 164396.862549,
-      "tow_length_mm": 164396.862549,
+      "moves": 1630,
+      "estimated_time_s": 552.299248,
+      "total_distance_mm": 82844.887173,
+      "tow_length_mm": 82844.887173,
       "average_feed_rate_mmpm": 9000.0
     },
     "plot": {
@@ -34,10 +34,10 @@
   "examples/multi_layer/expected.gcode": {
     "sim": {
       "commands_executed": 35937,
-      "moves": 35836,
-      "estimated_time_s": 1733.976821,
-      "total_distance_mm": 260096.523132,
-      "tow_length_mm": 260096.523132,
+      "moves": 35797,
+      "estimated_time_s": 905.471518,
+      "total_distance_mm": 135820.727743,
+      "tow_length_mm": 135820.727743,
       "average_feed_rate_mmpm": 9000.0
     },
     "plot": {
@@ -50,10 +50,10 @@
   "examples/rocketry/AvBay(470mm)single.gcode": {
     "sim": {
       "commands_executed": 76270,
-      "moves": 75963,
-      "estimated_time_s": 6772.408526,
-      "total_distance_mm": 338620.426318,
-      "tow_length_mm": 338620.426318,
+      "moves": 75842,
+      "estimated_time_s": 3705.695734,
+      "total_distance_mm": 185284.786683,
+      "tow_length_mm": 185284.786683,
       "average_feed_rate_mmpm": 3000.0
     },
     "plot": {

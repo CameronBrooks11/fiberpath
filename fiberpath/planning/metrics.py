@@ -28,6 +28,9 @@ class NominalMetrics:
     # Surface-arc tow length (carriage + mandrel arc, delivery excluded). For this
     # model total travel == tow, so it doubles as the nominal distance.
     distance_mm: float
+    # Number of moves that produce surface motion (distance > 0); the simulator
+    # reports this as its `moves` count without re-deriving distance.
+    move_count: int = 0
 
 
 def nominal_metrics(moves: Iterable[Move], mandrel_diameter: float) -> NominalMetrics:
@@ -36,6 +39,7 @@ def nominal_metrics(moves: Iterable[Move], mandrel_diameter: float) -> NominalMe
     last = {Axis.CARRIAGE: 0.0, Axis.MANDREL: 0.0, Axis.DELIVERY_HEAD: 0.0}
     time_s = 0.0
     distance_mm = 0.0
+    move_count = 0
 
     for move in moves:
         if move.kind is MoveKind.SET_FEED:
@@ -59,7 +63,8 @@ def nominal_metrics(moves: Iterable[Move], mandrel_diameter: float) -> NominalMe
                 raise ValueError("Feed rate must be set before moving the machine")
             time_s += distance / feed_mmpm * 60.0
             distance_mm += distance
+            move_count += 1
         for axis, value in move.targets.items():
             last[axis] = value
 
-    return NominalMetrics(time_s=time_s, distance_mm=distance_mm)
+    return NominalMetrics(time_s=time_s, distance_mm=distance_mm, move_count=move_count)
