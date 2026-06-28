@@ -133,7 +133,7 @@ export function createStreamFeedback({
       },
 
       paused() {
-        logInfo(addLogEntry, "Streaming paused (M0 sent)");
+        logInfo(addLogEntry, "Streaming paused");
         addToast({
           type: "warning",
           message: toastMessages.streaming.paused(),
@@ -149,7 +149,7 @@ export function createStreamFeedback({
       },
 
       resumed() {
-        logInfo(addLogEntry, "Streaming resumed (M108 sent)");
+        logInfo(addLogEntry, "Streaming resumed");
         addToast({
           type: "success",
           message: toastMessages.streaming.resumed(),
@@ -199,6 +199,19 @@ export function createStreamFeedback({
         addToast({
           type: "error",
           message: `Failed to stop: ${errorMsg}`,
+          duration: TOAST_DURATION_ERROR_MS,
+        });
+      },
+
+      interrupted() {
+        logError(
+          addLogEntry,
+          "Streaming backend restarted - job interrupted and controller reset",
+        );
+        addToast({
+          type: "warning",
+          message:
+            "The streaming backend restarted; the job was interrupted and the controller reset. Reconnect to continue.",
           duration: TOAST_DURATION_ERROR_MS,
         });
       },

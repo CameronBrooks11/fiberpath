@@ -20,8 +20,13 @@ Concurrency model:
 
 from __future__ import annotations
 
+import json
+import os
+import tempfile
 import threading
+import time
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from marlin_host import (
     HaltError,
@@ -46,6 +51,26 @@ __all__ = [
 
 # Job states that mean a job still owns the serial port.
 _ACTIVE_JOB_STATES = ("streaming", "paused")
+# How often (seconds) to refresh the on-disk recovery snapshot while streaming.
+_PERSIST_THROTTLE_S = 1.0
+
+
+def _default_state_path() -> Path:
+    """Runtime path for the active-job recovery snapshot.
+
+    Lives in the temp dir on purpose: it is per-machine runtime state, and a
+    reboot (which clears it) also powers down the controller, so there is
+    nothing to recover after one.
+    """
+    return Path(tempfile.gettempdir()) / "fiberpath-api" / "machine-job.json"
+
+
+def _job_number(job_id: str) -> int:
+    """Parse the counter out of a ``job-N`` id (0 if it doesn't match)."""
+    try:
+        return int(job_id.rsplit("-", 1)[-1])
+    except ValueError:
+        return 0
 
 
 class MachineError(RuntimeError):
@@ -84,7 +109,7 @@ class Job:
     id: str
     total: int
     sent: int = 0
-    state: str = "streaming"  # streaming|paused|completed|cancelled|error
+    state: str = "streaming"  # streaming|paused|completed|cancelled|error|orphaned
     error: str | None = None
     events: list[JobEvent] = field(default_factory=list)
     # seq is 1-based so the default poll cursor (since=0) returns every event.
@@ -105,7 +130,7 @@ class Job:
 class MachineService:
     """Owns the serial port and the background streaming job."""
 
-    def __init__(self) -> None:
+    def __init__(self, state_path: Path | None = None) -> None:
         self._lock = threading.RLock()
         self._host: MarlinHost | None = None
         self._port: str | None = None
@@ -114,6 +139,9 @@ class MachineService:
         self._job: Job | None = None
         self._thread: threading.Thread | None = None
         self._job_counter = 0
+        self._state_path = state_path if state_path is not None else _default_state_path()
+        self._last_persist = 0.0
+        self._recover_orphaned()
 
     # -- introspection -----------------------------------------------------
 
@@ -165,6 +193,7 @@ class MachineService:
             self._port = None
             self._baud_rate = None
             self._state = "disconnected"
+            self._clear_persisted()
 
     def _cancel_active_worker(self) -> None:
         """Signal the worker to stop and wait for it to finish (lock-free join)."""
@@ -203,6 +232,8 @@ class MachineService:
             job = Job(id=f"job-{self._job_counter}", total=len(commands))
             self._job = job
             self._state = "streaming"
+            self._last_persist = time.monotonic()
+            self._persist_job()
             thread = threading.Thread(
                 target=self._run_job,
                 args=(host, job, commands),
@@ -229,6 +260,7 @@ class MachineService:
                 job.state = "error"
                 job.append("error", message=str(exc))
                 self._state = "error"
+                self._clear_persisted()
         else:
             with self._lock:
                 if job.state not in ("cancelled", "error"):
@@ -236,6 +268,7 @@ class MachineService:
                     job.append("complete")
                 if self._state != "error":
                     self._state = "connected"
+                self._clear_persisted()
 
     def _on_progress(self, progress: StreamProgress) -> None:
         with self._lock:
@@ -247,6 +280,12 @@ class MachineService:
                     total=progress.total_commands,
                     command=progress.command,
                 )
+                # Refresh the recovery snapshot's progress, throttled to keep a
+                # long job from rewriting the file on every line.
+                now = time.monotonic()
+                if now - self._last_persist >= _PERSIST_THROTTLE_S:
+                    self._last_persist = now
+                    self._persist_job()
 
     def _record_action(self, response: MarlinResponse) -> None:
         with self._lock:
@@ -287,6 +326,7 @@ class MachineService:
             if job.state == "streaming":
                 job.state = "paused"
             self._state = "paused"
+            self._persist_job()
         return self.get_job(job_id)
 
     def resume_job(self, job_id: str) -> dict[str, object]:
@@ -297,6 +337,7 @@ class MachineService:
             if job.state == "paused":
                 job.state = "streaming"
             self._state = "streaming"
+            self._persist_job()
         return self.get_job(job_id)
 
     def cancel_job(self, job_id: str) -> dict[str, object]:
@@ -307,6 +348,7 @@ class MachineService:
             host.stop()
             if job.state in _ACTIVE_JOB_STATES:
                 job.state = "cancelled"
+            self._clear_persisted()
             # Stay connected; the worker returns from stream() and settles state.
         return self.get_job(job_id)
 
@@ -333,6 +375,81 @@ class MachineService:
         if self._job is None or self._job.id != job_id:
             raise MachineNotFoundError(f"unknown job: {job_id}")
         return self._job
+
+    # -- crash recovery ----------------------------------------------------
+
+    def _persist_job(self) -> None:
+        """Write a recovery snapshot of the active job (call under ``_lock``).
+
+        Best-effort: a snapshot write must never break a live stream, so all
+        I/O errors are swallowed. The file exists only while a job is active.
+        """
+        job = self._job
+        if job is None:
+            return
+        snapshot = {
+            "id": job.id,
+            "port": self._port,
+            "baud_rate": self._baud_rate,
+            "total": job.total,
+            "sent": job.sent,
+            "state": job.state,
+        }
+        try:
+            path = self._state_path
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(".tmp")
+            tmp.write_text(json.dumps(snapshot))
+            os.replace(tmp, path)  # atomic swap so a reader never sees a half file
+        except OSError:
+            pass
+
+    def _clear_persisted(self) -> None:
+        """Drop the recovery snapshot (call under ``_lock``)."""
+        self._last_persist = 0.0
+        try:
+            self._state_path.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+    def _recover_orphaned(self) -> None:
+        """Surface a job a previous (crashed) sidecar left mid-stream.
+
+        The snapshot file is deleted on every clean terminal transition and on
+        disconnect, so finding one with an active state at startup means a prior
+        process died mid-job. Reconstruct it as an ``orphaned`` tombstone — so a
+        re-attaching client polling that job id gets ``orphaned`` instead of a
+        404 — but do **not** reopen the port: a blind re-open would DTR-reset a
+        controller that may still be moving. Recovery is an explicit reconnect.
+        """
+        try:
+            raw = self._state_path.read_text()
+        except OSError:
+            return
+        try:
+            snap = json.loads(raw)
+        except ValueError:
+            self._clear_persisted()
+            return
+        if not isinstance(snap, dict) or snap.get("state") not in _ACTIVE_JOB_STATES:
+            self._clear_persisted()
+            return
+        job = Job(
+            id=str(snap.get("id", "job-0")),
+            total=int(snap.get("total") or 0),
+            sent=int(snap.get("sent") or 0),
+            state="orphaned",
+        )
+        port = snap.get("port")
+        job.error = (
+            "The streaming backend restarted mid-job; the controller was reset. "
+            + (f"Reconnect to {port} to continue." if port else "Reconnect to continue.")
+        )
+        job.append("error", message=job.error)
+        self._job = job
+        # Keep the counter ahead of the recovered id so the next job won't reuse it.
+        self._job_counter = _job_number(job.id)
+        self._clear_persisted()  # consumed into memory
 
 
 machine = MachineService()

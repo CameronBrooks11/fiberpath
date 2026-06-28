@@ -246,6 +246,17 @@ describe("createStreamFeedback", () => {
       );
     });
 
+    it("interrupted logs error and shows warning toast", () => {
+      const { addLogEntry, addToast, feedback } = makeMocks();
+      feedback.streaming.interrupted();
+      expect(addLogEntry).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "error" }),
+      );
+      expect(addToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "warning" }),
+      );
+    });
+
     it("startedEvent logs info with file and command count", () => {
       const { addLogEntry, addToast, feedback } = makeMocks();
       feedback.streaming.startedEvent("part.gcode", 150);
