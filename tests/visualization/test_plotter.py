@@ -3,7 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from fiberpath.config import load_wind_definition
+from fiberpath.gcode import read_program
 from fiberpath.planning import plan_wind
+from fiberpath.planning.ir import Program
 from fiberpath.visualization.plotter import (
     PlotConfig,
     compute_plot_signature,
@@ -24,8 +26,12 @@ def _plan_simple_cylinder_commands() -> list[str]:
     return plan_wind(definition).commands
 
 
+def _plan_simple_cylinder_program() -> Program:
+    return read_program(_plan_simple_cylinder_commands())
+
+
 def test_render_plot_produces_stable_geometry_signature() -> None:
-    program = _plan_simple_cylinder_commands()
+    program = _plan_simple_cylinder_program()
     signature = compute_plot_signature(program)
     assert signature.digest == SIMPLE_CYLINDER_SIGNATURE_DIGEST
     assert signature.segments_rendered == 1291
@@ -53,11 +59,11 @@ def test_plot_cli_writes_output(tmp_path: Path) -> None:
 
 
 def test_render_plot_handles_simple_cylinder_example() -> None:
-    commands = _plan_simple_cylinder_commands()
-    signature = compute_plot_signature(commands)
+    program = _plan_simple_cylinder_program()
+    signature = compute_plot_signature(program)
     assert signature.digest == SIMPLE_CYLINDER_SIGNATURE_DIGEST
     assert signature.segments_rendered > 0
-    result = render_plot(commands, PlotConfig(scale=0.5))
+    result = render_plot(program, PlotConfig(scale=0.5))
     assert result.segments_rendered == signature.segments_rendered
 
 

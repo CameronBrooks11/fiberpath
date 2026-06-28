@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
+from fiberpath.gcode import ProgramReadError, read_program
 from fiberpath.visualization.plotter import PlotConfig, PlotError, render_plot
 from rich.console import Console
 
@@ -24,10 +25,10 @@ def plot_command(
     output: Path = OUTPUT_OPTION,
     scale: float = SCALE_OPTION,
 ) -> None:
-    program = gcode_file.read_text(encoding="utf-8").splitlines()
+    lines = gcode_file.read_text(encoding="utf-8").splitlines()
     try:
-        result = render_plot(program, PlotConfig(scale=scale))
-    except PlotError as exc:  # pragma: no cover - parameter validation
+        result = render_plot(read_program(lines), PlotConfig(scale=scale))
+    except (PlotError, ProgramReadError) as exc:  # pragma: no cover - parameter validation
         raise typer.BadParameter(str(exc)) from exc
 
     output.parent.mkdir(parents=True, exist_ok=True)

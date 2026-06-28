@@ -6,6 +6,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 import typer
+from fiberpath.gcode import ProgramReadError, read_program
 from fiberpath.simulation import SimulationError, simulate_program
 
 from .output import echo_json
@@ -17,8 +18,8 @@ JSON_OPTION = typer.Option(False, "--json", help="Emit machine-readable JSON sum
 def simulate_command(gcode_file: Path = GCODE_ARGUMENT, json_output: bool = JSON_OPTION) -> None:
     commands = Path(gcode_file).read_text(encoding="utf-8").splitlines()
     try:
-        result = simulate_program(commands)
-    except SimulationError as exc:
+        result = simulate_program(read_program(commands))
+    except (SimulationError, ProgramReadError) as exc:
         typer.echo(f"Simulation failed: {exc}", err=True)
         raise typer.Exit(code=1) from exc
 

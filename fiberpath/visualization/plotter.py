@@ -1,21 +1,25 @@
-"""2D plotting helpers for unwrapped mandrel views."""
+"""2D plotting helpers for unwrapped mandrel views.
+
+The plotter consumes a typed :class:`~fiberpath.planning.ir.Program` and reads
+geometry straight from its ``RAPID`` moves and metadata — it no longer parses
+G-code text or the ``; Parameters`` header. Segment tracking is deliberately
+G92-blind (``SET_POSITION`` is ignored) to preserve the pre-IR plot signature;
+S4 (#136) reviews the G92 reference-frame correction.
+"""
 
 from __future__ import annotations
 
-import ast
 import json
 import math
-from collections.abc import Sequence
 from dataclasses import dataclass
 from hashlib import sha256
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from PIL import Image, ImageDraw
 
-if TYPE_CHECKING:
-    from fiberpath.gcode.dialects import MarlinDialect
+from fiberpath.planning.helpers import Axis
+from fiberpath.planning.ir import MoveKind, Program
 
 HEIGHT_DEGREES = 360.0
 
@@ -53,22 +57,17 @@ class PlotResult:
 
 
 def render_plot(
-    program: Sequence[str],
+    program: Program,
     config: PlotConfig | None = None,
-    dialect: MarlinDialect | None = None,
 ) -> PlotResult:
-    if not program:
+    if not program.moves:
         raise PlotError("Program is empty; cannot plot")
     config = config or PlotConfig()
     if config.scale <= 0:
         raise PlotError("Scale must be positive")
 
-    # Auto-detect dialect if not provided
-    if dialect is None:
-        dialect = _detect_dialect(program)
-
     metadata = _extract_metadata(program)
-    segments = _collect_segments(program, config.height_degrees, dialect)
+    segments = _collect_segments(program, config.height_degrees)
 
     width_px = max(1, int(round(metadata.mandrel_length_mm * config.scale)))
     height_px = max(1, int(round(config.height_degrees * config.scale)))
@@ -94,74 +93,47 @@ class PlotSignature:
 
 
 def compute_plot_signature(
-    program: Sequence[str],
+    program: Program,
     height_degrees: float = HEIGHT_DEGREES,
-    dialect: MarlinDialect | None = None,
 ) -> PlotSignature:
-    if dialect is None:
-        dialect = _detect_dialect(program)
     metadata = _extract_metadata(program)
-    segments = _collect_segments(program, height_degrees, dialect)
+    segments = _collect_segments(program, height_degrees)
     digest = _hash_segments(segments)
     return PlotSignature(metadata=metadata, segments_rendered=len(segments), digest=digest)
 
 
 def save_plot(
-    program: Sequence[str],
+    program: Program,
     destination: Path,
     config: PlotConfig | None = None,
-    dialect: MarlinDialect | None = None,
 ) -> Path:
-    result = render_plot(program, config, dialect)
+    result = render_plot(program, config)
     destination.parent.mkdir(parents=True, exist_ok=True)
     result.image.save(destination, format="PNG")
     return destination
 
 
-def _extract_metadata(program: Sequence[str]) -> PlotMetadata:
-    for line in program:
-        stripped = line.strip()
-        if stripped.startswith("; Parameters "):
-            payload = stripped.split(" ", 2)[2]
-            data = ast.literal_eval(payload)
-            mandrel = data["mandrel"]
-            tow = data["tow"]
-            return PlotMetadata(
-                mandrel_length_mm=float(mandrel["windLength"]),
-                tow_width_mm=float(tow["width"]),
-            )
-    raise PlotError("Unable to find Parameters header in program")
+def _extract_metadata(program: Program) -> PlotMetadata:
+    return PlotMetadata(
+        mandrel_length_mm=float(program.meta.wind_length),
+        tow_width_mm=float(program.meta.tow_width),
+    )
 
 
 def _collect_segments(
-    program: Sequence[str],
+    program: Program,
     height_degrees: float,
-    dialect: MarlinDialect,
 ) -> list[list[tuple[float, float]]]:
-    """Extract segments with axis-aware parsing."""
-    # Get axis letters from dialect
-    mapping = dialect.axis_mapping
-    carriage_axis = mapping.carriage
-    mandrel_axis = mapping.mandrel
-
+    """Extract unwrapped (carriage, mandrel) segments from the RAPID moves."""
     x_pos = 0.0
     y_pos = 0.0
     segments: list[list[tuple[float, float]]] = []
 
-    for raw_line in program:
-        line = raw_line.strip()
-        if not line or line.startswith(";"):
+    for move in program.moves:
+        if move.kind is not MoveKind.RAPID:
             continue
-        parts = line.split()
-        if parts[0] != "G0":
-            continue
-        next_x = x_pos
-        next_y = y_pos
-        for token in parts[1:]:
-            if token.startswith(carriage_axis):
-                next_x = float(token[1:])
-            elif token.startswith(mandrel_axis):
-                next_y = float(token[1:])
+        next_x = move.targets.get(Axis.CARRIAGE, x_pos)
+        next_y = move.targets.get(Axis.MANDREL, y_pos)
         if math.isclose(next_x, x_pos) and math.isclose(next_y, y_pos):
             continue
         segments.extend(_split_segment((x_pos, y_pos), (next_x, next_y), height_degrees))
@@ -169,7 +141,7 @@ def _collect_segments(
     return segments
 
 
-def _hash_segments(segments: Sequence[list[tuple[float, float]]]) -> str:
+def _hash_segments(segments: list[list[tuple[float, float]]]) -> str:
     normalized = [
         [[round(point[0], 6), round(point[1], 6)] for point in segment] for segment in segments
     ]
@@ -230,27 +202,3 @@ def _screen_point(
     x_px = point[0] * scale
     y_px = (point[1] % height_degrees) * scale
     return (x_px, y_px)
-
-
-def _detect_dialect(program: Sequence[str]) -> MarlinDialect:
-    """Resolve dialect from G-code by examining axis letters in first move command."""
-    from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
-
-    for line in program:
-        stripped = line.strip()
-        if not stripped or stripped.startswith(";"):
-            continue
-        parts = stripped.split()
-        if parts[0] in {"G0", "G1", "G92"}:
-            # Check which axes are present
-            axes_found = {token[0] for token in parts[1:] if token[0].isalpha() and token[0] != "F"}
-
-            # XAB is the only supported builtin format in v0.7.0+
-            if "A" in axes_found or "B" in axes_found:
-                return MARLIN_XAB_STANDARD
-            if "Y" in axes_found or "Z" in axes_found:
-                raise PlotError(
-                    "Detected unsupported XYZ axis program; re-generate using XAB format."
-                )
-
-    return MARLIN_XAB_STANDARD
