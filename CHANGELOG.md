@@ -26,6 +26,14 @@ The format is based on Keep a Changelog, and this project follows semantic versi
   through the respawn and surfaces an interrupted-job notice with a reconnect
   prompt instead of a generic error.
 
+### Documentation
+
+- Refreshed the Marlin streaming guide's Technical Details and Safety Features
+  for the 0.9.0 sidecar architecture (#269): the GUI now drives a bundled local
+  API sidecar over HTTP (typed client + polled job resource) backed by the
+  `marlin-host` library, replacing the retired stdio subprocess; pause/resume is
+  host-side (no `M0`/`M108`) and orphaned-job recovery is documented.
+
 ## [0.9.0] - 2026-06-28
 
 ### Added
