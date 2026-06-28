@@ -5,6 +5,7 @@
   import {
     validateHelicalField,
     getHelicalGeometryHint,
+    getHelicalGeometry,
     type HelicalNumericField,
   } from "../../lib/helicalValidation";
   import type { HelicalLayer } from "../../types/project";
@@ -103,13 +104,26 @@
     projectSession.updateLayer(layerId, { helical: { ...h, skip_initial_near_lock: checked } });
   }
 
-  const geometryHint = $derived(
+  const geometryHint = $derived(helical ? getHelicalGeometryHint(helical) : undefined);
+
+  // Derived circuit count + divisibility, shown inline so the source of the
+  // planner's "circuit count not divisible by patternNumber" rule is visible
+  // before planning (mirrors the Python kinematics).
+  const geometry = $derived(
     helical
-      ? getHelicalGeometryHint(
+      ? getHelicalGeometry(
           helical,
           projectSession.document.mandrel.diameter,
           projectSession.document.tow.width,
         )
+      : null,
+  );
+
+  // Bind the divisibility mismatch to the Pattern Number field so it reads as an
+  // inline error on the offending input, not just a detached warning.
+  const patternNumberError = $derived(
+    geometry && !geometry.divisible
+      ? `Not a divisor of the ${geometry.circuitCount} computed circuits`
       : undefined,
   );
 </script>
@@ -124,11 +138,26 @@
         unit={config.unit}
         step={config.step}
         value={helical[config.field]}
-        error={errors[config.field] ?? backend[FIELD_MAP[config.field]]}
+        error={errors[config.field] ??
+          (config.field === "pattern_number" ? patternNumberError : undefined) ??
+          backend[FIELD_MAP[config.field]]}
         oninput={(raw) => onInput(config.field, raw)}
         onblur={(raw) => onBlur(config.field, raw)}
       />
     {/each}
+
+    {#if geometry}
+      <p
+        class="editor__readout"
+        class:editor__readout--warning={!geometry.divisible}
+      >
+        <span class="editor__readout-value">≈ {geometry.circuitCount}</span> circuits
+        per layer · the pattern number must divide this evenly
+        {#if !geometry.divisible}
+          (≈ {geometry.circuitCount} is not a multiple of {geometry.patternNumber})
+        {/if}
+      </p>
+    {/if}
 
     {#if geometryHint}
       <p class="editor__hint editor__hint--warning">{geometryHint}</p>
@@ -165,6 +194,26 @@
     line-height: var(--line-height-normal);
   }
   .editor__hint--warning {
+    color: var(--status-warning-fg);
+  }
+  .editor__readout {
+    margin: var(--spacing-sm) 0 0;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-left: 2px solid var(--color-border-control);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-normal);
+  }
+  .editor__readout-value {
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+  }
+  .editor__readout--warning {
+    border-left-color: var(--status-warning-fg);
+    color: var(--status-warning-fg);
+  }
+  .editor__readout--warning .editor__readout-value {
     color: var(--status-warning-fg);
   }
 </style>
