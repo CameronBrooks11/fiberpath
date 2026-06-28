@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   validateHelicalField,
   getHelicalGeometryHint,
+  getHelicalGeometry,
 } from "./helicalValidation";
 import type { HelicalLayer } from "../types/project";
 
@@ -189,31 +190,16 @@ describe("helicalValidation", () => {
         skip_index: 3,
         pattern_number: 3,
       };
-      expect(getHelicalGeometryHint(layer, 150, 12.7)).toMatch(/skip index/i);
+      expect(getHelicalGeometryHint(layer)).toMatch(/skip index/i);
     });
 
-    it("does not emit a '(NaN)' hint while pattern_number is mid-edit", () => {
-      // Emptying the Pattern Number input makes it NaN; circuitCount % NaN is
-      // NaN (!== 0), which previously rendered "not divisible by pattern
-      // number (NaN)". A non-integer pattern means the hint is undefined.
-      const layer: HelicalLayer = { ...defaultHelical, pattern_number: NaN };
-      expect(getHelicalGeometryHint(layer, 150, 50)).toBeUndefined();
+    it("returns undefined for a valid skip/pattern pairing", () => {
+      expect(getHelicalGeometryHint(defaultHelical)).toBeUndefined();
     });
+  });
 
-    it("returns undefined when mandrel diameter is zero", () => {
-      expect(
-        getHelicalGeometryHint(defaultHelical, 0, 12.7),
-      ).toBeUndefined();
-    });
-
-    it("returns undefined when tow width is zero", () => {
-      expect(
-        getHelicalGeometryHint(defaultHelical, 150, 0),
-      ).toBeUndefined();
-    });
-
-    it("returns a circuit hint when circuits are not divisible by pattern", () => {
-      // Use values that produce a non-divisible circuit count
+  describe("getHelicalGeometry()", () => {
+    it("reports the circuit count and a non-divisible pattern", () => {
       // At 45°, towWidth=50mm, diameter=150mm: tow arc = 50/cos(45°) ≈ 70.7mm
       // circuits = ceil(π×150 / 70.7) ≈ ceil(6.67) = 7, pattern=3 → 7%3≠0
       const layer: HelicalLayer = {
@@ -222,24 +208,36 @@ describe("helicalValidation", () => {
         pattern_number: 3,
         skip_index: 2,
       };
-      const hint = getHelicalGeometryHint(layer, 150, 50);
-      expect(hint).toMatch(/circuit/i);
+      const geometry = getHelicalGeometry(layer, 150, 50);
+      expect(geometry).toEqual({
+        circuitCount: 7,
+        patternNumber: 3,
+        divisible: false,
+      });
     });
 
-    it("returns undefined when circuits are exactly divisible by pattern", () => {
-      // Tune values so circuits % pattern === 0
-      // At 0° → cos(0°)=1, tow arc = towWidth
-      // circuits = ceil(π*diameter / towWidth); want exact divisibility
-      // diameter=100mm, towWidth=~10.472mm → π*100/10.472 ≈ 30 → pattern=6 → 30%6=0
+    it("flags a divisible pattern", () => {
+      // Near-0° → cos≈1, tow arc ≈ towWidth. circuits = ceil(π*100/10.4) = 31.
+      // Use pattern 31 so it divides exactly.
       const layer: HelicalLayer = {
         ...defaultHelical,
-        wind_angle: 1, // near-zero angle
-        pattern_number: 6,
-        skip_index: 5,
+        wind_angle: 1,
+        pattern_number: 31,
+        skip_index: 2,
       };
-      // Just assert it doesn't throw and returns string-or-undefined
-      const hint = getHelicalGeometryHint(layer, 100, 10.4);
-      expect(hint === undefined || typeof hint === "string").toBe(true);
+      const geometry = getHelicalGeometry(layer, 100, 10.4);
+      expect(geometry?.divisible).toBe(true);
+      expect(geometry?.circuitCount).toBe(31);
+    });
+
+    it("returns null while pattern_number is mid-edit (NaN)", () => {
+      const layer: HelicalLayer = { ...defaultHelical, pattern_number: NaN };
+      expect(getHelicalGeometry(layer, 150, 50)).toBeNull();
+    });
+
+    it("returns null when mandrel diameter or tow width is non-positive", () => {
+      expect(getHelicalGeometry(defaultHelical, 0, 12.7)).toBeNull();
+      expect(getHelicalGeometry(defaultHelical, 150, 0)).toBeNull();
     });
   });
 });

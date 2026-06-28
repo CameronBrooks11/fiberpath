@@ -32,6 +32,50 @@ Given mandrel radius `r`, target angle `α`, and carriage speed limit `v_max`:
 - Number of passes to cover the mandrel: `passes = ceil(length / (w * cos(α')))`. Skip-layers adjust this by
   introducing an integer stride to satisfy coverage without overlap.
 
+## Pattern Parameters and the Circuit Count
+
+The winding pattern is laid down as a whole number of **circuits** around the
+mandrel circumference. This circuit count — distinct from the axial pass count
+above — is what the pattern validation operates on, and it is where the
+`computed circuit count is not divisible by patternNumber` error originates.
+
+**Circuit count** (mirrors `compute_helical_kinematics`):
+
+```text
+tow_arc_length = w / cos(α)                  # circumferential footprint of one tow band
+num_circuits   = ceil(π · d / tow_arc_length)
+               = ceil(π · d · cos(α) / w)
+```
+
+where `d` is the mandrel diameter, `w` the tow width, and `α` the wind angle.
+
+Three constraints relate the pattern parameters to this count:
+
+- **Divisibility** — `num_circuits % patternNumber == 0`. The pattern number
+  splits the circuits into equal bands, so it must divide them evenly.
+- **Coprimality** — `gcd(skipIndex, patternNumber) == 1` and
+  `skipIndex < patternNumber`. The skip index strides between bands each circuit;
+  if it shares a factor with the pattern number, the stride revisits a subset of
+  bands instead of visiting all of them.
+- **Lock alignment** (only when `patternNumber > 1`) — the per-circuit mandrel
+  advance from `lockDegrees`, `(2 · lockDegrees) mod 360°`, must be a multiple of
+  the in-pattern slot width `360° / patternNumber`, and the resulting slot stride
+  must stay coprime with the pattern number so circuits don't alias onto fewer
+  positions.
+
+**Worked example.** A 150 mm mandrel, 50 mm tow, 45° wind angle:
+
+```text
+tow_arc_length = 50 / cos(45°) ≈ 70.7 mm
+num_circuits   = ceil(π · 150 / 70.7) = ceil(6.66) = 7
+```
+
+With `patternNumber = 3`, `7 % 3 ≠ 0`, so validation fails — choose a pattern
+number that divides 7 (1 or 7), or adjust the angle / tow / diameter so the
+circuit count lands on a multiple of 3. The desktop layer editor shows this
+circuit count inline and flags the pattern-number field when it does not divide
+evenly, so the relationship is visible before planning.
+
 ## Skip / Bias Patterns
 
 Skip or bias patterns use a divisor `d` to skip every `n`th groove:

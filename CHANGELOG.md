@@ -10,6 +10,11 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ### Added
 
+- Helical pattern explainability in the layer editor (#145): the editor now shows
+  the derived circuit count inline (`≈ N circuits per layer`) and binds the
+  "not divisible by pattern number" mismatch to the Pattern Number field, so the
+  source of the planner's circuit-divisibility rule is visible before planning
+  instead of only appearing as a planning error.
 - Sidecar crash / orphaned-job recovery (#200). The machine service now writes a
   small recovery snapshot for the active streaming job; if the sidecar dies
   mid-stream, a freshly started sidecar reconstructs that job as `orphaned` so a
@@ -33,6 +38,10 @@ The format is based on Keep a Changelog, and this project follows semantic versi
   API sidecar over HTTP (typed client + polled job resource) backed by the
   `marlin-host` library, replacing the retired stdio subprocess; pause/resume is
   host-side (no `M0`/`M108`) and orphaned-job recovery is documented.
+- Documented the helical **circuit count** derivation and the pattern-parameter
+  constraints (divisibility, coprimality, lock alignment) in the planner-math
+  reference (#145), including a worked example — the circumferential circuit count
+  the validation uses was previously undocumented (only the axial pass count was).
 
 ## [0.9.0] - 2026-06-28
 

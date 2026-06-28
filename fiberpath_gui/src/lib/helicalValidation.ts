@@ -99,30 +99,45 @@ export function validateHelicalField(
   }
 }
 
-export function getHelicalGeometryHint(
+/**
+ * Derived helical geometry used to make the pattern relationship visible in the
+ * editor: how many circuits the layer's wind angle + mandrel + tow produce, and
+ * whether the pattern number divides them evenly (the rule the planner enforces).
+ * Mirrors `compute_helical_kinematics` in the Python planner.
+ *
+ * Returns `null` while inputs are mid-edit or geometrically undefined (so the
+ * caller shows nothing rather than a `NaN` readout).
+ */
+export interface HelicalGeometry {
+  circuitCount: number;
+  patternNumber: number;
+  divisible: boolean;
+}
+
+export function getHelicalGeometry(
   helical: HelicalLayer,
   mandrelDiameter: number,
   towWidth: number,
-): string | undefined {
+): HelicalGeometry | null {
+  if (!Number.isInteger(helical.pattern_number) || helical.pattern_number <= 0) {
+    return null;
+  }
+  const circuitCount = computeCircuitCount(helical, mandrelDiameter, towWidth);
+  if (!circuitCount) {
+    return null;
+  }
+  return {
+    circuitCount,
+    patternNumber: helical.pattern_number,
+    divisible: circuitCount % helical.pattern_number === 0,
+  };
+}
+
+export function getHelicalGeometryHint(helical: HelicalLayer): string | undefined {
+  // Routing warning only; the circuit-count / divisibility relationship is now
+  // surfaced as an always-visible readout via getHelicalGeometry().
   if (helical.skip_index >= helical.pattern_number) {
     return "Skip index should be less than pattern number to avoid invalid routing.";
   }
-
-  // While the field is mid-edit pattern_number can be NaN/0/non-integer; the
-  // divisibility check below would compute `% NaN` and render a "(NaN)" hint.
-  // The field surfaces its own validation error, so emit no geometry hint here.
-  if (!Number.isInteger(helical.pattern_number) || helical.pattern_number <= 0) {
-    return undefined;
-  }
-
-  const circuitCount = computeCircuitCount(helical, mandrelDiameter, towWidth);
-  if (!circuitCount) {
-    return undefined;
-  }
-
-  if (circuitCount % helical.pattern_number !== 0) {
-    return `Estimated circuits (${circuitCount}) are not divisible by pattern number (${helical.pattern_number}); planning validation may fail.`;
-  }
-
   return undefined;
 }
