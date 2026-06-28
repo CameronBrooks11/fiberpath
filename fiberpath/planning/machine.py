@@ -32,8 +32,6 @@ class WinderMachine:
         self._verbose = verbose_output
         self._moves: list[Move] = []
         self._feed_rate_mmpm = 0.0
-        self._total_time_s = 0.0
-        self._total_tow_length_mm = 0.0
         self._last_position: dict[Axis, float] = {
             Axis.CARRIAGE: 0.0,
             Axis.MANDREL: 0.0,
@@ -119,12 +117,6 @@ class WinderMachine:
         self.move({Axis.MANDREL: 360.0})
         self.set_position({Axis.MANDREL: 0.0})
 
-    def get_gcode_time_s(self) -> float:
-        return self._total_time_s
-
-    def get_tow_length_m(self) -> float:
-        return self._total_tow_length_mm / 1000.0
-
     def set_mandrel_diameter(self, mandrel_diameter: float) -> None:
         self._mandrel_diameter = mandrel_diameter
 
@@ -132,33 +124,10 @@ class WinderMachine:
         return self._mandrel_diameter
 
     def _move_segment(self, position: Mapping[Axis, float]) -> None:
-        targets: dict[Axis, float] = {}
-        total_distance_sq = 0.0
-        tow_length_sq = 0.0
-        for axis, value in position.items():
-            targets[axis] = value
-            move_component = value - self._last_position[axis]
-
-            if axis == Axis.MANDREL:
-                # Use degree value directly for motion distance.
-                total_distance_sq += move_component**2
-                # For tow length, always convert to arc length
-                arc_length = move_component / 360.0 * self._mandrel_diameter * math.pi
-                tow_length_sq += arc_length**2
-            elif axis == Axis.CARRIAGE:
-                # Carriage: always linear in mm
-                total_distance_sq += move_component**2
-                tow_length_sq += move_component**2
-            elif axis == Axis.DELIVERY_HEAD:
-                # Delivery head: use value directly for distance
-                total_distance_sq += move_component**2
-                # Delivery head rotation doesn't contribute to tow length
-
-            self._last_position[axis] = value
-
         if self._feed_rate_mmpm <= 0:
             raise RuntimeError("Feed rate must be set before moving the machine")
-
-        self._total_time_s += math.sqrt(total_distance_sq) / self._feed_rate_mmpm * 60.0
-        self._total_tow_length_mm += math.sqrt(tow_length_sq)
+        targets: dict[Axis, float] = {}
+        for axis, value in position.items():
+            targets[axis] = value
+            self._last_position[axis] = value
         self._moves.append(Move(MoveKind.RAPID, targets=targets))

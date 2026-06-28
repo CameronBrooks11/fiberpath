@@ -14,6 +14,7 @@ from .helpers import Axis
 from .ir import Move, MoveKind, Program, ProgramMeta
 from .layer_strategies import build_layer_summary, dispatch_layer
 from .machine import WinderMachine
+from .metrics import nominal_metrics
 from .validators import (
     validate_helical_layer,
     validate_layer_numeric_bounds,
@@ -66,9 +67,12 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
     )
 
     machine.set_feed_rate(definition.default_feed_rate)
-    layer_metrics: list[LayerMetrics] = []
     encountered_terminal = False
     mandrel_diameter = definition.mandrel_parameters.diameter
+
+    # (index, wind_type, terminal, pre_count, post_count) per layer; metrics are
+    # computed from the recorded Moves after the loop via the single O1 model.
+    layer_records: list[tuple[int, str, bool, int, int]] = []
 
     for index, layer in enumerate(definition.layers, start=1):
         validate_layer_sequence(index, encountered_terminal)
@@ -78,7 +82,6 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
             diameter=mandrel_diameter,
             windLength=definition.mandrel_parameters.wind_length,
         )
-        machine.set_mandrel_diameter(current_mandrel.diameter)
 
         helical_kinematics: HelicalKinematics | None = None
         if isinstance(layer, HelicalLayer):
@@ -89,10 +92,7 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
         summary = build_layer_summary(index, len(definition.layers), layer)
         machine.insert_comment(summary)
 
-        pre_commands = len(machine.get_moves())
-        pre_time = machine.get_gcode_time_s()
-        pre_tow = machine.get_tow_length_m()
-
+        pre_count = len(machine.get_moves())
         dispatch_layer(
             machine,
             layer,
@@ -100,22 +100,39 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
             definition.tow_parameters,
             helical_kinematics=helical_kinematics,
         )
+        terminal = bool(getattr(layer, "terminal", False))
+        layer_records.append(
+            (index, layer.wind_type, terminal, pre_count, len(machine.get_moves()))
+        )
+        if terminal:
+            encountered_terminal = True
 
+    moves = machine.get_moves()
+
+    # Per-layer metrics: cumulative O1 metrics at each layer boundary, differenced.
+    # (Between layers only a summary comment is recorded, which accrues no
+    # time/tow, so cumulative-at-pre equals cumulative-at-previous-post.)
+    layer_metrics: list[LayerMetrics] = []
+    prev_time = 0.0
+    prev_dist = 0.0
+    for index, wind_type, terminal, pre_count, post_count in layer_records:
+        cumulative = nominal_metrics(moves[:post_count], mandrel_diameter)
         layer_metrics.append(
             LayerMetrics(
                 index=index,
-                wind_type=layer.wind_type,
-                commands=len(machine.get_moves()) - pre_commands,
-                time_s=machine.get_gcode_time_s() - pre_time,
-                cumulative_time_s=machine.get_gcode_time_s(),
-                tow_m=machine.get_tow_length_m() - pre_tow,
-                cumulative_tow_m=machine.get_tow_length_m(),
-                terminal=bool(getattr(layer, "terminal", False)),
+                wind_type=wind_type,
+                commands=post_count - pre_count,
+                time_s=cumulative.time_s - prev_time,
+                cumulative_time_s=cumulative.time_s,
+                tow_m=(cumulative.distance_mm - prev_dist) / 1000.0,
+                cumulative_tow_m=cumulative.distance_mm / 1000.0,
+                terminal=terminal,
             )
         )
+        prev_time = cumulative.time_s
+        prev_dist = cumulative.distance_mm
 
-        if getattr(layer, "terminal", False):
-            encountered_terminal = True
+    total = nominal_metrics(moves, mandrel_diameter)
 
     # The init move (all-zero rapid) is the program's first line; the header is
     # carried structurally in ProgramMeta and rendered by serialize().
@@ -129,14 +146,14 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
         tow_width=definition.tow_parameters.width,
         tow_thickness=definition.tow_parameters.thickness,
     )
-    program = Program(meta=meta, moves=[init_move, *machine.get_moves()])
+    program = Program(meta=meta, moves=[init_move, *moves])
     commands = serialize(program, options.dialect)
     if options.verbose:
         commands.insert(0, "; Verbose output enabled")
 
     return PlanResult(
         commands=commands,
-        total_time_s=machine.get_gcode_time_s(),
-        total_tow_m=machine.get_tow_length_m(),
+        total_time_s=total.time_s,
+        total_tow_m=total.distance_mm / 1000.0,
         layers=layer_metrics,
     )
