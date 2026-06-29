@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import logging
 import math
 
 from fiberpath.config.schemas import (
@@ -16,10 +15,10 @@ from fiberpath.config.schemas import (
 from fiberpath.math_utils import rad_to_deg
 
 from .calculations import HelicalKinematics, compute_helical_kinematics
+from .developed import build_developed_path, lower_developed_path
 from .helpers import Axis
 from .machine import WinderMachine
-
-LOGGER = logging.getLogger(__name__)
+from .pattern import pattern_spec
 
 
 def build_layer_summary(index: int, total: int, layer: LayerModel) -> str:
@@ -93,92 +92,14 @@ def plan_helical_layer(
     *,
     helical_kinematics: HelicalKinematics | None = None,
 ) -> None:
-    delivery_head_pass_start_angle = -10.0
-    lead_out_degrees = layer.lead_out_degrees
-    wind_lead_in_mm = layer.lead_in_mm
-    lock_degrees = layer.lock_degrees
-    delivery_head_angle = -1.0 * (90.0 - layer.wind_angle)
-    pattern_number = layer.pattern_number
-
+    # Cut over to the developed-surface primitive (S2 #296): build the (z, theta)
+    # path from the declarative spec + the single kinematics source, then lower it
+    # to Motion IR. Byte-identical to the prior imperative emitter.
     kinematics = helical_kinematics or compute_helical_kinematics(
         layer, mandrel_parameters, tow_parameters
     )
-    num_circuits = kinematics.num_circuits
-    pattern_step_degrees = kinematics.pattern_step_degrees
-    pass_rotation_degrees = kinematics.pass_rotation_degrees
-    lead_in_degrees = kinematics.lead_in_degrees
-    main_pass_degrees = kinematics.main_pass_degrees
-    number_of_patterns = num_circuits / pattern_number
-    start_position_increment = layer.skip_index * (360.0 / pattern_number)
-    pass_parameters = [
-        {
-            "delivery_head_sign": 1,
-            "lead_in_end_mm": wind_lead_in_mm,
-            "full_pass_end_mm": mandrel_parameters.wind_length,
-        },
-        {
-            "delivery_head_sign": -1,
-            "lead_in_end_mm": mandrel_parameters.wind_length - wind_lead_in_mm,
-            "full_pass_end_mm": 0.0,
-        },
-    ]
-
-    LOGGER.debug("Helical wind with %s circuits", num_circuits)
-
-    if not layer.skip_initial_near_lock:
-        machine.move({Axis.CARRIAGE: 0.0, Axis.MANDREL: lock_degrees, Axis.DELIVERY_HEAD: 0.0})
-        machine.set_position({Axis.MANDREL: 0.0})
-
-    mandrel_position = 0.0
-    patterns = int(number_of_patterns)
-    for pattern_index in range(patterns):
-        for in_pattern_index in range(pattern_number):
-            machine.insert_comment(
-                f"\tPattern: {pattern_index + 1}/{patterns} "
-                f"Circuit: {in_pattern_index + 1}/{pattern_number}"
-            )
-
-            for pass_params in pass_parameters:
-                sign = pass_params["delivery_head_sign"]
-                machine.move({Axis.MANDREL: mandrel_position, Axis.DELIVERY_HEAD: 0.0})
-                machine.move({Axis.DELIVERY_HEAD: sign * delivery_head_pass_start_angle})
-
-                mandrel_position += lead_in_degrees
-                machine.move(
-                    {
-                        Axis.CARRIAGE: pass_params["lead_in_end_mm"],
-                        Axis.MANDREL: mandrel_position,
-                        Axis.DELIVERY_HEAD: sign * delivery_head_angle,
-                    }
-                )
-
-                mandrel_position += main_pass_degrees
-                machine.move(
-                    {
-                        Axis.CARRIAGE: pass_params["full_pass_end_mm"],
-                        Axis.MANDREL: mandrel_position,
-                    }
-                )
-
-                mandrel_position += lead_out_degrees
-                machine.move(
-                    {
-                        Axis.MANDREL: mandrel_position,
-                        Axis.DELIVERY_HEAD: sign * delivery_head_pass_start_angle,
-                    }
-                )
-
-                mandrel_position += (
-                    lock_degrees - lead_out_degrees - (pass_rotation_degrees % 360.0)
-                )
-
-            mandrel_position += start_position_increment
-
-        mandrel_position += pattern_step_degrees
-
-    mandrel_position += lock_degrees
-    machine.move({Axis.MANDREL: mandrel_position, Axis.DELIVERY_HEAD: 0.0})
-    machine.zero_axes(mandrel_position)
+    path = build_developed_path(pattern_spec(layer), kinematics, mandrel_parameters)
+    lower_developed_path(machine, path)
 
 
 def plan_skip_layer(machine: WinderMachine, layer: SkipLayer) -> None:
