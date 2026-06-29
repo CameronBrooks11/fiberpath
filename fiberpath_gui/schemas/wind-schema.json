@@ -79,6 +79,19 @@
           "title": "Diameter",
           "type": "number"
         },
+        "endDiameter": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enddiameter"
+        },
         "windLength": {
           "exclusiveMinimum": 0,
           "title": "Windlength",

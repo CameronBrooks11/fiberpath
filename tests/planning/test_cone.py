@@ -1,12 +1,14 @@
 """Cone (geodesic) helical winding — kinematics, development, and equivalence.
 
-S2 (#307). Cones are not yet wired into the planner/.wind (S3); these drive the
-cone builder directly and assert geodesic correctness via analytic invariants.
+S2 (#307) introduced the cone builder; S3 (#308/#311) wired it to the planner and
+the cone_reducer example. These drive the cone builder directly and assert
+geodesic correctness via analytic invariants.
 """
 
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 import pytest
 from _equivalence import (
@@ -15,6 +17,7 @@ from _equivalence import (
     assert_cone_geometry,
     cone_helical_layer_moves,
 )
+from fiberpath.config import load_wind_definition
 from fiberpath.config.schemas import HelicalLayer, MandrelParameters, TowParameters
 from fiberpath.planning.calculations import (
     ConeReachabilityError,
@@ -24,7 +27,7 @@ from fiberpath.planning.calculations import (
     cone_local_alpha_deg,
 )
 from fiberpath.planning.pattern import helical_spec
-from fiberpath.planning.surface import Cone
+from fiberpath.planning.surface import Cone, surface_from_mandrel
 
 # HPR reducer-style frustum: 98 -> 54 mm diameter over 120 mm (~10.4 deg half-angle).
 CONE = Cone(r0=49.0, r1=27.0, length=120.0)
@@ -98,18 +101,34 @@ def test_expanding_cone_is_rejected() -> None:
 
 def test_lowered_path_is_a_geodesic_clairaut_invariant() -> None:
     kin = _kin()
-    moves = cone_helical_layer_moves(helical_spec(LAYER), kin, MANDREL)
+    moves = cone_helical_layer_moves(helical_spec(LAYER), kin)
     assert_cone_geometry(moves, kin)
 
 
 def test_lowered_path_lays_all_circuits() -> None:
     kin = _kin()
-    moves = cone_helical_layer_moves(helical_spec(LAYER), kin, MANDREL)
+    moves = cone_helical_layer_moves(helical_spec(LAYER), kin)
     assert_cone_circuit_count(moves, kin.num_circuits)
 
 
 def test_cone_coverage_tiles_large_end() -> None:
     assert_cone_coverage(LAYER, _kin(), TOW)
+
+
+def test_cone_reducer_example_is_a_valid_geodesic() -> None:
+    # Ties the cone_reducer golden (#311) to the equivalence harness: the example
+    # the byte-golden locks must itself be a coverage-correct geodesic.
+    repo = Path(__file__).resolve().parents[2]
+    definition = load_wind_definition(repo / "examples/cone_reducer/input.wind")
+    surface = surface_from_mandrel(definition.mandrel_parameters)
+    assert isinstance(surface, Cone)
+    layer = definition.layers[0]
+    assert isinstance(layer, HelicalLayer)
+    kin = compute_cone_helical_kinematics(layer, surface, definition.tow_parameters)
+    moves = cone_helical_layer_moves(helical_spec(layer), kin)
+    assert_cone_geometry(moves, kin)
+    assert_cone_coverage(layer, kin, definition.tow_parameters)
+    assert_cone_circuit_count(moves, kin.num_circuits)
 
 
 def test_near_degenerate_cone_approaches_cylinder_rotation() -> None:
@@ -118,7 +137,5 @@ def test_near_degenerate_cone_approaches_cylinder_rotation() -> None:
     near = Cone(r0=49.0, r1=48.9, length=120.0)
     kin = compute_cone_helical_kinematics(LAYER, near, TOW)
     cone_full = cone_geodesic_theta_deg(near.length, kin)
-    cyl = compute_helical_kinematics(
-        LAYER, MandrelParameters.model_validate({"diameter": 98.0, "windLength": 120.0}), TOW
-    )
+    cyl = compute_helical_kinematics(LAYER, MANDREL, TOW)
     assert cone_full == pytest.approx(cyl.pass_rotation_degrees, rel=2e-2)

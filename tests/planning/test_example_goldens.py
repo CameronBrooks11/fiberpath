@@ -33,6 +33,7 @@ EXAMPLE_GOLDENS: list[tuple[str, str]] = [
     ("examples/simple_cylinder/input.wind", "examples/simple_cylinder/expected.gcode"),
     ("examples/sized_simple_cylinder/input.wind", "examples/sized_simple_cylinder/expected.gcode"),
     ("examples/multi_layer/input.wind", "examples/multi_layer/expected.gcode"),
+    ("examples/cone_reducer/input.wind", "examples/cone_reducer/expected.gcode"),
     ("examples/rocketry/AvBay(470mm)single.wind", "examples/rocketry/AvBay(470mm)single.gcode"),
     ("examples/rocketry/AvBay(470mm)triple.wind", "examples/rocketry/AvBay(470mm)triple.gcode"),
     ("examples/rocketry/MainChute(585mm).wind", "examples/rocketry/MainChute(585mm).gcode"),

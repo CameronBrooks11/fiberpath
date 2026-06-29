@@ -143,18 +143,17 @@ def assert_coverage(layer: HelicalLayer, mandrel: MandrelParameters, tow: TowPar
 def cone_helical_layer_moves(
     spec: PatternSpec,
     kinematics: ConeHelicalKinematics,
-    mandrel: MandrelParameters,
     feed: float = 9000.0,
 ) -> list[Move]:
     """Build + lower a single cone helical layer in isolation; return its IR moves.
 
-    Cones are not yet wired into ``dispatch_layer`` (S3), so this drives the cone
-    builder directly. The machine diameter is nominal (large end) -- it does not
-    affect the emitted carriage/mandrel/delivery moves.
+    Drives the cone builder directly (the full planner path is exercised by the
+    cone example golden). The machine diameter is nominal (large end) -- it does
+    not affect the emitted carriage/mandrel/delivery moves.
     """
     machine = WinderMachine(2.0 * kinematics.r0)
     machine.set_feed_rate(feed)
-    lower_developed_path(machine, build_cone_helical_developed_path(spec, kinematics, mandrel))
+    lower_developed_path(machine, build_cone_helical_developed_path(spec, kinematics))
     return machine.get_moves()
 
 
