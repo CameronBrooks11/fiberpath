@@ -1,4 +1,4 @@
-; Parameters {"mandrel":{"diameter":152.4,"windLength":812.8},"tow":{"width":9.525,"thickness":0.4}}
+; Parameters {"irVersion":"1.0","mandrel":{"diameter":152.4,"windLength":812.8},"tow":{"width":9.525,"thickness":0.4}}
 G0 X0 A0 B0
 G0 F9000
 ; Layer 1 of 1: hoop

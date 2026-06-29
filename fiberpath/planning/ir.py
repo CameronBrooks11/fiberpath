@@ -25,7 +25,15 @@ from enum import Enum
 
 from fiberpath.planning.helpers import Axis
 
-__all__ = ["Move", "MoveKind", "Program", "ProgramMeta"]
+__all__ = ["IR_VERSION", "Move", "MoveKind", "Program", "ProgramMeta"]
+
+#: Version of the Motion IR as a *secondary* interchange format (carried in the
+#: serialized ``; Parameters`` header as ``irVersion``). Versioned independently
+#: of the ``.wind`` schema and with WEAKER stability guarantees: the IR tracks the
+#: engine's internals and MAY change across minor engine releases. Bump on any
+#: change to the IR's observable shape (move kinds, header fields, axis
+#: semantics). Absent in older artifacts is read as "1.0".
+IR_VERSION = "1.0"
 
 
 class MoveKind(Enum):
@@ -61,6 +69,7 @@ class ProgramMeta:
     wind_length: float
     tow_width: float
     tow_thickness: float
+    ir_version: str = IR_VERSION
 
 
 @dataclass(slots=True)
