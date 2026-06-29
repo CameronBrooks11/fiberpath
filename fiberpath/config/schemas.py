@@ -24,6 +24,11 @@ class BaseFiberPathModel(BaseModel):
 class MandrelParameters(BaseFiberPathModel):
     diameter: PositiveFloat
     wind_length: PositiveFloat = Field(alias="windLength")
+    # Optional small-end diameter at z=windLength (schemaVersion 1.1+). When set
+    # and smaller than `diameter`, the mandrel is a reducing cone/frustum (large
+    # end `diameter` at z=0); absent reproduces a cylinder. Additive: older files
+    # omit it and parse unchanged.
+    end_diameter: PositiveFloat | None = Field(default=None, alias="endDiameter")
 
 
 class TowParameters(BaseFiberPathModel):

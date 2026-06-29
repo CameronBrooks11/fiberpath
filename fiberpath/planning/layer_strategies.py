@@ -11,8 +11,14 @@ from fiberpath.config.schemas import (
     TowParameters,
 )
 
-from .calculations import HelicalKinematics, compute_helical_kinematics
+from .calculations import (
+    ConeHelicalKinematics,
+    HelicalKinematics,
+    compute_cone_helical_kinematics,
+    compute_helical_kinematics,
+)
 from .developed import (
+    build_cone_helical_developed_path,
     build_helical_developed_path,
     build_hoop_developed_path,
     build_skip_developed_path,
@@ -20,6 +26,7 @@ from .developed import (
 )
 from .machine import WinderMachine
 from .pattern import pattern_spec
+from .surface import Cone, surface_from_mandrel
 
 
 def build_layer_summary(index: int, total: int, layer: LayerModel) -> str:
@@ -33,20 +40,35 @@ def dispatch_layer(
     tow_parameters: TowParameters,
     *,
     helical_kinematics: HelicalKinematics | None = None,
+    cone_kinematics: ConeHelicalKinematics | None = None,
 ) -> None:
     """Build the layer's developed-surface path and lower it to Motion IR.
 
     Every pattern type goes through one lowering (:func:`lower_developed_path`);
-    the per-type builders differ only in how they shape the developed path.
+    the per-type builders differ only in how they shape the developed path. The
+    mandrel's surface (cylinder or cone) selects the helical builder; skip is
+    surface-independent and hoop-on-cone is not supported (the validators reject
+    it before dispatch).
     """
     spec = pattern_spec(layer)
-    if isinstance(layer, HoopLayer):
+    surface = surface_from_mandrel(mandrel_parameters)
+    if isinstance(surface, Cone):
+        if isinstance(layer, HelicalLayer):
+            cone_kin = cone_kinematics or compute_cone_helical_kinematics(
+                layer, surface, tow_parameters
+            )
+            path = build_cone_helical_developed_path(spec, cone_kin)
+        elif isinstance(layer, SkipLayer):
+            path = build_skip_developed_path(spec)
+        else:
+            raise TypeError(f"hoop layers on a cone are not supported: {layer}")
+    elif isinstance(layer, HoopLayer):
         path = build_hoop_developed_path(spec, mandrel_parameters, tow_parameters)
     elif isinstance(layer, HelicalLayer):
-        kinematics = helical_kinematics or compute_helical_kinematics(
+        cyl_kin = helical_kinematics or compute_helical_kinematics(
             layer, mandrel_parameters, tow_parameters
         )
-        path = build_helical_developed_path(spec, kinematics, mandrel_parameters)
+        path = build_helical_developed_path(spec, cyl_kin, mandrel_parameters)
     elif isinstance(layer, SkipLayer):
         path = build_skip_developed_path(spec)
     else:

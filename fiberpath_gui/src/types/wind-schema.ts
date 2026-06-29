@@ -20,6 +20,7 @@ export type Mandrelrotation = number;
 export type Windtype2 = "skip";
 export type Layers = (HoopLayer | HelicalLayer | SkipLayer)[];
 export type Diameter = number;
+export type Enddiameter = number | null;
 export type Windlength = number;
 /**
  * Version of the .wind file format schema (1.x).
@@ -62,6 +63,7 @@ export interface SkipLayer {
 }
 export interface MandrelParameters {
   diameter: Diameter;
+  endDiameter?: Enddiameter;
   windLength: Windlength;
   [k: string]: unknown;
 }

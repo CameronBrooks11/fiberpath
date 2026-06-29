@@ -439,6 +439,8 @@ export interface components {
         MandrelParameters: {
             /** Diameter */
             diameter: number;
+            /** Enddiameter */
+            endDiameter?: number | null;
             /** Windlength */
             windLength: number;
         };

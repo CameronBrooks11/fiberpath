@@ -222,7 +222,6 @@ def _cone_lay_stations(z_from: float, z_to: float) -> list[float]:
 def build_cone_helical_developed_path(
     spec: PatternSpec,
     kinematics: ConeHelicalKinematics,
-    mandrel: MandrelParameters,
 ) -> DevelopedPath:
     """Build the developed-surface path for a helical layer on a cone (frustum).
 

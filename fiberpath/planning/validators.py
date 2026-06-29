@@ -217,8 +217,8 @@ def validate_cone_helical_layer(
 
     Cone-specific guards (orientation, geodesic reachability) raised as
     ``LayerValidationError`` for a consistent planner-facing error, then the
-    shared coverage conditions over the large-end circuit count. Not yet wired
-    into the planner (S3b) -- cones reach this only via direct construction.
+    shared coverage conditions over the large-end circuit count. This is the
+    planner's validation surface for a cone helical layer (see ``plan_wind``).
     """
     validate_layer_numeric_bounds(layer_index, layer)
 

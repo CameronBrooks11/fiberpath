@@ -83,17 +83,21 @@ toolpath must be reproduced bit-for-bit (or coverage-equivalent) before and afte
 |---|---|---|---|
 | 1 | **Motion IR** — typed machine-agnostic toolpath; planner emits it; simulate/plot/metrics/G-code consume it; adopt a single nominal time model (removes today's planner/simulator time divergence) | ✅ Done | [#136](https://github.com/fiberpath/fiberpath/issues/136) |
 | 2 | **Unified pattern primitive** — express hoop/helical/skip as one parametric primitive on the developed cylinder, re-derived to bit-for-bit equality; validators become spec type-checkers | ✅ Done | [#137](https://github.com/fiberpath/fiberpath/issues/137) |
-| 3a | **Cones** — typed `Cone` profile segment; developable closed-form paths; first golden is a straight HPR reducer frustum | Medium | [#138](https://github.com/fiberpath/fiberpath/issues/138) |
+| 3a | **Cones** — typed `Cone` profile segment; developable closed-form paths; first golden is a straight HPR reducer frustum | ✅ Done | [#138](https://github.com/fiberpath/fiberpath/issues/138) |
 | 3b | **Domes / general surfaces of revolution** — Clairaut + non-geodesic (λ) path solving with measured friction, 3-D delivery-eye kinematics | Longer-horizon (est. 2027+, hardware-gated) | [#139](https://github.com/fiberpath/fiberpath/issues/139) |
 
 Notes:
 
-- **Stages 1 and 2 have shipped.** Hoop, helical, and skip are now expressed as one declarative pattern
-  primitive on the developed cylinder that lowers through a single Motion IR path (`fiberpath/planning/`:
+- **Stages 1, 2, and 3a have shipped.** Hoop, helical, and skip are expressed as one declarative pattern
+  primitive on the developed surface that lowers through a single Motion IR path (`fiberpath/planning/`:
   `pattern.py` defines the primitive, `developed.py` the per-pattern path builders + the one lowering).
-  The cut-over reproduces the prior toolpaths **bit-for-bit** (the example goldens are unchanged), and the
-  coverage validators are now type-checkers over the primitive. Stage 3a (cones) builds on this by adding a
-  new path builder that reuses the same lowering.
+  The cylinder cut-over reproduces the prior toolpaths **bit-for-bit** (the example goldens are unchanged),
+  and the coverage validators are type-checkers over the primitive. **Stage 3a adds cones**: `surface.py`
+  models the mandrel as a typed `Cylinder`/`Cone`, a reducing frustum is wound as a **geodesic** (Clairaut,
+  anchored at the large end) via a new path builder that reuses the same lowering, exposed through the
+  additive `.wind` `endDiameter` field (`schemaVersion 1.1`) with the `cone_reducer` example
+  (gated by the tolerance-based equivalence harness — the geodesic's transcendental coordinates
+  are not bit-stable across platforms, so it is not byte-goldened like the cylinder examples).
 - **Time-model calibration** against the real machine is tracked separately and done when hardware time
   allows ([#130](https://github.com/fiberpath/fiberpath/issues/130)); the engine ships with a
   documented nominal estimate until then.

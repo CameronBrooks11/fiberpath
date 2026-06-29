@@ -14,6 +14,10 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from fiberpath.config.schemas import MandrelParameters
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,3 +72,21 @@ class Cone:
 
 
 Surface = Cylinder | Cone
+
+
+def surface_from_mandrel(mandrel: MandrelParameters) -> Surface:
+    """Map the .wind mandrel parameters onto the analytic surface model.
+
+    A reducing ``endDiameter`` (set and below ``diameter``) yields a ``Cone``
+    (large end ``diameter`` at z=0, small end ``endDiameter`` at z=windLength);
+    an absent or equal ``endDiameter`` is a ``Cylinder``. A *larger* ``endDiameter``
+    falls through to the cone branch so the layer validators reject it (expanding
+    frusta are not supported yet) with a clear message.
+    """
+    if mandrel.end_diameter is not None and mandrel.end_diameter != mandrel.diameter:
+        return Cone(
+            r0=mandrel.diameter / 2.0,
+            r1=mandrel.end_diameter / 2.0,
+            length=mandrel.wind_length,
+        )
+    return Cylinder(radius=mandrel.diameter / 2.0)

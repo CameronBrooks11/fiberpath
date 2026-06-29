@@ -6,16 +6,18 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from fiberpath.config import WindDefinition
-from fiberpath.config.schemas import MandrelParameters
+from fiberpath.config.schemas import HelicalLayer, HoopLayer, MandrelParameters
 from fiberpath.gcode.serializer import serialize
 
-from .calculations import HelicalKinematics
+from .calculations import ConeHelicalKinematics, HelicalKinematics
+from .exceptions import LayerValidationError
 from .helpers import Axis
 from .ir import Move, MoveKind, Program, ProgramMeta
 from .layer_strategies import build_layer_summary, dispatch_layer
 from .machine import WinderMachine
 from .metrics import nominal_metrics
-from .validators import validate_layer, validate_layer_sequence
+from .surface import Cone, surface_from_mandrel
+from .validators import validate_cone_helical_layer, validate_layer, validate_layer_sequence
 
 if TYPE_CHECKING:
     from fiberpath.gcode.dialects import MarlinDialect
@@ -76,13 +78,26 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
         current_mandrel = MandrelParameters(
             diameter=mandrel_diameter,
             windLength=definition.mandrel_parameters.wind_length,
+            endDiameter=definition.mandrel_parameters.end_diameter,
         )
 
-        # One validation surface over the declarative primitive; returns the
-        # helical kinematics (reused by dispatch) or None for hoop/skip.
-        helical_kinematics: HelicalKinematics | None = validate_layer(
-            index, layer, current_mandrel, definition.tow_parameters
-        )
+        # Validate over the declarative primitive, keyed on the mandrel surface.
+        # Cone helical returns cone kinematics; cylinder helical returns helical
+        # kinematics; hoop/skip return None. Both reused by dispatch.
+        surface = surface_from_mandrel(current_mandrel)
+        helical_kinematics: HelicalKinematics | None = None
+        cone_kinematics: ConeHelicalKinematics | None = None
+        if isinstance(surface, Cone):
+            if isinstance(layer, HoopLayer):
+                raise LayerValidationError(index, "hoop layers on a cone are not supported yet")
+            if isinstance(layer, HelicalLayer):
+                cone_kinematics = validate_cone_helical_layer(
+                    index, layer, surface, definition.tow_parameters
+                )
+        else:
+            helical_kinematics = validate_layer(
+                index, layer, current_mandrel, definition.tow_parameters
+            )
 
         summary = build_layer_summary(index, len(definition.layers), layer)
         machine.insert_comment(summary)
@@ -94,6 +109,7 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
             current_mandrel,
             definition.tow_parameters,
             helical_kinematics=helical_kinematics,
+            cone_kinematics=cone_kinematics,
         )
         terminal = bool(getattr(layer, "terminal", False))
         layer_records.append(

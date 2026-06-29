@@ -4,9 +4,14 @@ The `.wind` file format is a JSON-based configuration file that defines filament
 
 ## Schema Version
 
-Current schema version: **1.0**
+Current schema version: **1.1**
 
 The schema is formally defined in JSON Schema format and validated using [Pydantic](https://docs.pydantic.dev/) models in the CLI backend.
+
+The format evolves **additively** within a major version: new optional fields are
+added without breaking older files, and readers tolerate fields they do not know.
+`schemaVersion` is optional and absent is treated as `1.0`. See
+[the changelog](#format-changelog) below.
 
 ## File Structure
 
@@ -37,10 +42,11 @@ A `.wind` file is a JSON document with the following top-level structure:
 
 **Fields**:
 
-- `diameter` (required): Mandrel outer diameter in mm (must be > 0)
+- `diameter` (required): Mandrel outer diameter in mm (must be > 0). For a cone, this is the **large end** at `z = 0`.
 - `windLength` (required): Length of the winding area in mm (must be > 0)
+- `endDiameter` (optional, **1.1+**): Outer diameter in mm at the far end (`z = windLength`). When set **below** `diameter`, the mandrel is a reducing **cone (frustum)**; omit it (or set it equal to `diameter`) for a cylinder.
 
-**Example**:
+**Example (cylinder)**:
 
 ```json
 "mandrelParameters": {
@@ -48,6 +54,28 @@ A `.wind` file is a JSON document with the following top-level structure:
   "windLength": 800
 }
 ```
+
+**Example (cone / frustum)**:
+
+```json
+"mandrelParameters": {
+  "diameter": 98,
+  "windLength": 120,
+  "endDiameter": 54
+}
+```
+
+#### Cones (developable surfaces)
+
+A cone, like a cylinder, is **developable**: it unrolls to a flat sector, so a
+winding path is closed-form (no ODE/friction solver). Helical layers on a cone
+are wound as **geodesics** (Clairaut's relation `r · sin α = const`): the wind
+angle is **anchored at the large end** (`diameter`, `z = 0`) and the achieved
+fiber angle increases toward the small end. Current limits:
+
+- **Reducing frustum only** — `endDiameter` must be `< diameter` (mount the large end at `z = 0`).
+- **Helical (and skip) layers only** — a hoop layer on a cone is rejected (a 90° hoop is not a geodesic).
+- **Reachability** — a wind angle too steep for the taper is rejected: the geodesic must be able to reach the small end (`diameter · sin α ≤ endDiameter`).
 
 ### `towParameters` (required)
 
@@ -268,6 +296,14 @@ The `schemaVersion` field allows for future format evolution:
 - Version `1.0`: Initial schema with discriminated layer types
 - Future versions may add new layer types or optional fields
 - The CLI maintains backwards compatibility by making `schemaVersion` optional
+
+### Format changelog
+
+Additive-only within major version 1; tolerant readers ignore unknown fields, and
+a missing `schemaVersion` is treated as `1.0`.
+
+- **1.1** — added optional `mandrelParameters.endDiameter` for reducing **cones (frustums)**; helical layers on a cone are wound as geodesics. Files omitting `endDiameter` are unchanged 1.0 cylinders.
+- **1.0** — initial schema: discriminated layer types (hoop / helical / skip) on a cylinder.
 
 ## Example Files
 
