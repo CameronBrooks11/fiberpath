@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.1",
+  "layers": [
+    {
+      "windType": "hoop",
+      "terminal": false
+    }
+  ],
+  "mandrelParameters": {
+    "diameter": 98.0,
+    "windLength": 120.0,
+    "endDiameter": 54.0
+  },
+  "towParameters": {
+    "width": 7.0,
+    "thickness": 0.5
+  },
+  "defaultFeedRate": 9000.0
+}
