@@ -15,6 +15,10 @@ The format is based on Keep a Changelog, and this project follows semantic versi
   layers on a cone follow a geodesic (Clairaut) path anchored at the large end — the
   closed-form, no-friction winding for a developable surface. Cylinder output is
   unchanged; the `cone_reducer` example is validated by the equivalence harness.
+- **`.wind` conformance corpus** (#141): a new `conformance/` tree with `valid/`
+  (must-parse-and-plan) and `invalid/` (must-reject, each paired in `manifest.json`
+  with the error substring it must fail on), enforced by `tests/conformance/`. Pins
+  the format's accept/reject contract independently of the byte-level example goldens.
 - **Motion IR documented as a secondary versioned format** (#141): a new
   [Motion IR reference](docs/reference/motion-ir.md) plus an `irVersion` (`1.0`) carried
   in the emitted `; Parameters` header and round-tripped by the reader. It is versioned

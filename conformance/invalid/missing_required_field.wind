@@ -1,0 +1,16 @@
+{
+  "layers": [
+    {
+      "windType": "hoop",
+      "terminal": false
+    }
+  ],
+  "mandrelParameters": {
+    "diameter": 70.0,
+    "windLength": 500.0
+  },
+  "towParameters": {
+    "width": 7.0,
+    "thickness": 0.5
+  }
+}

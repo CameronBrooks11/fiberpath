@@ -1,0 +1,13 @@
+{
+  "_comment": "Each invalid .wind must be REJECTED. `match` is a substring that must appear in the raised error message (WindFileError for schema/parse failures, LayerValidationError for semantic ones). Pairing the case with its reason ensures it fails for the RIGHT cause, not incidentally.",
+  "cases": [
+    { "file": "bad_major_version.wind", "match": "schemaVersion" },
+    { "file": "missing_required_field.wind", "match": "defaultFeedRate" },
+    { "file": "wind_angle_out_of_range.wind", "match": "must be between" },
+    { "file": "non_coprime_pattern.wind", "match": "coprime" },
+    { "file": "lead_in_exceeds_length.wind", "match": "must be less than the mandrel windLength" },
+    { "file": "expanding_cone.wind", "match": "reducing frustum" },
+    { "file": "unreachable_cone_angle.wind", "match": "too steep" },
+    { "file": "hoop_on_cone.wind", "match": "hoop layers on a cone" }
+  ]
+}
