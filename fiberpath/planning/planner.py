@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from fiberpath.config import WindDefinition
-from fiberpath.config.schemas import HelicalLayer, MandrelParameters
+from fiberpath.config.schemas import MandrelParameters
 from fiberpath.gcode.serializer import serialize
 
 from .calculations import HelicalKinematics
@@ -15,11 +15,7 @@ from .ir import Move, MoveKind, Program, ProgramMeta
 from .layer_strategies import build_layer_summary, dispatch_layer
 from .machine import WinderMachine
 from .metrics import nominal_metrics
-from .validators import (
-    validate_helical_layer,
-    validate_layer_numeric_bounds,
-    validate_layer_sequence,
-)
+from .validators import validate_layer, validate_layer_sequence
 
 if TYPE_CHECKING:
     from fiberpath.gcode.dialects import MarlinDialect
@@ -76,18 +72,17 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
 
     for index, layer in enumerate(definition.layers, start=1):
         validate_layer_sequence(index, encountered_terminal)
-        validate_layer_numeric_bounds(index, layer)
 
         current_mandrel = MandrelParameters(
             diameter=mandrel_diameter,
             windLength=definition.mandrel_parameters.wind_length,
         )
 
-        helical_kinematics: HelicalKinematics | None = None
-        if isinstance(layer, HelicalLayer):
-            helical_kinematics = validate_helical_layer(
-                index, layer, current_mandrel, definition.tow_parameters
-            )
+        # One validation surface over the declarative primitive; returns the
+        # helical kinematics (reused by dispatch) or None for hoop/skip.
+        helical_kinematics: HelicalKinematics | None = validate_layer(
+            index, layer, current_mandrel, definition.tow_parameters
+        )
 
         summary = build_layer_summary(index, len(definition.layers), layer)
         machine.insert_comment(summary)
