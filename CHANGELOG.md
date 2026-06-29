@@ -15,6 +15,11 @@ The format is based on Keep a Changelog, and this project follows semantic versi
   layers on a cone follow a geodesic (Clairaut) path anchored at the large end — the
   closed-form, no-friction winding for a developable surface. Cylinder output is
   unchanged; the `cone_reducer` example is validated by the equivalence harness.
+- **Motion IR documented as a secondary versioned format** (#141): a new
+  [Motion IR reference](docs/reference/motion-ir.md) plus an `irVersion` (`1.0`) carried
+  in the emitted `; Parameters` header and round-tripped by the reader. It is versioned
+  independently of the `.wind` schema with explicitly weaker stability guarantees. (The
+  G-code header gains an `irVersion` field; example goldens regenerated for the new line.)
 - **`.wind` is now a normative open-format specification** (#141): the format guide
   states RFC-2119 conformance requirements for readers/writers and documents the media
   type `application/vnd.fiberpath.wind+json`. The canonical JSON-Schema `$id` is now

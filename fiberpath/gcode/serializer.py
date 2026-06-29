@@ -29,9 +29,11 @@ def _normalize(value: float) -> float | int:
 
 
 def _render_header(meta: ProgramMeta) -> str:
-    # Key order (diameter, windLength, width, thickness) reproduces the pydantic
+    # irVersion (the Motion IR format version) leads the header; the mandrel/tow
+    # key order (diameter, windLength, width, thickness) reproduces the pydantic
     # model_dump(by_alias=True) order the legacy header relied on.
-    payload = {
+    payload: dict[str, object] = {
+        "irVersion": meta.ir_version,
         "mandrel": {
             "diameter": _normalize(meta.mandrel_diameter),
             "windLength": _normalize(meta.wind_length),

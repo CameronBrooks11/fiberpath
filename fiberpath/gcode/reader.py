@@ -17,7 +17,7 @@ import json
 from typing import TYPE_CHECKING
 
 from fiberpath.planning.helpers import Axis
-from fiberpath.planning.ir import Move, MoveKind, Program, ProgramMeta
+from fiberpath.planning.ir import IR_VERSION, Move, MoveKind, Program, ProgramMeta
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
@@ -69,6 +69,8 @@ def _read_meta(lines: Sequence[str]) -> ProgramMeta:
                 wind_length=float(mandrel["windLength"]),
                 tow_width=float(tow["width"]),
                 tow_thickness=float(tow["thickness"]),
+                # Tolerant: pre-irVersion artifacts read as the baseline "1.0".
+                ir_version=str(data.get("irVersion", IR_VERSION)),
             )
     raise ProgramReadError("Unable to locate Parameters header in program")
 
