@@ -3,9 +3,15 @@
 from __future__ import annotations
 
 import pytest
-from fiberpath.config.schemas import HelicalLayer, MandrelParameters, TowParameters
+from fiberpath.config.schemas import (
+    HelicalLayer,
+    HoopLayer,
+    MandrelParameters,
+    SkipLayer,
+    TowParameters,
+)
 from fiberpath.planning.exceptions import LayerValidationError
-from fiberpath.planning.validators import validate_helical_layer
+from fiberpath.planning.validators import validate_helical_layer, validate_layer
 
 MANDREL = MandrelParameters.model_validate({"diameter": 70.0, "windLength": 100.0})
 BASE_LAYER = {
@@ -107,3 +113,33 @@ def test_validate_helical_layer_accepts_lock_180_pattern1() -> None:
     tow = TowParameters.model_validate({"width": 6.0, "thickness": 0.5})
     result = validate_helical_layer(1, layer, MANDREL, tow)
     assert result.num_circuits > 0
+
+
+# ---------------------------------------------------------------------------
+# validate_layer: the single validation surface over the primitive
+# ---------------------------------------------------------------------------
+
+_TOW = TowParameters.model_validate({"width": 6.0, "thickness": 0.5})
+
+
+def test_validate_layer_returns_kinematics_for_helical() -> None:
+    result = validate_layer(1, HelicalLayer.model_validate(BASE_LAYER), MANDREL, _TOW)
+    assert result is not None
+    assert result.num_circuits > 0
+
+
+def test_validate_layer_propagates_helical_coverage_errors() -> None:
+    layer = HelicalLayer.model_validate({**BASE_LAYER, "skipIndex": 4, "patternNumber": 4})
+    with pytest.raises(LayerValidationError):
+        validate_layer(1, layer, MANDREL, _TOW)
+
+
+def test_validate_layer_passes_through_hoop_and_skip_with_no_kinematics() -> None:
+    # Hoop and skip carry no coverage pattern, so the uniform entry validates
+    # them (no error) and returns no kinematics.
+    assert validate_layer(1, HoopLayer(terminal=False), MANDREL, _TOW) is None
+    assert validate_layer(1, HoopLayer(terminal=True), MANDREL, _TOW) is None
+    assert (
+        validate_layer(1, SkipLayer.model_validate({"mandrelRotation": 45.0}), MANDREL, _TOW)
+        is None
+    )

@@ -13,6 +13,7 @@ from fiberpath.config.schemas import (
 
 from .calculations import HelicalKinematics, compute_helical_kinematics
 from .exceptions import LayerValidationError
+from .pattern import pattern_spec
 
 MIN_WIND_ANGLE = 1.0
 MAX_WIND_ANGLE = 89.0
@@ -59,41 +60,67 @@ def validate_layer_numeric_bounds(layer_index: int, layer: LayerModel) -> None:
         )
 
 
+def validate_layer(
+    layer_index: int,
+    layer: LayerModel,
+    mandrel: MandrelParameters,
+    tow: TowParameters,
+) -> HelicalKinematics | None:
+    """Validate any layer over its declarative pattern primitive.
+
+    The single validation surface for every pattern type: numeric bounds apply
+    to layers with a free wind angle, and the coverage checks apply to laying
+    layers that carry a coverage pattern (helical). Hoop and skip have no
+    coverage pattern, so they pass through with nothing to constrain. Returns the
+    helical kinematics when applicable (for the planner to reuse), else ``None``.
+    """
+    validate_layer_numeric_bounds(layer_index, layer)
+    if isinstance(layer, HelicalLayer):
+        return validate_helical_layer(layer_index, layer, mandrel, tow)
+    return None
+
+
 def validate_helical_layer(
     layer_index: int,
     layer: HelicalLayer,
     mandrel: MandrelParameters,
     tow: TowParameters,
 ) -> HelicalKinematics:
-    if layer.skip_index >= layer.pattern_number:
+    # Read the coverage pattern from the declarative primitive (PatternSpec), so
+    # this is a type-checker over the primitive rather than the raw schema. This
+    # is equivalent to the raw layer only while helical_spec is a verbatim
+    # projection of the coverage fields (it is); the kinematics below are still
+    # derived from the layer, which is the single motion-math source.
+    spec = pattern_spec(layer)
+    if spec.skip_index >= spec.pattern_number:
         raise LayerValidationError(
             layer_index,
             "skipIndex must be less than patternNumber",
         )
 
-    if gcd(layer.skip_index, layer.pattern_number) != 1:
+    if gcd(spec.skip_index, spec.pattern_number) != 1:
         raise LayerValidationError(
             layer_index,
             "skipIndex and patternNumber must be coprime for full coverage",
         )
 
-    if layer.lead_in_mm >= mandrel.wind_length:
+    if spec.lead_in_mm >= mandrel.wind_length:
         raise LayerValidationError(
             layer_index,
             (
-                f"leadInMM ({layer.lead_in_mm}mm) must be less than the mandrel "
+                f"leadInMM ({spec.lead_in_mm}mm) must be less than the mandrel "
                 f"windLength ({mandrel.wind_length}mm); a longer lead-in drives the "
                 "carriage off the mandrel into negative coordinates"
             ),
         )
 
     kinematics = compute_helical_kinematics(layer, mandrel, tow)
-    if kinematics.num_circuits % layer.pattern_number != 0:
+    if kinematics.num_circuits % spec.pattern_number != 0:
         raise LayerValidationError(
             layer_index,
             (
                 "computed circuit count is not divisible by patternNumber "
-                f"({kinematics.num_circuits} % {layer.pattern_number} != 0)"
+                f"({kinematics.num_circuits} % {spec.pattern_number} != 0)"
             ),
         )
 
@@ -115,41 +142,41 @@ def validate_helical_layer(
     # When patternNumber == 1, start_position_increment = 360° ≡ 0°, so every circuit
     # begins at the same mandrel position.  Coverage is guaranteed entirely by the tow
     # width × circuit count calculation and lockDegrees is not constrained here.
-    if layer.pattern_number > 1:
-        pattern_step_deg = 360.0 / layer.pattern_number
-        per_circuit_mod = (2.0 * layer.lock_degrees) % 360.0
+    if spec.pattern_number > 1:
+        pattern_step_deg = 360.0 / spec.pattern_number
+        per_circuit_mod = (2.0 * spec.lock_degrees) % 360.0
 
         if round(per_circuit_mod % pattern_step_deg, 6) != 0:
             suggestions = _nearest_valid_lock_degrees(
-                layer.lock_degrees, pattern_step_deg, layer.skip_index
+                spec.lock_degrees, pattern_step_deg, spec.skip_index
             )
             raise LayerValidationError(
                 layer_index,
                 (
-                    f"lockDegrees {layer.lock_degrees}° produces a per-circuit mandrel advance of "
+                    f"lockDegrees {spec.lock_degrees}° produces a per-circuit mandrel advance of "
                     f"{per_circuit_mod:.6g}° (mod 360°), which is not divisible by the in-pattern "
                     f"slot width of {pattern_step_deg:.6g}°"
-                    f" (= 360 / patternNumber {layer.pattern_number}). "
+                    f" (= 360 / patternNumber {spec.pattern_number}). "
                     f"Circuits will overlap and leave bare mandrel strips. "
                     f"lockDegrees must be a multiple of {pattern_step_deg / 2:.6g}°. "
                     f"Nearest valid values: {suggestions}"
                 ),
             )
 
-        slot_step = (per_circuit_mod + layer.skip_index * pattern_step_deg) % 360.0
-        j = round(slot_step / pattern_step_deg) % layer.pattern_number
-        if gcd(j, layer.pattern_number) != 1:
+        slot_step = (per_circuit_mod + spec.skip_index * pattern_step_deg) % 360.0
+        j = round(slot_step / pattern_step_deg) % spec.pattern_number
+        if gcd(j, spec.pattern_number) != 1:
             suggestions = _nearest_valid_lock_degrees(
-                layer.lock_degrees, pattern_step_deg, layer.skip_index
+                spec.lock_degrees, pattern_step_deg, spec.skip_index
             )
             raise LayerValidationError(
                 layer_index,
                 (
-                    f"lockDegrees {layer.lock_degrees}° with skipIndex {layer.skip_index} and "
-                    f"patternNumber {layer.pattern_number} produces an"
+                    f"lockDegrees {spec.lock_degrees}° with skipIndex {spec.skip_index} and "
+                    f"patternNumber {spec.pattern_number} produces an"
                     f" intra-pattern slot stride of "
                     f"{j} (in units of {pattern_step_deg:.6g}°), which is not coprime with "
-                    f"patternNumber (gcd = {gcd(j, layer.pattern_number)}). "
+                    f"patternNumber (gcd = {gcd(j, spec.pattern_number)}). "
                     f"All in-pattern circuits will alias onto fewer positions,"
                     f" leaving bare strips. "
                     f"Nearest valid lockDegrees values: {suggestions}"
