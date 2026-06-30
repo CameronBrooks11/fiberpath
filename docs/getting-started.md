@@ -16,6 +16,8 @@ This guide walks you through installing FiberPath and creating your first filame
 
 The GUI provides an intuitive interface for planning, visualization, and streaming to hardware—no command-line experience needed.
 
+Once installed, the app registers the `.wind` file type: **double-click a `.wind` file** to open it directly in FiberPath. (On Linux this applies to the `.deb`; AppImage association is best-effort.)
+
 ### Python CLI & API (For Developers and Automation)
 
 If you need command-line access or want to integrate FiberPath into your own tools, install via pip or uv:

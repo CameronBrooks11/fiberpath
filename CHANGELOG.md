@@ -8,6 +8,8 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-06-29
+
 ### Added
 
 - **Versioned machine-profile contract** (#197): a new `MachineProfile`
@@ -44,6 +46,8 @@ The format is based on Keep a Changelog, and this project follows semantic versi
   **major-versioned** (`https://fiberpath.org/schemas/wind/1/wind.schema.json`): every
   additive 1.x revision validates against it, and `schemaVersion` carries the minor.
 
+- Branded desktop app icons and a README logo banner (#294): the installers and
+  desktop window now ship the FiberPath brand icon set across all platforms.
 - Helical pattern explainability in the layer editor (#145): the editor now shows
   the derived circuit count inline (`≈ N circuits per layer`) and binds the
   "not divisible by pattern number" mismatch to the Pattern Number field, so the
@@ -58,6 +62,15 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ### Changed
 
+- **Planner API:** `PlanOptions.dialect` is replaced by `PlanOptions.profile`
+  (#197). Python callers that passed a `MarlinDialect` now pass a `MachineProfile`
+  (default: the bundled `marlin-xab`); G-code output is unchanged for the default.
+- **Internal architecture:** planning was rebuilt on a typed **Motion IR**
+  (#136 — `plan_wind` lowers to `Move`/`Program`, `serialize()` renders G-code,
+  `read_program` parses it back) and a single declarative **pattern primitive**
+  (#137 — hoop/helical/skip share one developed-surface lowering). These are
+  byte-identical refactors with no change to inputs or output, but they are the
+  foundation the cone and open-format work builds on.
 - **G-code output now begins with a modal preamble** (#322): every program emits
   `G21` (mm), `G90` (absolute positioning), and `G94` (feed in units/min) right
   after the `; Parameters` header, so it no longer silently depends on the

@@ -36,7 +36,7 @@ hide:
 
     ---
 
-    **Latest Release:** [v0.9.0](https://github.com/fiberpath/fiberpath/releases/latest){ target=_blank }
+    **Latest Release:** [v0.10.0](https://github.com/fiberpath/fiberpath/releases/latest){ target=_blank }
 
     - **Desktop GUI** – Windows, macOS, Linux installers (no Python required)
     - **Python Package** – `pip install fiberpath`
@@ -44,19 +44,18 @@ hide:
 
     [:octicons-arrow-right-24: Installation Guide](getting-started.md)
 
--   :material-new-box:{ .lg .middle } **What's New in v0.9.0**
+-   :material-new-box:{ .lg .middle } **What's New in v0.10.0**
 
     ---
 
-    Marlin machine control was rebuilt on a dedicated, conformance-tested protocol library and moved onto the API sidecar:
+    This release expands what FiberPath can wind and formalizes its formats:
 
-    - **`marlin-host` library** — the host side of the Marlin serial protocol (reliable line-numbered/checksummed framing, M115 capability negotiation, bounded waits, out-of-band M112 e-stop) now lives in a standalone, hardware-validated, PyPI-published library, replacing the old optimistic in-repo streamer.
-    - **Machine control over the local API** — the sidecar owns the serial port; the desktop GUI drives it through the typed client and polls a job resource for streaming progress, retiring the bespoke stdio subprocess protocol.
-    - **CLI on the same engine** — `fiberpath stream` now runs through `marlin-host` too.
+    - **Cone winding** — reducing cones/frustums via an optional `endDiameter`, wound as closed-form geodesics (the first developable surface beyond the cylinder).
+    - **`.wind` is now an open format** — a normative specification with a published, [major-versioned JSON Schema](https://fiberpath.org/schemas/wind/1/wind.schema.json){ target=_blank } and a machine-checkable conformance corpus.
+    - **Machine profiles** — a versioned compatibility contract describing what a controller must support; G-code now emits a self-describing `G21`/`G90`/`G94` preamble.
+    - **Desktop polish** — double-click a `.wind` file to open it, plus branded app icons.
 
-    The Python package, planner, and `.wind` format are unchanged.
-
-    [:octicons-arrow-right-24: Marlin Streaming Guide](guides/marlin-streaming.md)
+    [:octicons-arrow-right-24: Machine Profile Guide](guides/machine-profile.md)
 
 -   :material-book-open-page-variant:{ .lg .middle } **User Guides**
 
