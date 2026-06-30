@@ -10,6 +10,12 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ### Added
 
+- **`.wind` desktop file association** (#148): the desktop app registers the `.wind`
+  extension (media type `application/vnd.fiberpath.wind+json`) so double-clicking a
+  winding program opens it in FiberPath. The launch path is received as a command-line
+  argument on Windows/Linux and via an Apple Event on macOS; a single-instance guard
+  forwards a second launch to the running window instead of opening a duplicate. (System
+  registration takes effect after installing a packaged build; AppImage is best-effort.)
 - **Cone (developable) surface support** (#138): a reducing cone/frustum can be wound
   by adding an optional `mandrelParameters.endDiameter` (`schemaVersion 1.1`). Helical
   layers on a cone follow a geodesic (Clairaut) path anchored at the large end — the

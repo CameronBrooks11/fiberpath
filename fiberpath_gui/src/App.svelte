@@ -13,11 +13,13 @@
   import AboutDialog from "./components/dialogs/AboutDialog.svelte";
   import DiagnosticsDialog from "./components/dialogs/DiagnosticsDialog.svelte";
   import { onMount } from "svelte";
+  import { listen } from "@tauri-apps/api/event";
   import { uiState } from "./state/ui-state.svelte";
   import { projectSession } from "./state/project-session.svelte";
   import { theme } from "./state/theme.svelte";
   import { backendHealth } from "./state/backend-health.svelte";
   import * as fileOps from "./services/file-operations.svelte";
+  import { invokeBackend, isTauri } from "./lib/tauri";
 
   // Apply the theme preference to the document root.
   $effect(() => {
@@ -26,12 +28,42 @@
     else root.setAttribute("data-theme", theme.preference);
   });
 
+  // Open a `.wind` file the OS handed us via the file association, landing in
+  // the Prepare workspace (a `.wind` is a project document). Reuses the same
+  // dirty-checked load path as the Recent Files menu.
+  async function openAssociatedFile(path: string) {
+    try {
+      if (await fileOps.openRecent(path)) uiState.setWorkspace("prepare");
+    } catch {
+      // openRecent already surfaces load failures as notifications.
+    }
+  }
+
   onMount(() => {
     const stopWatch = theme.watchSystem();
     const stopPoll = backendHealth.startPolling();
+
+    // File-association opens only arrive through the Tauri shell. Subscribe to
+    // the warm-open event first, then drain any cold-start file (launched by
+    // double-click): draining flips the backend from stashing to emitting, so
+    // ordering it after the listener means no open is dropped or duplicated.
+    let stopListening: (() => void) | undefined;
+    if (isTauri()) {
+      listen<string>("open-wind-file", (event) => void openAssociatedFile(event.payload))
+        .then((unlisten) => {
+          stopListening = unlisten;
+          return invokeBackend<string | null>("take_opened_file");
+        })
+        .then((path) => {
+          if (path) void openAssociatedFile(path);
+        })
+        .catch(() => {});
+    }
+
     return () => {
       stopWatch();
       stopPoll();
+      stopListening?.();
     };
   });
 

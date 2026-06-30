@@ -13,6 +13,9 @@ tauri-plugin-shell = "2.0"
 thiserror = "2.0"
 which = "8.0"
 
+[target."cfg(any(target_os = \"macos\", windows, target_os = \"linux\"))".dependencies]
+tauri-plugin-single-instance = "2.0"
+
 [build-dependencies]
 tauri-build = { version = "2.0", features = [] }
 

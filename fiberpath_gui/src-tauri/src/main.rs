@@ -4,13 +4,54 @@ mod api_path;
 mod api_sidecar;
 mod cli_path;
 mod cli_process;
+mod file_association;
 
 use serde_json::Value;
 use std::fs;
+use std::path::PathBuf;
 use std::process::Output;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use thiserror::Error;
+
+/// Tracks `.wind` file-association opens. A cold-start launch arrives before the
+/// frontend is listening, so it is stashed in `pending` and drained once via
+/// `take_opened_file`; `frontend_ready` flips when that drain happens, after
+/// which opens are pushed live over the `open-wind-file` event instead.
+#[derive(Default)]
+struct OpenedFile {
+    pending: Mutex<Option<PathBuf>>,
+    frontend_ready: AtomicBool,
+}
+
+/// Event emitted to the webview when a `.wind` file is opened while the app runs.
+const OPEN_WIND_FILE_EVENT: &str = "open-wind-file";
+
+/// Route a freshly opened `.wind` path to the frontend.
+///
+/// Before the frontend has drained the cold-start slot it cannot receive
+/// events, so the path is stashed; afterwards it is emitted. Exactly one channel
+/// fires per open, so a file never loads twice and no stale path is left behind.
+fn deliver_opened_file(app: &AppHandle, path: PathBuf) {
+    let state = app.state::<OpenedFile>();
+    if state.frontend_ready.load(Ordering::Relaxed) {
+        let _ = app.emit(OPEN_WIND_FILE_EVENT, path.to_string_lossy().into_owned());
+    } else {
+        *state.pending.lock().unwrap() = Some(path);
+    }
+}
+
+#[tauri::command]
+fn take_opened_file(state: tauri::State<OpenedFile>) -> Option<String> {
+    state.frontend_ready.store(true, Ordering::Relaxed);
+    state
+        .pending
+        .lock()
+        .unwrap()
+        .take()
+        .map(|path| path.to_string_lossy().into_owned())
+}
 
 #[derive(Debug, Error)]
 enum FiberpathError {
@@ -266,10 +307,31 @@ async fn check_backend_health(app: AppHandle) -> Result<BackendHealthResponse, S
 fn main() {
     let api_sidecar_state: api_sidecar::ApiSidecarState = Arc::new(Mutex::new(None));
 
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default();
+
+    // Single instance must be registered first. A second launch (e.g. opening a
+    // `.wind` file while the app is running) is routed here on Windows/Linux:
+    // focus the existing window and forward the path instead of spawning a
+    // duplicate process. macOS delivers the same intent via `RunEvent::Opened`.
+    // Gate matches the dependency's target cfg in Cargo.toml (Cargo can't use the
+    // `desktop` cfg, and the plugin is absent on other desktop targets like BSD).
+    #[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+    {
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.set_focus();
+            }
+            if let Some(path) = file_association::wind_path_from_args(argv) {
+                deliver_opened_file(app, path);
+            }
+        }));
+    }
+
+    builder
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .manage(api_sidecar_state)
+        .manage(OpenedFile::default())
         .setup(|app| {
             // Warm the sidecar in the background so the first frontend call is
             // fast. Failures (e.g. dev without a bundled binary) are non-fatal:
@@ -281,6 +343,12 @@ fn main() {
                     log::warn!("API sidecar eager start failed (retries on demand): {}", e);
                 }
             });
+
+            // Cold start: Windows/Linux deliver a file-association open as a
+            // command-line argument. Stash it for the frontend to drain on mount.
+            if let Some(path) = file_association::wind_path_from_args(std::env::args()) {
+                *app.state::<OpenedFile>().pending.lock().unwrap() = Some(path);
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -289,8 +357,28 @@ fn main() {
             load_wind_file,
             check_backend_health,
             get_cli_diagnostics,
+            take_opened_file,
             api_sidecar::api_base_url,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running FiberPath GUI");
+        .build(tauri::generate_context!())
+        .expect("error while running FiberPath GUI")
+        .run(|app, event| {
+            // macOS delivers file-association opens (cold and warm) as Apple
+            // Events surfaced here, not as command-line arguments.
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Opened { urls } = event {
+                for url in urls {
+                    if let Ok(path) = url.to_file_path() {
+                        if file_association::is_wind_file(&path) {
+                            deliver_opened_file(app, path);
+                        }
+                    }
+                }
+            }
+            // Silence unused-variable warnings on platforms without `Opened`.
+            #[cfg(not(target_os = "macos"))]
+            {
+                let _ = (app, event);
+            }
+        });
 }
