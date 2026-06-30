@@ -6,16 +6,34 @@ import { render, screen, fireEvent } from "@testing-library/svelte";
 vi.mock("./lib/marlin-api", () => ({
   listSerialPorts: vi.fn(() => Promise.resolve([])),
 }));
-// CLI-health polling invokes a Tauri command on mount; stub it healthy.
+// On mount the shell invokes Tauri commands (CLI-health poll, file-association
+// pickup). Drive them per-command so each test controls what the shell sees.
+const HEALTHY = { healthy: true, version: "test", errorMessage: null };
+const defaultInvoke = (cmd: string): Promise<unknown> =>
+  cmd === "take_opened_file" ? Promise.resolve(null) : Promise.resolve(HEALTHY);
+const mockInvoke = vi.fn(
+  (cmd: string, _args?: Record<string, unknown>): Promise<unknown> => defaultInvoke(cmd),
+);
 vi.mock("@tauri-apps/api/core", () => ({
-  invoke: vi.fn(() => Promise.resolve({ healthy: true, version: "test", errorMessage: null })),
+  invoke: (cmd: string, args?: Record<string, unknown>) => mockInvoke(cmd, args),
+}));
+// The shell subscribes to a Tauri event for warm file-association opens.
+const mockListen = vi.fn(
+  (_event: string, _handler: unknown): Promise<() => void> => Promise.resolve(() => {}),
+);
+vi.mock("@tauri-apps/api/event", () => ({
+  listen: (event: string, handler: unknown) => mockListen(event, handler),
 }));
 
 import App from "./App.svelte";
 import { uiState } from "./state/ui-state.svelte";
 import { projectSession } from "./state/project-session.svelte";
+import * as fileOps from "./services/file-operations.svelte";
 
 beforeEach(() => {
+  mockInvoke.mockReset();
+  mockInvoke.mockImplementation(defaultInvoke);
+  mockListen.mockClear();
   uiState.setWorkspace("prepare");
   uiState.leftCollapsed = false;
   uiState.rightCollapsed = false;
@@ -57,6 +75,32 @@ describe("App.svelte (shell)", () => {
     expect(screen.queryByText(/Console, G-code and diagnostics/)).toBeNull();
     await fireEvent.click(screen.getByRole("button", { name: /Utility/ }));
     expect(screen.getByText(/Console, G-code and diagnostics/)).toBeInTheDocument();
+  });
+
+  it("opens a .wind file handed over by the OS on launch and shows Prepare", async () => {
+    mockInvoke.mockImplementation((cmd: string) =>
+      cmd === "take_opened_file"
+        ? Promise.resolve("/spools/part.wind")
+        : Promise.resolve({ healthy: true, version: "test", errorMessage: null }),
+    );
+    const openRecent = vi.spyOn(fileOps, "openRecent").mockResolvedValue(true);
+    uiState.setWorkspace("machine");
+
+    render(App);
+    await vi.waitFor(() => expect(openRecent).toHaveBeenCalledWith("/spools/part.wind"));
+    expect(uiState.workspace).toBe("prepare");
+
+    // It also listens for warm opens (second launch / macOS Apple Event).
+    expect(mockListen).toHaveBeenCalledWith("open-wind-file", expect.any(Function));
+    openRecent.mockRestore();
+  });
+
+  it("does not open anything when no file was handed over", async () => {
+    const openRecent = vi.spyOn(fileOps, "openRecent").mockResolvedValue(true);
+    render(App);
+    await vi.waitFor(() => expect(mockInvoke).toHaveBeenCalledWith("take_opened_file", undefined));
+    expect(openRecent).not.toHaveBeenCalled();
+    openRecent.mockRestore();
   });
 
   it("blocks unload only when the document is dirty", () => {
