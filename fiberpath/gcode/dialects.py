@@ -1,8 +1,18 @@
-"""Dialects encapsulate controller-specific behavior."""
+"""Dialects encapsulate controller-specific behavior.
+
+A :class:`MarlinDialect` is the G-code-layer runtime view (axis letters + number
+formatting) used by the serializer and reader. The user-facing, versioned
+description of a target controller is :class:`fiberpath.config.MachineProfile`;
+:func:`dialect_from_profile` bridges a profile to the runtime dialect.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from fiberpath.config import MachineProfile
 
 
 @dataclass(slots=True)
@@ -37,7 +47,27 @@ class MarlinDialect:
         return ["G21" if self.units == "mm" else "G20", self.feed_mode]
 
 
-# Predefined dialect
-MARLIN_XAB_STANDARD = MarlinDialect(
-    axis_mapping=AxisMapping(carriage="X", mandrel="A", delivery_head="B"),
-)
+def dialect_from_profile(profile: MachineProfile) -> MarlinDialect:
+    """Build the runtime dialect a serializer/reader uses from a machine profile."""
+    mapping = profile.axis_mapping
+    return MarlinDialect(
+        units=profile.units,
+        feed_mode=profile.feed_mode,
+        axis_mapping=AxisMapping(
+            carriage=mapping.carriage,
+            mandrel=mapping.mandrel,
+            delivery_head=mapping.delivery_head,
+        ),
+    )
+
+
+def _default_dialect() -> MarlinDialect:
+    # Derived from the bundled, versioned `marlin-xab` profile rather than a
+    # hardcoded literal (#197). Reproduces the historical X/A/B dialect exactly.
+    from fiberpath.config import default_machine_profile
+
+    return dialect_from_profile(default_machine_profile())
+
+
+# The canonical Marlin X/A/B dialect, sourced from the versioned default profile.
+MARLIN_XAB_STANDARD = _default_dialect()

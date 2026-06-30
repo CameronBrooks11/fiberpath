@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
-from fiberpath.config import WindDefinition
+from fiberpath.config import MachineProfile, WindDefinition, default_machine_profile
 from fiberpath.config.schemas import HelicalLayer, HoopLayer, MandrelParameters
+from fiberpath.gcode.dialects import dialect_from_profile
 from fiberpath.gcode.serializer import serialize
 
 from .calculations import ConeHelicalKinematics, HelicalKinematics
@@ -19,21 +19,13 @@ from .metrics import nominal_metrics
 from .surface import Cone, surface_from_mandrel
 from .validators import validate_cone_helical_layer, validate_layer, validate_layer_sequence
 
-if TYPE_CHECKING:
-    from fiberpath.gcode.dialects import MarlinDialect
-
 
 @dataclass(slots=True)
 class PlanOptions:
     verbose: bool = False
-    dialect: MarlinDialect = field(default_factory=lambda: _get_default_dialect())  # noqa: E731
-
-
-def _get_default_dialect() -> MarlinDialect:
-    """Import default dialect lazily to avoid circular imports."""
-    from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
-
-    return MARLIN_XAB_STANDARD
+    # The target machine profile (the compatibility contract); defaults to the
+    # bundled Marlin X/A/B profile. The planner derives the G-code dialect from it.
+    profile: MachineProfile = field(default_factory=default_machine_profile)
 
 
 @dataclass(slots=True)
@@ -58,10 +50,11 @@ class PlanResult:
 
 def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) -> PlanResult:
     options = options or PlanOptions()
+    dialect = dialect_from_profile(options.profile)
     machine = WinderMachine(
         mandrel_diameter=definition.mandrel_parameters.diameter,
         verbose_output=options.verbose,
-        dialect=options.dialect,
+        dialect=dialect,
     )
 
     machine.set_feed_rate(definition.default_feed_rate)
@@ -158,7 +151,7 @@ def plan_wind(definition: WindDefinition, options: PlanOptions | None = None) ->
         tow_thickness=definition.tow_parameters.thickness,
     )
     program = Program(meta=meta, moves=[init_move, *moves])
-    commands = serialize(program, options.dialect)
+    commands = serialize(program, dialect)
     if options.verbose:
         commands.insert(0, "; Verbose output enabled")
 

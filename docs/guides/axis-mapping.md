@@ -46,4 +46,4 @@ Simulation and plotting now reject auto-detected XYZ programs with a clear error
 
 ## Advanced Integrations
 
-Advanced Python integrations can still pass a custom `MarlinDialect` via `PlanOptions(dialect=...)` when needed for specialized machines, but XAB is the built-in product path.
+Advanced Python integrations can target a specialized machine by passing a custom [machine profile](machine-profile.md) via `PlanOptions(profile=...)`, but XAB is the built-in product path.
