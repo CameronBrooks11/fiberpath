@@ -29,7 +29,7 @@ def _reference_definition(name: str = "simple-hoop") -> WindDefinition:
 def test_render_detects_xab_format() -> None:
     """Verify the reader auto-detects XAB format and the plotter renders it."""
     definition = _reference_definition("simple-hoop")
-    plan_result = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+    plan_result = plan_wind(definition, PlanOptions())
 
     result = render_plot(read_program(plan_result.commands))
     assert result.image is not None
@@ -67,7 +67,7 @@ def test_render_with_explicit_custom_dialect() -> None:
 def test_render_with_explicit_xab_dialect() -> None:
     """Verify render works with an explicitly-read XAB dialect."""
     definition = _reference_definition("simple-hoop")
-    plan_result = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+    plan_result = plan_wind(definition, PlanOptions())
 
     result = render_plot(read_program(plan_result.commands, dialect=MARLIN_XAB_STANDARD))
     assert result.image is not None
@@ -78,7 +78,7 @@ def test_helical_balanced_rejected_by_divisibility_validation() -> None:
     definition = _reference_definition("helical-balanced")
 
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+        plan_wind(definition, PlanOptions())
 
 
 def test_skip_bias_rejected_by_divisibility_validation() -> None:
@@ -86,4 +86,4 @@ def test_skip_bias_rejected_by_divisibility_validation() -> None:
     definition = _reference_definition("skip-bias")
 
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+        plan_wind(definition, PlanOptions())

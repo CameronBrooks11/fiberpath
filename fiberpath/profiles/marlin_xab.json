@@ -1,0 +1,14 @@
+{
+  "profileVersion": "1.0",
+  "id": "marlin-xab",
+  "name": "Marlin (X/A/B standard)",
+  "controller": "marlin",
+  "units": "mm",
+  "feedMode": "G94",
+  "axisMapping": {
+    "carriage": "X",
+    "mandrel": "A",
+    "deliveryHead": "B"
+  },
+  "requiredGcodes": ["G0", "G92"]
+}

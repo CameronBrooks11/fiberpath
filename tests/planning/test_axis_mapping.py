@@ -3,9 +3,9 @@
 from pathlib import Path
 
 import pytest
-from fiberpath.config import load_wind_definition
+from fiberpath.config import MachineProfile, default_machine_profile, load_wind_definition
 from fiberpath.config.schemas import WindDefinition
-from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, AxisMapping, MarlinDialect
+from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD, AxisMapping
 from fiberpath.planning import LayerValidationError, PlanOptions, plan_wind
 
 REFERENCE_ROOT = Path(__file__).parents[1] / "cyclone_reference_runs"
@@ -21,7 +21,7 @@ def test_default_dialect_is_xab_standard() -> None:
     definition = _reference_definition("simple-hoop")
 
     result_default = plan_wind(definition)
-    result_xab = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+    result_xab = plan_wind(definition, PlanOptions(profile=default_machine_profile()))
 
     assert result_default.commands == result_xab.commands
     assert result_default.commands[1] == "G0 X0 A0 B0"
@@ -29,9 +29,7 @@ def test_default_dialect_is_xab_standard() -> None:
 
 def test_xab_output_generates_expected_axis_letters() -> None:
     """Verify generated motion commands use X/A/B axes only."""
-    result = plan_wind(
-        _reference_definition("simple-hoop"), PlanOptions(dialect=MARLIN_XAB_STANDARD)
-    )
+    result = plan_wind(_reference_definition("simple-hoop"), PlanOptions())
 
     motion_commands = [
         cmd for cmd in result.commands if cmd.startswith("G0") or cmd.startswith("G1")
@@ -83,7 +81,7 @@ def test_set_position_commands_use_active_dialect_axes() -> None:
         }
     )
 
-    result = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+    result = plan_wind(definition, PlanOptions())
     g92_commands = [cmd for cmd in result.commands if cmd.startswith("G92")]
     assert len(g92_commands) > 0
     assert all(" A" in cmd or cmd == "G92 A0" for cmd in g92_commands)
@@ -92,9 +90,15 @@ def test_set_position_commands_use_active_dialect_axes() -> None:
 
 
 def test_custom_axis_mapping() -> None:
-    """Verify planner honors explicit custom mappings."""
-    custom_dialect = MarlinDialect(
-        axis_mapping=AxisMapping(carriage="X", mandrel="C", delivery_head="A")
+    """Verify the planner honors a custom machine profile's axis mapping."""
+    custom_profile = MachineProfile.model_validate(
+        {
+            "id": "custom-xca",
+            "name": "Custom X/C/A",
+            "controller": "marlin",
+            "axisMapping": {"carriage": "X", "mandrel": "C", "deliveryHead": "A"},
+            "requiredGcodes": ["G0", "G92"],
+        }
     )
 
     definition = WindDefinition.model_validate(
@@ -106,7 +110,7 @@ def test_custom_axis_mapping() -> None:
         }
     )
 
-    result = plan_wind(definition, PlanOptions(dialect=custom_dialect))
+    result = plan_wind(definition, PlanOptions(profile=custom_profile))
     assert result.commands[1] == "G0 X0 C0 A0"
     move_commands = [cmd for cmd in result.commands if cmd.startswith("G0") or cmd.startswith("G1")]
     assert any(" C" in cmd for cmd in move_commands)
@@ -124,7 +128,7 @@ def test_verbose_mode_with_xab_dialect() -> None:
         }
     )
 
-    result = plan_wind(definition, PlanOptions(verbose=True, dialect=MARLIN_XAB_STANDARD))
+    result = plan_wind(definition, PlanOptions(verbose=True))
     comments = [cmd for cmd in result.commands if cmd.startswith(";")]
     assert len(comments) > 0
 
@@ -132,12 +136,10 @@ def test_verbose_mode_with_xab_dialect() -> None:
 def test_helical_balanced_reference_rejected_by_divisibility_validation() -> None:
     """Legacy helical-balanced fixture is invalid under strict divisibility checks."""
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(
-            _reference_definition("helical-balanced"), PlanOptions(dialect=MARLIN_XAB_STANDARD)
-        )
+        plan_wind(_reference_definition("helical-balanced"), PlanOptions())
 
 
 def test_skip_bias_reference_rejected_by_divisibility_validation() -> None:
     """Legacy skip-bias fixture is invalid under strict divisibility checks."""
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(_reference_definition("skip-bias"), PlanOptions(dialect=MARLIN_XAB_STANDARD))
+        plan_wind(_reference_definition("skip-bias"), PlanOptions())

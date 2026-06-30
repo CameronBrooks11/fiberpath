@@ -29,7 +29,7 @@ def _reference_definition(name: str = "simple-hoop") -> WindDefinition:
 def test_detect_xab_format() -> None:
     """Verify auto-detection recognizes XAB format."""
     definition = _reference_definition("simple-hoop")
-    plan_result = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+    plan_result = plan_wind(definition, PlanOptions())
 
     result = simulate_program(read_program(plan_result.commands))
     assert result.estimated_time_s > 0
@@ -68,7 +68,7 @@ def test_explicit_custom_dialect_can_simulate_nonstandard_program() -> None:
 def test_auto_detect_and_explicit_xab_produce_same_results() -> None:
     """Verify explicit and detected XAB reads simulate identically."""
     definition = _reference_definition("simple-hoop")
-    xab_plan = plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+    xab_plan = plan_wind(definition, PlanOptions())
 
     auto_result = simulate_program(read_program(xab_plan.commands))
     explicit_result = simulate_program(read_program(xab_plan.commands, dialect=MARLIN_XAB_STANDARD))
@@ -83,4 +83,4 @@ def test_helical_balanced_rejected_by_divisibility_validation() -> None:
     definition = _reference_definition("helical-balanced")
 
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(definition, PlanOptions(dialect=MARLIN_XAB_STANDARD))
+        plan_wind(definition, PlanOptions())

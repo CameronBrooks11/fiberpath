@@ -10,6 +10,14 @@ The format is based on Keep a Changelog, and this project follows semantic versi
 
 ### Added
 
+- **Versioned machine-profile contract** (#197): a new `MachineProfile`
+  (`fiberpath.config`) is the validated, versioned description of a target
+  controller — axis mapping, units/feed semantics, and the G-code opcodes a
+  compatible winder must support. The canonical Marlin X/A/B target now ships as a
+  data profile (`fiberpath/profiles/marlin_xab.json`) and the planner consumes a
+  profile (`PlanOptions(profile=...)`) instead of a hardcoded dialect constant;
+  `MARLIN_XAB_STANDARD` is derived from it, so G-code output is byte-identical. See
+  the new [Machine Profile guide](docs/guides/machine-profile.md).
 - **`.wind` desktop file association** (#148): the desktop app registers the `.wind`
   extension (media type `application/vnd.fiberpath.wind+json`) so double-clicking a
   winding program opens it in FiberPath. The launch path is received as a command-line

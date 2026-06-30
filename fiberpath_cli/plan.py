@@ -8,7 +8,6 @@ from pathlib import Path
 import typer
 from fiberpath.config import WindFileError, load_wind_definition
 from fiberpath.gcode import write_gcode
-from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
 from fiberpath.planning import PlanOptions, plan_wind
 from rich.console import Console
 from rich.table import Table
@@ -41,9 +40,7 @@ def plan_command(
         raise typer.BadParameter(str(exc)) from exc
 
     try:
-        result = plan_wind(
-            wind_definition, PlanOptions(verbose=verbose, dialect=MARLIN_XAB_STANDARD)
-        )
+        result = plan_wind(wind_definition, PlanOptions(verbose=verbose))
     except Exception as exc:  # pragma: no cover - defensive guard
         typer.echo(f"Planning failed: {exc}", err=True)
         raise typer.Exit(code=1) from exc

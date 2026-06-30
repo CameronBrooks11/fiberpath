@@ -3,7 +3,6 @@ from pathlib import Path
 import pytest
 from fiberpath.config import load_wind_definition
 from fiberpath.config.schemas import WindDefinition
-from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
 from fiberpath.planning import LayerValidationError, PlanOptions, plan_wind
 
 REFERENCE_ROOT = Path(__file__).parents[1] / "cyclone_reference_runs"
@@ -30,7 +29,7 @@ def test_plan_wind_returns_commands() -> None:
     ],
 )
 def test_plan_wind_uses_xab_axes(case: str) -> None:
-    result = plan_wind(_reference_definition(case), PlanOptions(dialect=MARLIN_XAB_STANDARD))
+    result = plan_wind(_reference_definition(case), PlanOptions())
 
     motion_commands = [
         cmd for cmd in result.commands if cmd.startswith("G0") or cmd.startswith("G1")
@@ -43,14 +42,12 @@ def test_plan_wind_uses_xab_axes(case: str) -> None:
 
 def test_plan_wind_rejects_legacy_non_divisible_helical_reference() -> None:
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(
-            _reference_definition("helical-balanced"), PlanOptions(dialect=MARLIN_XAB_STANDARD)
-        )
+        plan_wind(_reference_definition("helical-balanced"), PlanOptions())
 
 
 def test_plan_wind_rejects_legacy_skip_bias_non_divisible_reference() -> None:
     with pytest.raises(LayerValidationError, match="not divisible by patternNumber"):
-        plan_wind(_reference_definition("skip-bias"), PlanOptions(dialect=MARLIN_XAB_STANDARD))
+        plan_wind(_reference_definition("skip-bias"), PlanOptions())
 
 
 def test_plan_wind_rejects_layers_after_terminal() -> None:

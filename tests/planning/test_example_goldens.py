@@ -22,7 +22,6 @@ from pathlib import Path
 
 import pytest
 from fiberpath.config import load_wind_definition
-from fiberpath.gcode.dialects import MARLIN_XAB_STANDARD
 from fiberpath.planning import PlanOptions, plan_wind
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -51,7 +50,7 @@ EXAMPLE_GOLDENS: list[tuple[str, str]] = [
 def _render(wind: Path) -> str:
     """Plan a ``.wind`` to G-code text exactly as ``write_gcode`` serializes it."""
     definition = load_wind_definition(wind)
-    result = plan_wind(definition, PlanOptions(verbose=False, dialect=MARLIN_XAB_STANDARD))
+    result = plan_wind(definition, PlanOptions(verbose=False))
     return "\n".join(result.commands) + "\n"
 
 
